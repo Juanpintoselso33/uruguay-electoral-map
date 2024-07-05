@@ -28,33 +28,34 @@ let map: L.Map | null = null;
 
 const sheetNumbers = computed(() => props.selectedLists);
 
+const updateMap = () => {
+  if (map && props.geojsonData) {
+    map.eachLayer((layer) => {
+      if (layer instanceof L.GeoJSON) {
+        map.removeLayer(layer);
+      }
+    });
+
+    L.geoJSON(props.geojsonData, {
+      style: styleFeature,
+      onEachFeature: onEachFeature,
+    }).addTo(map);
+  }
+};
+
 const initializeMap = () => {
   if (mapContainer.value && !map) {
-    const isMobile = window.innerWidth < 768;
     map = L.map(mapContainer.value, {
       center: [-34.8211, -56.225],
       zoom: 11.5,
       layers: [],
       zoomControl: false,
       attributionControl: false,
-      scrollWheelZoom: !isMobile,
-      doubleClickZoom: !isMobile,
-      boxZoom: !isMobile,
-      keyboard: !isMobile,
-      dragging: !isMobile,
-      touchZoom: !isMobile,
     });
 
-    if (!isMobile) {
-      L.control.zoom({ position: "bottomright" }).addTo(map);
-    }
+    L.control.zoom({ position: "bottomright" }).addTo(map);
 
-    if (props.geojsonData) {
-      L.geoJSON(props.geojsonData, {
-        style: styleFeature,
-        onEachFeature: onEachFeature,
-      }).addTo(map);
-    }
+    updateMap();
   }
 };
 
@@ -129,22 +130,15 @@ onMounted(() => {
 });
 
 watch(
-  () => props.geojsonData,
-  (newData) => {
-    if (newData && map) {
-      map.eachLayer((layer) => {
-        if (layer instanceof L.GeoJSON && map) {
-          map.removeLayer(layer);
-        }
-      });
-
-      L.geoJSON(newData, {
-        style: styleFeature,
-        onEachFeature: onEachFeature,
-      }).addTo(map);
-    }
+  [
+    () => props.selectedLists,
+    () => props.votosPorListas,
+    () => props.geojsonData,
+  ],
+  () => {
+    updateMap();
   },
-  { immediate: true, deep: true }
+  { deep: true }
 );
 
 function getColor(votes) {
@@ -240,9 +234,7 @@ function shadeColor(color, percent) {
 .montevideo-map-wrapper {
   width: 100%;
   height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
 }
 
 .montevideo-map {
