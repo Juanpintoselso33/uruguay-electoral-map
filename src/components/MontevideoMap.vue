@@ -150,73 +150,57 @@ watch(
   { deep: true }
 );
 
+const getMaxVotes = computed(() => {
+  return Math.max(
+    ...Object.values(props.geojsonData.features).map((feature) =>
+      props.getVotosForNeighborhood(feature.properties.BARRIO)
+    )
+  );
+});
+
 function getColor(votes) {
-  const totalVotes = votes;
-  if (totalVotes === 0) {
-    return "#FFFFFF"; // Blanco para 0 votos
+  const maxVotes = getMaxVotes.value;
+  if (votes === 0) {
+    return "#FFFFFF"; // White for 0 votes
   }
 
-  let color;
+  const ratio = votes / maxVotes;
+  const colorSteps = [
+    { threshold: 0.05, color: "#FFF3E0" },
+    { threshold: 0.1, color: "#FFE0B2" },
+    { threshold: 0.15, color: "#FFD54F" },
+    { threshold: 0.2, color: "#FFCC80" },
+    { threshold: 0.25, color: "#FFC107" },
+    { threshold: 0.3, color: "#FFA72C" },
+    { threshold: 0.4, color: "#FF9800" },
+    { threshold: 0.45, color: "#FF8A65" },
+    { threshold: 0.5, color: "#FF7043" },
+    { threshold: 0.6, color: "#FF6E6E" },
+    { threshold: 0.8, color: "#FF5722" },
+    { threshold: 1, color: "#FF4500" },
+  ];
 
-  switch (true) {
-    case totalVotes <= 100:
-      color = "#FFF3E0"; // Naranja muy claro
-      break;
-    case totalVotes <= 200:
-      color = "#FFE0B2"; // Naranja claro
-      break;
-    case totalVotes <= 300:
-      color = "#FFD54F"; // Naranja medio
-      break;
-    case totalVotes <= 400:
-      color = "#FFCC80"; // Naranja medio
-      break;
-    case totalVotes <= 500:
-      color = "#FFC107"; // Naranja medio
-      break;
-    case totalVotes <= 600:
-      color = "#FFA72C"; // Naranja medio
-      break;
-    case totalVotes <= 800:
-      color = "#FF9800"; // Naranja medio
-      break;
-    case totalVotes <= 900:
-      color = "#FF8A65"; // Naranja medio
-      break;
-    case totalVotes <= 1000:
-      color = "#FF7043"; // Naranja medio
-      break;
-    case totalVotes <= 1200:
-      color = "#FF6E6E"; // Naranja un poco más oscuro
-      break;
-    case totalVotes <= 1600:
-      color = "#FF5722"; // Naranja oscuro
-      break;
-    case totalVotes <= 2000:
-      color = "#FF4500"; // Naranja muy oscuro
-      break;
-    default:
-      // Interpolación de naranja muy oscuro a violeta oscuro
-      const ratio = (totalVotes - 2000) / 2000;
-      const interpolateColor = (startColor, endColor, ratio) => {
-        const hex = (x) => {
-          x = x.toString(16);
-          return x.length === 1 ? "0" + x : x;
-        };
-        const interpolate = (start, end, ratio) =>
-          Math.ceil(
-            parseInt(start, 16) * (1 - ratio) + parseInt(end, 16) * ratio
-          );
-        const r = interpolate("E6", "4B", ratio);
-        const g = interpolate("51", "00", ratio);
-        const b = interpolate("00", "82", ratio);
-        return `#${hex(r)}${hex(g)}${hex(b)}`;
-      };
-      color = interpolateColor("#E65100", "#4B0082", Math.min(ratio, 1));
-      break;
+  for (const step of colorSteps) {
+    if (ratio <= step.threshold) {
+      return step.color;
+    }
   }
 
-  return color;
+  // For values above 1 (shouldn't happen, but just in case)
+  return interpolateColor("#FF4500", "#4B0082", Math.min(ratio - 1, 1));
+}
+
+function interpolateColor(startColor, endColor, ratio) {
+  const hex = (x) => {
+    x = x.toString(16);
+    return x.length === 1 ? "0" + x : x;
+  };
+  const interpolate = (start, end, ratio) =>
+    Math.ceil(parseInt(start, 16) * (1 - ratio) + parseInt(end, 16) * ratio);
+  const r = interpolate(startColor.slice(1, 3), endColor.slice(1, 3), ratio);
+  const g = interpolate(startColor.slice(3, 5), endColor.slice(3, 5), ratio);
+  const b = interpolate(startColor.slice(5, 7), endColor.slice(5, 7), ratio);
+  return `#${hex(r)}${hex(g)}${hex(b)}`;
 }
 
 function shadeColor(color, percent) {
@@ -251,6 +235,19 @@ const getTotalVotes = () => {
     0
   );
 };
+
+const getTotalVotesAcrossAllNeighborhoods = () => {
+  return props.selectedLists.reduce((total, list) => {
+    return (
+      total +
+      Object.values(props.votosPorListas[list] || {}).reduce((a, b) => a + b, 0)
+    );
+  }, 0);
+};
+
+const areAllVotesAccounted = computed(() => {
+  return getTotalVotes() === getTotalVotesAcrossAllNeighborhoods();
+});
 </script>
 
 <style scoped>
