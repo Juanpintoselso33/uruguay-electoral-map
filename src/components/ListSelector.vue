@@ -17,7 +17,7 @@
           v-model="selectedLists"
           @change="onListSelect"
         />
-        <span class="list-number">Lista {{ list }}</span>
+        <span class="list-number">Lista {{ parseInt(list) }}</span>
       </label>
     </div>
   </div>
@@ -37,13 +37,10 @@ const searchQuery = ref("");
 const filteredLists = ref<string[]>([]);
 
 const filterLists = () => {
-  console.log("filterLists called, searchQuery:", searchQuery.value);
-  console.log("props.lists:", props.lists);
   if (!props.lists) {
     filteredLists.value = [];
     return;
   }
-  // Filter out undefined values
   const validLists = props.lists.filter((list) => list !== undefined);
   if (!searchQuery.value) {
     filteredLists.value = validLists;
@@ -52,18 +49,15 @@ const filterLists = () => {
       list.includes(searchQuery.value.trim())
     );
   }
-  console.log("filteredLists after filtering:", filteredLists.value);
 };
 
 const onListSelect = () => {
-  console.log("onListSelect called, selectedLists:", selectedLists.value);
   emit("listsSelected", selectedLists.value);
 };
 
 watch(
   () => props.lists,
   (newLists) => {
-    console.log("props.lists changed:", newLists);
     selectedLists.value = [];
     filterLists();
   },
@@ -72,15 +66,12 @@ watch(
 
 watch(
   () => searchQuery.value,
-  (newQuery) => {
-    console.log("searchQuery changed:", newQuery);
+  () => {
     filterLists();
   }
 );
 
 onMounted(() => {
-  console.log("ListSelector component mounted");
-  console.log("Initial props.lists:", props.lists);
   filterLists();
 });
 </script>
@@ -92,7 +83,7 @@ onMounted(() => {
   border-radius: 8px;
   padding: 20px;
   width: 100%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 01);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   height: 30vh;

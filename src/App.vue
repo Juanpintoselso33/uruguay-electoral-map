@@ -12,16 +12,45 @@
           :getVotosForNeighborhood="getVotosForNeighborhood"
           :geojsonData="geojsonData"
           :selectedNeighborhood="selectedNeighborhood"
+          :isODN="isODN"
           @updateSelectedNeighborhood="updateSelectedNeighborhood"
         />
       </div>
-      <ListSelector :lists="availableLists" @listsSelected="onListsSelected" />
+      <div class="controls">
+        <div class="data-source-toggle">
+          <h3>Data Source</h3>
+          <div class="toggle-container">
+            <label class="toggle-option">
+              <input
+                type="radio"
+                v-model="isODN"
+                :value="false"
+                @change="toggleDataSource"
+              />
+              <span class="toggle-label">ODD</span>
+            </label>
+            <label class="toggle-option">
+              <input
+                type="radio"
+                v-model="isODN"
+                :value="true"
+                @change="toggleDataSource"
+              />
+              <span class="toggle-label">ODN</span>
+            </label>
+          </div>
+        </div>
+        <ListSelector
+          :lists="availableLists"
+          @listsSelected="onListsSelected"
+        />
+      </div>
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import Papa from "papaparse";
 import ListSelector from "./components/ListSelector.vue";
 import MontevideoMap from "./components/MontevideoMap.vue";
@@ -32,6 +61,7 @@ const votosPorListas = ref<Record<string, Record<string, number>>>({});
 const maxVotosPorListas = ref<Record<string, number>>({});
 const geojsonData = ref<any>(null);
 const selectedNeighborhood = ref<string | null>(null);
+const isODN = ref(false);
 
 const onListsSelected = (lists: string[]) => {
   selectedLists.value = lists;
@@ -72,9 +102,10 @@ const processCSV = (csvText: string) => {
 
 const fetchAvailableLists = async () => {
   try {
-    const response = await fetch(
-      "/Barrios_Mapeados_Finales_Revisados_Correctos.csv"
-    );
+    const filePath = isODN.value
+      ? "/Barrios_Mapeados_Finales_Revisados_Correctos.csv"
+      : "/votos_por_barrio_pn_mapeado.csv";
+    const response = await fetch(filePath);
     const csvText = await response.text();
     const {
       votosPorListas: votos,
@@ -85,14 +116,16 @@ const fetchAvailableLists = async () => {
     votosPorListas.value = votos;
     maxVotosPorListas.value = maxVotos;
   } catch (error) {
-    console.error("Error fetching CSV data:", error);
+    console.error("Error fetching data:", error);
   }
 };
 
 const fetchGeoJSONData = async () => {
   try {
     const response = await fetch("/v_sig_barrios.json");
+    console.log("Llegaron los datos de geojson: ", response);
     geojsonData.value = await response.json();
+    console.log("GeoJSON data content:", geojsonData.value);
   } catch (error) {
     console.error("Error fetching GeoJSON data:", error);
   }
@@ -108,9 +141,17 @@ const updateSelectedNeighborhood = (neighborhood: string | null) => {
   selectedNeighborhood.value = neighborhood;
 };
 
+const toggleDataSource = () => {
+  fetchAvailableLists();
+};
+
 onMounted(() => {
   fetchAvailableLists();
   fetchGeoJSONData();
+});
+
+watch(isODN, () => {
+  fetchAvailableLists();
 });
 </script>
 
@@ -133,12 +174,65 @@ onMounted(() => {
 .content {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 50px); /* Adjust based on your header height */
+  height: calc(100vh - 50px);
 }
 
 .map-container {
-  width: 100%;
-  height: 70vh;
+  flex-grow: 1;
+  position: relative;
+  height: 100%;
+}
+
+.controls {
+  background-color: white;
+  padding: 20px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 500;
+}
+
+.data-source-toggle {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+}
+
+.data-source-toggle h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.toggle-container {
+  display: flex;
+  justify-content: space-around;
+  background-color: #e0e0e0;
+  border-radius: 20px;
+  padding: 4px;
+}
+
+.toggle-option {
+  flex: 1;
+  text-align: center;
+}
+
+.toggle-option input[type="radio"] {
+  display: none;
+}
+
+.toggle-label {
+  display: block;
+  padding: 8px 16px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.toggle-option input[type="radio"]:checked + .toggle-label {
+  background-color: #333;
+  color: white;
 }
 
 @media (min-width: 768px) {
@@ -147,15 +241,12 @@ onMounted(() => {
   }
 
   .map-container {
-    flex: 2;
-    height: calc(100vh - 50px); /* Adjust based on your header height */
+    width: 70%;
   }
 
-  .list-selector {
-    flex: 1;
-    max-width: 400px;
-    height: calc(100vh - 50px); /* Adjust based on your header height */
-    overflow-y: auto;
+  .controls {
+    width: 30%;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
   }
 }
 </style>

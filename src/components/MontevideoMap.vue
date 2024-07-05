@@ -17,6 +17,9 @@ const props = defineProps<{
   selectedLists: string[];
   votosPorListas: Record<string, Record<string, number>>;
   maxVotosPorListas: Record<string, number>;
+  geojsonData: any;
+  isODN: boolean;
+  getVotosForNeighborhood: (neighborhood: string) => number;
 }>();
 
 const mapContainer = ref(null);
@@ -24,12 +27,6 @@ const selectedNeighborhood = ref(null);
 let map: L.Map | null = null;
 
 const sheetNumbers = computed(() => props.selectedLists);
-
-const getVotosForNeighborhood = (neighborhood: string) => {
-  return sheetNumbers.value.reduce((acc, sheetNumber) => {
-    return acc + (props.votosPorListas[sheetNumber]?.[neighborhood] || 0);
-  }, 0);
-};
 
 const initializeMap = () => {
   if (mapContainer.value && !map) {
@@ -40,41 +37,31 @@ const initializeMap = () => {
       layers: [],
       zoomControl: false,
       attributionControl: false,
-      scrollWheelZoom: isMobile,
-      doubleClickZoom: isMobile,
-      boxZoom: isMobile,
-      keyboard: isMobile,
-      dragging: isMobile,
-      touchZoom: isMobile,
+      scrollWheelZoom: !isMobile,
+      doubleClickZoom: !isMobile,
+      boxZoom: !isMobile,
+      keyboard: !isMobile,
+      dragging: !isMobile,
+      touchZoom: !isMobile,
     });
 
-    if (isMobile) {
-      // Add zoom control to the bottom right corner for mobile devices
-      L.control
-        .zoom({
-          position: "bottomright",
-        })
-        .addTo(map);
+    if (!isMobile) {
+      L.control.zoom({ position: "bottomright" }).addTo(map);
     }
 
-    fetch("/v_sig_barrios.json")
-      .then((response) => response.json())
-      .then((geojsonData) => {
-        L.geoJSON(geojsonData, {
-          style: (feature) => styleFeature(feature),
-          onEachFeature: onEachFeature,
-        }).addTo(map!);
-      })
-      .catch((error) =>
-        console.error("Error al cargar el archivo GeoJSON:", error)
-      );
+    if (props.geojsonData) {
+      L.geoJSON(props.geojsonData, {
+        style: styleFeature,
+        onEachFeature: onEachFeature,
+      }).addTo(map);
+    }
   }
 };
 
 const styleFeature = (feature) => {
   if (!feature) return {};
   const neighborhood = feature.properties.BARRIO;
-  const votes = getVotosForNeighborhood(neighborhood);
+  const votes = props.getVotosForNeighborhood(neighborhood);
   const fillColor = getColor(votes);
   return {
     color: "#000000",
@@ -91,7 +78,7 @@ const onEachFeature = (feature, layer) => {
     },
     mouseover: () => {
       const neighborhood = feature.properties.BARRIO;
-      const votes = getVotosForNeighborhood(neighborhood);
+      const votes = props.getVotosForNeighborhood(neighborhood);
       const currentColor = getColor(votes);
       const darkerColor = shadeColor(currentColor, -20);
       (layer as L.Path).setStyle({
@@ -99,11 +86,19 @@ const onEachFeature = (feature, layer) => {
         fillOpacity: 0.5,
       });
 
-      const tooltipContent = sheetNumbers.value
+      let tooltipContent = `<strong>${neighborhood}</strong><br>`;
+
+      const sortedSheetNumbers = [...sheetNumbers.value].sort((a, b) => {
+        const votesA = props.votosPorListas[a]?.[neighborhood] || 0;
+        const votesB = props.votosPorListas[b]?.[neighborhood] || 0;
+        return votesB - votesA;
+      });
+
+      tooltipContent += sortedSheetNumbers
         .map((sheetNumber) => {
           const listVotes =
             props.votosPorListas[sheetNumber]?.[neighborhood] || 0;
-          return `Lista ${sheetNumber}: ${listVotes} votos`;
+          return `Lista ${parseInt(sheetNumber)}: ${listVotes} votos`;
         })
         .join("<br>");
 
@@ -111,16 +106,14 @@ const onEachFeature = (feature, layer) => {
         sheetNumbers.value.length > 1
           ? `<br><strong>Total: ${votes} votos</strong>`
           : "";
+      tooltipContent += totalVotes;
 
       layer
-        .bindTooltip(
-          `<strong>${neighborhood}</strong><br>${tooltipContent}${totalVotes}`,
-          {
-            permanent: false,
-            direction: "auto",
-            className: "neighborhood-label",
-          }
-        )
+        .bindTooltip(tooltipContent, {
+          permanent: false,
+          direction: "auto",
+          className: "neighborhood-label",
+        })
         .openTooltip();
     },
     mouseout: () => {
@@ -136,17 +129,22 @@ onMounted(() => {
 });
 
 watch(
-  () => props.selectedLists,
-  () => {
-    if (map) {
+  () => props.geojsonData,
+  (newData) => {
+    if (newData && map) {
       map.eachLayer((layer) => {
-        if (layer instanceof L.GeoJSON) {
-          layer.setStyle(styleFeature);
+        if (layer instanceof L.GeoJSON && map) {
+          map.removeLayer(layer);
         }
       });
+
+      L.geoJSON(newData, {
+        style: styleFeature,
+        onEachFeature: onEachFeature,
+      }).addTo(map);
     }
   },
-  { deep: true }
+  { immediate: true, deep: true }
 );
 
 function getColor(votes) {
@@ -161,7 +159,6 @@ function getColor(votes) {
     case totalVotes <= 100:
       color = "#FFF3E0"; // Naranja muy claro
       break;
-
     case totalVotes <= 200:
       color = "#FFE0B2"; // Naranja claro
       break;
@@ -183,7 +180,6 @@ function getColor(votes) {
     case totalVotes <= 900:
       color = "#FF8A65"; // Naranja medio
       break;
-
     case totalVotes <= 1000:
       color = "#FF7043"; // Naranja medio
       break;
@@ -244,17 +240,19 @@ function shadeColor(color, percent) {
 .montevideo-map-wrapper {
   width: 100%;
   height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .montevideo-map {
   width: 100%;
   height: 100%;
-  background-color: white;
 }
 
 .neighborhood-info {
   position: absolute;
-  top: 10px;
+  bottom: 10px;
   left: 10px;
   background-color: rgba(255, 255, 255, 0.8);
   padding: 5px 10px;
