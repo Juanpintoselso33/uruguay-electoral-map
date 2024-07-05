@@ -17,32 +17,11 @@
         />
       </div>
       <div class="controls">
-        <div class="data-source-toggle">
-          <h3>Data Source</h3>
-          <div class="toggle-container">
-            <label class="toggle-option">
-              <input
-                type="radio"
-                v-model="isODN"
-                :value="false"
-                @change="toggleDataSource"
-              />
-              <span class="toggle-label">ODD</span>
-            </label>
-            <label class="toggle-option">
-              <input
-                type="radio"
-                v-model="isODN"
-                :value="true"
-                @change="toggleDataSource"
-              />
-              <span class="toggle-label">ODN</span>
-            </label>
-          </div>
-        </div>
         <ListSelector
           :lists="availableLists"
+          :isODN="isODN"
           @listsSelected="onListsSelected"
+          @updateIsODN="updateIsODN"
         />
       </div>
     </main>
@@ -65,6 +44,11 @@ const isODN = ref(false);
 
 const onListsSelected = (lists: string[]) => {
   selectedLists.value = lists;
+};
+
+const updateIsODN = (value: boolean) => {
+  isODN.value = value;
+  fetchAvailableLists();
 };
 
 const processCSV = (csvText: string) => {
@@ -141,10 +125,6 @@ const updateSelectedNeighborhood = (neighborhood: string | null) => {
   selectedNeighborhood.value = neighborhood;
 };
 
-const toggleDataSource = () => {
-  fetchAvailableLists();
-};
-
 onMounted(() => {
   fetchAvailableLists();
   fetchGeoJSONData();
@@ -191,50 +171,6 @@ watch(isODN, () => {
   z-index: 500;
 }
 
-.data-source-toggle {
-  margin-bottom: 20px;
-  padding: 15px;
-  background-color: #f0f0f0;
-  border-radius: 8px;
-}
-
-.data-source-toggle h3 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  font-size: 1.2rem;
-  color: #333;
-}
-
-.toggle-container {
-  display: flex;
-  justify-content: space-around;
-  background-color: #e0e0e0;
-  border-radius: 20px;
-  padding: 4px;
-}
-
-.toggle-option {
-  flex: 1;
-  text-align: center;
-}
-
-.toggle-option input[type="radio"] {
-  display: none;
-}
-
-.toggle-label {
-  display: block;
-  padding: 8px 16px;
-  border-radius: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.toggle-option input[type="radio"]:checked + .toggle-label {
-  background-color: #333;
-  color: white;
-}
-
 @media (min-width: 768px) {
   .content {
     flex-direction: row;
@@ -247,6 +183,25 @@ watch(isODN, () => {
   .controls {
     width: 30%;
     box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@media (max-width: 767px) {
+  .content {
+    flex-direction: column;
+  }
+
+  .map-container {
+    width: 100%;
+    height: calc(100vh - 50px);
+  }
+
+  .controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
   }
 }
 </style>
