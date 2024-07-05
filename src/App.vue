@@ -87,8 +87,8 @@ const processCSV = (csvText: string) => {
 const fetchAvailableLists = async () => {
   try {
     const filePath = isODN.value
-      ? "/Barrios_Mapeados_Finales_Revisados_Correctos.csv"
-      : "/votos_por_barrio_pn_mapeado.csv";
+      ? "/votos_por_barrio_pn_mapeado_odn.csv"
+      : "/votos_por_barrio_pn_mapeado_odd.csv";
     const response = await fetch(filePath);
     const csvText = await response.text();
     const {
@@ -106,7 +106,7 @@ const fetchAvailableLists = async () => {
 
 const fetchGeoJSONData = async () => {
   try {
-    const response = await fetch("/v_sig_barrios.json");
+    const response = await fetch("/montevideo_map.json");
     console.log("Llegaron los datos de geojson: ", response);
     geojsonData.value = await response.json();
     console.log("GeoJSON data content:", geojsonData.value);

@@ -1,6 +1,15 @@
 <template>
   <div class="montevideo-map-wrapper">
     <div class="montevideo-map" ref="mapContainer"></div>
+    <div class="selected-lists-info">
+      <h3>Selected Lists</h3>
+      <ul>
+        <li v-for="list in selectedLists" :key="list">
+          Lista {{ list }}: {{ getTotalVotesForList(list) }} votes
+        </li>
+      </ul>
+      <p>Total Votes: {{ getTotalVotes() }}</p>
+    </div>
     <div v-if="selectedNeighborhood !== null" class="neighborhood-info">
       Selected Neighborhood: {{ selectedNeighborhood }} - Votos:
       {{ getVotosForNeighborhood(selectedNeighborhood) }}
@@ -31,7 +40,7 @@ const sheetNumbers = computed(() => props.selectedLists);
 const updateMap = () => {
   if (map && props.geojsonData) {
     map.eachLayer((layer) => {
-      if (layer instanceof L.GeoJSON) {
+      if (layer instanceof L.GeoJSON && map) {
         map.removeLayer(layer);
       }
     });
@@ -228,6 +237,20 @@ function shadeColor(color, percent) {
       .slice(1)
   );
 }
+
+const getTotalVotesForList = (list: string) => {
+  return Object.values(props.votosPorListas[list] || {}).reduce(
+    (a, b) => a + b,
+    0
+  );
+};
+
+const getTotalVotes = () => {
+  return props.selectedLists.reduce(
+    (total, list) => total + getTotalVotesForList(list),
+    0
+  );
+};
 </script>
 
 <style scoped>
@@ -258,5 +281,33 @@ function shadeColor(color, percent) {
   font-size: 12px;
   font-weight: bold;
   color: black;
+}
+
+.selected-lists-info {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 10px;
+  border-radius: 5px;
+  max-width: 250px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.selected-lists-info h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.selected-lists-info ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.selected-lists-info li {
+  margin-bottom: 5px;
 }
 </style>
