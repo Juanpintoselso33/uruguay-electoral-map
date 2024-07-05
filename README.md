@@ -61,7 +61,7 @@ The built files will be in the `dist` directory.
 ## Data Sources
 
 - Electoral data: Provided by the Electoral Court of Uruguay
-- Geographical data: [Specify the source of your GeoJSON data]
+- Geographical data: Provided by the Intendancy of Montevideo
 
 ## Contributing
 
