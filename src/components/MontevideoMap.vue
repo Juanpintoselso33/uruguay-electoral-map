@@ -33,19 +33,29 @@ const getVotosForNeighborhood = (neighborhood: string) => {
 
 const initializeMap = () => {
   if (mapContainer.value && !map) {
+    const isMobile = window.innerWidth < 768;
     map = L.map(mapContainer.value, {
       center: [-34.8211, -56.225],
       zoom: 11.5,
       layers: [],
       zoomControl: false,
       attributionControl: false,
-      scrollWheelZoom: false,
-      doubleClickZoom: false,
-      boxZoom: false,
-      keyboard: false,
-      dragging: false,
-      touchZoom: false,
+      scrollWheelZoom: isMobile,
+      doubleClickZoom: isMobile,
+      boxZoom: isMobile,
+      keyboard: isMobile,
+      dragging: isMobile,
+      touchZoom: isMobile,
     });
+
+    if (isMobile) {
+      // Add zoom control to the bottom right corner for mobile devices
+      L.control
+        .zoom({
+          position: "bottomright",
+        })
+        .addTo(map);
+    }
 
     fetch("/v_sig_barrios.json")
       .then((response) => response.json())
@@ -232,19 +242,14 @@ function shadeColor(color, percent) {
 
 <style scoped>
 .montevideo-map-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   width: 100%;
-  height: 80%; /* Full height of the viewport */
+  height: 100%;
 }
 
 .montevideo-map {
-  width: 80vw; /* 80% of the viewport width */
-  height: 80vw; /* Maintain a square aspect ratio */
-  max-width: 1400px; /* Maximum width */
-  max-height: 1000px; /* Maximum height */
-  background-color: white; /* Fondo blanco */
+  width: 100%;
+  height: 100%;
+  background-color: white;
 }
 
 .neighborhood-info {

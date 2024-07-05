@@ -4,7 +4,6 @@
       <h1>Montevideo Neighborhood Map</h1>
     </header>
     <main class="content">
-      <ListSelector :lists="availableLists" @listsSelected="onListsSelected" />
       <div class="map-container">
         <MontevideoMap
           :selectedLists="selectedLists"
@@ -16,6 +15,7 @@
           @updateSelectedNeighborhood="updateSelectedNeighborhood"
         />
       </div>
+      <ListSelector :lists="availableLists" @listsSelected="onListsSelected" />
     </main>
   </div>
 </template>
@@ -132,12 +132,30 @@ onMounted(() => {
 
 .content {
   display: flex;
-  flex: 1;
-  padding: 20px;
-  gap: 20px;
+  flex-direction: column;
+  height: calc(100vh - 50px); /* Adjust based on your header height */
 }
 
 .map-container {
-  flex: 1;
+  width: 100%;
+  height: 70vh;
+}
+
+@media (min-width: 768px) {
+  .content {
+    flex-direction: row;
+  }
+
+  .map-container {
+    flex: 2;
+    height: calc(100vh - 50px); /* Adjust based on your header height */
+  }
+
+  .list-selector {
+    flex: 1;
+    max-width: 400px;
+    height: calc(100vh - 50px); /* Adjust based on your header height */
+    overflow-y: auto;
+  }
 }
 </style>

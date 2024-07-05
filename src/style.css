@@ -9,8 +9,8 @@ body {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: #213547;
+  background-color: #ffffff;
 }
 
 #app {
@@ -24,11 +24,4 @@ h1 {
   font-size: 2.5em;
   line-height: 1.1;
   margin: 0;
-}
-
-@media (prefers-color-scheme: light) {
-  body {
-    color: #213547;
-    background-color: #ffffff;
-  }
 }
