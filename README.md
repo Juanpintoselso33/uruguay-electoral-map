@@ -115,16 +115,11 @@ montevideo-election-map/
 2. Use the list selector on the left to choose specific political lists or parties.
 3. The map will update to show the voting results for your selection.
 4. Click on a neighborhood to see detailed voting information in the tooltip.
-5. Toggle between absolute votes and percentages using the provided option.
-6. On mobile devices, use the bottom drawer to access the list selector and detailed information.
+5. On mobile devices, use the bottom drawer to access the list selector and detailed information.
 
 ## Performance Considerations
 
 The application is optimized for performance, but loading times may vary depending on the user's internet connection and device capabilities. The map data is loaded asynchronously to improve initial load times.
-
-## Browser Compatibility
-
-This application is compatible with modern web browsers including Chrome, Firefox, Safari, and Edge. Internet Explorer is not supported.
 
 ## Feedback and Issues
 
