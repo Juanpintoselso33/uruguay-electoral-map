@@ -19,7 +19,7 @@ An interactive Vue.js application visualizing the 2024 internal election results
 - Papa Parse for CSV parsing
 - TypeScript for type safety
 - Pandas for data cleaning and preparation
-  - The data was cleaned and prepared in the following repository: https://github.com/juanpintoselso33/ds-montevideo-internas
+  - The data was cleaned and prepared in the following repository: [https://github.com/juanpintoselso33/ds-montevideo-internas](https://github.com/Juanpintoselso33/ds-mvd-internas)
 
 ## Getting Started
 
