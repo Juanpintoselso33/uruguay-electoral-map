@@ -17,6 +17,8 @@ An interactive Vue.js application visualizing the 2024 internal election results
 - Leaflet.js for map rendering
 - Papa Parse for CSV parsing
 - TypeScript for type safety
+- Jupyter notebook for data cleaning which is uploaded in this repo:
+   https://github.com/Juanpintoselso33/ds-mvd-internas
 
 ## Getting Started
 
@@ -87,8 +89,7 @@ Follow the hosting provider's instructions for deploying a Vue.js application bu
 ```
 montevideo-election-map/
 ├── public/
-│   ├── v_sig_barrios.json
-│   └── Barrios_Mapeados_Finales_Revisados_Correctos.csv
+│   * Here goes the data files
 ├── src/
 │   ├── components/
 │   │   ├── ListSelector.vue
