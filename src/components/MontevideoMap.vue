@@ -1,17 +1,48 @@
 <template>
   <div class="montevideo-map-wrapper">
     <div class="montevideo-map" ref="mapContainer"></div>
-    <div class="selected-lists-info">
-      <h3>Selected Lists</h3>
-      <ul>
-        <li v-for="list in selectedLists" :key="list">
-          Lista {{ list }}: {{ getTotalVotesForList(list) }} votes
-        </li>
-      </ul>
-      <p>Total Votes: {{ getTotalVotes() }}</p>
+    <div
+      class="selected-lists-info"
+      :class="{ 'mobile-hidden': isMobileHidden }"
+    >
+      <div class="mobile-toggle" @click="toggleMobileVisibility">
+        <span
+          class="arrow"
+          :class="{
+            'arrow-up': !isMobileHidden,
+            'arrow-down': isMobileHidden,
+          }"
+        ></span>
+      </div>
+      <div class="selected-lists-content">
+        <h3 class="selected-lists-title">Listas seleccionadas</h3>
+        <ul class="party-list">
+          <li
+            v-for="(partyData, party) in groupedSelectedLists"
+            :key="party"
+            class="party-item"
+          >
+            <strong class="party-name"
+              >{{ party }}: {{ partyData.totalVotes }} votos</strong
+            >
+            <ul class="list-items">
+              <li
+                v-for="list in partyData.lists"
+                :key="list.number"
+                class="list-item"
+              >
+                Lista {{ list.number }}: {{ list.votes }} votos
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <div class="total-votes">
+          <strong>Total de votos:</strong> {{ getTotalVotes() }}
+        </div>
+      </div>
     </div>
     <div v-if="selectedNeighborhood !== null" class="neighborhood-info">
-      Selected Neighborhood: {{ selectedNeighborhood }} - Votos:
+      Barrio seleccionado: {{ selectedNeighborhood }} - Votos:
       {{ getVotosForNeighborhood(selectedNeighborhood) }}
     </div>
   </div>
@@ -29,6 +60,8 @@ const props = defineProps<{
   geojsonData: any;
   isODN: boolean;
   getVotosForNeighborhood: (neighborhood: string) => number;
+  partiesAbbrev: Record<string, string>;
+  partiesByList: Record<string, string>;
 }>();
 
 const mapContainer = ref(null);
@@ -108,7 +141,12 @@ const onEachFeature = (feature, layer) => {
         .map((sheetNumber) => {
           const listVotes =
             props.votosPorListas[sheetNumber]?.[neighborhood] || 0;
-          return `Lista ${parseInt(sheetNumber)}: ${listVotes} votos`;
+          const party = props.partiesByList[sheetNumber];
+          console.log(party);
+          const partyAbbrev = props.partiesAbbrev[party] || party;
+          return `Lista ${parseInt(
+            sheetNumber
+          )} (${partyAbbrev}): ${listVotes} votos`;
         })
         .join("<br>");
 
@@ -248,6 +286,42 @@ const getTotalVotesAcrossAllNeighborhoods = () => {
 const areAllVotesAccounted = computed(() => {
   return getTotalVotes() === getTotalVotesAcrossAllNeighborhoods();
 });
+
+interface PartyData {
+  totalVotes: number;
+  lists: { number: string; votes: number }[];
+}
+
+const groupedSelectedLists = computed<Record<string, PartyData>>(() => {
+  const grouped = {};
+  props.selectedLists.forEach((list) => {
+    const party = props.partiesByList[list];
+    if (!grouped[party]) {
+      grouped[party] = { totalVotes: 0, lists: [] };
+    }
+    const votes = getTotalVotesForList(list);
+    grouped[party].totalVotes += votes;
+    grouped[party].lists.push({ number: list, votes });
+  });
+
+  // Sort parties by total votes and add "Partido" prefix for display
+  return Object.fromEntries(
+    Object.entries(grouped)
+      .sort(([, a], [, b]) => b.totalVotes - a.totalVotes)
+      .map(([party, data]) => [
+        party !== "Independiente" && party !== "Frente Amplio"
+          ? `Partido ${party}`
+          : party,
+        data,
+      ])
+  );
+});
+
+const isMobileHidden = ref(true);
+
+const toggleMobileVisibility = () => {
+  isMobileHidden.value = !isMobileHidden.value;
+};
 </script>
 
 <style scoped>
@@ -284,27 +358,100 @@ const areAllVotesAccounted = computed(() => {
   position: absolute;
   top: 10px;
   left: 10px;
-  background-color: rgba(255, 255, 255, 0.8);
-  padding: 10px;
-  border-radius: 5px;
-  max-width: 250px;
-  max-height: 300px;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 15px;
+  border-radius: 8px;
+  max-width: 300px;
+  max-height: 400px;
   overflow-y: auto;
   z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.selected-lists-info h3 {
+.selected-lists-title {
   margin-top: 0;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  font-size: 1.2em;
+  color: #333;
 }
 
-.selected-lists-info ul {
+.party-list {
   list-style-type: none;
   padding: 0;
   margin: 0;
 }
 
-.selected-lists-info li {
+.party-item {
+  margin-bottom: 15px;
+}
+
+.party-name {
+  display: block;
   margin-bottom: 5px;
+  color: #444;
+}
+
+.list-items {
+  list-style-type: none;
+  padding-left: 15px;
+}
+
+.list-item {
+  margin-bottom: 3px;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.total-votes {
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+  font-size: 1.1em;
+  color: #333;
+}
+
+.mobile-toggle {
+  display: none;
+  cursor: pointer;
+  padding: 10px;
+  text-align: center;
+}
+
+.arrow {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+}
+
+.arrow-up {
+  border-bottom: 5px solid black;
+}
+
+.arrow-down {
+  border-top: 5px solid black;
+}
+
+@media (max-width: 767px) {
+  .selected-lists-info {
+    top: 0;
+    left: 0;
+    right: 0;
+    max-width: 100%;
+    border-radius: 0 0 8px 8px;
+  }
+
+  .mobile-toggle {
+    display: block;
+  }
+
+  .mobile-hidden .selected-lists-content {
+    display: none;
+  }
+
+  .selected-lists-content {
+    padding-top: 10px;
+  }
 }
 </style>

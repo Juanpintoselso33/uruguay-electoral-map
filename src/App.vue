@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header class="header">
-      <h1>Montevideo Neighborhood Map</h1>
+      <h1>Votos por listas en barrios de Montevideo</h1>
     </header>
     <main class="content">
       <div class="map-container">
@@ -13,6 +13,8 @@
           :geojsonData="geojsonData"
           :selectedNeighborhood="selectedNeighborhood"
           :isODN="isODN"
+          :partiesAbbrev="partiesAbbrev"
+          :partiesByList="partiesByList"
           @updateSelectedNeighborhood="updateSelectedNeighborhood"
         />
       </div>
@@ -20,8 +22,12 @@
         <ListSelector
           :lists="availableLists"
           :isODN="isODN"
+          :partiesAbbrev="partiesAbbrev"
+          :selectedParty="selectedParty"
           @listsSelected="onListsSelected"
           @updateIsODN="updateIsODN"
+          @updateSelectedParty="updateSelectedParty"
+          :partiesByList="partiesByList"
         />
       </div>
     </main>
@@ -29,10 +35,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import Papa from "papaparse";
 import ListSelector from "./components/ListSelector.vue";
 import MontevideoMap from "./components/MontevideoMap.vue";
+import partiesAbbrev from "../public/partidos_abrev.json";
 
 const availableLists = ref<string[]>([]);
 const selectedLists = ref<string[]>([]);
@@ -41,6 +48,8 @@ const maxVotosPorListas = ref<Record<string, number>>({});
 const geojsonData = ref<any>(null);
 const selectedNeighborhood = ref<string | null>(null);
 const isODN = ref(false);
+const partiesByList = ref<Record<string, string>>({});
+const selectedParty = ref<string>("");
 
 const onListsSelected = (lists: string[]) => {
   selectedLists.value = lists;
@@ -57,16 +66,19 @@ const processCSV = (csvText: string) => {
     ZONA: string;
     CNT_VOTOS: string;
     HOJA: string;
+    PARTIDO: string;
   }> = result.data;
 
   const votosPorListas: Record<string, Record<string, number>> = {};
   const maxVotosPorListas: Record<string, number> = {};
   const lists = new Set<string>();
+  const partiesByList: Record<string, string> = {};
 
   data.forEach((row) => {
     if (!votosPorListas[row.HOJA]) {
       votosPorListas[row.HOJA] = {};
       maxVotosPorListas[row.HOJA] = 0;
+      partiesByList[row.HOJA] = row.PARTIDO;
     }
     votosPorListas[row.HOJA][row.ZONA] =
       (votosPorListas[row.HOJA][row.ZONA] || 0) + parseInt(row.CNT_VOTOS, 10);
@@ -81,24 +93,27 @@ const processCSV = (csvText: string) => {
     votosPorListas,
     maxVotosPorListas,
     lists: Array.from(lists).sort((a, b) => parseInt(a) - parseInt(b)),
+    partiesByList,
   };
 };
 
 const fetchAvailableLists = async () => {
   try {
     const filePath = isODN.value
-      ? "/votos_por_barrio_pn_mapeado_odn.csv"
-      : "/votos_por_barrio_pn_mapeado_odd.csv";
+      ? "/montevideo_odn_dataset_con_zona.csv"
+      : "/montevideo_odd_dataset_con_zona.csv";
     const response = await fetch(filePath);
     const csvText = await response.text();
     const {
       votosPorListas: votos,
       maxVotosPorListas: maxVotos,
       lists,
+      partiesByList: parties,
     } = processCSV(csvText);
     availableLists.value = lists;
     votosPorListas.value = votos;
     maxVotosPorListas.value = maxVotos;
+    partiesByList.value = parties;
   } catch (error) {
     console.error("Error fetching data:", error);
   }
@@ -124,6 +139,36 @@ const getVotosForNeighborhood = (neighborhood: string): number => {
 const updateSelectedNeighborhood = (neighborhood: string | null) => {
   selectedNeighborhood.value = neighborhood;
 };
+
+const updateSelectedParty = (party: string) => {
+  selectedParty.value = party;
+};
+
+const getTotalVotes = () => {
+  return selectedLists.value.reduce((total, list) => {
+    return (
+      total +
+      Object.values(votosPorListas.value[list] || {}).reduce((a, b) => a + b, 0)
+    );
+  }, 0);
+};
+
+const groupedSelectedLists = computed(() => {
+  const grouped = {};
+  selectedLists.value.forEach((list) => {
+    const party = partiesByList.value[list];
+    if (!grouped[party]) {
+      grouped[party] = { totalVotes: 0, lists: [] };
+    }
+    const votes = Object.values(votosPorListas.value[list] || {}).reduce(
+      (a, b) => a + b,
+      0
+    );
+    grouped[party].totalVotes += votes;
+    grouped[party].lists.push({ number: list, votes });
+  });
+  return grouped;
+});
 
 onMounted(() => {
   fetchAvailableLists();
