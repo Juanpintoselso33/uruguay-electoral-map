@@ -222,11 +222,13 @@ watch(isODN, () => {
   .header {
     padding: 10px;
     flex-direction: column;
+    text-align: center;
   }
 
   .header h1 {
     font-size: 1.5rem;
     margin: 10px 0;
+    text-align: center;
   }
 
   .github-link {
