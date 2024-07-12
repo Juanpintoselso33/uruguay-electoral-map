@@ -422,19 +422,26 @@ const toggleMobileVisibility = () => {
 .arrow-down {
   border-top: 5px solid black;
 }
-
 @media (max-width: 767px) {
   .selected-lists-info {
     position: fixed;
     bottom: 0;
     left: 0;
-    height: 100%;
     right: 0;
     max-width: 100%;
     border-radius: 8px 8px 0 0;
-    transform: translateY(185%);
+    transform: translateY(50%);
     transition: transform 0.3s ease-in-out;
+    max-height: 70vh; /* Limit the height to 70% of the viewport height */
+  }
+
+  .selected-lists-content {
+    max-height: calc(
+      70vh - 40px
+    ); /* Subtract the height of the toggle button */
     overflow-y: auto;
+    padding-bottom: 20px; /* Add some padding at the bottom for better scrolling */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
 
   .selected-lists-info.mobile-hidden {

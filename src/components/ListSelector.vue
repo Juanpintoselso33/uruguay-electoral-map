@@ -226,7 +226,7 @@ onMounted(() => {
 @media (max-width: 767px) {
   .list-selector {
     position: fixed;
-    top: 50px; /* Adjusted to account for the header */
+    top: 140px; /* Adjusted to account for the header */
     left: 0;
     right: 0;
     height: calc(70vh - 40px);
