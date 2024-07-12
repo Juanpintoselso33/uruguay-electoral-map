@@ -309,6 +309,6 @@ watch(isODN, () => {
 }
 
 .leaflet-interactive:focus {
-  display: none;
+  outline: none;
 }
 </style>
