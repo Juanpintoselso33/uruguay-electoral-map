@@ -237,23 +237,31 @@ onMounted(() => {
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    position: absolute;
+    top: -20px;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
   }
 
   .arrow {
     width: 0;
     height: 0;
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
     transition: transform 0.3s ease-in-out;
   }
 
   .arrow-up {
-    border-bottom: 8px solid #333;
-    transform: rotate(180deg);
+    border-bottom: 12px solid #333;
+    transform: translateY(-4px) rotate(180deg);
   }
 
   .arrow-down {
-    border-top: 8px solid #333;
+    border-top: 12px solid #333;
+    transform: translateY(4px);
   }
 
   .list-selector-content {

@@ -351,14 +351,13 @@ const toggleMobileVisibility = () => {
 
 .selected-lists-info {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 40px;
+  left: 20px;
   background-color: rgba(255, 255, 255, 0.9);
   padding: 15px;
   border-radius: 8px;
   max-width: 300px;
   max-height: 400px;
-  overflow-y: auto;
   z-index: 1000;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
