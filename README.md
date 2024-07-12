@@ -6,9 +6,10 @@ An interactive Vue.js application visualizing the 2024 internal election results
 
 - Interactive map of Montevideo neighborhoods
 - Color-coded visualization of voting patterns
-- Ability to filter results by political lists
+- Ability to filter results by political lists and parties
 - Detailed tooltips showing vote counts per list and total votes
 - Responsive design for various screen sizes
+- Option to view results as absolute votes or percentages
 
 ## Technologies Used
 
@@ -17,6 +18,8 @@ An interactive Vue.js application visualizing the 2024 internal election results
 - Leaflet.js for map rendering
 - Papa Parse for CSV parsing
 - TypeScript for type safety
+- Pandas for data cleaning and preparation
+  - The data was cleaned and prepared in the following repository: https://github.com/juanpintoselso33/ds-montevideo-internas
 
 ## Getting Started
 
@@ -30,8 +33,8 @@ An interactive Vue.js application visualizing the 2024 internal election results
 1. Clone the repository:
 
    ```
-   git clone https://github.com/yourusername/montevideo-election-map.git
-   cd montevideo-election-map
+   git clone https://github.com/juanpintoselso33/montevideo-map.git
+   cd montevideo-map
    ```
 
 2. Install dependencies:
@@ -87,16 +90,46 @@ Follow the hosting provider's instructions for deploying a Vue.js application bu
 ```
 montevideo-election-map/
 ├── public/
+│   ├── montevideo_map.json
 │   ├── v_sig_barrios.json
-│   └── Barrios_Mapeados_Finales_Revisados_Correctos.csv
+│   ├── montevideo_odd_dataset_con_zona.csv
+│   ├── montevideo_odn_dataset_sin_zona.csv
+│   └── partidos_abrev.json
 ├── src/
 │   ├── components/
 │   │   ├── ListSelector.vue
 │   │   └── MontevideoMap.vue
 │   ├── App.vue
-│   └── main.js
+│   ├── main.js
+│   └── style.css
 ├── index.html
 ├── package.json
 ├── vite.config.js
+├── tsconfig.json
 └── README.md
 ```
+
+## Usage
+
+1. Upon opening the application, you'll see a map of Montevideo divided into neighborhoods.
+2. Use the list selector on the left to choose specific political lists or parties.
+3. The map will update to show the voting results for your selection.
+4. Click on a neighborhood to see detailed voting information in the tooltip.
+5. Toggle between absolute votes and percentages using the provided option.
+6. On mobile devices, use the bottom drawer to access the list selector and detailed information.
+
+## Performance Considerations
+
+The application is optimized for performance, but loading times may vary depending on the user's internet connection and device capabilities. The map data is loaded asynchronously to improve initial load times.
+
+## Browser Compatibility
+
+This application is compatible with modern web browsers including Chrome, Firefox, Safari, and Edge. Internet Explorer is not supported.
+
+## Feedback and Issues
+
+If you encounter any bugs or have suggestions for improvements, please open an issue on the GitHub repository.
+
+## Acknowledgements
+
+Special thanks to the Electoral Court of Uruguay and the Intendancy of Montevideo for providing the data used in this project.

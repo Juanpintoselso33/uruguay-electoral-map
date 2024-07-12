@@ -1,49 +1,48 @@
 <template>
   <div class="montevideo-map-wrapper">
     <div class="montevideo-map" ref="mapContainer"></div>
-    <div
-      class="selected-lists-info"
-      :class="{ 'mobile-hidden': isMobileHidden }"
-    >
-      <div class="mobile-toggle" @click="toggleMobileVisibility">
-        <span
-          class="arrow"
-          :class="{
-            'arrow-up': !isMobileHidden,
-            'arrow-down': isMobileHidden,
-          }"
-        ></span>
-      </div>
-      <div class="selected-lists-content">
-        <h3 class="selected-lists-title">Listas seleccionadas</h3>
-        <ul class="party-list">
-          <li
-            v-for="(partyData, party) in groupedSelectedLists"
-            :key="party"
-            class="party-item"
-          >
-            <strong class="party-name"
-              >{{ party }}: {{ partyData.totalVotes }} votos</strong
-            >
-            <ul class="list-items">
-              <li
-                v-for="list in partyData.lists"
-                :key="list.number"
-                class="list-item"
-              >
-                Lista {{ list.number }}: {{ list.votes }} votos
-              </li>
-            </ul>
-          </li>
-        </ul>
-        <div class="total-votes">
-          <strong>Total de votos:</strong> {{ getTotalVotes() }}
-        </div>
-      </div>
-    </div>
+
     <div v-if="selectedNeighborhood !== null" class="neighborhood-info">
       Barrio seleccionado: {{ selectedNeighborhood }} - Votos:
       {{ getVotosForNeighborhood(selectedNeighborhood) }}
+    </div>
+  </div>
+  <div class="mobile-toggle" @click="toggleMobileVisibility">
+    <a class="mobile-toggle-text">Ver listas seleccionadas</a>
+    <span
+      class="arrow"
+      :class="{
+        'arrow-up': !isMobileHidden,
+        'arrow-down': isMobileHidden,
+      }"
+    ></span>
+  </div>
+  <div class="selected-lists-info" :class="{ 'mobile-hidden': isMobileHidden }">
+    <div class="selected-lists-content">
+      <h3 class="selected-lists-title">Listas seleccionadas</h3>
+      <ul class="party-list">
+        <li
+          v-for="(partyData, party) in groupedSelectedLists"
+          :key="party"
+          class="party-item"
+        >
+          <strong class="party-name"
+            >{{ party }}: {{ partyData.totalVotes }} votos</strong
+          >
+          <ul class="list-items">
+            <li
+              v-for="list in partyData.lists"
+              :key="list.number"
+              class="list-item"
+            >
+              Lista {{ list.number }}: {{ list.votes }} votos
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <div class="total-votes">
+        <strong>Total de votos:</strong> {{ getTotalVotes() }}
+      </div>
     </div>
   </div>
 </template>
@@ -142,7 +141,6 @@ const onEachFeature = (feature, layer) => {
           const listVotes =
             props.votosPorListas[sheetNumber]?.[neighborhood] || 0;
           const party = props.partiesByList[sheetNumber];
-          console.log(party);
           const partyAbbrev = props.partiesAbbrev[party] || party;
           return `Lista ${parseInt(
             sheetNumber
@@ -207,7 +205,7 @@ const getMaxVotes = computed(() => {
 function getColor(votes) {
   const maxVotes = getMaxVotes.value;
   if (votes === 0) {
-    return "#FFFFFF"; // White for 0 votes
+    return "#FFFFFF";
   }
 
   const ratio = votes / maxVotes;
@@ -232,7 +230,6 @@ function getColor(votes) {
     }
   }
 
-  // For values above 1 (shouldn't happen, but just in case)
   return interpolateColor("#FF4500", "#4B0082", Math.min(ratio - 1, 1));
 }
 
@@ -299,7 +296,6 @@ const groupedSelectedLists = computed<Record<string, PartyData>>(() => {
     grouped[party].lists.push({ number: list, votes });
   });
 
-  // Sort parties by total votes and add "Partido" prefix for display
   return Object.fromEntries(
     Object.entries(grouped)
       .sort(([, a], [, b]) => b.totalVotes - a.totalVotes)
@@ -352,7 +348,7 @@ const toggleMobileVisibility = () => {
 .selected-lists-info {
   position: absolute;
   top: 40px;
-  left: 20px;
+  right: 20px;
   background-color: rgba(255, 255, 255, 0.9);
   padding: 15px;
   border-radius: 8px;
@@ -429,15 +425,45 @@ const toggleMobileVisibility = () => {
 
 @media (max-width: 767px) {
   .selected-lists-info {
-    top: 0;
+    position: fixed;
+    bottom: 0;
     left: 0;
+    height: 100%;
     right: 0;
     max-width: 100%;
-    border-radius: 0 0 8px 8px;
+    border-radius: 8px 8px 0 0;
+    transform: translateY(185%);
+    transition: transform 0.3s ease-in-out;
+    overflow-y: auto;
+  }
+
+  .selected-lists-info.mobile-hidden {
+    transform: translateY(300%);
   }
 
   .mobile-toggle {
     display: block;
+    height: 40px;
+    display: flex;
+    font-size: 1.2rem;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+  }
+
+  .mobile-toggle-text {
+    font-size: 1.2rem;
+    color: #333;
+    font-weight: bold;
+    margin-right: 10px;
   }
 
   .mobile-hidden .selected-lists-content {

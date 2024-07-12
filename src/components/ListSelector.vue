@@ -1,64 +1,67 @@
 <template>
-  <div class="list-selector" :class="{ 'mobile-hidden': isMobileHidden }">
+  <div class="list-selector-wrapper">
+    <div class="list-selector" :class="{ 'mobile-hidden': isMobileHidden }">
+      <div class="list-selector-content">
+        <div class="data-source-toggle">
+          <h3>Orden</h3>
+          <div class="toggle-container">
+            <label class="toggle-option">
+              <input
+                type="radio"
+                v-model="localIsODN"
+                :value="false"
+                @change="onDataSourceToggle"
+              />
+              <span class="toggle-label">ODD</span>
+            </label>
+            <label class="toggle-option">
+              <input
+                type="radio"
+                v-model="localIsODN"
+                :value="true"
+                @change="onDataSourceToggle"
+              />
+              <span class="toggle-label">ODN</span>
+            </label>
+          </div>
+        </div>
+        <div class="party-selector">
+          <h3>Partido</h3>
+          <select v-model="selectedParty" @change="onPartySelect">
+            <option value="">Todos los partidos</option>
+            <option v-for="party in uniqueParties" :key="party" :value="party">
+              {{ party }}
+            </option>
+          </select>
+        </div>
+        <h2>Listas</h2>
+        <div class="search-bar">
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Buscar por numero de lista"
+            @input="filterLists"
+          />
+        </div>
+        <div class="list-options">
+          <label v-for="list in filteredLists" :key="list" class="list-option">
+            <input
+              type="checkbox"
+              :value="list"
+              :checked="selectedLists.includes(list)"
+              @change="(e) => onListSelect(list, e.target.checked)"
+            />
+            <span class="list-number">Lista {{ parseInt(list) }}</span>
+          </label>
+        </div>
+      </div>
+    </div>
     <div class="mobile-toggle" @click="toggleMobileVisibility">
+      <a class="mobile-toggle-text">Ver listas, partidos y ordenes</a>
       <span
         class="arrow"
         :class="{ 'arrow-up': !isMobileHidden, 'arrow-down': isMobileHidden }"
       ></span>
-    </div>
-    <div class="list-selector-content">
-      <div class="data-source-toggle">
-        <h3>Orden</h3>
-        <div class="toggle-container">
-          <label class="toggle-option">
-            <input
-              type="radio"
-              v-model="localIsODN"
-              :value="false"
-              @change="onDataSourceToggle"
-            />
-            <span class="toggle-label">ODD</span>
-          </label>
-          <label class="toggle-option">
-            <input
-              type="radio"
-              v-model="localIsODN"
-              :value="true"
-              @change="onDataSourceToggle"
-            />
-            <span class="toggle-label">ODN</span>
-          </label>
-        </div>
-      </div>
-      <div class="party-selector">
-        <h3>Partido</h3>
-        <select v-model="selectedParty" @change="onPartySelect">
-          <option value="">Todos los partidos</option>
-          <option v-for="party in uniqueParties" :key="party" :value="party">
-            {{ party }}
-          </option>
-        </select>
-      </div>
-      <h2>Listas</h2>
-      <div class="search-bar">
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Buscar por numero de lista"
-          @input="filterLists"
-        />
-      </div>
-      <div class="list-options">
-        <label v-for="list in filteredLists" :key="list" class="list-option">
-          <input
-            type="checkbox"
-            :value="list"
-            :checked="selectedLists.includes(list)"
-            @change="(e) => onListSelect(list, e.target.checked)"
-          />
-          <span class="list-number">Lista {{ parseInt(list) }}</span>
-        </label>
-      </div>
     </div>
   </div>
 </template>
@@ -172,7 +175,6 @@ watch(
 watch(
   () => props.lists,
   (newLists) => {
-    // Only clear selectedLists if the data source (ODN/ODD) has changed
     if (newLists.length !== props.lists.length) {
       selectedLists.value = [];
     }
@@ -202,33 +204,37 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.list-selector-wrapper {
+  position: relative;
+}
+
 .list-selector {
   background-color: white;
   border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  border-radius: 8px 8px 0 0;
   padding: 20px;
   width: 100%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  height: 30vh;
+  height: auto;
   overflow-y: auto;
   transition: transform 0.3s ease-in-out;
+  z-index: 999;
 }
 
 @media (max-width: 767px) {
   .list-selector {
     position: fixed;
-    bottom: 0;
+    top: 50px; /* Adjusted to account for the header */
     left: 0;
     right: 0;
-    z-index: 1000;
-    border-radius: 8px 8px 0 0;
-    height: 70vh;
+    height: calc(70vh - 40px);
+    transform: translateY(-100%);
   }
 
-  .mobile-hidden {
-    transform: translateY(calc(100% - 40px));
+  .list-selector.mobile-hidden {
+    transform: translateY(0);
   }
 
   .mobile-toggle {
@@ -237,13 +243,20 @@ onMounted(() => {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    position: absolute;
-    top: -20px;
+    position: fixed;
     left: 0;
     right: 0;
     background-color: white;
-    border-radius: 20px 20px 0 0;
+    border-radius: 0 0 8px 8px;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+  }
+
+  .mobile-toggle-text {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    margin-right: 10px;
   }
 
   .arrow {
@@ -256,12 +269,10 @@ onMounted(() => {
 
   .arrow-up {
     border-bottom: 12px solid #333;
-    transform: translateY(-4px) rotate(180deg);
   }
 
   .arrow-down {
     border-top: 12px solid #333;
-    transform: translateY(4px);
   }
 
   .list-selector-content {
