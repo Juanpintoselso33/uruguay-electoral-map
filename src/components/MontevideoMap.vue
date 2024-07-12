@@ -108,12 +108,12 @@ const styleFeature = (feature) => {
   const fillColor = getColor(votes);
   return {
     color: "#000000",
-    weight: 2,
+    weight: 1,
     fillColor: fillColor,
     fillOpacity: 0.7,
+    opacity: 1,
   };
 };
-
 const onEachFeature = (feature, layer) => {
   layer.on({
     click: () => {
@@ -168,6 +168,14 @@ const onEachFeature = (feature, layer) => {
       (layer as L.Path).setStyle(styleFeature(feature));
       selectedNeighborhood.value = null;
       layer.unbindTooltip();
+    },
+    mousedown: (e) => {
+      e.target.setStyle({
+        fillOpacity: 0.3,
+      });
+    },
+    mouseup: (e) => {
+      e.target.setStyle(styleFeature(feature));
     },
   });
 };
@@ -273,19 +281,6 @@ const getTotalVotes = () => {
     0
   );
 };
-
-const getTotalVotesAcrossAllNeighborhoods = () => {
-  return props.selectedLists.reduce((total, list) => {
-    return (
-      total +
-      Object.values(props.votosPorListas[list] || {}).reduce((a, b) => a + b, 0)
-    );
-  }, 0);
-};
-
-const areAllVotesAccounted = computed(() => {
-  return getTotalVotes() === getTotalVotesAcrossAllNeighborhoods();
-});
 
 interface PartyData {
   totalVotes: number;
@@ -453,5 +448,26 @@ const toggleMobileVisibility = () => {
   .selected-lists-content {
     padding-top: 10px;
   }
+}
+.leaflet-interactive {
+  outline: none !important;
+  cursor: pointer;
+}
+
+.leaflet-pane path {
+  outline: none !important;
+  outline-offset: 0 !important;
+}
+
+.leaflet-container {
+  outline: none !important;
+}
+
+.leaflet-interactive:focus {
+  outline: none !important;
+}
+
+.leaflet-interactive:active {
+  outline: none !important;
 }
 </style>
