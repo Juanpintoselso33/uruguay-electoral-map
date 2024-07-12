@@ -2,6 +2,9 @@
 
 An interactive Vue.js application visualizing the 2024 internal election results across Montevideo, Uruguay. Using official Electoral Court data, it offers a neighborhood-level map of voting patterns. Features include color-coded districts, filtering by political lists, and interactive elements for analyzing local political trends in Uruguay's capital city.
 
+![image](https://github.com/user-attachments/assets/94d70f90-6332-4b73-b488-043c471b598c)
+
+
 ## Features
 
 - Interactive map of Montevideo neighborhoods
