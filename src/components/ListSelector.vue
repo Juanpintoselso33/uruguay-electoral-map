@@ -200,6 +200,7 @@ watch(
 
 onMounted(() => {
   filterLists();
+  toggleMobileVisibility();
 });
 </script>
 

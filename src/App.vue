@@ -291,7 +291,7 @@ watch(isODN, () => {
   align-items: center;
   background-color: transparent;
   color: white;
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   text-decoration: none;
   transition: background-color 0.3s ease;
 }
