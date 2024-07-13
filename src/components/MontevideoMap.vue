@@ -19,23 +19,38 @@
   </div>
   <div class="selected-lists-info" :class="{ 'mobile-hidden': isMobileHidden }">
     <div class="selected-lists-content">
-      <h3 class="selected-lists-title">Listas seleccionadas</h3>
+      <h3 class="selected-lists-title">
+        {{
+          props.selectedCandidates.length > 0
+            ? "Candidatos seleccionados"
+            : "Listas seleccionadas"
+        }}
+      </h3>
       <ul class="party-list">
         <li
-          v-for="(partyData, party) in groupedSelectedLists"
+          v-for="(partyData, party) in groupedSelectedItems"
           :key="party"
           class="party-item"
         >
           <strong class="party-name"
             >{{ party }}: {{ partyData.totalVotes }} votos</strong
           >
-          <ul class="list-items">
+          <ul class="list-items" v-if="props.selectedCandidates.length === 0">
             <li
               v-for="list in partyData.lists"
               :key="list.number"
               class="list-item"
             >
               Lista {{ list.number }}: {{ list.votes }} votos
+            </li>
+          </ul>
+          <ul class="candidate-items" v-else>
+            <li
+              v-for="candidate in partyData.candidates"
+              :key="candidate.name"
+              class="candidate-item"
+            >
+              {{ candidate.name }}: {{ candidate.votes }} votos
             </li>
           </ul>
         </li>
@@ -61,6 +76,8 @@ const props = defineProps<{
   getVotosForNeighborhood: (neighborhood: string) => number;
   partiesAbbrev: Record<string, string>;
   partiesByList: Record<string, string>;
+  selectedCandidates: string[];
+  precandidatosByList: Record<string, string>;
 }>();
 
 const mapContainer = ref(null);
@@ -100,7 +117,10 @@ const initializeMap = () => {
 const styleFeature = (feature) => {
   if (!feature) return {};
   const neighborhood = feature.properties.BARRIO;
-  const votes = props.getVotosForNeighborhood(neighborhood);
+  const votes =
+    props.selectedCandidates.length > 0
+      ? getCandidateTotalVotes(neighborhood)
+      : props.getVotosForNeighborhood(neighborhood);
   const fillColor = getColor(votes);
   return {
     color: "#000000",
@@ -110,6 +130,7 @@ const styleFeature = (feature) => {
     opacity: 1,
   };
 };
+
 const onEachFeature = (feature, layer) => {
   layer.on({
     click: () => {
@@ -117,59 +138,75 @@ const onEachFeature = (feature, layer) => {
     },
     mouseover: () => {
       const neighborhood = feature.properties.BARRIO;
-      const votes = props.getVotosForNeighborhood(neighborhood);
+      const votes =
+        props.selectedCandidates.length > 0
+          ? getCandidateTotalVotes(neighborhood)
+          : props.getVotosForNeighborhood(neighborhood);
       const currentColor = getColor(votes);
       const darkerColor = shadeColor(currentColor, -20);
       (layer as L.Path).setStyle({
         fillColor: darkerColor,
-        fillOpacity: 0.5,
+        fillOpacity: 0.7,
       });
 
       let tooltipContent = `<div class="tooltip-content"><strong>${neighborhood}</strong><br>`;
 
-      const sortedSheetNumbers = [...sheetNumbers.value]
-        .filter(
-          (sheetNumber) =>
-            (props.votosPorListas[sheetNumber]?.[neighborhood] || 0) > 0
-        )
-        .sort((a, b) => {
-          const votesA = props.votosPorListas[a]?.[neighborhood] || 0;
-          const votesB = props.votosPorListas[b]?.[neighborhood] || 0;
-          return votesB - votesA;
-        });
-
-      tooltipContent += '<div class="tooltip-columns">';
-      const columnCount =
-        sortedSheetNumbers.length > 20
-          ? 3
-          : sortedSheetNumbers.length > 10
-          ? 2
-          : 1;
-      const itemsPerColumn = Math.ceil(sortedSheetNumbers.length / columnCount);
-
-      for (let i = 0; i < columnCount; i++) {
+      if (props.selectedCandidates.length > 0) {
+        const candidateVotes = getCandidateVotesForNeighborhood(neighborhood);
+        tooltipContent += '<div class="tooltip-columns">';
         tooltipContent += '<div class="tooltip-column">';
-        tooltipContent += sortedSheetNumbers
-          .slice(i * itemsPerColumn, (i + 1) * itemsPerColumn)
-          .map((sheetNumber) => {
-            const listVotes =
-              props.votosPorListas[sheetNumber]?.[neighborhood] || 0;
-            const party = props.partiesByList[sheetNumber];
-            const partyAbbrev = props.partiesAbbrev[party] || party;
-            return `<div class="tooltip-item">Lista ${parseInt(
-              sheetNumber
-            )} (${partyAbbrev}): ${listVotes} votos</div>`;
-          })
-          .join("");
+        candidateVotes.forEach(({ candidate, votes, party }) => {
+          tooltipContent += `<div class="tooltip-item">${candidate} (${party}): ${votes} votos</div>`;
+        });
+        tooltipContent += "</div>";
+        tooltipContent += "</div>";
+      } else {
+        const sortedSheetNumbers = [...sheetNumbers.value]
+          .filter(
+            (sheetNumber) =>
+              (props.votosPorListas[sheetNumber]?.[neighborhood] || 0) > 0
+          )
+          .sort((a, b) => {
+            const votesA = props.votosPorListas[a]?.[neighborhood] || 0;
+            const votesB = props.votosPorListas[b]?.[neighborhood] || 0;
+            return votesB - votesA;
+          });
+
+        tooltipContent += '<div class="tooltip-columns">';
+        const columnCount =
+          sortedSheetNumbers.length > 20
+            ? 3
+            : sortedSheetNumbers.length > 10
+            ? 2
+            : 1;
+        const itemsPerColumn = Math.ceil(
+          sortedSheetNumbers.length / columnCount
+        );
+
+        for (let i = 0; i < columnCount; i++) {
+          tooltipContent += '<div class="tooltip-column">';
+          tooltipContent += sortedSheetNumbers
+            .slice(i * itemsPerColumn, (i + 1) * itemsPerColumn)
+            .map((sheetNumber) => {
+              const listVotes =
+                props.votosPorListas[sheetNumber]?.[neighborhood] || 0;
+              const party = props.partiesByList[sheetNumber];
+              const partyAbbrev = props.partiesAbbrev[party] || party;
+              return `<div class="tooltip-item">Lista ${parseInt(
+                sheetNumber
+              )} (${partyAbbrev}): ${listVotes} votos</div>`;
+            })
+            .join("");
+          tooltipContent += "</div>";
+        }
         tooltipContent += "</div>";
       }
-      tooltipContent += "</div>";
 
       const totalVotes =
-        sheetNumbers.value.length > 1
-          ? `<div class="tooltip-total"><strong>Total: ${votes} votos</strong></div>`
-          : "";
-      tooltipContent += totalVotes + "</div>";
+        props.selectedCandidates.length > 0
+          ? getCandidateTotalVotes(neighborhood)
+          : votes;
+      tooltipContent += `<div class="tooltip-total"><strong>Total: ${totalVotes} votos</strong></div></div>`;
 
       layer
         .bindTooltip(tooltipContent, {
@@ -195,6 +232,45 @@ const onEachFeature = (feature, layer) => {
   });
 };
 
+const getCandidateVotesForNeighborhood = (neighborhood: string) => {
+  return props.selectedCandidates.map((candidate) => {
+    const votes = Object.entries(props.votosPorListas).reduce(
+      (sum, [list, votes]) => {
+        if (props.precandidatosByList[list] === candidate) {
+          return sum + (votes[neighborhood] || 0);
+        }
+        return sum;
+      },
+      0
+    );
+    const party = Object.entries(props.precandidatosByList).find(
+      ([, c]) => c === candidate
+    )?.[0];
+    const partyName = party ? props.partiesByList[party] : "Unknown";
+    const partyAbbrev = props.partiesAbbrev[partyName] || partyName;
+    return { candidate, votes, party: partyAbbrev };
+  });
+};
+
+const getCandidateTotalVotes = (neighborhood: string) => {
+  return getCandidateVotesForNeighborhood(neighborhood).reduce(
+    (total, { votes }) => total + votes,
+    0
+  );
+};
+
+const getCandidateTotalVotesAllNeighborhoods = (candidate: string) => {
+  return Object.values(props.geojsonData.features).reduce((total, feature) => {
+    const neighborhood = feature.properties.BARRIO;
+    return (
+      total +
+        getCandidateVotesForNeighborhood(neighborhood).find(
+          (c) => c.candidate === candidate
+        )?.votes || 0
+    );
+  }, 0);
+};
+
 onMounted(() => {
   initializeMap();
 });
@@ -204,6 +280,7 @@ watch(
     () => props.selectedLists,
     () => props.votosPorListas,
     () => props.geojsonData,
+    () => props.selectedCandidates,
   ],
   () => {
     updateMap();
@@ -220,7 +297,15 @@ const getMaxVotes = computed(() => {
 });
 
 function getColor(votes) {
-  const maxVotes = getMaxVotes.value;
+  const maxVotes =
+    props.selectedCandidates.length > 0
+      ? Math.max(
+          ...Object.values(props.geojsonData.features).map((feature) =>
+            getCandidateTotalVotes(feature.properties.BARRIO)
+          )
+        )
+      : getMaxVotes.value;
+
   if (votes === 0) {
     return "#FFFFFF";
   }
@@ -290,10 +375,16 @@ const getTotalVotesForList = (list: string) => {
 };
 
 const getTotalVotes = () => {
-  return props.selectedLists.reduce(
-    (total, list) => total + getTotalVotesForList(list),
-    0
-  );
+  if (props.selectedCandidates.length > 0) {
+    return props.selectedCandidates.reduce((total, candidate) => {
+      return total + getCandidateTotalVotesAllNeighborhoods(candidate);
+    }, 0);
+  } else {
+    return props.selectedLists.reduce(
+      (total, list) => total + getTotalVotesForList(list),
+      0
+    );
+  }
 };
 
 interface PartyData {
@@ -301,28 +392,53 @@ interface PartyData {
   lists: { number: string; votes: number }[];
 }
 
-const groupedSelectedLists = computed<Record<string, PartyData>>(() => {
-  const grouped = {};
-  props.selectedLists.forEach((list) => {
-    const party = props.partiesByList[list];
-    if (!grouped[party]) {
-      grouped[party] = { totalVotes: 0, lists: [] };
-    }
-    const votes = getTotalVotesForList(list);
-    grouped[party].totalVotes += votes;
-    grouped[party].lists.push({ number: list, votes });
-  });
-
-  return Object.fromEntries(
-    Object.entries(grouped)
-      .sort(([, a], [, b]) => b.totalVotes - a.totalVotes)
-      .map(([party, data]) => [
-        party !== "Independiente" && party !== "Frente Amplio"
-          ? `Partido ${party}`
-          : party,
-        data,
-      ])
-  );
+const groupedSelectedItems = computed(() => {
+  if (props.selectedCandidates.length > 0) {
+    const grouped = {};
+    props.selectedCandidates.forEach((candidate) => {
+      const party = Object.entries(props.precandidatosByList).find(
+        ([, c]) => c === candidate
+      )?.[0];
+      const partyName = party ? props.partiesByList[party] : "Unknown";
+      if (!grouped[partyName]) {
+        grouped[partyName] = { totalVotes: 0, candidates: [] };
+      }
+      const votes = getCandidateTotalVotesAllNeighborhoods(candidate);
+      grouped[partyName].totalVotes += votes;
+      grouped[partyName].candidates.push({ name: candidate, votes });
+    });
+    return Object.fromEntries(
+      Object.entries(grouped)
+        .sort(([, a], [, b]) => b.totalVotes - a.totalVotes)
+        .map(([party, data]) => [
+          party !== "Independiente" && party !== "Frente Amplio"
+            ? `Partido ${party}`
+            : party,
+          data,
+        ])
+    );
+  } else {
+    const grouped = {};
+    props.selectedLists.forEach((list) => {
+      const party = props.partiesByList[list];
+      if (!grouped[party]) {
+        grouped[party] = { totalVotes: 0, lists: [] };
+      }
+      const votes = getTotalVotesForList(list);
+      grouped[party].totalVotes += votes;
+      grouped[party].lists.push({ number: list, votes });
+    });
+    return Object.fromEntries(
+      Object.entries(grouped)
+        .sort(([, a], [, b]) => b.totalVotes - a.totalVotes)
+        .map(([party, data]) => [
+          party !== "Independiente" && party !== "Frente Amplio"
+            ? `Partido ${party}`
+            : party,
+          data,
+        ])
+    );
+  }
 });
 
 const isMobileHidden = ref(true);
@@ -584,5 +700,26 @@ const toggleMobileVisibility = () => {
   .tooltip-column {
     min-width: 100%;
   }
+}
+
+.candidate-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.candidate-item {
+  margin-bottom: 15px;
+}
+
+.candidate-name {
+  display: block;
+  margin-bottom: 5px;
+  color: #444;
+}
+
+.candidate-votes {
+  font-size: 0.9em;
+  color: #666;
 }
 </style>

@@ -25,6 +25,29 @@
             </label>
           </div>
         </div>
+        <div v-if="localIsODN" class="selector-toggle">
+          <h3>Seleccionar por</h3>
+          <div class="toggle-container">
+            <label class="toggle-option">
+              <input
+                type="radio"
+                v-model="showLists"
+                :value="true"
+                @change="onSelectorToggle"
+              />
+              <span class="toggle-label">Listas</span>
+            </label>
+            <label class="toggle-option">
+              <input
+                type="radio"
+                v-model="showLists"
+                :value="false"
+                @change="onSelectorToggle"
+              />
+              <span class="toggle-label">Candidatos</span>
+            </label>
+          </div>
+        </div>
         <div class="party-selector">
           <h3>Partido</h3>
           <select v-model="selectedParty" @change="onPartySelect">
@@ -34,34 +57,58 @@
             </option>
           </select>
         </div>
-        <h2>Listas</h2>
-        <div class="search-bar">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Buscar por numero de lista"
-            @input="filterLists"
-          />
-        </div>
-        <div class="list-options">
-          <label class="list-option select-all">
+        <template v-if="showLists">
+          <h2>Listas</h2>
+          <div class="search-bar">
             <input
-              type="checkbox"
-              :checked="isAllSelected"
-              @change="toggleAllLists"
+              v-model="searchQuery"
+              type="text"
+              placeholder="Buscar por numero de lista"
+              @input="filterLists"
             />
-            <span class="list-number">Seleccionar todas las listas</span>
-          </label>
-          <label v-for="list in filteredLists" :key="list" class="list-option">
-            <input
-              type="checkbox"
-              :value="list"
-              :checked="selectedLists.includes(list)"
-              @change="(e) => onListSelect(list, e.target.checked)"
-            />
-            <span class="list-number">Lista {{ parseInt(list) }}</span>
-          </label>
-        </div>
+          </div>
+          <div class="list-options">
+            <label class="list-option select-all">
+              <input
+                type="checkbox"
+                :checked="isAllSelected"
+                @change="toggleAllLists"
+              />
+              <span class="list-number">Seleccionar todas las listas</span>
+            </label>
+            <label
+              v-for="list in filteredLists"
+              :key="list"
+              class="list-option"
+            >
+              <input
+                type="checkbox"
+                :value="list"
+                :checked="selectedLists.includes(list)"
+                @change="(e) => onListSelect(list, e.target.checked)"
+              />
+              <span class="list-number">Lista {{ parseInt(list) }}</span>
+            </label>
+          </div>
+        </template>
+        <template v-else>
+          <h2>Candidatos</h2>
+          <div class="list-options">
+            <label
+              v-for="candidate in filteredCandidates"
+              :key="candidate"
+              class="list-option"
+            >
+              <input
+                type="checkbox"
+                :value="candidate"
+                :checked="selectedCandidates.includes(candidate)"
+                @change="(e) => onCandidateSelect(candidate, e.target.checked)"
+              />
+              <span class="list-number">{{ candidate }}</span>
+            </label>
+          </div>
+        </template>
       </div>
     </div>
     <div class="mobile-toggle" @click="toggleMobileVisibility">
@@ -84,12 +131,16 @@ const props = defineProps<{
   partiesAbbrev: Record<string, string>;
   selectedParty: string;
   partiesByList: Record<string, string>;
+  precandidatosByList: Record<string, string>;
+  candidates: Array<string>;
+  candidatesByParty: Record<string, string>;
 }>();
 
 const emit = defineEmits([
   "listsSelected",
   "updateIsODN",
   "updateSelectedParty",
+  "candidatesSelected",
 ]);
 
 const selectedLists = ref<string[]>([]);
@@ -97,6 +148,9 @@ const searchQuery = ref("");
 const filteredLists = ref<string[]>([]);
 const isMobileHidden = ref(true);
 const localIsODN = ref(props.isODN);
+const showLists = ref(true);
+
+const selectedCandidates = ref<string[]>([]);
 
 const selectedParty = ref(props.selectedParty);
 const uniqueParties = computed(() => {
@@ -118,6 +172,16 @@ const filteredListsByParty = computed(() => {
     const listParty = props.partiesByList[list];
 
     return listParty === selectedPartyName;
+  });
+});
+
+const filteredCandidates = computed(() => {
+  if (!selectedParty.value) return props.candidates;
+
+  const selectedPartyName = selectedParty.value.replace("Partido ", "");
+
+  return props.candidates.filter((candidate) => {
+    return props.candidatesByParty[candidate] === selectedPartyName;
   });
 });
 
@@ -179,6 +243,16 @@ const onDataSourceToggle = () => {
   emit("updateIsODN", localIsODN.value);
 };
 
+const onSelectorToggle = () => {
+  if (showLists.value) {
+    selectedCandidates.value = [];
+  } else {
+    selectedLists.value = [];
+  }
+  emit("listsSelected", selectedLists.value);
+  emit("candidatesSelected", selectedCandidates.value);
+};
+
 const toggleMobileVisibility = () => {
   isMobileHidden.value = !isMobileHidden.value;
 };
@@ -187,9 +261,23 @@ const onPartySelect = () => {
   try {
     emit("updateSelectedParty", selectedParty.value);
     filterLists();
+    // Reset selected candidates when changing party
+    selectedCandidates.value = [];
+    emit("candidatesSelected", selectedCandidates.value);
   } catch (error) {
     console.error("Error in onPartySelect:", error);
   }
+};
+
+const onCandidateSelect = (candidate: string, isSelected: boolean) => {
+  if (isSelected) {
+    selectedCandidates.value.push(candidate);
+  } else {
+    selectedCandidates.value = selectedCandidates.value.filter(
+      (item) => item !== candidate
+    );
+  }
+  emit("candidatesSelected", selectedCandidates.value);
 };
 
 watch(
@@ -445,5 +533,19 @@ h2 {
   grid-column: 1 / -1;
   background-color: #f0f0f0;
   font-weight: bold;
+}
+
+.selector-toggle {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+}
+
+.selector-toggle h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  color: #333;
 }
 </style>

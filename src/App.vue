@@ -28,10 +28,14 @@
         :isODN="isODN"
         :partiesAbbrev="partiesAbbrev"
         :selectedParty="selectedParty"
+        :partiesByList="partiesByList"
+        :candidates="uniqueSortedCandidates"
+        :precandidatosByList="precandidatosByList"
+        :candidatesByParty="candidatesByParty"
         @listsSelected="onListsSelected"
+        @candidatesSelected="onCandidatesSelected"
         @updateIsODN="updateIsODN"
         @updateSelectedParty="updateSelectedParty"
-        :partiesByList="partiesByList"
       />
       <div class="map-container">
         <MontevideoMap
@@ -44,6 +48,8 @@
           :isODN="isODN"
           :partiesAbbrev="partiesAbbrev"
           :partiesByList="partiesByList"
+          :precandidatosByList="precandidatosByList"
+          :selectedCandidates="selectedCandidates"
           @updateSelectedNeighborhood="updateSelectedNeighborhood"
         />
       </div>
@@ -67,9 +73,17 @@ const selectedNeighborhood = ref<string | null>(null);
 const isODN = ref(false);
 const partiesByList = ref<Record<string, string>>({});
 const selectedParty = ref<string>("");
+const precandidatosByList = ref<Record<string, string>>({});
+const selectedCandidates = ref<string[]>([]);
 
 const onListsSelected = (lists: string[]) => {
   selectedLists.value = lists;
+  selectedCandidates.value = []; // Clear selected candidates when lists are selected
+};
+
+const onCandidatesSelected = (candidates: string[]) => {
+  selectedCandidates.value = candidates;
+  selectedLists.value = []; // Clear selected lists when candidates are selected
 };
 
 const updateIsODN = (value: boolean) => {
@@ -91,12 +105,14 @@ const processCSV = (csvText: string) => {
   const maxVotosPorListas: Record<string, number> = {};
   const lists = new Set<string>();
   const partiesByList: Record<string, string> = {};
+  const precandidatosByList: Record<string, string> = {};
 
   data.forEach((row) => {
     if (!votosPorListas[row.HOJA]) {
       votosPorListas[row.HOJA] = {};
       maxVotosPorListas[row.HOJA] = 0;
       partiesByList[row.HOJA] = row.PARTIDO;
+      precandidatosByList[row.HOJA] = row.PRECANDIDATO;
     }
     votosPorListas[row.HOJA][row.ZONA] =
       (votosPorListas[row.HOJA][row.ZONA] || 0) + parseInt(row.CNT_VOTOS, 10);
@@ -112,6 +128,7 @@ const processCSV = (csvText: string) => {
     maxVotosPorListas,
     lists: Array.from(lists).sort((a, b) => parseInt(a) - parseInt(b)),
     partiesByList,
+    precandidatosByList,
   };
 };
 
@@ -127,11 +144,13 @@ const fetchAvailableLists = async () => {
       maxVotosPorListas: maxVotos,
       lists,
       partiesByList: parties,
+      precandidatosByList: precandidatos,
     } = processCSV(csvText);
     availableLists.value = lists;
     votosPorListas.value = votos;
     maxVotosPorListas.value = maxVotos;
     partiesByList.value = parties;
+    precandidatosByList.value = precandidatos;
   } catch (error) {
     console.error("Error fetching data:", error);
   }
@@ -147,9 +166,23 @@ const fetchGeoJSONData = async () => {
 };
 
 const getVotosForNeighborhood = (neighborhood: string): number => {
-  return selectedLists.value.reduce((acc, sheetNumber) => {
-    return acc + (votosPorListas.value[sheetNumber]?.[neighborhood] || 0);
-  }, 0);
+  if (selectedCandidates.value.length > 0) {
+    return selectedCandidates.value.reduce((acc, candidate) => {
+      return (
+        acc +
+        Object.entries(votosPorListas.value).reduce((sum, [list, votes]) => {
+          if (precandidatosByList.value[list] === candidate) {
+            return sum + (votes[neighborhood] || 0);
+          }
+          return sum;
+        }, 0)
+      );
+    }, 0);
+  } else {
+    return selectedLists.value.reduce((acc, sheetNumber) => {
+      return acc + (votosPorListas.value[sheetNumber]?.[neighborhood] || 0);
+    }, 0);
+  }
 };
 
 const updateSelectedNeighborhood = (neighborhood: string | null) => {
@@ -161,12 +194,29 @@ const updateSelectedParty = (party: string) => {
 };
 
 const getTotalVotes = () => {
-  return selectedLists.value.reduce((total, list) => {
-    return (
-      total +
-      Object.values(votosPorListas.value[list] || {}).reduce((a, b) => a + b, 0)
-    );
-  }, 0);
+  if (selectedCandidates.value.length > 0) {
+    return selectedCandidates.value.reduce((total, candidate) => {
+      return (
+        total +
+        Object.entries(votosPorListas.value).reduce((sum, [list, votes]) => {
+          if (precandidatosByList.value[list] === candidate) {
+            return sum + Object.values(votes).reduce((a, b) => a + b, 0);
+          }
+          return sum;
+        }, 0)
+      );
+    }, 0);
+  } else {
+    return selectedLists.value.reduce((total, list) => {
+      return (
+        total +
+        Object.values(votosPorListas.value[list] || {}).reduce(
+          (a, b) => a + b,
+          0
+        )
+      );
+    }, 0);
+  }
 };
 
 const groupedSelectedLists = computed(() => {
@@ -184,6 +234,26 @@ const groupedSelectedLists = computed(() => {
     grouped[party].lists.push({ number: list, votes });
   });
   return grouped;
+});
+
+const uniqueSortedCandidates = computed(() => {
+  return Array.from(new Set(Object.values(precandidatosByList.value)))
+    .filter(
+      (candidate) =>
+        candidate !== undefined && candidate !== null && candidate !== ""
+    )
+    .sort((a, b) => a.localeCompare(b, "es"));
+});
+
+const candidatesByParty = computed(() => {
+  const result: Record<string, string> = {};
+  Object.entries(precandidatosByList.value).forEach(([list, candidate]) => {
+    const party = partiesByList.value[list];
+    if (party && candidate) {
+      result[candidate] = party;
+    }
+  });
+  return result;
 });
 
 onMounted(() => {
