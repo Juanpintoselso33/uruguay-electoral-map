@@ -44,6 +44,14 @@
           />
         </div>
         <div class="list-options">
+          <label class="list-option select-all">
+            <input
+              type="checkbox"
+              :checked="isAllSelected"
+              @change="toggleAllLists"
+            />
+            <span class="list-number">Seleccionar todas las listas</span>
+          </label>
           <label v-for="list in filteredLists" :key="list" class="list-option">
             <input
               type="checkbox"
@@ -68,6 +76,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from "vue";
+import { useDebounce } from "@vueuse/core";
 
 const props = defineProps<{
   lists: Array<string>;
@@ -139,6 +148,24 @@ const filterLists = () => {
   }
 };
 
+const isAllSelected = computed(() => {
+  return (
+    filteredLists.value.length > 0 &&
+    selectedLists.value.length === filteredLists.value.length
+  );
+});
+
+const toggleAllLists = () => {
+  if (isAllSelected.value) {
+    selectedLists.value = [];
+  } else {
+    selectedLists.value = [...filteredLists.value];
+  }
+  emit("listsSelected", selectedLists.value);
+};
+
+const debouncedFilterLists = useDebounce(filterLists, 300);
+
 const onListSelect = (list: string, isSelected: boolean) => {
   if (isSelected) {
     selectedLists.value.push(list);
@@ -194,7 +221,7 @@ watch(
 watch(
   () => searchQuery.value,
   () => {
-    filterLists();
+    debouncedFilterLists();
   }
 );
 
@@ -412,5 +439,11 @@ h2 {
   border-radius: 4px;
   font-size: 1rem;
   background-color: white;
+}
+
+.select-all {
+  grid-column: 1 / -1;
+  background-color: #f0f0f0;
+  font-weight: bold;
 }
 </style>

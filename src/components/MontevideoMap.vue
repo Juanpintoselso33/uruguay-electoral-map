@@ -93,9 +93,6 @@ const initializeMap = () => {
       zoomControl: false,
       attributionControl: false,
     });
-
-    L.control.zoom({ position: "bottomright" }).addTo(map);
-
     updateMap();
   }
 };
@@ -128,7 +125,7 @@ const onEachFeature = (feature, layer) => {
         fillOpacity: 0.5,
       });
 
-      let tooltipContent = `<strong>${neighborhood}</strong><br>`;
+      let tooltipContent = `<div class="tooltip-content"><strong>${neighborhood}</strong><br>`;
 
       const sortedSheetNumbers = [...sheetNumbers.value].sort((a, b) => {
         const votesA = props.votosPorListas[a]?.[neighborhood] || 0;
@@ -136,29 +133,51 @@ const onEachFeature = (feature, layer) => {
         return votesB - votesA;
       });
 
-      tooltipContent += sortedSheetNumbers
-        .map((sheetNumber) => {
-          const listVotes =
-            props.votosPorListas[sheetNumber]?.[neighborhood] || 0;
-          const party = props.partiesByList[sheetNumber];
-          const partyAbbrev = props.partiesAbbrev[party] || party;
-          return `Lista ${parseInt(
-            sheetNumber
-          )} (${partyAbbrev}): ${listVotes} votos`;
-        })
-        .join("<br>");
+      if (sortedSheetNumbers.length > 10) {
+        tooltipContent += '<div class="tooltip-columns">';
+        const halfLength = Math.ceil(sortedSheetNumbers.length / 2);
+        for (let i = 0; i < 2; i++) {
+          tooltipContent += '<div class="tooltip-column">';
+          tooltipContent += sortedSheetNumbers
+            .slice(i * halfLength, (i + 1) * halfLength)
+            .map((sheetNumber) => {
+              const listVotes =
+                props.votosPorListas[sheetNumber]?.[neighborhood] || 0;
+              const party = props.partiesByList[sheetNumber];
+              const partyAbbrev = props.partiesAbbrev[party] || party;
+              return `Lista ${parseInt(
+                sheetNumber
+              )} (${partyAbbrev}): ${listVotes} votos`;
+            })
+            .join("<br>");
+          tooltipContent += "</div>";
+        }
+        tooltipContent += "</div>";
+      } else {
+        tooltipContent += sortedSheetNumbers
+          .map((sheetNumber) => {
+            const listVotes =
+              props.votosPorListas[sheetNumber]?.[neighborhood] || 0;
+            const party = props.partiesByList[sheetNumber];
+            const partyAbbrev = props.partiesAbbrev[party] || party;
+            return `Lista ${parseInt(
+              sheetNumber
+            )} (${partyAbbrev}): ${listVotes} votos`;
+          })
+          .join("<br>");
+      }
 
       const totalVotes =
         sheetNumbers.value.length > 1
           ? `<br><strong>Total: ${votes} votos</strong>`
           : "";
-      tooltipContent += totalVotes;
+      tooltipContent += totalVotes + "</div>";
 
       layer
         .bindTooltip(tooltipContent, {
           permanent: false,
           direction: "auto",
-          className: "neighborhood-label",
+          className: "neighborhood-label scrollable-tooltip",
         })
         .openTooltip();
     },
@@ -353,9 +372,15 @@ const toggleMobileVisibility = () => {
   padding: 15px;
   border-radius: 8px;
   max-width: 300px;
-  max-height: 400px;
+  max-height: 1200px;
+  overflow-y: auto;
   z-index: 1000;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.selected-lists-content {
+  max-height: calc(70vh - 30px);
+  overflow-y: auto;
 }
 
 .selected-lists-title {
@@ -501,5 +526,59 @@ const toggleMobileVisibility = () => {
 
 .leaflet-interactive:active {
   outline: none !important;
+}
+
+.scrollable-tooltip {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.tooltip-content {
+  max-width: 250px;
+}
+
+@media (max-width: 767px) {
+  .scrollable-tooltip {
+    max-height: none;
+    overflow-y: visible;
+  }
+}
+
+.tooltip-columns {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.tooltip-column {
+  width: 48%;
+}
+
+.tooltip-content {
+  max-width: 400px;
+}
+
+.scrollable-tooltip .leaflet-tooltip-content {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+@media (max-width: 767px) {
+  .tooltip-columns {
+    flex-direction: column;
+  }
+
+  .tooltip-column {
+    width: 100%;
+  }
+
+  .tooltip-content {
+    max-width: 250px;
+  }
+
+  .scrollable-tooltip .leaflet-tooltip-content {
+    max-height: none;
+    overflow-y: visible;
+  }
 }
 </style>

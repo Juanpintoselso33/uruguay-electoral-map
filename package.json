@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vueuse/core": "^10.11.0",
     "leaflet": "^1.9.4",
     "mapbox-gl": "^3.5.0",
     "ol": "^9.2.4",

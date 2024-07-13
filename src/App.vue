@@ -84,6 +84,7 @@ const processCSV = (csvText: string) => {
     CNT_VOTOS: string;
     HOJA: string;
     PARTIDO: string;
+    PRECANDIDATO: string;
   }> = result.data;
 
   const votosPorListas: Record<string, Record<string, number>> = {};
