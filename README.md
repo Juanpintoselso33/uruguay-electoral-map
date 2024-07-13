@@ -2,6 +2,9 @@
 
 An interactive Vue.js application visualizing the 2024 internal election results across Montevideo, Uruguay. Using official Electoral Court data, it offers a neighborhood-level map of voting patterns. Features include color-coded districts, filtering by political lists, and interactive elements for analyzing local political trends in Uruguay's capital city.
 
+![image](https://github.com/user-attachments/assets/94d70f90-6332-4b73-b488-043c471b598c)
+
+
 ## Features
 
 - Interactive map of Montevideo neighborhoods
@@ -19,7 +22,7 @@ An interactive Vue.js application visualizing the 2024 internal election results
 - Papa Parse for CSV parsing
 - TypeScript for type safety
 - Pandas for data cleaning and preparation
-  - The data was cleaned and prepared in the following repository: https://github.com/juanpintoselso33/ds-montevideo-internas
+  - The data was cleaned and prepared in the following repository: [https://github.com/juanpintoselso33/ds-montevideo-internas](https://github.com/Juanpintoselso33/ds-mvd-internas)
 
 ## Getting Started
 
@@ -115,16 +118,11 @@ montevideo-election-map/
 2. Use the list selector on the left to choose specific political lists or parties.
 3. The map will update to show the voting results for your selection.
 4. Click on a neighborhood to see detailed voting information in the tooltip.
-5. Toggle between absolute votes and percentages using the provided option.
-6. On mobile devices, use the bottom drawer to access the list selector and detailed information.
+5. On mobile devices, use the bottom drawer to access the list selector and detailed information.
 
 ## Performance Considerations
 
 The application is optimized for performance, but loading times may vary depending on the user's internet connection and device capabilities. The map data is loaded asynchronously to improve initial load times.
-
-## Browser Compatibility
-
-This application is compatible with modern web browsers including Chrome, Firefox, Safari, and Edge. Internet Explorer is not supported.
 
 ## Feedback and Issues
 
