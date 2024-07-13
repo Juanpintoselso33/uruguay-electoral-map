@@ -127,49 +127,47 @@ const onEachFeature = (feature, layer) => {
 
       let tooltipContent = `<div class="tooltip-content"><strong>${neighborhood}</strong><br>`;
 
-      const sortedSheetNumbers = [...sheetNumbers.value].sort((a, b) => {
-        const votesA = props.votosPorListas[a]?.[neighborhood] || 0;
-        const votesB = props.votosPorListas[b]?.[neighborhood] || 0;
-        return votesB - votesA;
-      });
+      const sortedSheetNumbers = [...sheetNumbers.value]
+        .filter(
+          (sheetNumber) =>
+            (props.votosPorListas[sheetNumber]?.[neighborhood] || 0) > 0
+        )
+        .sort((a, b) => {
+          const votesA = props.votosPorListas[a]?.[neighborhood] || 0;
+          const votesB = props.votosPorListas[b]?.[neighborhood] || 0;
+          return votesB - votesA;
+        });
 
-      if (sortedSheetNumbers.length > 10) {
-        tooltipContent += '<div class="tooltip-columns">';
-        const halfLength = Math.ceil(sortedSheetNumbers.length / 2);
-        for (let i = 0; i < 2; i++) {
-          tooltipContent += '<div class="tooltip-column">';
-          tooltipContent += sortedSheetNumbers
-            .slice(i * halfLength, (i + 1) * halfLength)
-            .map((sheetNumber) => {
-              const listVotes =
-                props.votosPorListas[sheetNumber]?.[neighborhood] || 0;
-              const party = props.partiesByList[sheetNumber];
-              const partyAbbrev = props.partiesAbbrev[party] || party;
-              return `Lista ${parseInt(
-                sheetNumber
-              )} (${partyAbbrev}): ${listVotes} votos`;
-            })
-            .join("<br>");
-          tooltipContent += "</div>";
-        }
-        tooltipContent += "</div>";
-      } else {
+      tooltipContent += '<div class="tooltip-columns">';
+      const columnCount =
+        sortedSheetNumbers.length > 20
+          ? 3
+          : sortedSheetNumbers.length > 10
+          ? 2
+          : 1;
+      const itemsPerColumn = Math.ceil(sortedSheetNumbers.length / columnCount);
+
+      for (let i = 0; i < columnCount; i++) {
+        tooltipContent += '<div class="tooltip-column">';
         tooltipContent += sortedSheetNumbers
+          .slice(i * itemsPerColumn, (i + 1) * itemsPerColumn)
           .map((sheetNumber) => {
             const listVotes =
               props.votosPorListas[sheetNumber]?.[neighborhood] || 0;
             const party = props.partiesByList[sheetNumber];
             const partyAbbrev = props.partiesAbbrev[party] || party;
-            return `Lista ${parseInt(
+            return `<div class="tooltip-item">Lista ${parseInt(
               sheetNumber
-            )} (${partyAbbrev}): ${listVotes} votos`;
+            )} (${partyAbbrev}): ${listVotes} votos</div>`;
           })
-          .join("<br>");
+          .join("");
+        tooltipContent += "</div>";
       }
+      tooltipContent += "</div>";
 
       const totalVotes =
         sheetNumbers.value.length > 1
-          ? `<br><strong>Total: ${votes} votos</strong>`
+          ? `<div class="tooltip-total"><strong>Total: ${votes} votos</strong></div>`
           : "";
       tooltipContent += totalVotes + "</div>";
 
@@ -544,18 +542,33 @@ const toggleMobileVisibility = () => {
   }
 }
 
+.tooltip-content {
+  max-width: 400px;
+  max-height: 300px;
+  overflow-y: auto;
+  font-size: 12px;
+}
+
 .tooltip-columns {
   display: flex;
   justify-content: space-between;
-  width: 100%;
+  flex-wrap: wrap;
 }
 
 .tooltip-column {
-  width: 48%;
+  flex: 1;
+  min-width: 120px;
+  padding: 0 5px;
 }
 
-.tooltip-content {
-  max-width: 400px;
+.tooltip-item {
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+
+.tooltip-total {
+  margin-top: 8px;
+  font-weight: bold;
 }
 
 .scrollable-tooltip .leaflet-tooltip-content {
@@ -564,21 +577,12 @@ const toggleMobileVisibility = () => {
 }
 
 @media (max-width: 767px) {
-  .tooltip-columns {
-    flex-direction: column;
-  }
-
-  .tooltip-column {
-    width: 100%;
-  }
-
   .tooltip-content {
     max-width: 250px;
   }
 
-  .scrollable-tooltip .leaflet-tooltip-content {
-    max-height: none;
-    overflow-y: visible;
+  .tooltip-column {
+    min-width: 100%;
   }
 }
 </style>
