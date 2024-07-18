@@ -9,8 +9,8 @@ An interactive Vue.js application visualizing the 2024 internal election results
 
 - Interactive map of Montevideo neighborhoods
 - Color-coded visualization of voting patterns
-- Ability to filter results by political lists and parties
-- Detailed tooltips showing vote counts per list and total votes
+- Ability to filter results by political lists, parties and presidentialcandidates
+- Detailed tooltips showing vote counts per list or candidate and total votes
 - Responsive design for various screen sizes
 - Option to view results as absolute votes or percentages
 

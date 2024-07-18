@@ -1,6 +1,11 @@
 <template>
   <div class="list-selector-wrapper">
-    <div class="list-selector" :class="{ 'mobile-hidden': isMobileHidden }">
+    <div
+      class="list-selector"
+      :class="{ 'mobile-hidden': isMobileHidden }"
+      role="region"
+      aria-label="List and candidate selector"
+    >
       <div class="list-selector-content">
         <div class="data-source-toggle">
           <h3>Orden</h3>
@@ -59,6 +64,9 @@
         </div>
         <template v-if="showLists">
           <h2>Listas</h2>
+          <div v-if="filteredLists.length === 0" class="no-results">
+            No se encontraron listas que coincidan con la búsqueda.
+          </div>
           <div class="search-bar">
             <input
               v-model="searchQuery"
@@ -80,11 +88,12 @@
               v-for="list in filteredLists"
               :key="list"
               class="list-option"
+              v-memo="[list, props.selectedLists.includes(list)]"
             >
               <input
                 type="checkbox"
                 :value="list"
-                :checked="selectedLists.includes(list)"
+                :checked="props.selectedLists.includes(list)"
                 @change="(e) => onListSelect(list, e.target.checked)"
               />
               <span class="list-number">Lista {{ parseInt(list) }}</span>
@@ -93,25 +102,47 @@
         </template>
         <template v-else>
           <h2>Candidatos</h2>
+          <div v-if="filteredCandidates.length === 0" class="no-results">
+            No se encontraron candidatos para el partido seleccionado.
+          </div>
           <div class="list-options">
             <label
               v-for="candidate in filteredCandidates"
               :key="candidate"
               class="list-option"
+              v-memo="[candidate, props.selectedCandidates.includes(candidate)]"
             >
               <input
                 type="checkbox"
                 :value="candidate"
-                :checked="selectedCandidates.includes(candidate)"
+                :checked="props.selectedCandidates.includes(candidate)"
                 @change="(e) => onCandidateSelect(candidate, e.target.checked)"
               />
               <span class="list-number">{{ candidate }}</span>
             </label>
           </div>
         </template>
+        <div class="clear-selection">
+          <button
+            @click="clearSelection"
+            :disabled="
+              props.selectedLists.length === 0 &&
+              props.selectedCandidates.length === 0
+            "
+          >
+            Limpiar selección
+          </button>
+        </div>
       </div>
     </div>
-    <div class="mobile-toggle" @click="toggleMobileVisibility">
+    <div
+      class="mobile-toggle"
+      @click="toggleMobileVisibility"
+      @keydown.enter="toggleMobileVisibility"
+      role="button"
+      tabindex="0"
+      aria-label="Toggle list selector visibility"
+    >
       <a class="mobile-toggle-text">Ver listas, partidos y ordenes</a>
       <span
         class="arrow"
@@ -134,23 +165,22 @@ const props = defineProps<{
   precandidatosByList: Record<string, string>;
   candidates: Array<string>;
   candidatesByParty: Record<string, string>;
+  selectedLists: string[];
+  selectedCandidates: string[];
 }>();
 
 const emit = defineEmits([
-  "listsSelected",
+  "update:selectedLists",
+  "update:selectedCandidates",
   "updateIsODN",
   "updateSelectedParty",
-  "candidatesSelected",
 ]);
 
-const selectedLists = ref<string[]>([]);
 const searchQuery = ref("");
 const filteredLists = ref<string[]>([]);
 const isMobileHidden = ref(true);
 const localIsODN = ref(props.isODN);
 const showLists = ref(true);
-
-const selectedCandidates = ref<string[]>([]);
 
 const selectedParty = ref(props.selectedParty);
 const uniqueParties = computed(() => {
@@ -160,19 +190,21 @@ const uniqueParties = computed(() => {
 });
 
 const filteredListsByParty = computed(() => {
+  console.log("Selected party:", selectedParty.value);
+  console.log("Parties by list:", props.partiesByList);
+
   if (!selectedParty.value) return props.lists;
 
   const selectedPartyName = selectedParty.value.replace("Partido ", "");
 
-  return props.lists.filter((list) => {
-    if (!list || typeof list !== "string") {
-      return false;
-    }
-
+  const filteredLists = props.lists.filter((list) => {
     const listParty = props.partiesByList[list];
-
+    console.log(`List: ${list}, Party: ${listParty}`);
     return listParty === selectedPartyName;
   });
+
+  console.log("Filtered lists:", filteredLists);
+  return filteredLists;
 });
 
 const filteredCandidates = computed(() => {
@@ -187,15 +219,14 @@ const filteredCandidates = computed(() => {
 
 const filterLists = () => {
   try {
-    if (
-      !filteredListsByParty.value ||
-      filteredListsByParty.value.length === 0
-    ) {
+    const partyFilteredLists = filteredListsByParty.value;
+
+    if (!partyFilteredLists || partyFilteredLists.length === 0) {
       filteredLists.value = [];
       return;
     }
 
-    const validLists = filteredListsByParty.value.filter(
+    const validLists = partyFilteredLists.filter(
       (list) => list !== undefined && list !== null
     );
 
@@ -215,28 +246,26 @@ const filterLists = () => {
 const isAllSelected = computed(() => {
   return (
     filteredLists.value.length > 0 &&
-    selectedLists.value.length === filteredLists.value.length
+    props.selectedLists.length === filteredLists.value.length
   );
 });
 
 const toggleAllLists = () => {
-  if (isAllSelected.value) {
-    selectedLists.value = [];
-  } else {
-    selectedLists.value = [...filteredLists.value];
-  }
-  emit("listsSelected", selectedLists.value);
+  const newSelectedLists = isAllSelected.value ? [] : [...filteredLists.value];
+  emit("update:selectedLists", newSelectedLists);
 };
 
 const debouncedFilterLists = useDebounce(filterLists, 300);
 
 const onListSelect = (list: string, isSelected: boolean) => {
-  if (isSelected) {
-    selectedLists.value.push(list);
-  } else {
-    selectedLists.value = selectedLists.value.filter((item) => item !== list);
+  if (props.selectedCandidates.length > 0) {
+    // Show an error message or alert
+    return;
   }
-  emit("listsSelected", selectedLists.value);
+  const newSelectedLists = isSelected
+    ? [...props.selectedLists, list]
+    : props.selectedLists.filter((item) => item !== list);
+  emit("update:selectedLists", newSelectedLists);
 };
 
 const onDataSourceToggle = () => {
@@ -245,12 +274,10 @@ const onDataSourceToggle = () => {
 
 const onSelectorToggle = () => {
   if (showLists.value) {
-    selectedCandidates.value = [];
+    emit("update:selectedCandidates", []);
   } else {
-    selectedLists.value = [];
+    emit("update:selectedLists", []);
   }
-  emit("listsSelected", selectedLists.value);
-  emit("candidatesSelected", selectedCandidates.value);
 };
 
 const toggleMobileVisibility = () => {
@@ -261,29 +288,33 @@ const onPartySelect = () => {
   try {
     emit("updateSelectedParty", selectedParty.value);
     filterLists();
-    // Reset selected candidates when changing party
-    selectedCandidates.value = [];
-    emit("candidatesSelected", selectedCandidates.value);
   } catch (error) {
     console.error("Error in onPartySelect:", error);
   }
 };
 
 const onCandidateSelect = (candidate: string, isSelected: boolean) => {
-  if (isSelected) {
-    selectedCandidates.value.push(candidate);
-  } else {
-    selectedCandidates.value = selectedCandidates.value.filter(
-      (item) => item !== candidate
-    );
+  if (props.selectedLists.length > 0) {
+    // Show an error message or alert
+    return;
   }
-  emit("candidatesSelected", selectedCandidates.value);
+  const newSelectedCandidates = isSelected
+    ? [...props.selectedCandidates, candidate]
+    : props.selectedCandidates.filter((item) => item !== candidate);
+  emit("update:selectedCandidates", newSelectedCandidates);
+};
+
+const clearSelection = () => {
+  emit("update:selectedLists", []);
+  emit("update:selectedCandidates", []);
 };
 
 watch(
   () => filteredListsByParty.value,
   (newFilteredLists) => {
     filteredLists.value = newFilteredLists;
+    // Do not update selectedLists here to keep all selected lists
+    emit("listsSelected", props.selectedLists);
   }
 );
 
@@ -291,10 +322,10 @@ watch(
   () => props.lists,
   (newLists) => {
     if (newLists.length !== props.lists.length) {
-      selectedLists.value = [];
+      emit("update:selectedLists", []);
     }
     filterLists();
-    emit("listsSelected", selectedLists.value);
+    emit("listsSelected", props.selectedLists);
   },
   { immediate: true }
 );
@@ -310,6 +341,13 @@ watch(
   () => searchQuery.value,
   () => {
     debouncedFilterLists();
+  }
+);
+
+watch(
+  () => selectedParty.value,
+  () => {
+    filterLists();
   }
 );
 
@@ -547,5 +585,30 @@ h2 {
   margin-bottom: 10px;
   font-size: 1.2rem;
   color: #333;
+}
+
+.no-results {
+  text-align: center;
+  color: #777;
+  margin-bottom: 20px;
+}
+
+.clear-selection {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.clear-selection button {
+  padding: 10px 20px;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.clear-selection button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 </style>

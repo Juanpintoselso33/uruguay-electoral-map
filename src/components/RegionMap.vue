@@ -7,7 +7,13 @@
       {{ getVotosForNeighborhood(selectedNeighborhood) }}
     </div>
   </div>
-  <div class="mobile-toggle" @click="toggleMobileVisibility">
+  <div
+    class="mobile-toggle"
+    @click="toggleMobileVisibility"
+    tabindex="0"
+    role="button"
+    aria-label="Toggle selected lists visibility"
+  >
     <a class="mobile-toggle-text">Ver listas seleccionadas</a>
     <span
       class="arrow"
@@ -63,60 +69,94 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, watch, computed, onUnmounted, watchEffect } from "vue";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 const props = defineProps<{
+  regionName: string;
   selectedLists: string[];
   votosPorListas: Record<string, Record<string, number>>;
   maxVotosPorListas: Record<string, number>;
-  geojsonData: any;
-  isODN: boolean;
   getVotosForNeighborhood: (neighborhood: string) => number;
+  geojsonData: any;
+  selectedNeighborhood: string | null;
+  isODN: boolean;
   partiesAbbrev: Record<string, string>;
   partiesByList: Record<string, string>;
-  selectedCandidates: string[];
   precandidatosByList: Record<string, string>;
+  selectedCandidates: string[];
+  mapCenter: [number, number];
+  mapZoom: number;
 }>();
+
+const emit = defineEmits(["updateSelectedNeighborhood"]);
 
 const mapContainer = ref(null);
 const selectedNeighborhood = ref(null);
-let map: L.Map | null = null;
+const map = ref(null);
 
 const sheetNumbers = computed(() => props.selectedLists);
 
 const updateMap = () => {
-  if (map && props.geojsonData) {
-    map.eachLayer((layer) => {
-      if (layer instanceof L.GeoJSON && map) {
-        map.removeLayer(layer);
+  if (map.value && props.geojsonData) {
+    map.value.eachLayer((layer) => {
+      if (layer instanceof L.GeoJSON && map.value) {
+        map.value.removeLayer(layer);
       }
     });
 
     L.geoJSON(props.geojsonData, {
       style: styleFeature,
       onEachFeature: onEachFeature,
-    }).addTo(map);
+    }).addTo(map.value);
   }
 };
 
 const initializeMap = () => {
-  if (mapContainer.value && !map) {
-    map = L.map(mapContainer.value, {
-      center: [-34.8211, -56.225],
-      zoom: 11.5,
-      layers: [],
-      zoomControl: false,
-      attributionControl: false,
-    });
-    updateMap();
+  try {
+    if (mapContainer.value) {
+      if (map.value) {
+        map.value.remove();
+      }
+      map.value = L.map(mapContainer.value, {
+        center: props.mapCenter,
+        zoom: props.mapZoom,
+        layers: [],
+        zoomControl: false,
+        attributionControl: false,
+      });
+      updateMap();
+
+      setTimeout(() => {
+        map.value.invalidateSize();
+      }, 100);
+    }
+  } catch (error) {
+    console.error("Error initializing map:", error);
   }
 };
 
+watch(
+  () => props.regionName,
+  () => {
+    initializeMap();
+  }
+);
+
+watch(
+  () => [props.mapCenter, props.mapZoom],
+  () => {
+    if (map.value) {
+      map.value.setView(props.mapCenter, props.mapZoom);
+      map.value.invalidateSize();
+    }
+  }
+);
+
 const styleFeature = (feature) => {
   if (!feature) return {};
-  const neighborhood = feature.properties.BARRIO;
+  const neighborhood = feature.properties.BARRIO || feature.properties.texto;
   const votes =
     props.selectedCandidates.length > 0
       ? getCandidateTotalVotes(neighborhood)
@@ -134,10 +174,12 @@ const styleFeature = (feature) => {
 const onEachFeature = (feature, layer) => {
   layer.on({
     click: () => {
-      selectedNeighborhood.value = feature.properties.BARRIO;
+      selectedNeighborhood.value =
+        feature.properties.BARRIO || feature.properties.texto;
     },
     mouseover: () => {
-      const neighborhood = feature.properties.BARRIO;
+      const neighborhood =
+        feature.properties.BARRIO || feature.properties.texto;
       const votes =
         props.selectedCandidates.length > 0
           ? getCandidateTotalVotes(neighborhood)
@@ -152,7 +194,9 @@ const onEachFeature = (feature, layer) => {
       let tooltipContent = `<div class="tooltip-content"><strong>${neighborhood}</strong><br>`;
 
       if (props.selectedCandidates.length > 0) {
-        const candidateVotes = getCandidateVotesForNeighborhood(neighborhood);
+        const candidateVotes = getCandidateVotesForNeighborhood(
+          neighborhood
+        ).sort((a, b) => b.votes - a.votes);
         tooltipContent += '<div class="tooltip-columns">';
         tooltipContent += '<div class="tooltip-column">';
         candidateVotes.forEach(({ candidate, votes, party }) => {
@@ -161,7 +205,7 @@ const onEachFeature = (feature, layer) => {
         tooltipContent += "</div>";
         tooltipContent += "</div>";
       } else {
-        const sortedSheetNumbers = [...sheetNumbers.value]
+        const sortedSheetNumbers = [...props.selectedLists]
           .filter(
             (sheetNumber) =>
               (props.votosPorListas[sheetNumber]?.[neighborhood] || 0) > 0
@@ -206,7 +250,9 @@ const onEachFeature = (feature, layer) => {
         props.selectedCandidates.length > 0
           ? getCandidateTotalVotes(neighborhood)
           : votes;
-      tooltipContent += `<div class="tooltip-total"><strong>Total: ${totalVotes} votos</strong></div></div>`;
+      tooltipContent += `<div class="tooltip-total"><strong>Total: ${
+        totalVotes || 0
+      } votos</strong></div></div>`;
 
       layer
         .bindTooltip(tooltipContent, {
@@ -234,15 +280,16 @@ const onEachFeature = (feature, layer) => {
 
 const getCandidateVotesForNeighborhood = (neighborhood: string) => {
   return props.selectedCandidates.map((candidate) => {
-    const votes = Object.entries(props.votosPorListas).reduce(
-      (sum, [list, votes]) => {
-        if (props.precandidatosByList[list] === candidate) {
-          return sum + (votes[neighborhood] || 0);
-        }
-        return sum;
-      },
-      0
-    );
+    let votes = 0;
+    const candidateLists = Object.entries(props.precandidatosByList)
+      .filter(([, precandidato]) => precandidato === candidate)
+      .map(([list]) => list);
+
+    candidateLists.forEach((list) => {
+      const listVotes = props.votosPorListas[list]?.[neighborhood] || 0;
+      votes += listVotes;
+    });
+
     const party = Object.entries(props.precandidatosByList).find(
       ([, c]) => c === candidate
     )?.[0];
@@ -261,7 +308,7 @@ const getCandidateTotalVotes = (neighborhood: string) => {
 
 const getCandidateTotalVotesAllNeighborhoods = (candidate: string) => {
   return Object.values(props.geojsonData.features).reduce((total, feature) => {
-    const neighborhood = feature.properties.BARRIO;
+    const neighborhood = feature.properties.BARRIO || feature.properties.texto;
     return (
       total +
         getCandidateVotesForNeighborhood(neighborhood).find(
@@ -273,25 +320,23 @@ const getCandidateTotalVotesAllNeighborhoods = (candidate: string) => {
 
 onMounted(() => {
   initializeMap();
+  window.addEventListener("resize", () => {
+    if (map.value) {
+      map.value.invalidateSize();
+    }
+  });
 });
 
-watch(
-  [
-    () => props.selectedLists,
-    () => props.votosPorListas,
-    () => props.geojsonData,
-    () => props.selectedCandidates,
-  ],
-  () => {
-    updateMap();
-  },
-  { deep: true }
-);
+watch(() => props.geojsonData, updateMap, { deep: true });
+watch(() => props.selectedLists, updateMap);
+watch(() => props.selectedCandidates, updateMap);
 
 const getMaxVotes = computed(() => {
   return Math.max(
     ...Object.values(props.geojsonData.features).map((feature) =>
-      props.getVotosForNeighborhood(feature.properties.BARRIO)
+      props.getVotosForNeighborhood(
+        feature.properties.BARRIO || feature.properties.texto
+      )
     )
   );
 });
@@ -301,7 +346,9 @@ function getColor(votes) {
     props.selectedCandidates.length > 0
       ? Math.max(
           ...Object.values(props.geojsonData.features).map((feature) =>
-            getCandidateTotalVotes(feature.properties.BARRIO)
+            getCandidateTotalVotes(
+              feature.properties.BARRIO || feature.properties.texto
+            )
           )
         )
       : getMaxVotes.value;
@@ -374,7 +421,7 @@ const getTotalVotesForList = (list: string) => {
   );
 };
 
-const getTotalVotes = () => {
+const getTotalVotes = (): number => {
   if (props.selectedCandidates.length > 0) {
     return props.selectedCandidates.reduce((total, candidate) => {
       return total + getCandidateTotalVotesAllNeighborhoods(candidate);
@@ -407,6 +454,10 @@ const groupedSelectedItems = computed(() => {
       grouped[partyName].totalVotes += votes;
       grouped[partyName].candidates.push({ name: candidate, votes });
     });
+    // Sort candidates within each party
+    Object.values(grouped).forEach((partyData: any) => {
+      partyData.candidates.sort((a, b) => b.votes - a.votes);
+    });
     return Object.fromEntries(
       Object.entries(grouped)
         .sort(([, a], [, b]) => b.totalVotes - a.totalVotes)
@@ -428,6 +479,10 @@ const groupedSelectedItems = computed(() => {
       grouped[party].totalVotes += votes;
       grouped[party].lists.push({ number: list, votes });
     });
+    // Sort lists within each party
+    Object.values(grouped).forEach((partyData: any) => {
+      partyData.lists.sort((a, b) => b.votes - a.votes);
+    });
     return Object.fromEntries(
       Object.entries(grouped)
         .sort(([, a], [, b]) => b.totalVotes - a.totalVotes)
@@ -446,6 +501,12 @@ const isMobileHidden = ref(true);
 const toggleMobileVisibility = () => {
   isMobileHidden.value = !isMobileHidden.value;
 };
+
+onUnmounted(() => {
+  if (map.value) {
+    map.value.remove();
+  }
+});
 </script>
 
 <style scoped>
