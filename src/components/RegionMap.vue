@@ -194,56 +194,36 @@ const onEachFeature = (feature, layer) => {
       let tooltipContent = `<div class="tooltip-content"><strong>${neighborhood}</strong><br>`;
 
       if (props.selectedCandidates.length > 0) {
-        const candidateVotes = getCandidateVotesForNeighborhood(
-          neighborhood
-        ).sort((a, b) => b.votes - a.votes);
-        tooltipContent += '<div class="tooltip-columns">';
-        tooltipContent += '<div class="tooltip-column">';
-        candidateVotes.forEach(({ candidate, votes, party }) => {
-          tooltipContent += `<div class="tooltip-item">${candidate} (${party}): ${votes} votos</div>`;
-        });
-        tooltipContent += "</div>";
-        tooltipContent += "</div>";
-      } else {
-        const sortedSheetNumbers = [...props.selectedLists]
-          .filter(
-            (sheetNumber) =>
-              (props.votosPorListas[sheetNumber]?.[neighborhood] || 0) > 0
-          )
-          .sort((a, b) => {
-            const votesA = props.votosPorListas[a]?.[neighborhood] || 0;
-            const votesB = props.votosPorListas[b]?.[neighborhood] || 0;
-            return votesB - votesA;
+        const candidateVotes = getCandidateVotesForNeighborhood(neighborhood);
+        const groupedCandidates = groupCandidatesByParty(candidateVotes);
+
+        tooltipContent += '<ul class="party-list">';
+        for (const [party, candidates] of Object.entries(groupedCandidates)) {
+          const partyVotes = candidates.reduce((sum, c) => sum + c.votes, 0);
+          tooltipContent += `<li class="party-item">
+            <strong class="party-name">${party}: ${partyVotes} votos</strong>
+            <ul class="candidate-items">`;
+          candidates.forEach(({ candidate, votes }) => {
+            tooltipContent += `<li class="candidate-item">${candidate}: ${votes} votos</li>`;
           });
-
-        tooltipContent += '<div class="tooltip-columns">';
-        const columnCount =
-          sortedSheetNumbers.length > 20
-            ? 3
-            : sortedSheetNumbers.length > 10
-            ? 2
-            : 1;
-        const itemsPerColumn = Math.ceil(
-          sortedSheetNumbers.length / columnCount
-        );
-
-        for (let i = 0; i < columnCount; i++) {
-          tooltipContent += '<div class="tooltip-column">';
-          tooltipContent += sortedSheetNumbers
-            .slice(i * itemsPerColumn, (i + 1) * itemsPerColumn)
-            .map((sheetNumber) => {
-              const listVotes =
-                props.votosPorListas[sheetNumber]?.[neighborhood] || 0;
-              const party = props.partiesByList[sheetNumber];
-              const partyAbbrev = props.partiesAbbrev[party] || party;
-              return `<div class="tooltip-item">Lista ${parseInt(
-                sheetNumber
-              )} (${partyAbbrev}): ${listVotes} votos</div>`;
-            })
-            .join("");
-          tooltipContent += "</div>";
+          tooltipContent += "</ul></li>";
         }
-        tooltipContent += "</div>";
+        tooltipContent += "</ul>";
+      } else {
+        const groupedLists = groupListsByParty(neighborhood);
+
+        tooltipContent += '<ul class="party-list">';
+        for (const [party, lists] of Object.entries(groupedLists)) {
+          const partyVotes = lists.reduce((sum, l) => sum + l.votes, 0);
+          tooltipContent += `<li class="party-item">
+            <strong class="party-name">${party}: ${partyVotes} votos</strong>
+            <ul class="list-items">`;
+          lists.forEach(({ number, votes }) => {
+            tooltipContent += `<li class="list-item">Lista ${number}: ${votes} votos</li>`;
+          });
+          tooltipContent += "</ul></li>";
+        }
+        tooltipContent += "</ul>";
       }
 
       const totalVotes =
@@ -276,6 +256,44 @@ const onEachFeature = (feature, layer) => {
       e.target.setStyle(styleFeature(feature));
     },
   });
+};
+
+const groupCandidatesByParty = (candidateVotes) => {
+  const grouped = {};
+  candidateVotes.forEach(({ candidate, votes, party }) => {
+    if (!grouped[party]) {
+      grouped[party] = [];
+    }
+    grouped[party].push({ candidate, votes });
+  });
+  return Object.fromEntries(
+    Object.entries(grouped).sort(
+      ([, a], [, b]) =>
+        b.reduce((sum, c) => sum + c.votes, 0) -
+        a.reduce((sum, c) => sum + c.votes, 0)
+    )
+  );
+};
+
+const groupListsByParty = (neighborhood) => {
+  const grouped = {};
+  props.selectedLists.forEach((list) => {
+    const party = props.partiesByList[list];
+    const votes = props.votosPorListas[list]?.[neighborhood] || 0;
+    if (votes > 0) {
+      if (!grouped[party]) {
+        grouped[party] = [];
+      }
+      grouped[party].push({ number: list, votes });
+    }
+  });
+  return Object.fromEntries(
+    Object.entries(grouped).sort(
+      ([, a], [, b]) =>
+        b.reduce((sum, l) => sum + l.votes, 0) -
+        a.reduce((sum, l) => sum + l.votes, 0)
+    )
+  );
 };
 
 const getCandidateVotesForNeighborhood = (neighborhood: string) => {
@@ -579,14 +597,18 @@ onUnmounted(() => {
   display: block;
   margin-bottom: 5px;
   color: #444;
+  font-weight: bold;
 }
 
-.list-items {
+.list-items,
+.candidate-items {
   list-style-type: none;
   padding-left: 15px;
+  margin: 0;
 }
 
-.list-item {
+.list-item,
+.candidate-item {
   margin-bottom: 3px;
   font-size: 0.9em;
   color: #666;
@@ -779,7 +801,69 @@ onUnmounted(() => {
   color: #444;
 }
 
+.tooltip-content .party-list,
+.tooltip-content .list-items,
+.tooltip-content .candidate-items {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.tooltip-content .party-item {
+  margin-bottom: 10px;
+}
+
+.tooltip-content .party-name {
+  display: block;
+  margin-bottom: 5px;
+  color: #444;
+  font-weight: bold;
+}
+
+.tooltip-content .list-items,
+.tooltip-content .candidate-items {
+  padding-left: 15px;
+}
+
+.tooltip-content .list-item,
+.tooltip-content .candidate-item {
+  margin-bottom: 3px;
+  font-size: 0.9em;
+  color: #666;
+}
+
 .candidate-votes {
+  font-size: 0.9em;
+  color: #666;
+}
+
+.tooltip-content .party-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tooltip-content .party-item {
+  margin-bottom: 10px;
+}
+
+.tooltip-content .party-name {
+  display: block;
+  margin-bottom: 5px;
+  color: #444;
+  font-weight: bold;
+}
+
+.tooltip-content .list-items,
+.tooltip-content .candidate-items {
+  list-style-type: none;
+  padding-left: 15px;
+  margin: 0;
+}
+
+.tooltip-content .list-item,
+.tooltip-content .candidate-item {
+  margin-bottom: 3px;
   font-size: 0.9em;
   color: #666;
 }
