@@ -197,33 +197,39 @@ const onEachFeature = (feature, layer) => {
         const candidateVotes = getCandidateVotesForNeighborhood(neighborhood);
         const groupedCandidates = groupCandidatesByParty(candidateVotes);
 
-        tooltipContent += '<ul class="party-list">';
+        tooltipContent += '<div class="party-list">';
         for (const [party, candidates] of Object.entries(groupedCandidates)) {
           const partyVotes = candidates.reduce((sum, c) => sum + c.votes, 0);
-          tooltipContent += `<li class="party-item">
-            <strong class="party-name">${party}: ${partyVotes} votos</strong>
-            <ul class="candidate-items">`;
-          candidates.forEach(({ candidate, votes }) => {
-            tooltipContent += `<li class="candidate-item">${candidate}: ${votes} votos</li>`;
-          });
-          tooltipContent += "</ul></li>";
+          const partyAbbrev = props.partiesAbbrev[party] || party;
+          tooltipContent += `<div class="party-item">
+            <div class="party-name" style="margin-left: 20px;"><strong>${partyAbbrev}</strong>: ${partyVotes} votos</div>
+            <div class="candidate-items" style="margin-left: 40px;">`;
+          candidates
+            .sort((a, b) => b.votes - a.votes)
+            .forEach(({ candidate, votes }) => {
+              tooltipContent += `<div class="candidate-item">${candidate}: ${votes} votos</div>`;
+            });
+          tooltipContent += "</div></div>";
         }
-        tooltipContent += "</ul>";
+        tooltipContent += "</div>";
       } else {
         const groupedLists = groupListsByParty(neighborhood);
 
-        tooltipContent += '<ul class="party-list">';
+        tooltipContent += '<div class="party-list">';
         for (const [party, lists] of Object.entries(groupedLists)) {
           const partyVotes = lists.reduce((sum, l) => sum + l.votes, 0);
-          tooltipContent += `<li class="party-item">
-            <strong class="party-name">${party}: ${partyVotes} votos</strong>
-            <ul class="list-items">`;
-          lists.forEach(({ number, votes }) => {
-            tooltipContent += `<li class="list-item">Lista ${number}: ${votes} votos</li>`;
-          });
-          tooltipContent += "</ul></li>";
+          const partyAbbrev = props.partiesAbbrev[party] || party;
+          tooltipContent += `<div class="party-item">
+            <div class="party-name" style="margin-left: 20px;"><strong>${partyAbbrev}</strong>: ${partyVotes} votos</div>
+            <div class="list-items" style="margin-left: 40px;">`;
+          lists
+            .sort((a, b) => b.votes - a.votes)
+            .forEach(({ number, votes }) => {
+              tooltipContent += `<div class="list-item">Lista ${number}: ${votes} votos</div>`;
+            });
+          tooltipContent += "</div></div>";
         }
-        tooltipContent += "</ul>";
+        tooltipContent += "</div>";
       }
 
       const totalVotes =
@@ -590,7 +596,7 @@ onUnmounted(() => {
 }
 
 .party-item {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .party-name {
@@ -602,7 +608,6 @@ onUnmounted(() => {
 
 .list-items,
 .candidate-items {
-  list-style-type: none;
   padding-left: 15px;
   margin: 0;
 }
@@ -795,10 +800,39 @@ onUnmounted(() => {
   margin-bottom: 15px;
 }
 
-.candidate-name {
-  display: block;
-  margin-bottom: 5px;
+.tooltip-content .party-list,
+.tooltip-content .list-items,
+.tooltip-content .candidate-items {
+  margin: 0;
+  padding: 0;
+}
+
+.tooltip-content .party-item {
+  margin-bottom: 10px;
+}
+
+.tooltip-content .party-name {
+  font-weight: bold;
   color: #444;
+  margin-bottom: 5px;
+}
+
+.tooltip-content .list-items,
+.tooltip-content .candidate-items {
+  padding-left: 15px;
+  margin: 0;
+}
+
+.tooltip-content .list-item,
+.tooltip-content .candidate-item {
+  margin-bottom: 3px;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.tooltip-total {
+  margin-top: 10px;
+  font-weight: bold;
 }
 
 .tooltip-content .party-list,
