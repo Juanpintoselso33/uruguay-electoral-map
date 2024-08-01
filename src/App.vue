@@ -118,6 +118,14 @@ const regions = ref<Region[]>([
     mapCenter: [-34.5211, -55.0],
     mapZoom: 9.5,
   },
+  {
+    name: "Treinta y Tres",
+    odnCsvPath: "/treinta_y_tres_odn_dataset_con_zona.csv",
+    oddCsvPath: "/treinta_y_tres_odd_dataset_con_zona.csv",
+    geojsonPath: "/treinta_y_tres_map.json",
+    mapCenter: [-33.2211, -54.325],
+    mapZoom: 10.5,
+  },
   // Add other regions here
 ]);
 

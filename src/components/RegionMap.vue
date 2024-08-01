@@ -156,7 +156,11 @@ watch(
 
 const styleFeature = (feature) => {
   if (!feature) return {};
-  const neighborhood = feature.properties.BARRIO || feature.properties.texto;
+  const neighborhood = normalizeString(
+    feature.properties.BARRIO ||
+      feature.properties.texto ||
+      feature.properties.zona
+  );
   const votes =
     props.selectedCandidates.length > 0
       ? getCandidateTotalVotes(neighborhood)
@@ -174,12 +178,18 @@ const styleFeature = (feature) => {
 const onEachFeature = (feature, layer) => {
   layer.on({
     click: () => {
-      selectedNeighborhood.value =
-        feature.properties.BARRIO || feature.properties.texto;
+      selectedNeighborhood.value = normalizeString(
+        feature.properties.BARRIO ||
+          feature.properties.texto ||
+          feature.properties.zona
+      );
     },
     mouseover: () => {
-      const neighborhood =
-        feature.properties.BARRIO || feature.properties.texto;
+      const neighborhood = normalizeString(
+        feature.properties.BARRIO ||
+          feature.properties.texto ||
+          feature.properties.zona
+      );
       const votes =
         props.selectedCandidates.length > 0
           ? getCandidateTotalVotes(neighborhood)
@@ -332,7 +342,11 @@ const getCandidateTotalVotes = (neighborhood: string) => {
 
 const getCandidateTotalVotesAllNeighborhoods = (candidate: string) => {
   return Object.values(props.geojsonData.features).reduce((total, feature) => {
-    const neighborhood = feature.properties.BARRIO || feature.properties.texto;
+    const neighborhood = normalizeString(
+      feature.properties.BARRIO ||
+        feature.properties.texto ||
+        feature.properties.zona
+    );
     return (
       total +
         getCandidateVotesForNeighborhood(neighborhood).find(
@@ -359,7 +373,11 @@ const getMaxVotes = computed(() => {
   return Math.max(
     ...Object.values(props.geojsonData.features).map((feature) =>
       props.getVotosForNeighborhood(
-        feature.properties.BARRIO || feature.properties.texto
+        normalizeString(
+          feature.properties.BARRIO ||
+            feature.properties.texto ||
+            feature.properties.zona
+        )
       )
     )
   );
@@ -371,7 +389,11 @@ function getColor(votes) {
       ? Math.max(
           ...Object.values(props.geojsonData.features).map((feature) =>
             getCandidateTotalVotes(
-              feature.properties.BARRIO || feature.properties.texto
+              normalizeString(
+                feature.properties.BARRIO ||
+                  feature.properties.texto ||
+                  feature.properties.zona
+              )
             )
           )
         )
@@ -383,17 +405,17 @@ function getColor(votes) {
 
   const ratio = votes / maxVotes;
   const colorSteps = [
-    { threshold: 0.05, color: "#FFF3E0" },
-    { threshold: 0.1, color: "#FFE0B2" },
-    { threshold: 0.15, color: "#FFD54F" },
+    { threshold: 0.01, color: "#FFF3E0" },
+    { threshold: 0.05, color: "#FFE0B2" },
+    { threshold: 0.1, color: "#FFD54F" },
     { threshold: 0.2, color: "#FFCC80" },
-    { threshold: 0.25, color: "#FFC107" },
-    { threshold: 0.3, color: "#FFA72C" },
-    { threshold: 0.4, color: "#FF9800" },
-    { threshold: 0.45, color: "#FF8A65" },
-    { threshold: 0.5, color: "#FF7043" },
-    { threshold: 0.6, color: "#FF6E6E" },
-    { threshold: 0.8, color: "#FF5722" },
+    { threshold: 0.3, color: "#FFC107" },
+    { threshold: 0.4, color: "#FFA72C" },
+    { threshold: 0.5, color: "#FF9800" },
+    { threshold: 0.6, color: "#FF8A65" },
+    { threshold: 0.7, color: "#FF7043" },
+    { threshold: 0.8, color: "#FF6E6E" },
+    { threshold: 0.9, color: "#FF5722" },
     { threshold: 1, color: "#FF4500" },
   ];
 
@@ -531,6 +553,10 @@ onUnmounted(() => {
     map.value.remove();
   }
 });
+
+function normalizeString(str: string): string {
+  return str;
+}
 </script>
 
 <style scoped>
