@@ -104,27 +104,35 @@ const selectedCandidates = ref<string[]>([]);
 const regions = ref<Region[]>([
   {
     name: "Montevideo",
-    odnCsvPath: "/montevideo_odn_dataset_con_zona.csv",
-    oddCsvPath: "/montevideo_odd_dataset_con_zona.csv",
+    odnCsvPath: "/montevideo_odn.csv",
+    oddCsvPath: "/montevideo_odd.csv",
     geojsonPath: "/montevideo_map.json",
     mapCenter: [-34.8211, -56.225],
     mapZoom: 11.5,
   },
   {
     name: "Maldonado",
-    odnCsvPath: "/maldonado_odn_dataset_con_zona.csv",
-    oddCsvPath: "/maldonado_odd_dataset_con_zona.csv",
+    odnCsvPath: "/maldonado_odn.csv",
+    oddCsvPath: "/maldonado_odd.csv",
     geojsonPath: "/maldonado_map.json",
     mapCenter: [-34.5211, -55.0],
     mapZoom: 9.5,
   },
   {
     name: "Treinta y Tres",
-    odnCsvPath: "/treinta_y_tres_odn_dataset_con_zona.csv",
-    oddCsvPath: "/treinta_y_tres_odd_dataset_con_zona.csv",
+    odnCsvPath: "/treinta_y_tres_odn.csv",
+    oddCsvPath: "/treinta_y_tres_odd.csv",
     geojsonPath: "/treinta_y_tres_map.json",
     mapCenter: [-33.2211, -54.325],
     mapZoom: 10.5,
+  },
+  {
+    name: "Colonia",
+    odnCsvPath: "/colonia_odn.csv",
+    oddCsvPath: "/colonia_odd.csv",
+    geojsonPath: "/colonia_map.json",
+    mapCenter: [-34.8211, -56.225],
+    mapZoom: 11.5,
   },
   // Add other regions here
 ]);
