@@ -10,8 +10,10 @@
   },
   "dependencies": {
     "@vueuse/core": "^10.11.0",
+    "chroma-js": "^2.6.0",
     "leaflet": "^1.9.4",
     "mapbox-gl": "^3.5.0",
+    "montevideo-map": "file:",
     "ol": "^9.2.4",
     "papaparse": "^5.4.1",
     "topojson-client": "^3.1.0",

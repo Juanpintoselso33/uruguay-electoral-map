@@ -255,7 +255,11 @@ const toggleAllLists = () => {
   emit("update:selectedLists", newSelectedLists);
 };
 
-const debouncedFilterLists = useDebounce(filterLists, 300);
+const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+watch(debouncedSearchQuery, () => {
+  filterLists();
+});
 
 const onListSelect = (list: string, isSelected: boolean) => {
   if (props.selectedCandidates.length > 0) {
@@ -334,13 +338,6 @@ watch(
   () => props.isODN,
   (newValue) => {
     localIsODN.value = newValue;
-  }
-);
-
-watch(
-  () => searchQuery.value,
-  () => {
-    debouncedFilterLists();
   }
 );
 

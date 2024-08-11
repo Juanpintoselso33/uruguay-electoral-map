@@ -72,6 +72,7 @@
 import { ref, onMounted, watch, computed, onUnmounted, watchEffect } from "vue";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import chroma from "chroma-js";
 
 const props = defineProps<{
   regionName: string;
@@ -127,6 +128,7 @@ const initializeMap = () => {
         attributionControl: false,
       });
       updateMap();
+      fitMapToBounds();
 
       setTimeout(() => {
         map.value.invalidateSize();
@@ -134,6 +136,14 @@ const initializeMap = () => {
     }
   } catch (error) {
     console.error("Error initializing map:", error);
+  }
+};
+
+const fitMapToBounds = () => {
+  if (map.value && props.geojsonData) {
+    const geojsonLayer = L.geoJSON(props.geojsonData);
+    const bounds = geojsonLayer.getBounds();
+    map.value.fitBounds(bounds);
   }
 };
 
@@ -145,12 +155,9 @@ watch(
 );
 
 watch(
-  () => [props.mapCenter, props.mapZoom],
+  () => props.geojsonData,
   () => {
-    if (map.value) {
-      map.value.setView(props.mapCenter, props.mapZoom);
-      map.value.invalidateSize();
-    }
+    fitMapToBounds();
   }
 );
 
@@ -363,7 +370,19 @@ onMounted(() => {
       map.value.invalidateSize();
     }
   });
+  emit("mapInitialized");
 });
+
+watch(
+  () => props.geojsonData,
+  (newGeojsonData) => {
+    if (newGeojsonData && map.value) {
+      updateMap();
+      createLegend();
+    }
+  },
+  { immediate: true }
+);
 
 watch(() => props.geojsonData, updateMap, { deep: true });
 watch(() => props.selectedLists, updateMap);
@@ -404,60 +423,52 @@ function getColor(votes) {
   }
 
   const ratio = votes / maxVotes;
-  const colorSteps = [
-    { threshold: 0.01, color: "#FFF3E0" },
-    { threshold: 0.05, color: "#FFE0B2" },
-    { threshold: 0.1, color: "#FFD54F" },
-    { threshold: 0.2, color: "#FFCC80" },
-    { threshold: 0.3, color: "#FFC107" },
-    { threshold: 0.4, color: "#FFA72C" },
-    { threshold: 0.5, color: "#FF9800" },
-    { threshold: 0.6, color: "#FF8A65" },
-    { threshold: 0.7, color: "#FF7043" },
-    { threshold: 0.8, color: "#FF6E6E" },
-    { threshold: 0.9, color: "#FF5722" },
-    { threshold: 1, color: "#FF4500" },
-  ];
 
-  for (const step of colorSteps) {
-    if (ratio <= step.threshold) {
-      return step.color;
-    }
+  // Create a heat map color scale using chroma.js
+  const colorScale = chroma
+    .scale(["#ffffb2", "#fecc5c", "#fd8d3c", "#f03b20", "#bd0026"])
+    .mode("lab")
+    .domain([0, 1]);
+
+  return colorScale(ratio).hex();
+}
+function shadeColor(color, percent) {
+  return chroma(color)
+    .darken(percent / 100)
+    .hex();
+}
+
+function createLegend() {
+  if (!map.value || !getMaxVotes.value) return;
+
+  // Remove existing legend if it exists
+  const existingLegend = document.querySelector(".info.legend");
+  if (existingLegend) {
+    existingLegend.remove();
   }
 
-  return interpolateColor("#FF4500", "#4B0082", Math.min(ratio - 1, 1));
-}
+  const legend = L.control({ position: "bottomright" });
 
-function interpolateColor(startColor, endColor, ratio) {
-  const hex = (x) => {
-    x = x.toString(16);
-    return x.length === 1 ? "0" + x : x;
+  legend.onAdd = function () {
+    const div = L.DomUtil.create("div", "info legend");
+    const grades = [0, 0.2, 0.4, 0.6, 0.8, 1];
+    const labels = [];
+
+    for (let i = 0; i < grades.length; i++) {
+      const color = getColor(grades[i] * getMaxVotes.value);
+      labels.push(
+        '<i style="background:' +
+          color +
+          '"></i> ' +
+          Math.round(grades[i] * getMaxVotes.value)
+      );
+    }
+
+    div.innerHTML = labels.join("<br>");
+    return div;
   };
-  const interpolate = (start, end, ratio) =>
-    Math.ceil(parseInt(start, 16) * (1 - ratio) + parseInt(end, 16) * ratio);
-  const r = interpolate(startColor.slice(1, 3), endColor.slice(1, 3), ratio);
-  const g = interpolate(startColor.slice(3, 5), endColor.slice(3, 5), ratio);
-  const b = interpolate(startColor.slice(5, 7), endColor.slice(5, 7), ratio);
-  return `#${hex(r)}${hex(g)}${hex(b)}`;
-}
 
-function shadeColor(color, percent) {
-  const num = parseInt(color.slice(1), 16),
-    amt = Math.round(2.55 * percent),
-    R = (num >> 16) + amt,
-    G = ((num >> 8) & 0x00ff) + amt,
-    B = (num & 0x0000ff) + amt;
-  return (
-    "#" +
-    (
-      0x1000000 +
-      (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
-      (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
-      (B < 255 ? (B < 1 ? 0 : B) : 255)
-    )
-      .toString(16)
-      .slice(1)
-  );
+  legend.addTo(map.value);
 }
 
 const getTotalVotesForList = (list: string) => {
@@ -479,11 +490,6 @@ const getTotalVotes = (): number => {
     );
   }
 };
-
-interface PartyData {
-  totalVotes: number;
-  lists: { number: string; votes: number }[];
-}
 
 const groupedSelectedItems = computed(() => {
   if (props.selectedCandidates.length > 0) {
@@ -926,5 +932,20 @@ function normalizeString(str: string): string {
   margin-bottom: 3px;
   font-size: 0.9em;
   color: #666;
+}
+
+.legend {
+  line-height: 18px;
+  color: #555;
+  background: white;
+  padding: 6px 8px;
+  border-radius: 5px;
+}
+.legend i {
+  width: 18px;
+  height: 18px;
+  float: left;
+  margin-right: 8px;
+  opacity: 0.7;
 }
 </style>
