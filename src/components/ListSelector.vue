@@ -7,52 +7,53 @@
       aria-label="List and candidate selector"
     >
       <div class="list-selector-content">
+        <!-- Data source toggle -->
         <div class="data-source-toggle">
           <h3>Orden</h3>
           <div class="toggle-container">
-            <label class="toggle-option">
+            <label
+              v-for="option in [
+                { value: false, label: 'ODD' },
+                { value: true, label: 'ODN' },
+              ]"
+              :key="option.label"
+              class="toggle-option"
+            >
               <input
                 type="radio"
                 v-model="localIsODN"
-                :value="false"
+                :value="option.value"
                 @change="onDataSourceToggle"
               />
-              <span class="toggle-label">ODD</span>
-            </label>
-            <label class="toggle-option">
-              <input
-                type="radio"
-                v-model="localIsODN"
-                :value="true"
-                @change="onDataSourceToggle"
-              />
-              <span class="toggle-label">ODN</span>
+              <span class="toggle-label">{{ option.label }}</span>
             </label>
           </div>
         </div>
+
+        <!-- Selector toggle -->
         <div v-if="localIsODN" class="selector-toggle">
           <h3>Seleccionar por</h3>
           <div class="toggle-container">
-            <label class="toggle-option">
+            <label
+              v-for="option in [
+                { value: true, label: 'Listas' },
+                { value: false, label: 'Candidatos' },
+              ]"
+              :key="option.label"
+              class="toggle-option"
+            >
               <input
                 type="radio"
                 v-model="showLists"
-                :value="true"
+                :value="option.value"
                 @change="onSelectorToggle"
               />
-              <span class="toggle-label">Listas</span>
-            </label>
-            <label class="toggle-option">
-              <input
-                type="radio"
-                v-model="showLists"
-                :value="false"
-                @change="onSelectorToggle"
-              />
-              <span class="toggle-label">Candidatos</span>
+              <span class="toggle-label">{{ option.label }}</span>
             </label>
           </div>
         </div>
+
+        <!-- Party selector -->
         <div class="party-selector">
           <h3>Partido</h3>
           <select v-model="selectedParty" @change="onPartySelect">
@@ -62,6 +63,8 @@
             </option>
           </select>
         </div>
+
+        <!-- Lists section -->
         <template v-if="showLists">
           <h2>Listas</h2>
           <div v-if="filteredLists.length === 0" class="no-results">
@@ -72,7 +75,6 @@
               v-model="searchQuery"
               type="text"
               placeholder="Buscar por numero de lista"
-              @input="filterLists"
             />
           </div>
           <div class="list-options">
@@ -94,12 +96,14 @@
                 type="checkbox"
                 :value="list"
                 :checked="props.selectedLists.includes(list)"
-                @change="(e) => onListSelect(list, e.target.checked)"
+                @change="(e) => onListSelect(list, (e.target as HTMLInputElement).checked)"
               />
               <span class="list-number">Lista {{ parseInt(list) }}</span>
             </label>
           </div>
         </template>
+
+        <!-- Candidates section -->
         <template v-else>
           <h2>Candidatos</h2>
           <div v-if="filteredCandidates.length === 0" class="no-results">
@@ -116,12 +120,14 @@
                 type="checkbox"
                 :value="candidate"
                 :checked="props.selectedCandidates.includes(candidate)"
-                @change="(e) => onCandidateSelect(candidate, e.target.checked)"
+                @change="(e) => onCandidateSelect(candidate, (e.target as HTMLInputElement).checked)"
               />
               <span class="list-number">{{ candidate }}</span>
             </label>
           </div>
         </template>
+
+        <!-- Clear selection button -->
         <div class="clear-selection">
           <button
             @click="clearSelection"
@@ -135,6 +141,8 @@
         </div>
       </div>
     </div>
+
+    <!-- Mobile toggle -->
     <div
       class="mobile-toggle"
       @click="toggleMobileVisibility"
@@ -156,33 +164,41 @@
 import { ref, watch, onMounted, computed } from "vue";
 import { useDebounce } from "@vueuse/core";
 
-const props = defineProps<{
-  lists: Array<string>;
+// Step 1: Define interfaces for props and emits
+interface Props {
+  lists: string[];
   isODN: boolean;
   partiesAbbrev: Record<string, string>;
   selectedParty: string;
   partiesByList: Record<string, string>;
   precandidatosByList: Record<string, string>;
-  candidates: Array<string>;
+  candidates: string[];
   candidatesByParty: Record<string, string>;
   selectedLists: string[];
   selectedCandidates: string[];
-}>();
+}
 
-const emit = defineEmits([
-  "update:selectedLists",
-  "update:selectedCandidates",
-  "updateIsODN",
-  "updateSelectedParty",
-]);
+interface Emits {
+  (e: "update:selectedLists", value: string[]): void;
+  (e: "update:selectedCandidates", value: string[]): void;
+  (e: "updateIsODN", value: boolean): void;
+  (e: "updateSelectedParty", value: string): void;
+  (e: "listsSelected", value: string[]): void;
+}
 
+// Step 2: Use composition API with better type inference
+const props = defineProps<Props>();
+const emit = defineEmits<Emits>();
+
+// Refs
 const searchQuery = ref("");
 const filteredLists = ref<string[]>([]);
 const isMobileHidden = ref(true);
 const localIsODN = ref(props.isODN);
 const showLists = ref(true);
-
 const selectedParty = ref(props.selectedParty);
+
+// Step 3: Organize computed properties
 const uniqueParties = computed(() => {
   return Object.keys(props.partiesAbbrev)
     .map((party) => (party.startsWith("Partido ") ? party : `Partido ${party}`))
@@ -190,21 +206,13 @@ const uniqueParties = computed(() => {
 });
 
 const filteredListsByParty = computed(() => {
-  console.log("Selected party:", selectedParty.value);
-  console.log("Parties by list:", props.partiesByList);
-
   if (!selectedParty.value) return props.lists;
 
   const selectedPartyName = selectedParty.value.replace("Partido ", "");
 
-  const filteredLists = props.lists.filter((list) => {
-    const listParty = props.partiesByList[list];
-    console.log(`List: ${list}, Party: ${listParty}`);
-    return listParty === selectedPartyName;
-  });
-
-  console.log("Filtered lists:", filteredLists);
-  return filteredLists;
+  return props.lists.filter(
+    (list) => props.partiesByList[list] === selectedPartyName
+  );
 });
 
 const filteredCandidates = computed(() => {
@@ -212,36 +220,10 @@ const filteredCandidates = computed(() => {
 
   const selectedPartyName = selectedParty.value.replace("Partido ", "");
 
-  return props.candidates.filter((candidate) => {
-    return props.candidatesByParty[candidate] === selectedPartyName;
-  });
+  return props.candidates.filter(
+    (candidate) => props.candidatesByParty[candidate] === selectedPartyName
+  );
 });
-
-const filterLists = () => {
-  try {
-    const partyFilteredLists = filteredListsByParty.value;
-
-    if (!partyFilteredLists || partyFilteredLists.length === 0) {
-      filteredLists.value = [];
-      return;
-    }
-
-    const validLists = partyFilteredLists.filter(
-      (list) => list !== undefined && list !== null
-    );
-
-    if (!searchQuery.value) {
-      filteredLists.value = validLists;
-    } else {
-      filteredLists.value = validLists.filter((list) =>
-        list.includes(searchQuery.value.trim())
-      );
-    }
-  } catch (error) {
-    console.error("Error in filterLists:", error);
-    console.error("Error stack:", error.stack);
-  }
-};
 
 const isAllSelected = computed(() => {
   return (
@@ -250,22 +232,32 @@ const isAllSelected = computed(() => {
   );
 });
 
+// Methods
+const filterLists = () => {
+  const validLists = filteredListsByParty.value.filter(
+    (list) => list !== undefined && list !== null
+  );
+
+  filteredLists.value = searchQuery.value
+    ? validLists.filter((list) => list.includes(searchQuery.value.trim()))
+    : validLists;
+};
+
 const toggleAllLists = () => {
-  const newSelectedLists = isAllSelected.value ? [] : [...filteredLists.value];
+  const currentSelectedLists = new Set(props.selectedLists);
+  const filteredListsSet = new Set(filteredLists.value);
+
+  const newSelectedLists = isAllSelected.value
+    ? props.selectedLists.filter((list) => !filteredListsSet.has(list))
+    : Array.from(new Set([...currentSelectedLists, ...filteredLists.value]));
+
   emit("update:selectedLists", newSelectedLists);
 };
 
-const debouncedSearchQuery = useDebounce(searchQuery, 300);
-
-watch(debouncedSearchQuery, () => {
-  filterLists();
-});
-
+// Step 4: Use proper typing for event handlers
 const onListSelect = (list: string, isSelected: boolean) => {
-  if (props.selectedCandidates.length > 0) {
-    // Show an error message or alert
-    return;
-  }
+  if (props.selectedCandidates.length > 0) return;
+
   const newSelectedLists = isSelected
     ? [...props.selectedLists, list]
     : props.selectedLists.filter((item) => item !== list);
@@ -289,19 +281,13 @@ const toggleMobileVisibility = () => {
 };
 
 const onPartySelect = () => {
-  try {
-    emit("updateSelectedParty", selectedParty.value);
-    filterLists();
-  } catch (error) {
-    console.error("Error in onPartySelect:", error);
-  }
+  emit("updateSelectedParty", selectedParty.value);
+  filterLists();
 };
 
 const onCandidateSelect = (candidate: string, isSelected: boolean) => {
-  if (props.selectedLists.length > 0) {
-    // Show an error message or alert
-    return;
-  }
+  if (props.selectedLists.length > 0) return;
+
   const newSelectedCandidates = isSelected
     ? [...props.selectedCandidates, candidate]
     : props.selectedCandidates.filter((item) => item !== candidate);
@@ -313,11 +299,15 @@ const clearSelection = () => {
   emit("update:selectedCandidates", []);
 };
 
+// Step 5: Improve watch functions
+const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+watch(debouncedSearchQuery, filterLists);
+
 watch(
   () => filteredListsByParty.value,
   (newFilteredLists) => {
     filteredLists.value = newFilteredLists;
-    // Do not update selectedLists here to keep all selected lists
     emit("listsSelected", props.selectedLists);
   }
 );
@@ -341,12 +331,7 @@ watch(
   }
 );
 
-watch(
-  () => selectedParty.value,
-  () => {
-    filterLists();
-  }
-);
+watch([() => searchQuery.value, () => selectedParty.value], filterLists);
 
 onMounted(() => {
   filterLists();

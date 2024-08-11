@@ -1,6 +1,20 @@
 <template>
   <div class="montevideo-map-wrapper">
     <div class="montevideo-map" ref="mapContainer"></div>
+    <div class="map-legend" v-if="showLegend">
+      <h4>Votos</h4>
+      <div
+        v-for="(grade, index) in legendGrades"
+        :key="index"
+        class="legend-item"
+      >
+        <span
+          class="legend-color"
+          :style="{ backgroundColor: getColor(grade * getMaxVotes) }"
+        ></span>
+        <span class="legend-label">{{ Math.round(grade * getMaxVotes) }}</span>
+      </div>
+    </div>
 
     <div v-if="selectedNeighborhood !== null" class="neighborhood-info">
       Barrio seleccionado: {{ selectedNeighborhood }} - Votos:
@@ -73,6 +87,7 @@ import { ref, onMounted, watch, computed, onUnmounted, watchEffect } from "vue";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import chroma from "chroma-js";
+import { GeoJSON, GeoJsonProperties } from "geojson";
 
 const props = defineProps<{
   regionName: string;
@@ -91,13 +106,16 @@ const props = defineProps<{
   mapZoom: number;
 }>();
 
-const emit = defineEmits(["updateSelectedNeighborhood"]);
+const emit = defineEmits<{
+  updateSelectedNeighborhood: [neighborhood: string | null];
+  mapInitialized: [];
+}>();
 
 const mapContainer = ref(null);
-const selectedNeighborhood = ref(null);
-const map = ref(null);
-
-const sheetNumbers = computed(() => props.selectedLists);
+const selectedNeighborhood = ref<string | null>(null);
+const map = ref<L.Map | null>(null);
+const showLegend = ref(true);
+const legendGrades = [0, 0.2, 0.4, 0.6, 0.8, 1];
 
 const updateMap = () => {
   if (map.value && props.geojsonData) {
@@ -108,9 +126,9 @@ const updateMap = () => {
     });
 
     L.geoJSON(props.geojsonData, {
-      style: styleFeature,
+      style: styleFeature as L.StyleFunction<GeoJsonProperties>,
       onEachFeature: onEachFeature,
-    }).addTo(map.value);
+    }).addTo(map.value as L.Map);
   }
 };
 
@@ -131,7 +149,7 @@ const initializeMap = () => {
       fitMapToBounds();
 
       setTimeout(() => {
-        map.value.invalidateSize();
+        map.value?.invalidateSize();
       }, 100);
     }
   } catch (error) {
@@ -161,8 +179,10 @@ watch(
   }
 );
 
-const styleFeature = (feature) => {
-  if (!feature) return {};
+const styleFeature = (
+  feature: GeoJSON.Feature<GeoJSON.Geometry, GeoJsonProperties> | undefined
+): L.PathOptions => {
+  if (!feature || !feature.properties) return {};
   const neighborhood = normalizeString(
     feature.properties.BARRIO ||
       feature.properties.texto ||
@@ -182,21 +202,25 @@ const styleFeature = (feature) => {
   };
 };
 
-const onEachFeature = (feature, layer) => {
+const onEachFeature = (feature: GeoJSON.Feature, layer: L.Layer) => {
   layer.on({
     click: () => {
-      selectedNeighborhood.value = normalizeString(
-        feature.properties.BARRIO ||
-          feature.properties.texto ||
-          feature.properties.zona
-      );
+      selectedNeighborhood.value = feature.properties
+        ? normalizeString(
+            feature.properties.BARRIO ||
+              feature.properties.texto ||
+              feature.properties.zona
+          )
+        : null;
     },
     mouseover: () => {
-      const neighborhood = normalizeString(
-        feature.properties.BARRIO ||
-          feature.properties.texto ||
-          feature.properties.zona
-      );
+      const neighborhood = feature.properties
+        ? normalizeString(
+            feature.properties.BARRIO ||
+              feature.properties.texto ||
+              feature.properties.zona
+          )
+        : "";
       const votes =
         props.selectedCandidates.length > 0
           ? getCandidateTotalVotes(neighborhood)
@@ -281,8 +305,20 @@ const onEachFeature = (feature, layer) => {
   });
 };
 
-const groupCandidatesByParty = (candidateVotes) => {
-  const grouped = {};
+interface CandidateVote {
+  candidate: string;
+  votes: number;
+  party: string;
+}
+
+interface GroupedCandidates {
+  [party: string]: { candidate: string; votes: number }[];
+}
+
+const groupCandidatesByParty = (
+  candidateVotes: CandidateVote[]
+): GroupedCandidates => {
+  const grouped: GroupedCandidates = {};
   candidateVotes.forEach(({ candidate, votes, party }) => {
     if (!grouped[party]) {
       grouped[party] = [];
@@ -298,8 +334,17 @@ const groupCandidatesByParty = (candidateVotes) => {
   );
 };
 
-const groupListsByParty = (neighborhood) => {
-  const grouped = {};
+interface ListVote {
+  number: string;
+  votes: number;
+}
+
+interface GroupedLists {
+  [party: string]: ListVote[];
+}
+
+const groupListsByParty = (neighborhood: string): GroupedLists => {
+  const grouped: GroupedLists = {};
   props.selectedLists.forEach((list) => {
     const party = props.partiesByList[list];
     const votes = props.votosPorListas[list]?.[neighborhood] || 0;
@@ -347,20 +392,22 @@ const getCandidateTotalVotes = (neighborhood: string) => {
   );
 };
 
-const getCandidateTotalVotesAllNeighborhoods = (candidate: string) => {
-  return Object.values(props.geojsonData.features).reduce((total, feature) => {
-    const neighborhood = normalizeString(
-      feature.properties.BARRIO ||
-        feature.properties.texto ||
-        feature.properties.zona
-    );
-    return (
-      total +
-        getCandidateVotesForNeighborhood(neighborhood).find(
-          (c) => c.candidate === candidate
-        )?.votes || 0
-    );
-  }, 0);
+const getCandidateTotalVotesAllNeighborhoods = (candidate: string): number => {
+  return Object.values(props.geojsonData.features).reduce(
+    (total: number, feature: any) => {
+      const neighborhood = normalizeString(
+        feature.properties.BARRIO ||
+          feature.properties.texto ||
+          feature.properties.zona
+      );
+      const candidateVotes = getCandidateVotesForNeighborhood(neighborhood);
+      const candidateVote = candidateVotes.find(
+        (c) => c.candidate === candidate
+      );
+      return total + (candidateVote?.votes || 0);
+    },
+    0
+  );
 };
 
 onMounted(() => {
@@ -378,7 +425,7 @@ watch(
   (newGeojsonData) => {
     if (newGeojsonData && map.value) {
       updateMap();
-      createLegend();
+      showLegend.value = true;
     }
   },
   { immediate: true }
@@ -389,8 +436,11 @@ watch(() => props.selectedLists, updateMap);
 watch(() => props.selectedCandidates, updateMap);
 
 const getMaxVotes = computed(() => {
+  if (!props.geojsonData || !props.geojsonData.features) {
+    return 0;
+  }
   return Math.max(
-    ...Object.values(props.geojsonData.features).map((feature) =>
+    ...props.geojsonData.features.map((feature: any) =>
       props.getVotosForNeighborhood(
         normalizeString(
           feature.properties.BARRIO ||
@@ -402,11 +452,15 @@ const getMaxVotes = computed(() => {
   );
 });
 
-function getColor(votes) {
+function getColor(votes: number): string {
+  if (!props.geojsonData || !props.geojsonData.features) {
+    return "#FFFFFF";
+  }
+
   const maxVotes =
     props.selectedCandidates.length > 0
       ? Math.max(
-          ...Object.values(props.geojsonData.features).map((feature) =>
+          ...props.geojsonData.features.map((feature: any) =>
             getCandidateTotalVotes(
               normalizeString(
                 feature.properties.BARRIO ||
@@ -418,7 +472,7 @@ function getColor(votes) {
         )
       : getMaxVotes.value;
 
-  if (votes === 0) {
+  if (votes === 0 || maxVotes === 0) {
     return "#FFFFFF";
   }
 
@@ -432,43 +486,10 @@ function getColor(votes) {
 
   return colorScale(ratio).hex();
 }
-function shadeColor(color, percent) {
+function shadeColor(color: string, percent: number): string {
   return chroma(color)
     .darken(percent / 100)
     .hex();
-}
-
-function createLegend() {
-  if (!map.value || !getMaxVotes.value) return;
-
-  // Remove existing legend if it exists
-  const existingLegend = document.querySelector(".info.legend");
-  if (existingLegend) {
-    existingLegend.remove();
-  }
-
-  const legend = L.control({ position: "bottomright" });
-
-  legend.onAdd = function () {
-    const div = L.DomUtil.create("div", "info legend");
-    const grades = [0, 0.2, 0.4, 0.6, 0.8, 1];
-    const labels = [];
-
-    for (let i = 0; i < grades.length; i++) {
-      const color = getColor(grades[i] * getMaxVotes.value);
-      labels.push(
-        '<i style="background:' +
-          color +
-          '"></i> ' +
-          Math.round(grades[i] * getMaxVotes.value)
-      );
-    }
-
-    div.innerHTML = labels.join("<br>");
-    return div;
-  };
-
-  legend.addTo(map.value);
 }
 
 const getTotalVotesForList = (list: string) => {
@@ -491,20 +512,24 @@ const getTotalVotes = (): number => {
   }
 };
 
-const groupedSelectedItems = computed(() => {
+interface PartyData {
+  totalVotes: number;
+  lists?: { number: string; votes: number }[];
+  candidates?: { name: string; votes: number }[];
+}
+
+const groupedSelectedItems = computed<Record<string, PartyData>>(() => {
   if (props.selectedCandidates.length > 0) {
-    const grouped = {};
+    const grouped: Record<string, PartyData> = {};
     props.selectedCandidates.forEach((candidate) => {
       const party = Object.entries(props.precandidatosByList).find(
         ([, c]) => c === candidate
       )?.[0];
       const partyName = party ? props.partiesByList[party] : "Unknown";
-      if (!grouped[partyName]) {
-        grouped[partyName] = { totalVotes: 0, candidates: [] };
-      }
+      grouped[partyName] ??= { totalVotes: 0, candidates: [] };
       const votes = getCandidateTotalVotesAllNeighborhoods(candidate);
       grouped[partyName].totalVotes += votes;
-      grouped[partyName].candidates.push({ name: candidate, votes });
+      grouped[partyName].candidates?.push({ name: candidate, votes });
     });
     // Sort candidates within each party
     Object.values(grouped).forEach((partyData: any) => {
@@ -521,7 +546,7 @@ const groupedSelectedItems = computed(() => {
         ])
     );
   } else {
-    const grouped = {};
+    const grouped: Record<string, PartyData> = {};
     props.selectedLists.forEach((list) => {
       const party = props.partiesByList[list];
       if (!grouped[party]) {
@@ -529,7 +554,7 @@ const groupedSelectedItems = computed(() => {
       }
       const votes = getTotalVotesForList(list);
       grouped[party].totalVotes += votes;
-      grouped[party].lists.push({ number: list, votes });
+      grouped[party].lists?.push({ number: list, votes });
     });
     // Sort lists within each party
     Object.values(grouped).forEach((partyData: any) => {
@@ -760,6 +785,57 @@ function normalizeString(str: string): string {
 
 .leaflet-interactive:active {
   outline: none !important;
+}
+
+.map-legend {
+  position: absolute;
+  background: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  font-size: 12px;
+  max-width: 200px;
+}
+
+@media (min-width: 768px) {
+  .map-legend {
+    bottom: 20px;
+    right: 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  .map-legend {
+    top: 60px;
+    right: 10px;
+    max-width: 150px;
+  }
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+.legend-label {
+  font-size: 12px;
+}
+.legend-color {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+.legend-label {
+  font-size: 12px;
 }
 
 .scrollable-tooltip {

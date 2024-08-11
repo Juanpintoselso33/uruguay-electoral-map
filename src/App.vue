@@ -250,22 +250,26 @@ const getVotosForNeighborhood = (neighborhood: string): number => {
     return selectedCandidates.value.reduce((acc, candidate) => {
       return (
         acc +
-        Object.entries(currentRegion.value.votosPorListas).reduce(
-          (sum, [list, votes]) => {
-            if (currentRegion.value.precandidatosByList[list] === candidate) {
-              return sum + (votes[neighborhood] || 0);
-            }
-            return sum;
-          },
-          0
-        )
+        (currentRegion.value.votosPorListas
+          ? Object.entries(currentRegion.value.votosPorListas).reduce(
+              (sum, [list, votes]) => {
+                if (
+                  currentRegion.value.precandidatosByList?.[list] === candidate
+                ) {
+                  return sum + (votes[neighborhood] ?? 0);
+                }
+                return sum;
+              },
+              0
+            )
+          : 0)
       );
     }, 0);
   } else {
     return selectedLists.value.reduce((acc, sheetNumber) => {
       return (
         acc +
-        (currentRegion.value.votosPorListas[sheetNumber]?.[neighborhood] || 0)
+        (currentRegion.value.votosPorListas?.[sheetNumber]?.[neighborhood] ?? 0)
       );
     }, 0);
   }
@@ -299,7 +303,7 @@ const candidatesByParty = computed(() => {
   ) {
     Object.entries(currentRegion.value.precandidatosByList).forEach(
       ([list, candidate]) => {
-        const party = currentRegion.value.partiesByList[list];
+        const party = currentRegion.value.partiesByList?.[list];
         if (party && candidate) {
           result[candidate] = party;
         }
