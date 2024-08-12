@@ -1,95 +1,55 @@
 <template>
   <div class="montevideo-map-wrapper">
     <div class="montevideo-map" ref="mapContainer"></div>
-    <div class="map-legend" v-if="showLegend">
-      <h4>Votos</h4>
-      <div
-        v-for="(grade, index) in legendGrades"
-        :key="index"
-        class="legend-item"
-      >
-        <span
-          class="legend-color"
-          :style="{ backgroundColor: getColor(grade * getMaxVotes) }"
-        ></span>
-        <span class="legend-label">{{ Math.round(grade * getMaxVotes) }}</span>
-      </div>
-    </div>
-
-    <div v-if="selectedNeighborhood !== null" class="neighborhood-info">
-      Barrio seleccionado: {{ selectedNeighborhood }} - Votos:
-      {{ getVotosForNeighborhood(selectedNeighborhood) }}
-    </div>
+    <MapLegend
+      v-if="showLegend"
+      :legendGrades="legendGrades"
+      :getColor="getColor"
+      :maxVotes="getMaxVotes"
+    />
+    <NeighborhoodInfo
+      :selectedNeighborhood="selectedNeighborhood"
+      :getVotosForNeighborhood="getVotosForNeighborhood"
+    />
   </div>
-  <div
-    class="mobile-toggle"
-    @click="toggleMobileVisibility"
-    tabindex="0"
-    role="button"
-    aria-label="Toggle selected lists visibility"
-  >
-    <a class="mobile-toggle-text">Ver listas seleccionadas</a>
-    <span
-      class="arrow"
-      :class="{
-        'arrow-up': !isMobileHidden,
-        'arrow-down': isMobileHidden,
-      }"
-    ></span>
-  </div>
-  <div class="selected-lists-info" :class="{ 'mobile-hidden': isMobileHidden }">
-    <div class="selected-lists-content">
-      <h3 class="selected-lists-title">
-        {{
-          props.selectedCandidates.length > 0
-            ? "Candidatos seleccionados"
-            : "Listas seleccionadas"
-        }}
-      </h3>
-      <ul class="party-list">
-        <li
-          v-for="(partyData, party) in groupedSelectedItems"
-          :key="party"
-          class="party-item"
-        >
-          <strong class="party-name"
-            >{{ party }}: {{ partyData.totalVotes }} votos</strong
-          >
-          <ul class="list-items" v-if="props.selectedCandidates.length === 0">
-            <li
-              v-for="list in partyData.lists"
-              :key="list.number"
-              class="list-item"
-            >
-              Lista {{ list.number }}: {{ list.votes }} votos
-            </li>
-          </ul>
-          <ul class="candidate-items" v-else>
-            <li
-              v-for="candidate in partyData.candidates"
-              :key="candidate.name"
-              class="candidate-item"
-            >
-              {{ candidate.name }}: {{ candidate.votes }} votos
-            </li>
-          </ul>
-        </li>
-      </ul>
-      <div class="total-votes">
-        <strong>Total de votos:</strong> {{ getTotalVotes() }}
-      </div>
-    </div>
-  </div>
+  <MobileToggle
+    @toggle="toggleMobileVisibility"
+    :isMobileHidden="isMobileHidden"
+  />
+  <SelectedListsInfo
+    :isMobileHidden="isMobileHidden"
+    :selectedCandidates="props.selectedCandidates"
+    :groupedSelectedItems="groupedSelectedItems"
+    :getTotalVotes="getTotalVotes"
+  />
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed, onUnmounted, watchEffect } from "vue";
+import { ref, onMounted, watch, computed, onUnmounted } from "vue";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import chroma from "chroma-js";
-import { GeoJSON, GeoJsonProperties } from "geojson";
+import { GeoJSON } from "geojson";
+import MapLegend from "./mapComponents/MapLegend.vue";
+import NeighborhoodInfo from "./mapComponents/NeighborhoodInfo.vue";
+import MobileToggle from "./mapComponents/MobileToggle.vue";
+import SelectedListsInfo from "./mapComponents/SelectedListsInfo.vue";
+import { useMapStore } from "../stores/mapStore";
+import { storeToRefs } from "pinia";
+import {
+  styleFeature,
+  getNormalizedNeighborhood,
+  createOnEachFeature,
+  getTotalVotesForList,
+  getCandidateTotalVotesAllNeighborhoods,
+} from "../utils/mapUtils";
+import { createTooltipContent } from "../utils/tooltipUtils";
+import { useTooltip } from "../composables/useToolTip";
+import { useVoteCalculations } from "../composables/useVoteCalculations";
+import { useVoteGrouping } from "../composables/useVoteGrouping"; // Import the composable
 
-const props = defineProps<{
+// Define props using an interface
+interface Props {
   regionName: string;
   selectedLists: string[];
   votosPorListas: Record<string, Record<string, number>>;
@@ -104,520 +64,191 @@ const props = defineProps<{
   selectedCandidates: string[];
   mapCenter: [number, number];
   mapZoom: number;
-}>();
+  currentRegion: string;
+  getCandidateVotesForNeighborhood: (neighborhood: string) => number; // Add this line
+}
 
+const props = defineProps<Props>();
+
+// Define emits
 const emit = defineEmits<{
-  updateSelectedNeighborhood: [neighborhood: string | null];
-  mapInitialized: [];
+  (e: "updateSelectedNeighborhood", neighborhood: string | null): void;
+  (e: "mapInitialized"): void;
 }>();
 
-const mapContainer = ref(null);
-const selectedNeighborhood = ref<string | null>(null);
-const map = ref<L.Map | null>(null);
-const showLegend = ref(true);
-const legendGrades = [0, 0.2, 0.4, 0.6, 0.8, 1];
+const mapStore = useMapStore();
+const { initializeMap, updateMap, fitMapToBounds } = mapStore;
+const { map, showLegend, isMobileHidden, selectedNeighborhood } =
+  storeToRefs(mapStore);
 
-const updateMap = () => {
-  if (map.value && props.geojsonData) {
-    map.value.eachLayer((layer) => {
-      if (layer instanceof L.GeoJSON && map.value) {
-        map.value.removeLayer(layer);
-      }
-    });
+const mapContainer = ref<HTMLElement | null>(null);
+const { handleFeatureMouseover, handleFeatureMouseout } = useTooltip();
+const {
+  getCandidateVotesForNeighborhood,
+  getCandidateTotalVotes,
+  getTotalVotes,
+} = useVoteCalculations(props, props.currentRegion);
 
-    L.geoJSON(props.geojsonData, {
-      style: styleFeature as L.StyleFunction<GeoJsonProperties>,
-      onEachFeature: onEachFeature,
-    }).addTo(map.value as L.Map);
-  }
-};
+const { groupCandidatesByParty, groupListsByParty } = useVoteGrouping(props); // Call useVoteGrouping and get the necessary functions
 
-const initializeMap = () => {
-  try {
-    if (mapContainer.value) {
-      if (map.value) {
-        map.value.remove();
-      }
-      map.value = L.map(mapContainer.value, {
-        center: props.mapCenter,
-        zoom: props.mapZoom,
-        layers: [],
-        zoomControl: false,
-        attributionControl: false,
-      });
-      updateMap();
-      fitMapToBounds();
-
-      setTimeout(() => {
-        map.value?.invalidateSize();
-      }, 100);
-    }
-  } catch (error) {
-    console.error("Error initializing map:", error);
-  }
-};
-
-const fitMapToBounds = () => {
-  if (map.value && props.geojsonData) {
-    const geojsonLayer = L.geoJSON(props.geojsonData);
-    const bounds = geojsonLayer.getBounds();
-    map.value.fitBounds(bounds);
-  }
-};
-
-watch(
-  () => props.regionName,
-  () => {
-    initializeMap();
-  }
-);
-
-watch(
-  () => props.geojsonData,
-  () => {
-    fitMapToBounds();
-  }
-);
-
-const styleFeature = (
-  feature: GeoJSON.Feature<GeoJSON.Geometry, GeoJsonProperties> | undefined
-): L.PathOptions => {
-  if (!feature || !feature.properties) return {};
-  const neighborhood = normalizeString(
-    feature.properties.BARRIO ||
-      feature.properties.texto ||
-      feature.properties.zona
-  );
-  const votes =
-    props.selectedCandidates.length > 0
-      ? getCandidateTotalVotes(neighborhood)
-      : props.getVotosForNeighborhood(neighborhood);
-  const fillColor = getColor(votes);
-  return {
-    color: "#000000",
-    weight: 1,
-    fillColor: fillColor,
-    fillOpacity: 0.7,
-    opacity: 1,
-  };
-};
-
-const onEachFeature = (feature: GeoJSON.Feature, layer: L.Layer) => {
-  layer.on({
-    click: () => {
-      selectedNeighborhood.value = feature.properties
-        ? normalizeString(
-            feature.properties.BARRIO ||
-              feature.properties.texto ||
-              feature.properties.zona
-          )
-        : null;
-    },
-    mouseover: () => {
-      const neighborhood = feature.properties
-        ? normalizeString(
-            feature.properties.BARRIO ||
-              feature.properties.texto ||
-              feature.properties.zona
-          )
-        : "";
-      const votes =
-        props.selectedCandidates.length > 0
-          ? getCandidateTotalVotes(neighborhood)
-          : props.getVotosForNeighborhood(neighborhood);
-      const currentColor = getColor(votes);
-      const darkerColor = shadeColor(currentColor, -20);
-      (layer as L.Path).setStyle({
-        fillColor: darkerColor,
-        fillOpacity: 0.7,
-      });
-
-      let tooltipContent = `<div class="tooltip-content"><strong>${neighborhood}</strong><br>`;
-
-      if (props.selectedCandidates.length > 0) {
-        const candidateVotes = getCandidateVotesForNeighborhood(neighborhood);
-        const groupedCandidates = groupCandidatesByParty(candidateVotes);
-
-        tooltipContent += '<div class="party-list">';
-        for (const [party, candidates] of Object.entries(groupedCandidates)) {
-          const partyVotes = candidates.reduce((sum, c) => sum + c.votes, 0);
-          const partyAbbrev = props.partiesAbbrev[party] || party;
-          tooltipContent += `<div class="party-item">
-            <div class="party-name" style="margin-left: 20px;"><strong>${partyAbbrev}</strong>: ${partyVotes} votos</div>
-            <div class="candidate-items" style="margin-left: 40px;">`;
-          candidates
-            .sort((a, b) => b.votes - a.votes)
-            .forEach(({ candidate, votes }) => {
-              tooltipContent += `<div class="candidate-item">${candidate}: ${votes} votos</div>`;
-            });
-          tooltipContent += "</div></div>";
-        }
-        tooltipContent += "</div>";
-      } else {
-        const groupedLists = groupListsByParty(neighborhood);
-
-        tooltipContent += '<div class="party-list">';
-        for (const [party, lists] of Object.entries(groupedLists)) {
-          const partyVotes = lists.reduce((sum, l) => sum + l.votes, 0);
-          const partyAbbrev = props.partiesAbbrev[party] || party;
-          tooltipContent += `<div class="party-item">
-            <div class="party-name" style="margin-left: 20px;"><strong>${partyAbbrev}</strong>: ${partyVotes} votos</div>
-            <div class="list-items" style="margin-left: 40px;">`;
-          lists
-            .sort((a, b) => b.votes - a.votes)
-            .forEach(({ number, votes }) => {
-              tooltipContent += `<div class="list-item">Lista ${number}: ${votes} votos</div>`;
-            });
-          tooltipContent += "</div></div>";
-        }
-        tooltipContent += "</div>";
-      }
-
-      const totalVotes =
-        props.selectedCandidates.length > 0
-          ? getCandidateTotalVotes(neighborhood)
-          : votes;
-      tooltipContent += `<div class="tooltip-total"><strong>Total: ${
-        totalVotes || 0
-      } votos</strong></div></div>`;
-
-      layer
-        .bindTooltip(tooltipContent, {
-          permanent: false,
-          direction: "auto",
-          className: "neighborhood-label scrollable-tooltip",
-        })
-        .openTooltip();
-    },
-    mouseout: () => {
-      (layer as L.Path).setStyle(styleFeature(feature));
-      selectedNeighborhood.value = null;
-      layer.unbindTooltip();
-    },
-    mousedown: (e) => {
-      e.target.setStyle({
-        fillOpacity: 0.3,
-      });
-    },
-    mouseup: (e) => {
-      e.target.setStyle(styleFeature(feature));
-    },
-  });
-};
-
-interface CandidateVote {
-  candidate: string;
-  votes: number;
-  party: string;
-}
-
-interface GroupedCandidates {
-  [party: string]: { candidate: string; votes: number }[];
-}
-
-const groupCandidatesByParty = (
-  candidateVotes: CandidateVote[]
-): GroupedCandidates => {
-  const grouped: GroupedCandidates = {};
-  candidateVotes.forEach(({ candidate, votes, party }) => {
-    if (!grouped[party]) {
-      grouped[party] = [];
-    }
-    grouped[party].push({ candidate, votes });
-  });
-  return Object.fromEntries(
-    Object.entries(grouped).sort(
-      ([, a], [, b]) =>
-        b.reduce((sum, c) => sum + c.votes, 0) -
-        a.reduce((sum, c) => sum + c.votes, 0)
-    )
-  );
-};
-
-interface ListVote {
-  number: string;
-  votes: number;
-}
-
-interface GroupedLists {
-  [party: string]: ListVote[];
-}
-
-const groupListsByParty = (neighborhood: string): GroupedLists => {
-  const grouped: GroupedLists = {};
-  props.selectedLists.forEach((list) => {
-    const party = props.partiesByList[list];
-    const votes = props.votosPorListas[list]?.[neighborhood] || 0;
-    if (votes > 0) {
-      if (!grouped[party]) {
-        grouped[party] = [];
-      }
-      grouped[party].push({ number: list, votes });
-    }
-  });
-  return Object.fromEntries(
-    Object.entries(grouped).sort(
-      ([, a], [, b]) =>
-        b.reduce((sum, l) => sum + l.votes, 0) -
-        a.reduce((sum, l) => sum + l.votes, 0)
-    )
-  );
-};
-
-const getCandidateVotesForNeighborhood = (neighborhood: string) => {
-  return props.selectedCandidates.map((candidate) => {
-    let votes = 0;
-    const candidateLists = Object.entries(props.precandidatosByList)
-      .filter(([, precandidato]) => precandidato === candidate)
-      .map(([list]) => list);
-
-    candidateLists.forEach((list) => {
-      const listVotes = props.votosPorListas[list]?.[neighborhood] || 0;
-      votes += listVotes;
-    });
-
-    const party = Object.entries(props.precandidatosByList).find(
-      ([, c]) => c === candidate
-    )?.[0];
-    const partyName = party ? props.partiesByList[party] : "Unknown";
-    const partyAbbrev = props.partiesAbbrev[partyName] || partyName;
-    return { candidate, votes, party: partyAbbrev };
-  });
-};
-
-const getCandidateTotalVotes = (neighborhood: string) => {
-  return getCandidateVotesForNeighborhood(neighborhood).reduce(
-    (total, { votes }) => total + votes,
-    0
-  );
-};
-
-const getCandidateTotalVotesAllNeighborhoods = (candidate: string): number => {
-  return Object.values(props.geojsonData.features).reduce(
-    (total: number, feature: any) => {
-      const neighborhood = normalizeString(
-        feature.properties.BARRIO ||
-          feature.properties.texto ||
-          feature.properties.zona
-      );
-      const candidateVotes = getCandidateVotesForNeighborhood(neighborhood);
-      const candidateVote = candidateVotes.find(
-        (c) => c.candidate === candidate
-      );
-      return total + (candidateVote?.votes || 0);
-    },
-    0
-  );
-};
-
-onMounted(() => {
-  initializeMap();
-  window.addEventListener("resize", () => {
-    if (map.value) {
-      map.value.invalidateSize();
-    }
-  });
-  emit("mapInitialized");
+const groupedSelectedItems = computed(() => {
+  // Logic to compute grouped selected items based on props.selectedCandidates
+  return props.selectedCandidates.reduce((acc, candidate) => {
+    // Example grouping logic
+    const party = props.partiesByList[candidate]; // Adjust as necessary
+    if (!acc[party]) acc[party] = [];
+    acc[party].push(candidate);
+    return acc;
+  }, {} as Record<string, string[]>);
 });
 
-watch(
-  () => props.geojsonData,
-  (newGeojsonData) => {
-    if (newGeojsonData && map.value) {
-      updateMap();
-      showLegend.value = true;
-    }
-  },
-  { immediate: true }
-);
-
-watch(() => props.geojsonData, updateMap, { deep: true });
-watch(() => props.selectedLists, updateMap);
-watch(() => props.selectedCandidates, updateMap);
+const legendGrades = [0, 0.2, 0.4, 0.6, 0.8, 1];
 
 const getMaxVotes = computed(() => {
   if (!props.geojsonData || !props.geojsonData.features) {
     return 0;
   }
-  return Math.max(
-    ...props.geojsonData.features.map((feature: any) =>
-      props.getVotosForNeighborhood(
-        normalizeString(
-          feature.properties.BARRIO ||
-            feature.properties.texto ||
-            feature.properties.zona
+  return props.selectedCandidates.length > 0
+    ? Math.max(
+        ...props.geojsonData.features.map((feature: any) =>
+          getCandidateTotalVotes(getNormalizedNeighborhood(feature))
         )
       )
-    )
-  );
+    : Math.max(
+        ...props.geojsonData.features.map((feature: any) =>
+          props.getVotosForNeighborhood(getNormalizedNeighborhood(feature))
+        )
+      );
 });
 
-function getColor(votes: number): string {
-  if (!props.geojsonData || !props.geojsonData.features) {
+const getColor = (votes: number): string => {
+  if (votes === 0 || getMaxVotes.value === 0) {
     return "#FFFFFF";
   }
-
-  const maxVotes =
-    props.selectedCandidates.length > 0
-      ? Math.max(
-          ...props.geojsonData.features.map((feature: any) =>
-            getCandidateTotalVotes(
-              normalizeString(
-                feature.properties.BARRIO ||
-                  feature.properties.texto ||
-                  feature.properties.zona
-              )
-            )
-          )
-        )
-      : getMaxVotes.value;
-
-  if (votes === 0 || maxVotes === 0) {
-    return "#FFFFFF";
-  }
-
-  const ratio = votes / maxVotes;
-
-  // Create a heat map color scale using chroma.js
-  const colorScale = chroma
+  const ratio = votes / getMaxVotes.value;
+  const colorScale = (chroma as any)
     .scale(["#ffffb2", "#fecc5c", "#fd8d3c", "#f03b20", "#bd0026"])
     .mode("lab")
     .domain([0, 1]);
-
   return colorScale(ratio).hex();
-}
-function shadeColor(color: string, percent: number): string {
-  return chroma(color)
-    .darken(percent / 100)
-    .hex();
-}
+};
 
-const getTotalVotesForList = (list: string) => {
-  return Object.values(props.votosPorListas[list] || {}).reduce(
-    (a, b) => a + b,
-    0
+const initializeLocalMap = () => {
+  console.log("Initializing map...");
+  if (mapContainer.value && !map.value) {
+    console.log("mapContainer and map check passed");
+    initializeMap(mapContainer.value, props.mapCenter, props.mapZoom);
+    updateLocalMap();
+    fitMapToBounds(props.geojsonData);
+
+    setTimeout(() => {
+      map.value?.invalidateSize();
+      emit("mapInitialized");
+    }, 100);
+  }
+};
+
+const updateLocalMap = () => {
+  if (!props.geojsonData) {
+    console.warn("GeoJSON data is undefined");
+    return;
+  }
+
+  mapStore.updateMap(
+    props.geojsonData,
+    (feature) => styleFeature(feature, props.getVotosForNeighborhood, getColor),
+    createOnEachFeature(
+      (e, feature, layer) => {
+        console.log("Mouseover event:", e);
+        console.log("Feature:", feature);
+        if (!feature || !e.latlng) {
+          console.warn("Invalid feature or latlng:", feature, e.latlng);
+          return;
+        }
+        handleFeatureMouseover(e, feature, layer, map.value!, (feature) => {
+          const neighborhood = getNormalizedNeighborhood(feature);
+          const votes = props.getVotosForNeighborhood(neighborhood);
+          return createTooltipContent(
+            neighborhood,
+            votes,
+            props.selectedCandidates,
+            props.partiesAbbrev,
+            getCandidateVotesForNeighborhood,
+            groupCandidatesByParty, // Pass the function here
+            groupListsByParty // Pass the function here
+          );
+        });
+      },
+      (e, feature, layer) => {
+        if (!feature) {
+          console.warn("Invalid feature object");
+          return;
+        }
+        handleFeatureMouseout();
+      },
+      (feature) => {
+        if (!feature) {
+          console.warn("Invalid feature object");
+          return;
+        }
+        mapStore.setSelectedNeighborhood(getNormalizedNeighborhood(feature));
+      },
+      props.getVotosForNeighborhood,
+      getColor,
+      map.value!
+    )
   );
 };
 
-const getTotalVotes = (): number => {
-  if (props.selectedCandidates.length > 0) {
-    return props.selectedCandidates.reduce((total, candidate) => {
-      return total + getCandidateTotalVotesAllNeighborhoods(candidate);
-    }, 0);
-  } else {
-    return props.selectedLists.reduce(
-      (total, list) => total + getTotalVotesForList(list),
-      0
-    );
-  }
-};
-
-interface PartyData {
-  totalVotes: number;
-  lists?: { number: string; votes: number }[];
-  candidates?: { name: string; votes: number }[];
-}
-
-const groupedSelectedItems = computed<Record<string, PartyData>>(() => {
-  if (props.selectedCandidates.length > 0) {
-    const grouped: Record<string, PartyData> = {};
-    props.selectedCandidates.forEach((candidate) => {
-      const party = Object.entries(props.precandidatosByList).find(
-        ([, c]) => c === candidate
-      )?.[0];
-      const partyName = party ? props.partiesByList[party] : "Unknown";
-      grouped[partyName] ??= { totalVotes: 0, candidates: [] };
-      const votes = getCandidateTotalVotesAllNeighborhoods(candidate);
-      grouped[partyName].totalVotes += votes;
-      grouped[partyName].candidates?.push({ name: candidate, votes });
-    });
-    // Sort candidates within each party
-    Object.values(grouped).forEach((partyData: any) => {
-      partyData.candidates.sort((a, b) => b.votes - a.votes);
-    });
-    return Object.fromEntries(
-      Object.entries(grouped)
-        .sort(([, a], [, b]) => b.totalVotes - a.totalVotes)
-        .map(([party, data]) => [
-          party !== "Independiente" && party !== "Frente Amplio"
-            ? `Partido ${party}`
-            : party,
-          data,
-        ])
-    );
-  } else {
-    const grouped: Record<string, PartyData> = {};
-    props.selectedLists.forEach((list) => {
-      const party = props.partiesByList[list];
-      if (!grouped[party]) {
-        grouped[party] = { totalVotes: 0, lists: [] };
-      }
-      const votes = getTotalVotesForList(list);
-      grouped[party].totalVotes += votes;
-      grouped[party].lists?.push({ number: list, votes });
-    });
-    // Sort lists within each party
-    Object.values(grouped).forEach((partyData: any) => {
-      partyData.lists.sort((a, b) => b.votes - a.votes);
-    });
-    return Object.fromEntries(
-      Object.entries(grouped)
-        .sort(([, a], [, b]) => b.totalVotes - a.totalVotes)
-        .map(([party, data]) => [
-          party !== "Independiente" && party !== "Frente Amplio"
-            ? `Partido ${party}`
-            : party,
-          data,
-        ])
-    );
-  }
-});
-
-const isMobileHidden = ref(true);
-
 const toggleMobileVisibility = () => {
-  isMobileHidden.value = !isMobileHidden.value;
+  mapStore.toggleMobileVisibility();
 };
+
+// Watchers
+// Watch for changes in region name and geojsonData
+watch(
+  [() => props.regionName, () => props.geojsonData],
+  ([newRegionName, newGeojsonData]) => {
+    if (newRegionName && mapContainer.value && newGeojsonData) {
+      updateLocalMap();
+    }
+  },
+  { deep: true }
+);
+
+// Watch for changes in selected lists and candidates
+watch(
+  [() => props.selectedLists, () => props.selectedCandidates],
+  () => {
+    updateLocalMap();
+  },
+  { deep: true }
+);
+
+onMounted(() => {
+  initializeLocalMap();
+  window.addEventListener("resize", () => {
+    if (map.value) {
+      map.value.invalidateSize();
+    }
+  });
+});
 
 onUnmounted(() => {
-  if (map.value) {
-    map.value.remove();
-  }
+  map.value?.remove();
 });
-
-function normalizeString(str: string): string {
-  return str;
-}
 </script>
 
 <style scoped>
 .montevideo-map-wrapper {
   width: 100%;
-  height: 100%;
+  height: 100vh;
   position: relative;
 }
 
 .montevideo-map {
   width: 100%;
   height: 100%;
-}
-
-.neighborhood-info {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  background-color: rgba(255, 255, 255, 0.8);
-  padding: 5px 10px;
-  border-radius: 5px;
-}
-
-.neighborhood-label {
-  background: none;
-  border: none;
-  box-shadow: none;
-  font-size: 12px;
-  font-weight: bold;
-  color: black;
 }
 
 .selected-lists-info {
@@ -684,28 +315,6 @@ function normalizeString(str: string): string {
   color: #333;
 }
 
-.mobile-toggle {
-  display: none;
-  cursor: pointer;
-  padding: 10px;
-  text-align: center;
-}
-
-.arrow {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-}
-
-.arrow-up {
-  border-bottom: 5px solid black;
-}
-
-.arrow-down {
-  border-top: 5px solid black;
-}
 @media (max-width: 767px) {
   .selected-lists-info {
     position: fixed;
@@ -716,16 +325,14 @@ function normalizeString(str: string): string {
     border-radius: 8px 8px 0 0;
     transform: translateY(50%);
     transition: transform 0.3s ease-in-out;
-    max-height: 70vh; /* Limit the height to 70% of the viewport height */
+    max-height: 70vh;
   }
 
   .selected-lists-content {
-    max-height: calc(
-      70vh - 40px
-    ); /* Subtract the height of the toggle button */
+    max-height: calc(70vh - 40px);
     overflow-y: auto;
-    padding-bottom: 20px; /* Add some padding at the bottom for better scrolling */
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    padding-bottom: 20px;
+    -webkit-overflow-scrolling: touch;
   }
 
   .selected-lists-info.mobile-hidden {
@@ -753,18 +360,9 @@ function normalizeString(str: string): string {
   .mobile-toggle-text {
     font-size: 1.2rem;
     color: #333;
-    font-weight: bold;
-    margin-right: 10px;
-  }
-
-  .mobile-hidden .selected-lists-content {
-    display: none;
-  }
-
-  .selected-lists-content {
-    padding-top: 10px;
   }
 }
+
 .leaflet-interactive {
   outline: none !important;
   cursor: pointer;
@@ -828,187 +426,6 @@ function normalizeString(str: string): string {
 .legend-label {
   font-size: 12px;
 }
-.legend-color {
-  width: 20px;
-  height: 20px;
-  margin-right: 5px;
-}
-
-.legend-label {
-  font-size: 12px;
-}
-
-.scrollable-tooltip {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.tooltip-content {
-  max-width: 250px;
-}
-
-@media (max-width: 767px) {
-  .scrollable-tooltip {
-    max-height: none;
-    overflow-y: visible;
-  }
-}
-
-.tooltip-content {
-  max-width: 400px;
-  max-height: 300px;
-  overflow-y: auto;
-  font-size: 12px;
-}
-
-.tooltip-columns {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-}
-
-.tooltip-column {
-  flex: 1;
-  min-width: 120px;
-  padding: 0 5px;
-}
-
-.tooltip-item {
-  margin-bottom: 4px;
-  white-space: nowrap;
-}
-
-.tooltip-total {
-  margin-top: 8px;
-  font-weight: bold;
-}
-
-.scrollable-tooltip .leaflet-tooltip-content {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-@media (max-width: 767px) {
-  .tooltip-content {
-    max-width: 250px;
-  }
-
-  .tooltip-column {
-    min-width: 100%;
-  }
-}
-
-.candidate-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-
-.candidate-item {
-  margin-bottom: 15px;
-}
-
-.tooltip-content .party-list,
-.tooltip-content .list-items,
-.tooltip-content .candidate-items {
-  margin: 0;
-  padding: 0;
-}
-
-.tooltip-content .party-item {
-  margin-bottom: 10px;
-}
-
-.tooltip-content .party-name {
-  font-weight: bold;
-  color: #444;
-  margin-bottom: 5px;
-}
-
-.tooltip-content .list-items,
-.tooltip-content .candidate-items {
-  padding-left: 15px;
-  margin: 0;
-}
-
-.tooltip-content .list-item,
-.tooltip-content .candidate-item {
-  margin-bottom: 3px;
-  font-size: 0.9em;
-  color: #666;
-}
-
-.tooltip-total {
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-.tooltip-content .party-list,
-.tooltip-content .list-items,
-.tooltip-content .candidate-items {
-  list-style-type: none;
-  padding-left: 0;
-  margin: 0;
-}
-
-.tooltip-content .party-item {
-  margin-bottom: 10px;
-}
-
-.tooltip-content .party-name {
-  display: block;
-  margin-bottom: 5px;
-  color: #444;
-  font-weight: bold;
-}
-
-.tooltip-content .list-items,
-.tooltip-content .candidate-items {
-  padding-left: 15px;
-}
-
-.tooltip-content .list-item,
-.tooltip-content .candidate-item {
-  margin-bottom: 3px;
-  font-size: 0.9em;
-  color: #666;
-}
-
-.candidate-votes {
-  font-size: 0.9em;
-  color: #666;
-}
-
-.tooltip-content .party-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-
-.tooltip-content .party-item {
-  margin-bottom: 10px;
-}
-
-.tooltip-content .party-name {
-  display: block;
-  margin-bottom: 5px;
-  color: #444;
-  font-weight: bold;
-}
-
-.tooltip-content .list-items,
-.tooltip-content .candidate-items {
-  list-style-type: none;
-  padding-left: 15px;
-  margin: 0;
-}
-
-.tooltip-content .list-item,
-.tooltip-content .candidate-item {
-  margin-bottom: 3px;
-  font-size: 0.9em;
-  color: #666;
-}
 
 .legend {
   line-height: 18px;
@@ -1017,11 +434,60 @@ function normalizeString(str: string): string {
   padding: 6px 8px;
   border-radius: 5px;
 }
+
 .legend i {
   width: 18px;
   height: 18px;
   float: left;
   margin-right: 8px;
   opacity: 0.7;
+}
+
+.fixed-tooltip {
+  pointer-events: none;
+}
+
+.no-pointer-events {
+  pointer-events: none;
+}
+
+.leaflet-interactive:hover {
+  stroke-width: 1px !important;
+}
+
+.leaflet-pane path.leaflet-interactive:hover {
+  stroke-width: 1px !important;
+  stroke: inherit !important;
+}
+
+.spinner {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  z-index: 1000;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+:global(.custom-tooltip) {
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 5px;
+  font-size: 12px;
+  pointer-events: none;
 }
 </style>

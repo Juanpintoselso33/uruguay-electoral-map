@@ -6,7 +6,7 @@
           <RegionSelector
             :regions="regions"
             :currentRegion="currentRegion"
-            @regionSelected="setCurrentRegion"
+            @regionSelected="regionStore.setCurrentRegion"
           />
           <a
             href="https://github.com/juanpintoselso33"
@@ -22,7 +22,7 @@
               viewBox="0 0 24 24"
             >
               <path
-                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12z"
+                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.231 1.231 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801 5.76 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12z"
               />
             </svg>
             <span>Juan Pintos Elso</span>
@@ -39,22 +39,22 @@
         :selectedParty="selectedParty"
         :partiesByList="currentPartiesByList"
         :candidates="uniqueSortedCandidates"
-        :precandidatosByList="precandidatosByList"
+        :precandidatosByList="currentRegion.precandidatosByList"
         :candidatesByParty="candidatesByParty"
         :currentRegion="currentRegion.name"
         v-model:selectedLists="selectedLists"
         v-model:selectedCandidates="selectedCandidates"
-        @updateIsODN="updateIsODN"
-        @updateSelectedParty="updateSelectedParty"
+        @updateIsODN="regionStore.updateIsODN"
+        @updateSelectedParty="regionStore.updateSelectedParty"
       />
       <div class="map-container">
         <RegionMap
           :regionName="currentRegion.name"
           :selectedLists="selectedLists"
-          :votosPorListas="currentRegion.votosPorListas || {}"
-          :maxVotosPorListas="currentRegion.maxVotosPorListas || {}"
-          :partiesByList="currentRegion.partiesByList || {}"
-          :precandidatosByList="currentRegion.precandidatosByList || {}"
+          :votosPorListas="currentRegion.votosPorListas"
+          :maxVotosPorListas="currentRegion.maxVotosPorListas"
+          :partiesByList="currentRegion.partiesByList"
+          :precandidatosByList="currentRegion.precandidatosByList"
           :geojsonData="currentRegion.geojsonData"
           :selectedNeighborhood="selectedNeighborhood"
           :isODN="isODN"
@@ -62,8 +62,9 @@
           :selectedCandidates="selectedCandidates"
           :mapCenter="currentRegion.mapCenter"
           :mapZoom="currentRegion.mapZoom"
-          :getVotosForNeighborhood="getVotosForNeighborhood"
-          @updateSelectedNeighborhood="updateSelectedNeighborhood"
+          :currentRegion="currentRegion.name"
+          :getVotosForNeighborhood="regionStore.getVotosForNeighborhood"
+          @updateSelectedNeighborhood="regionStore.updateSelectedNeighborhood"
           @mapInitialized="handleMapInitialized"
         />
       </div>
@@ -72,291 +73,37 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed, watchEffect } from "vue";
-import Papa from "papaparse";
+import { onMounted } from "vue";
 import ListSelector from "./components/ListSelector.vue";
 import RegionMap from "./components/RegionMap.vue";
 import RegionSelector from "./components/RegionSelector.vue";
 import partiesAbbrev from "../public/partidos_abrev.json";
+import { useRegionStore } from "./stores/regionStore";
+import { storeToRefs } from "pinia";
 
-interface Region {
-  name: string;
-  odnCsvPath: string;
-  oddCsvPath: string;
-  geojsonPath: string;
-  mapCenter: [number, number];
-  mapZoom: number;
-  votosPorListas?: Record<string, Record<string, number>>;
-  maxVotosPorListas?: Record<string, number>;
-  partiesByList?: Record<string, string>;
-  precandidatosByList?: Record<string, string>;
-  geojsonData?: any;
-}
-
-const availableLists = ref<string[]>([]);
-const selectedLists = ref<string[]>([]);
-const selectedNeighborhood = ref<string | null>(null);
-const isODN = ref(false);
-const partiesByList = ref<Record<string, string>>({});
-const selectedParty = ref<string>("");
-const precandidatosByList = ref<Record<string, string>>({});
-const selectedCandidates = ref<string[]>([]);
-
-const regions = ref<Region[]>([
-  {
-    name: "Montevideo",
-    odnCsvPath: "/montevideo_odn.csv",
-    oddCsvPath: "/montevideo_odd.csv",
-    geojsonPath: "/montevideo_map.json",
-    mapCenter: [-34.8211, -56.225],
-    mapZoom: 11.5,
-  },
-  {
-    name: "Maldonado",
-    odnCsvPath: "/maldonado_odn.csv",
-    oddCsvPath: "/maldonado_odd.csv",
-    geojsonPath: "/maldonado_map.json",
-    mapCenter: [-34.5211, -55.0],
-    mapZoom: 9.5,
-  },
-  {
-    name: "Treinta y Tres",
-    odnCsvPath: "/treinta_y_tres_odn.csv",
-    oddCsvPath: "/treinta_y_tres_odd.csv",
-    geojsonPath: "/treinta_y_tres_map.json",
-    mapCenter: [-33.2211, -54.325],
-    mapZoom: 10.5,
-  },
-  {
-    name: "Colonia",
-    odnCsvPath: "/colonia_odn.csv",
-    oddCsvPath: "/colonia_odd.csv",
-    geojsonPath: "/colonia_map.json",
-    mapCenter: [-34.8211, -56.225],
-    mapZoom: 11.5,
-  },
-  // Add other regions here
-]);
-
-const currentRegion = ref<Region>(regions.value[0]);
+const regionStore = useRegionStore();
+const {
+  regions,
+  currentRegion,
+  availableLists,
+  selectedLists,
+  selectedNeighborhood,
+  isODN,
+  selectedParty,
+  selectedCandidates,
+  uniqueSortedCandidates,
+  candidatesByParty,
+  currentPartiesByList,
+} = storeToRefs(regionStore);
 
 const handleMapInitialized = () => {
   if (currentRegion.value.geojsonData) {
-    // Trigger an update of the RegionMap component
-    currentRegion.value = { ...currentRegion.value };
+    regionStore.updateCurrentRegion({ ...currentRegion.value });
   }
 };
-
-const onListsSelected = (lists: string[]) => {
-  selectedLists.value = lists;
-  selectedCandidates.value = []; // Clear selected candidates when lists are selected
-};
-
-const onCandidatesSelected = (candidates: string[]) => {
-  selectedCandidates.value = candidates;
-  selectedLists.value = []; // Clear selected lists when candidates are selected
-};
-
-const updateIsODN = (value: boolean) => {
-  isODN.value = value;
-  fetchRegionData(currentRegion.value);
-};
-
-const processCSV = (csvText: string) => {
-  const result = Papa.parse(csvText, { header: true });
-  const data: Array<{
-    ZONA: string;
-    CNT_VOTOS: string;
-    HOJA: string;
-    PARTIDO: string;
-    PRECANDIDATO: string;
-  }> = result.data;
-
-  const votosPorListas: Record<string, Record<string, number>> = {};
-  const maxVotosPorListas: Record<string, number> = {};
-  const lists = new Set<string>();
-  const partiesByList: Record<string, string> = {};
-  const precandidatosByList: Record<string, string> = {};
-
-  data.forEach((row) => {
-    if (!votosPorListas[row.HOJA]) {
-      votosPorListas[row.HOJA] = {};
-      maxVotosPorListas[row.HOJA] = 0;
-      partiesByList[row.HOJA] = row.PARTIDO;
-      precandidatosByList[row.HOJA] = row.PRECANDIDATO;
-    }
-    votosPorListas[row.HOJA][row.ZONA] =
-      (votosPorListas[row.HOJA][row.ZONA] || 0) + parseInt(row.CNT_VOTOS, 10);
-    maxVotosPorListas[row.HOJA] = Math.max(
-      maxVotosPorListas[row.HOJA],
-      votosPorListas[row.HOJA][row.ZONA]
-    );
-    lists.add(row.HOJA);
-  });
-
-  return {
-    votosPorListas,
-    maxVotosPorListas,
-    lists: Array.from(lists).sort((a, b) => parseInt(a) - parseInt(b)),
-    partiesByList,
-    precandidatosByList,
-  };
-};
-
-const fetchRegionData = async (region: Region) => {
-  try {
-    const csvPath = isODN.value ? region.odnCsvPath : region.oddCsvPath;
-    const response = await fetch(csvPath);
-    const csvText = await response.text();
-    console.log(`Fetched CSV data for ${region.name}:`, csvText.slice(0, 200)); // Log the first 200 characters of the CSV
-
-    const {
-      votosPorListas: newVotosPorListas,
-      maxVotosPorListas: newMaxVotosPorListas,
-      lists,
-      partiesByList: newPartiesByList,
-      precandidatosByList: newPrecandidatosByList,
-    } = processCSV(csvText);
-
-    console.log(`Processed data for ${region.name}:`, {
-      votosPorListasCount: Object.keys(newVotosPorListas).length,
-      maxVotosPorListasCount: Object.keys(newMaxVotosPorListas).length,
-      listsCount: lists.length,
-      partiesByListCount: Object.keys(newPartiesByList).length,
-      precandidatosByListCount: Object.keys(newPrecandidatosByList).length,
-    });
-
-    const geojsonResponse = await fetch(region.geojsonPath);
-    if (!geojsonResponse.ok) throw new Error("Failed to fetch GeoJSON data");
-    const geojsonData = await geojsonResponse.json();
-
-    availableLists.value = lists;
-    currentRegion.value = {
-      ...region,
-      votosPorListas: newVotosPorListas || {},
-      maxVotosPorListas: newMaxVotosPorListas || {},
-      partiesByList: newPartiesByList || {},
-      precandidatosByList: newPrecandidatosByList || {},
-      geojsonData: geojsonData || null,
-    };
-  } catch (error) {
-    console.error("Error fetching region data:", error);
-    // You might want to add some user-facing error handling here
-  }
-};
-
-const getVotosForNeighborhood = (neighborhood: string): number => {
-  if (selectedCandidates.value.length > 0) {
-    return selectedCandidates.value.reduce((acc, candidate) => {
-      return (
-        acc +
-        (currentRegion.value.votosPorListas
-          ? Object.entries(currentRegion.value.votosPorListas).reduce(
-              (sum, [list, votes]) => {
-                if (
-                  currentRegion.value.precandidatosByList?.[list] === candidate
-                ) {
-                  return sum + (votes[neighborhood] ?? 0);
-                }
-                return sum;
-              },
-              0
-            )
-          : 0)
-      );
-    }, 0);
-  } else {
-    return selectedLists.value.reduce((acc, sheetNumber) => {
-      return (
-        acc +
-        (currentRegion.value.votosPorListas?.[sheetNumber]?.[neighborhood] ?? 0)
-      );
-    }, 0);
-  }
-};
-
-const updateSelectedNeighborhood = (neighborhood: string | null) => {
-  selectedNeighborhood.value = neighborhood;
-};
-
-const updateSelectedParty = (party: string) => {
-  selectedParty.value = party;
-};
-
-const uniqueSortedCandidates = computed(() => {
-  if (!currentRegion.value || !currentRegion.value.precandidatosByList) {
-    return [];
-  }
-  return Array.from(
-    new Set(Object.values(currentRegion.value.precandidatosByList))
-  )
-    .filter(Boolean)
-    .sort((a, b) => a.localeCompare(b, "es"));
-});
-
-const candidatesByParty = computed(() => {
-  const result: Record<string, string> = {};
-  if (
-    currentRegion.value &&
-    currentRegion.value.precandidatosByList &&
-    currentRegion.value.partiesByList
-  ) {
-    Object.entries(currentRegion.value.precandidatosByList).forEach(
-      ([list, candidate]) => {
-        const party = currentRegion.value.partiesByList?.[list];
-        if (party && candidate) {
-          result[candidate] = party;
-        }
-      }
-    );
-  }
-  return result;
-});
-
-const setCurrentRegion = (region: Region) => {
-  if (currentRegion.value.name !== region.name) {
-    currentRegion.value = region;
-    selectedLists.value = []; // Reset selected lists
-    selectedCandidates.value = []; // Reset selected candidates
-    fetchRegionData(region);
-  }
-};
-
-const currentPartiesByList = computed(
-  () => currentRegion.value.partiesByList || {}
-);
 
 onMounted(() => {
-  fetchRegionData(currentRegion.value);
-});
-
-watch([isODN], () => {
-  selectedLists.value = []; // Reset selected lists
-  selectedCandidates.value = []; // Reset selected candidates
-  fetchRegionData(currentRegion.value);
-});
-
-watch(
-  () => currentRegion.value.name,
-  (newRegion, oldRegion) => {
-    if (newRegion !== oldRegion) {
-      selectedLists.value = [];
-      selectedCandidates.value = [];
-    }
-  }
-);
-
-watchEffect(() => {
-  console.log("ListSelector props:", {
-    availableListsCount: availableLists.value.length,
-    isODN: isODN.value,
-    partiesAbbrevCount: Object.keys(partiesAbbrev).length,
-    selectedParty: selectedParty.value,
-    partiesByListCount: Object.keys(currentPartiesByList.value).length,
-    candidatesCount: uniqueSortedCandidates.value.length,
-    precandidatosByListCount: Object.keys(precandidatosByList.value).length,
-    candidatesByPartyCount: Object.keys(candidatesByParty.value).length,
-  });
+  regionStore.fetchRegionData();
 });
 </script>
 
