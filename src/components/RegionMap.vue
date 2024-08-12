@@ -92,14 +92,35 @@ const {
 const { groupCandidatesByParty, groupListsByParty } = useVoteGrouping(props); // Call useVoteGrouping and get the necessary functions
 
 const groupedSelectedItems = computed(() => {
-  // Logic to compute grouped selected items based on props.selectedCandidates
-  return props.selectedCandidates.reduce((acc, candidate) => {
-    // Example grouping logic
-    const party = props.partiesByList[candidate]; // Adjust as necessary
-    if (!acc[party]) acc[party] = [];
-    acc[party].push(candidate);
-    return acc;
-  }, {} as Record<string, string[]>);
+  console.log("Selected Candidates:", props.selectedCandidates);
+  if (props.selectedCandidates.length > 0) {
+    const grouped = props.selectedCandidates.reduce((acc, candidate) => {
+      const party = props.partiesByList[candidate];
+      if (!acc[party]) acc[party] = { candidates: [], lists: [] };
+      acc[party].candidates.push({
+        name: candidate,
+        votes: getCandidateVotesForNeighborhood(candidate),
+      });
+      return acc;
+    }, {} as Record<string, { candidates: any[]; lists: any[] }>);
+
+    // Debugging grouped items
+    console.log("Grouped Selected Items:", grouped);
+    console.log("Selected Candidates:", props.selectedCandidates);
+    console.log("Grouped Selected Items:", grouped);
+    return grouped;
+  } else {
+    const grouped = props.selectedLists.reduce((acc, list) => {
+      const party = props.partiesByList[list];
+      if (!acc[party]) acc[party] = { candidates: [], lists: [] };
+      acc[party].lists.push({
+        name: list,
+        votes: getTotalVotesForList(props.votosPorListas, list),
+      });
+      return acc;
+    }, {} as Record<string, { candidates: any[]; lists: any[] }>);
+    return grouped;
+  }
 });
 
 const legendGrades = [0, 0.2, 0.4, 0.6, 0.8, 1];
@@ -159,8 +180,6 @@ const updateLocalMap = () => {
     (feature) => styleFeature(feature, props.getVotosForNeighborhood, getColor),
     createOnEachFeature(
       (e, feature, layer) => {
-        console.log("Mouseover event:", e);
-        console.log("Feature:", feature);
         if (!feature || !e.latlng) {
           console.warn("Invalid feature or latlng:", feature, e.latlng);
           return;

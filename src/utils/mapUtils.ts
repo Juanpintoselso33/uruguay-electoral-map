@@ -23,7 +23,6 @@ export const styleFeature = (
 
 export const getNormalizedNeighborhood = (feature: GeoJSON.Feature): string => {
   if (!feature || !feature.properties) {
-    console.error("Invalid feature object:", feature);
     return "";
   }
   return normalizeString(
@@ -60,20 +59,15 @@ export const createOnEachFeature = (
 
     layer.on({
       mouseover: (e) => {
-        console.log("Mouseover event:", e);
-        console.log("Feature:", feature);
         if (e.latlng) {
           handleFeatureMouseover(e, feature, layer, map, (feature) => {
             const neighborhood = getNormalizedNeighborhood(feature);
             const votes = getVotesForNeighborhood2(neighborhood);
             return `<strong>${neighborhood}</strong><br>Votes: ${votes}`;
           });
-        } else {
-          console.warn("LatLng is undefined", e);
         }
       },
       mouseout: (e) => {
-        console.log("Mouseout event:", e);
         handleFeatureMouseout(e, feature, layer);
       },
       click: (e) => handleFeatureClick(feature),

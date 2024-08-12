@@ -64,6 +64,9 @@
           :mapZoom="currentRegion.mapZoom"
           :currentRegion="currentRegion.name"
           :getVotosForNeighborhood="regionStore.getVotosForNeighborhood"
+          :getCandidateVotesForNeighborhood="
+            regionStore.getCandidateVotesForNeighborhood
+          "
           @updateSelectedNeighborhood="regionStore.updateSelectedNeighborhood"
           @mapInitialized="handleMapInitialized"
         />

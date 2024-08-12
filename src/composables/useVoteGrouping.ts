@@ -11,6 +11,7 @@ import {
 } from "../utils/mapUtils"; // Added import
 
 export function useVoteGrouping(props) {
+  console.log("useVoteGrouping called with props:", props);
   const groupCandidatesByParty = (
     candidateVotes: CandidateVote[]
   ): GroupedCandidates => {
@@ -52,6 +53,7 @@ export function useVoteGrouping(props) {
   };
 
   const groupedSelectedItems = computed<Record<string, PartyData>>(() => {
+    console.log("Selected Candidates:", props.selectedCandidates);
     if (props.selectedCandidates.length > 0) {
       const grouped: Record<string, PartyData> = {};
       props.selectedCandidates.forEach((candidate) => {
@@ -64,16 +66,17 @@ export function useVoteGrouping(props) {
         }
         const votes = getCandidateTotalVotesAllNeighborhoods(
           props.geojsonData,
-          props.getCandidateVotesForNeighborhood, // Asegúrate de pasar la función correcta aquí
+          props.getCandidateVotesForNeighborhood,
           candidate
         );
+        console.log(`Votes for ${candidate} in ${partyName}:`, votes);
         grouped[partyName].totalVotes += votes;
         grouped[partyName].candidates?.push({ name: candidate, votes });
       });
       Object.values(grouped).forEach((partyData: any) => {
         partyData.candidates.sort((a, b) => b.votes - a.votes);
       });
-      return Object.fromEntries(
+      const sortedGrouped = Object.fromEntries(
         Object.entries(grouped)
           .sort(([, a], [, b]) => b.totalVotes - a.totalVotes)
           .map(([party, data]) => [
@@ -83,6 +86,8 @@ export function useVoteGrouping(props) {
             data,
           ])
       );
+      console.log("Grouped Selected Items:", sortedGrouped);
+      return sortedGrouped;
     } else {
       const grouped: Record<string, PartyData> = {};
       props.selectedLists.forEach((list) => {
@@ -97,7 +102,7 @@ export function useVoteGrouping(props) {
       Object.values(grouped).forEach((partyData: any) => {
         partyData.lists.sort((a, b) => b.votes - a.votes);
       });
-      return Object.fromEntries(
+      const sortedGrouped = Object.fromEntries(
         Object.entries(grouped)
           .sort(([, a], [, b]) => b.totalVotes - a.totalVotes)
           .map(([party, data]) => [
@@ -107,6 +112,8 @@ export function useVoteGrouping(props) {
             data,
           ])
       );
+      console.log("Grouped Selected Items (Lists):", sortedGrouped);
+      return sortedGrouped;
     }
   });
 

@@ -38,11 +38,16 @@
 interface Props {
   isMobileHidden: boolean;
   selectedCandidates: string[];
-  groupedSelectedItems: Record<string, any>;
+  groupedSelectedItems: Record<string, { candidates: any[]; lists: any[] }>;
   getTotalVotes: () => number;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
+
+// Debugging props
+console.log("Selected Candidates:", props.selectedCandidates);
+console.log("Grouped Selected Items:", props.groupedSelectedItems);
+console.log("Is Mobile Hidden:", props.isMobileHidden);
 </script>
 
 <style scoped>

@@ -22,9 +22,6 @@ export function useTooltip() {
     map: L.Map,
     getTooltipContent: (feature: GeoJSON.Feature) => string
   ) => {
-    console.log("Handling feature mouseover");
-    console.log("Event latlng:", e.latlng);
-    console.log("Feature:", feature);
     createTooltip(map, e.latlng, getTooltipContent(feature));
   };
 

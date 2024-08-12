@@ -164,6 +164,27 @@ export const useRegionStore = defineStore("region", () => {
     }
   };
 
+  const getCandidateVotesForNeighborhood = (neighborhood: string): number => {
+    return selectedCandidates.value.reduce((acc, candidate) => {
+      return (
+        acc +
+        (currentRegion.value.votosPorListas
+          ? Object.entries(currentRegion.value.votosPorListas).reduce(
+              (sum, [list, votes]) => {
+                if (
+                  currentRegion.value.precandidatosByList?.[list] === candidate
+                ) {
+                  return sum + (votes[neighborhood] ?? 0);
+                }
+                return sum;
+              },
+              0
+            )
+          : 0)
+      );
+    }, 0);
+  };
+
   const uniqueSortedCandidates = computed(() => {
     if (!currentRegion.value || !currentRegion.value.precandidatosByList) {
       return [];
@@ -227,6 +248,7 @@ export const useRegionStore = defineStore("region", () => {
     setCurrentRegion,
     fetchRegionData,
     getVotosForNeighborhood,
+    getCandidateVotesForNeighborhood,
     uniqueSortedCandidates,
     candidatesByParty,
     currentPartiesByList,

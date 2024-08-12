@@ -337,6 +337,21 @@ onMounted(() => {
   filterLists();
   toggleMobileVisibility();
 });
+
+// Debugging
+watch(
+  () => props.selectedLists,
+  (newSelectedLists) => {
+    console.log("Selected Lists Updated:", newSelectedLists);
+  }
+);
+
+watch(
+  () => props.selectedCandidates,
+  (newSelectedCandidates) => {
+    console.log("Selected Candidates Updated:", newSelectedCandidates);
+  }
+);
 </script>
 
 <style scoped>
