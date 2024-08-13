@@ -2,6 +2,7 @@ import L from "leaflet";
 import chroma from "chroma-js";
 import { GeoJSON, GeoJsonProperties } from "geojson";
 import { normalizeString } from "./stringUtils";
+import { useVoteCalculations } from "../composables/useVoteCalculations";
 
 export const styleFeature = (
   feature: GeoJSON.Feature<GeoJSON.Geometry, GeoJsonProperties> | undefined,
@@ -9,7 +10,7 @@ export const styleFeature = (
   getColor: (votes: number) => string
 ): L.PathOptions => {
   if (!feature || !feature.properties) {
-    console.log("Feature or properties are undefined:", feature);
+    console.log("Feature or properties are  undefined:", feature);
     return {};
   }
 
@@ -43,6 +44,15 @@ export const getNormalizedNeighborhood = (feature: GeoJSON.Feature): string => {
   );
 };
 
+export const getTooltipContent = (
+  feature: GeoJSON.Feature,
+  getVotesForNeighborhood: (neighborhood: string) => number
+): string => {
+  const neighborhood = getNormalizedNeighborhood(feature);
+  const votes = getVotesForNeighborhood(neighborhood);
+  return `<strong>${neighborhood}</strong><br>Votes: ${votes}`;
+};
+
 export const createOnEachFeature = (
   handleFeatureMouseover: (
     e: L.LeafletMouseEvent,
@@ -70,11 +80,9 @@ export const createOnEachFeature = (
     layer.on({
       mouseover: (e) => {
         if (e.latlng) {
-          handleFeatureMouseover(e, feature, layer, map, (feature) => {
-            const neighborhood = getNormalizedNeighborhood(feature);
-            const votes = getVotesForNeighborhood(neighborhood);
-            return `<strong>${neighborhood}</strong><br>Votes: ${votes}`;
-          });
+          handleFeatureMouseover(e, feature, layer, map, (f) =>
+            getTooltipContent(f, getVotesForNeighborhood)
+          );
         }
       },
       mouseout: (e) => {
@@ -85,37 +93,16 @@ export const createOnEachFeature = (
   };
 };
 
-export const getTotalVotesForList = (
-  votosPorListas: Record<string, Record<string, number>>,
-  list: string
-) => {
-  if (!votosPorListas[list]) {
-    return 0;
-  }
-  return Object.values(votosPorListas[list]).reduce((a, b) => a + b, 0);
-};
-
 export const getCandidateTotalVotesAllNeighborhoods = (
   votosPorListas: Record<string, Record<string, number>>,
   selectedCandidates: Record<number, string>,
   precandidatosByList: Record<string, string>
 ): number => {
-  const candidatesArray = Object.values(selectedCandidates);
-  return Object.entries(votosPorListas).reduce(
-    (total, [list, neighborhoodVotes]) => {
-      const candidate = Object.entries(precandidatosByList).find(([_, c]) =>
-        candidatesArray.includes(c)
-      )?.[0];
-      return (
-        total +
-        (candidate
-          ? Object.values(neighborhoodVotes).reduce(
-              (sum, votes) => sum + votes,
-              0
-            )
-          : 0)
-      );
-    },
-    0
+  const { getCandidateTotalVotesForAllNeighborhoods } = useVoteCalculations(
+    { votosPorListas, precandidatosByList },
+    null
   );
+  return Object.values(selectedCandidates).reduce((total, candidate) => {
+    return total + getCandidateTotalVotesForAllNeighborhoods(candidate);
+  }, 0);
 };

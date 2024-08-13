@@ -14,7 +14,10 @@ export interface GroupedLists {
 }
 
 export interface GroupedCandidates {
-  [party: string]: { candidate: string; votes: number }[];
+  [party: string]: {
+    totalVotes: number;
+    candidates: CandidateVote[];
+  };
 }
 
 export interface PartyData {

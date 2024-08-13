@@ -4,11 +4,13 @@
     <div class="selected-lists-content">
       <ul class="party-list">
         <li
-          v-for="(partyData, party) in groupedSelectedItems"
+          v-for="(partyData, party) in sortedGroupedItems"
           :key="party"
           class="party-item"
         >
-          <span class="party-name">{{ parseFullPartyName(party) }}</span>
+          <span class="party-name">{{
+            parseFullPartyName(String(party))
+          }}</span>
           <ul v-if="partyData.candidates" class="candidate-items">
             <li
               v-for="candidate in partyData.candidates"
@@ -30,7 +32,6 @@
           <div class="party-total">
             <span class="total-label"
               >Total:
-
               {{
                 partyData.candidates
                   ? partyData.candidates.reduce(
@@ -51,23 +52,65 @@
 
 <script setup lang="ts">
 import { parseFullPartyName } from "../../utils/stringUtils";
+import { computed } from "vue";
 
 interface Props {
   isMobileHidden: boolean;
   selectedCandidates: string[];
   groupedSelectedItems: Record<
     string,
-    { candidates: { name: string; votes: number }[]; lists: any[] }
+    {
+      candidates: { name: string; votes: number }[];
+      lists: { number: string; votes: number }[];
+    }
   >;
   getTotalVotes: () => number;
+  sortBy: "votes" | "alphabetical";
 }
 
 const props = defineProps<Props>();
 
-// Debugging props
-console.log("Selected Candidates:", props.selectedCandidates);
-console.log("Grouped Selected Items:", props.groupedSelectedItems);
-console.log("Is Mobile Hidden:", props.isMobileHidden);
+// Sorting function
+const sortByVotes = <T extends { votes: number }>(a: T, b: T) =>
+  b.votes - a.votes;
+const sortAlphabetically = <T extends { name?: string; number?: string }>(
+  a: T,
+  b: T
+) => {
+  const aValue = a.name || a.number || "";
+  const bValue = b.name || b.number || "";
+  return aValue.localeCompare(bValue);
+};
+
+// Sorted grouped items
+const sortedGroupedItems = computed(() => {
+  const sorted = Object.entries(props.groupedSelectedItems).sort(
+    ([, a], [, b]) => {
+      const aVotes = a.candidates
+        ? a.candidates.reduce((sum, c) => sum + c.votes, 0)
+        : a.lists.reduce((sum, l) => sum + l.votes, 0);
+      const bVotes = b.candidates
+        ? b.candidates.reduce((sum, c) => sum + c.votes, 0)
+        : b.lists.reduce((sum, l) => sum + l.votes, 0);
+      return bVotes - aVotes;
+    }
+  );
+
+  return Object.fromEntries(
+    sorted.map(([party, data]) => {
+      if (data.candidates) {
+        data.candidates.sort(
+          props.sortBy === "votes" ? sortByVotes : sortAlphabetically
+        );
+      } else if (data.lists) {
+        data.lists.sort(
+          props.sortBy === "votes" ? sortByVotes : sortAlphabetically
+        );
+      }
+      return [party, data];
+    })
+  );
+});
 </script>
 
 <style scoped>

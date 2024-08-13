@@ -67,7 +67,7 @@
         <!-- Lists section -->
         <template v-if="showLists">
           <h2>Listas</h2>
-          <div v-if="filteredLists.length === 0" class="no-results">
+          <div v-if="filteredListsByParty.length === 0" class="no-results">
             No se encontraron listas que coincidan con la búsqueda.
           </div>
           <div class="search-bar">
@@ -87,7 +87,7 @@
               <span class="list-number">Seleccionar todas las listas</span>
             </label>
             <label
-              v-for="list in filteredLists"
+              v-for="list in filteredListsByParty"
               :key="list"
               class="list-option"
               v-memo="[list, props.selectedLists.includes(list)]"
@@ -163,6 +163,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from "vue";
 import { useDebounce } from "@vueuse/core";
+import { useSorting } from "../composables/useSorting";
 
 // Step 1: Define interfaces for props and emits
 interface Props {
@@ -205,23 +206,30 @@ const uniqueParties = computed(() => {
     .sort();
 });
 
+const { sortListsAlphabetically, sortCandidatesAlphabetically } =
+  useSorting(props);
+
 const filteredListsByParty = computed(() => {
-  if (!selectedParty.value) return props.lists;
-
-  const selectedPartyName = selectedParty.value.replace("Partido ", "");
-
-  return props.lists.filter(
-    (list) => props.partiesByList[list] === selectedPartyName
-  );
+  const lists = !selectedParty.value
+    ? props.lists
+    : props.lists.filter(
+        (list) =>
+          props.partiesByList[list] ===
+          selectedParty.value.replace("Partido ", "")
+      );
+  return lists.sort((a, b) => parseInt(a) - parseInt(b)); // Sort lists by number
 });
 
 const filteredCandidates = computed(() => {
-  if (!selectedParty.value) return props.candidates;
+  if (!selectedParty.value)
+    return sortCandidatesAlphabetically.value(props.candidates);
 
   const selectedPartyName = selectedParty.value.replace("Partido ", "");
 
-  return props.candidates.filter(
-    (candidate) => props.candidatesByParty[candidate] === selectedPartyName
+  return sortCandidatesAlphabetically.value(
+    props.candidates.filter(
+      (candidate) => props.candidatesByParty[candidate] === selectedPartyName
+    )
   );
 });
 
@@ -266,6 +274,10 @@ const onListSelect = (list: string, isSelected: boolean) => {
 
 const onDataSourceToggle = () => {
   emit("updateIsODN", localIsODN.value);
+  if (!localIsODN.value) {
+    showLists.value = true;
+    emit("update:selectedCandidates", []);
+  }
 };
 
 const onSelectorToggle = () => {
@@ -336,6 +348,15 @@ onMounted(() => {
   filterLists();
   toggleMobileVisibility();
 });
+
+// Add this after the existing watch functions
+watch(
+  [() => props.lists, () => props.partiesByList, () => selectedParty.value],
+  () => {
+    filterLists();
+  },
+  { immediate: true }
+);
 
 // Debugging
 watch(

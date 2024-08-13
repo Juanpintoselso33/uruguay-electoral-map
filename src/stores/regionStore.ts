@@ -2,6 +2,9 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import Papa from "papaparse";
 import { Region } from "../types/Region";
+import { CandidateVote } from "../types/VoteTypes";
+import { useVoteCalculations } from "../composables/useVoteCalculations";
+import { useVoteGrouping } from "../composables/useVoteGrouping";
 
 export const useRegionStore = defineStore("region", () => {
   const regions = ref<Region[]>([
@@ -10,32 +13,24 @@ export const useRegionStore = defineStore("region", () => {
       odnCsvPath: "/montevideo_odn.csv",
       oddCsvPath: "/montevideo_odd.csv",
       geojsonPath: "/montevideo_map.json",
-      mapCenter: [-34.8211, -56.225],
-      mapZoom: 11.5,
     },
     {
       name: "Treinta y Tres",
       odnCsvPath: "/treinta_y_tres_odn.csv",
       oddCsvPath: "/treinta_y_tres_odd.csv",
       geojsonPath: "/treinta_y_tres_map.json",
-      mapCenter: [-33.3333, -54.3333],
-      mapZoom: 10,
     },
     {
       name: "Maldonado",
       odnCsvPath: "/maldonado_odn.csv",
       oddCsvPath: "/maldonado_odd.csv",
       geojsonPath: "/maldonado_map.json",
-      mapCenter: [-34.8211, -56.225],
-      mapZoom: 11.5,
     },
     {
       name: "Colonia",
       odnCsvPath: "/colonia_odn.csv",
       oddCsvPath: "/colonia_odd.csv",
       geojsonPath: "/colonia_map.json",
-      mapCenter: [-34.8211, -56.225],
-      mapZoom: 11.5,
     },
     // Add other regions here
   ]);
@@ -143,58 +138,30 @@ export const useRegionStore = defineStore("region", () => {
     };
   };
 
-  const getVotosForNeighborhood = (neighborhood: string): number => {
-    if (selectedCandidates.value.length > 0) {
-      return selectedCandidates.value.reduce((acc, candidate) => {
-        return (
-          acc +
-          (currentRegion.value.votosPorListas
-            ? Object.entries(currentRegion.value.votosPorListas).reduce(
-                (sum, [list, votes]) => {
-                  if (
-                    currentRegion.value.precandidatosByList?.[list] ===
-                    candidate
-                  ) {
-                    return sum + (votes[neighborhood] ?? 0);
-                  }
-                  return sum;
-                },
-                0
-              )
-            : 0)
-        );
-      }, 0);
-    } else {
-      return selectedLists.value.reduce((acc, sheetNumber) => {
-        return (
-          acc +
-          (currentRegion.value.votosPorListas?.[sheetNumber]?.[neighborhood] ??
-            0)
-        );
-      }, 0);
-    }
-  };
+  const voteCalculations = useVoteCalculations(
+    {
+      selectedCandidates,
+      selectedLists,
+      votosPorListas: computed(() => currentRegion.value.votosPorListas || {}),
+      precandidatosByList: computed(
+        () => currentRegion.value.precandidatosByList || {}
+      ),
+    },
+    currentRegion
+  );
 
-  const getCandidateVotesForNeighborhood = (neighborhood: string): number => {
-    return selectedCandidates.value.reduce((acc, candidate) => {
-      return (
-        acc +
-        (currentRegion.value.votosPorListas
-          ? Object.entries(currentRegion.value.votosPorListas).reduce(
-              (sum, [list, votes]) => {
-                if (
-                  currentRegion.value.precandidatosByList?.[list] === candidate
-                ) {
-                  return sum + (votes[neighborhood] ?? 0);
-                }
-                return sum;
-              },
-              0
-            )
-          : 0)
-      );
-    }, 0);
-  };
+  const voteGrouping = useVoteGrouping(
+    {
+      selectedCandidates,
+      selectedLists,
+      votosPorListas: computed(() => currentRegion.value.votosPorListas || {}),
+      partiesByList: computed(() => currentRegion.value.partiesByList || {}),
+      precandidatosByList: computed(
+        () => currentRegion.value.precandidatosByList || {}
+      ),
+    },
+    voteCalculations
+  );
 
   const uniqueSortedCandidates = computed(() => {
     if (!currentRegion.value || !currentRegion.value.precandidatosByList) {
@@ -247,6 +214,27 @@ export const useRegionStore = defineStore("region", () => {
     selectedParty.value = party;
   };
 
+  const getCandidateVotesForNeighborhood = (
+    neighborhood: string
+  ): CandidateVote[] => {
+    const votes: Record<string, number> = {}; // Assuming this is how you get the votes
+
+    // Populate the votes object with candidate names and their respective votes
+    selectedCandidates.value.forEach((candidate) => {
+      votes[candidate] = voteCalculations.getVotesForCandidateInNeighborhood(
+        candidate,
+        neighborhood
+      );
+    });
+
+    // Convert the votes object to an array of CandidateVote
+    return Object.entries(votes).map(([candidate, voteCount]) => ({
+      candidate,
+      votes: voteCount,
+      party: currentRegion.value.partiesByList?.[candidate] || "Unknown", // Adjust this based on your data structure
+    }));
+  };
+
   return {
     regions,
     currentRegion,
@@ -258,8 +246,6 @@ export const useRegionStore = defineStore("region", () => {
     selectedCandidates,
     setCurrentRegion,
     fetchRegionData,
-    getVotosForNeighborhood,
-    getCandidateVotesForNeighborhood,
     uniqueSortedCandidates,
     candidatesByParty,
     currentPartiesByList,
@@ -267,5 +253,9 @@ export const useRegionStore = defineStore("region", () => {
     updateIsODN,
     updateSelectedNeighborhood,
     updateSelectedParty,
+    getVotesForNeighborhood: voteCalculations.getVotesForNeighborhood,
+    getCandidateVotesForNeighborhood,
+    groupCandidatesByParty: voteGrouping.groupCandidatesByParty,
+    groupListsByParty: voteGrouping.groupListsByParty,
   };
 });

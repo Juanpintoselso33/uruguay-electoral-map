@@ -1,13 +1,18 @@
 <template>
   <div class="map-legend">
     <div
-      v-for="(grade, index) in legendGrades"
+      v-for="(grade, index) in props.legendGrades"
       :key="index"
       class="legend-item"
     >
       <div
         class="legend-color"
-        :style="{ backgroundColor: getColor(grade) }"
+        :style="{
+          backgroundColor: props.getColor(
+            grade / props.maxVotes,
+            props.maxVotes
+          ),
+        }"
       ></div>
       <span class="legend-label">{{ formatLegendLabel(grade, index) }}</span>
     </div>
@@ -15,20 +20,20 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+
 const props = defineProps<{
   legendGrades: number[];
-  getColor: (value: number) => string;
+  getColor: (value: number, maxVotes: number) => string;
   maxVotes: number;
 }>();
 
 const formatLegendLabel = (grade: number, index: number) => {
-  const value = Math.round(grade * props.maxVotes);
   const nextValue =
     index < props.legendGrades.length - 1
-      ? Math.round(props.legendGrades[index + 1] * props.maxVotes)
+      ? props.legendGrades[index + 1]
       : null;
-
-  return nextValue ? `${value} - ${nextValue}` : `${value}+`;
+  return nextValue ? `${grade} - ${nextValue}` : `${grade}+`;
 };
 </script>
 

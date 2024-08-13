@@ -1,11 +1,12 @@
 <template>
   <div class="montevideo-map-wrapper">
     <div class="montevideo-map" ref="mapContainer"></div>
+    <Spinner :isLoading="isLoading" />
     <MapLegend
       v-if="showLegend"
-      :legendGrades="legendGrades"
-      :getColor="getColor"
-      :maxVotes="getMaxVotes"
+      :legendGrades="calculateLegendGrades()"
+      :getColor="(grade) => getColor(grade * getMaxVotes(), getMaxVotes())"
+      :maxVotes="getMaxVotes()"
     />
     <NeighborhoodInfo
       :selectedNeighborhood="selectedNeighborhood"
@@ -21,6 +22,7 @@
     :selectedCandidates="props.selectedCandidates"
     :groupedSelectedItems="groupedSelectedItems"
     :getTotalVotes="getTotalVotes"
+    :sortBy="'votes'"
   />
 </template>
 
@@ -28,25 +30,20 @@
 import { ref, onMounted, watch, computed, onUnmounted } from "vue";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import chroma from "chroma-js";
-import { GeoJSON } from "geojson";
 import MapLegend from "./mapComponents/MapLegend.vue";
 import NeighborhoodInfo from "./mapComponents/NeighborhoodInfo.vue";
 import MobileToggle from "./mapComponents/MobileToggle.vue";
 import SelectedListsInfo from "./mapComponents/SelectedListsInfo.vue";
+import Spinner from "./mapComponents/Spinner.vue";
 import { useMapStore } from "../stores/mapStore";
 import { storeToRefs } from "pinia";
-import {
-  styleFeature,
-  getNormalizedNeighborhood,
-  createOnEachFeature,
-  getTotalVotesForList,
-  getCandidateTotalVotesAllNeighborhoods,
-} from "../utils/mapUtils";
-import { createTooltipContent } from "../utils/tooltipUtils";
+import { getNormalizedNeighborhood } from "../utils/mapUtils";
 import { useTooltip } from "../composables/useToolTip";
 import { useVoteCalculations } from "../composables/useVoteCalculations";
 import { useVoteGrouping } from "../composables/useVoteGrouping";
+import { useColorScale } from "../composables/useColorScale";
+import { useMapInitialization } from "../composables/useMapInitialization";
+import { useMapUpdates } from "../composables/useMapUpdates";
 
 interface Props {
   regionName: string;
@@ -61,8 +58,6 @@ interface Props {
   partiesByList: Record<string, string>;
   precandidatosByList: Record<string, string>;
   selectedCandidates: string[];
-  mapCenter: [number, number];
-  mapZoom: number;
   currentRegion: string;
   getCandidateVotesForNeighborhood: (
     neighborhood: string
@@ -77,7 +72,6 @@ const emit = defineEmits<{
 }>();
 
 const mapStore = useMapStore();
-const { initializeMap, updateMap, fitMapToBounds } = mapStore;
 const { map, showLegend, isMobileHidden, selectedNeighborhood } =
   storeToRefs(mapStore);
 
@@ -89,16 +83,20 @@ const {
   getCandidateTotalVotes,
   getTotalVotes,
   getCandidateTotalVotesForAllNeighborhoods,
+  getTotalVotesForList,
+  getVotesForCandidateInNeighborhood,
 } = useVoteCalculations(props, props.currentRegion);
 
 const { groupCandidatesByParty, groupListsByParty, groupedSelectedItems } =
   useVoteGrouping(props, {
+    getTotalVotesForList,
     getCandidateTotalVotesForAllNeighborhoods,
   });
 
-const legendGrades = [0, 0.2, 0.4, 0.6, 0.8, 1];
+const { getColor } = useColorScale();
+const { initializeMap, fitMapToBounds } = useMapInitialization();
 
-const getMaxVotes = computed(() => {
+const getMaxVotes = () => {
   if (!props.geojsonData || !props.geojsonData.features) {
     return 0;
   }
@@ -110,131 +108,55 @@ const getMaxVotes = computed(() => {
       )
     : Math.max(
         ...props.geojsonData.features.map((feature: any) =>
-          props.getVotosForNeighborhood(getNormalizedNeighborhood(feature))
+          getVotesForNeighborhood(getNormalizedNeighborhood(feature))
         )
       );
-});
-
-const getColor = (votes: number): string => {
-  if (votes === 0 || getMaxVotes.value === 0) {
-    return "#FFFFFF";
-  }
-  const ratio = votes / getMaxVotes.value;
-  const colorScale = (chroma as any)
-    .scale(["#ffffb2", "#fecc5c", "#fd8d3c", "#f03b20", "#bd0026"])
-    .mode("lab")
-    .domain([0, 1]);
-  return colorScale(ratio).hex();
 };
+
+const calculateLegendGrades = () => {
+  const maxVotes = getMaxVotes();
+  return [0, 0.2, 0.4, 0.6, 0.8, 1].map((grade) =>
+    Math.round(grade * maxVotes)
+  );
+};
+
+const { updateMap } = useMapUpdates(
+  props,
+  map.value,
+  getMaxVotes,
+  {
+    getVotesForNeighborhood,
+    getCandidateVotesForNeighborhood,
+    getCandidateTotalVotes,
+    getTotalVotes,
+    getCandidateTotalVotesForAllNeighborhoods,
+    getTotalVotesForList,
+    getVotesForCandidateInNeighborhood,
+  },
+  { groupCandidatesByParty, groupListsByParty, groupedSelectedItems }
+);
+
+const isLoading = ref(true);
 
 const initializeLocalMap = () => {
   if (mapContainer.value && !map.value) {
-    initializeMap(mapContainer.value, props.mapCenter, props.mapZoom);
+    isLoading.value = true;
+    map.value = initializeMap(mapContainer.value, props.geojsonData);
     updateLocalMap();
-    fitMapToBounds(props.geojsonData);
 
     setTimeout(() => {
       map.value?.invalidateSize();
+      isLoading.value = false;
       emit("mapInitialized");
-    }, 100);
+    }, 500);
   }
 };
 
 const updateLocalMap = () => {
-  console.log("DEBUG: Entered updateLocalMap");
-
-  if (!props.geojsonData) {
-    console.warn("GeoJSON data is undefined");
-    return;
+  if (map.value) {
+    updateMap(map.value);
+    map.value.invalidateSize();
   }
-
-  const getVotesFunction = (neighborhood: string): number => {
-    console.log(
-      "DEBUG: Entered getVotesFunction for neighborhood:",
-      neighborhood
-    );
-
-    if (props.selectedCandidates.length > 0) {
-      console.log("DEBUG: Selected Candidates are:", props.selectedCandidates);
-
-      const candidateVotes = getCandidateVotesForNeighborhood(neighborhood);
-      console.log("DEBUG: Candidate Votes:", candidateVotes);
-
-      const totalVotes = Object.values(candidateVotes).reduce(
-        (sum, { votes }) => sum + votes,
-        0
-      );
-
-      console.log(`Votes for neighborhood ${neighborhood}:`, totalVotes);
-      return totalVotes;
-    }
-
-    const votes = props.getVotosForNeighborhood(neighborhood);
-    console.log(`Votes for neighborhood ${neighborhood} from lists:`, votes);
-    return votes;
-  };
-
-  mapStore.updateMap(
-    props.geojsonData,
-    (feature) => {
-      const neighborhood = getNormalizedNeighborhood(feature);
-      const votes = getVotesFunction(neighborhood);
-      console.log(`SE MANDA PARA PINTAR: Votes for ${neighborhood}:`, votes); // Debugging line
-      return styleFeature(
-        feature,
-        getVotesFunction,
-        getColor,
-        getNormalizedNeighborhood
-      );
-    },
-    createOnEachFeature(
-      (e, feature, layer) => {
-        if (!feature || !e.latlng) {
-          console.warn("Invalid feature or latlng:", feature, e.latlng);
-          return;
-        }
-        handleFeatureMouseover(e, feature, layer, map.value!, (feature) => {
-          const neighborhood = getNormalizedNeighborhood(feature);
-          const votes = props.getVotosForNeighborhood(neighborhood);
-          return createTooltipContent(
-            neighborhood,
-            votes,
-            props.selectedCandidates,
-            props.partiesAbbrev,
-            getCandidateVotesForNeighborhood,
-            (candidateVotes) =>
-              groupCandidatesByParty(
-                candidateVotes,
-                props.partiesAbbrev,
-                props.precandidatosByList,
-                props.partiesByList
-              ),
-            groupListsByParty
-          );
-        });
-      },
-      (e, feature, layer) => {
-        if (!feature) {
-          console.warn("Invalid feature object");
-          return;
-        }
-        handleFeatureMouseout();
-      },
-      (feature) => {
-        if (!feature) {
-          console.warn("Invalid feature object");
-          return;
-        }
-        mapStore.setSelectedNeighborhood(getNormalizedNeighborhood(feature));
-      },
-      (neighborhood: string) => getCandidateTotalVotes(neighborhood),
-      getColor,
-      map.value!
-    )
-  );
-
-  // Force map refresh
-  map.value?.invalidateSize();
 };
 
 const toggleMobileVisibility = () => {
@@ -245,7 +167,15 @@ watch(
   [() => props.regionName, () => props.geojsonData],
   ([newRegionName, newGeojsonData]) => {
     if (newRegionName && mapContainer.value && newGeojsonData) {
-      updateLocalMap();
+      isLoading.value = true;
+      if (map.value) {
+        map.value.remove();
+        map.value = null;
+      }
+      initializeLocalMap();
+      setTimeout(() => {
+        isLoading.value = false;
+      }, 500);
     }
   },
   { deep: true }
