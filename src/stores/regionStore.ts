@@ -5,6 +5,7 @@ import { Region } from "../types/Region";
 import { CandidateVote } from "../types/VoteTypes";
 import { useVoteCalculations } from "../composables/useVoteCalculations";
 import { useVoteGrouping } from "../composables/useVoteGrouping";
+import { getNormalizedNeighborhood } from "../utils/mapUtils";
 
 export const useRegionStore = defineStore("region", () => {
   const regions = ref<Region[]>([
@@ -235,6 +236,39 @@ export const useRegionStore = defineStore("region", () => {
     }));
   };
 
+  const getMaxVotes = (
+    geojsonData: any,
+    selectedCandidates: string[],
+    getVotesForNeighborhood: Function,
+    getCandidateTotalVotes: Function
+  ) => {
+    console.log("getMaxVotes called");
+    if (!geojsonData || !geojsonData.features) {
+      console.log("No geojsonData or features");
+      return 0;
+    }
+    const maxVotes =
+      selectedCandidates.length > 0
+        ? Math.max(
+            ...geojsonData.features.map((feature: any) => {
+              const neighborhood = getNormalizedNeighborhood(feature);
+              const votes = getCandidateTotalVotes(neighborhood);
+              console.log(`Candidate votes for ${neighborhood}: ${votes}`);
+              return votes;
+            })
+          )
+        : Math.max(
+            ...geojsonData.features.map((feature: any) => {
+              const neighborhood = getNormalizedNeighborhood(feature);
+              const votes = getVotesForNeighborhood(neighborhood);
+              console.log(`Total votes for ${neighborhood}: ${votes}`);
+              return votes;
+            })
+          );
+    console.log(`Max votes: ${maxVotes}`);
+    return maxVotes;
+  };
+
   return {
     regions,
     currentRegion,
@@ -257,5 +291,6 @@ export const useRegionStore = defineStore("region", () => {
     getCandidateVotesForNeighborhood,
     groupCandidatesByParty: voteGrouping.groupCandidatesByParty,
     groupListsByParty: voteGrouping.groupListsByParty,
+    getMaxVotes,
   };
 });

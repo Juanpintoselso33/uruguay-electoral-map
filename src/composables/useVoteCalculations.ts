@@ -9,7 +9,10 @@ export function useVoteCalculations(props, currentRegion) {
     } else if (list) {
       return props.votosPorListas[list]?.[neighborhood] || 0;
     } else {
-      return props.selectedLists.reduce((total, list) => {
+      const selectedLists = Array.isArray(props.selectedLists)
+        ? props.selectedLists
+        : [];
+      return selectedLists.reduce((total, list) => {
         return total + (props.votosPorListas[list]?.[neighborhood] || 0);
       }, 0);
     }

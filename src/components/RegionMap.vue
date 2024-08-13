@@ -4,9 +4,9 @@
     <Spinner :isLoading="isLoading" />
     <MapLegend
       v-if="showLegend"
-      :legendGrades="calculateLegendGrades()"
-      :getColor="(grade) => getColor(grade * getMaxVotes(), getMaxVotes())"
-      :maxVotes="getMaxVotes()"
+      :legendGrades="[0, 0.2, 0.4, 0.6, 0.8, 1]"
+      :getColor="getColor"
+      :maxVotes="getMaxVotes"
     />
     <NeighborhoodInfo
       :selectedNeighborhood="selectedNeighborhood"
@@ -19,7 +19,7 @@
   />
   <SelectedListsInfo
     :isMobileHidden="isMobileHidden"
-    :selectedCandidates="props.selectedCandidates"
+    :selectedCandidates="selectedCandidates"
     :groupedSelectedItems="groupedSelectedItems"
     :getTotalVotes="getTotalVotes"
     :sortBy="'votes'"
@@ -44,6 +44,7 @@ import { useVoteGrouping } from "../composables/useVoteGrouping";
 import { useColorScale } from "../composables/useColorScale";
 import { useMapInitialization } from "../composables/useMapInitialization";
 import { useMapUpdates } from "../composables/useMapUpdates";
+import { useRegionStore } from "../stores/regionStore";
 
 interface Props {
   regionName: string;
@@ -72,8 +73,10 @@ const emit = defineEmits<{
 }>();
 
 const mapStore = useMapStore();
+const regionStore = useRegionStore();
 const { map, showLegend, isMobileHidden, selectedNeighborhood } =
   storeToRefs(mapStore);
+const { selectedLists, selectedCandidates } = storeToRefs(regionStore);
 
 const mapContainer = ref<HTMLElement | null>(null);
 const { handleFeatureMouseover, handleFeatureMouseout } = useTooltip();
@@ -96,29 +99,13 @@ const { groupCandidatesByParty, groupListsByParty, groupedSelectedItems } =
 const { getColor } = useColorScale();
 const { initializeMap, fitMapToBounds } = useMapInitialization();
 
-const getMaxVotes = () => {
-  if (!props.geojsonData || !props.geojsonData.features) {
-    return 0;
-  }
-  return props.selectedCandidates.length > 0
-    ? Math.max(
-        ...props.geojsonData.features.map((feature: any) =>
-          getCandidateTotalVotes(getNormalizedNeighborhood(feature))
-        )
-      )
-    : Math.max(
-        ...props.geojsonData.features.map((feature: any) =>
-          getVotesForNeighborhood(getNormalizedNeighborhood(feature))
-        )
-      );
-};
-
-const calculateLegendGrades = () => {
-  const maxVotes = getMaxVotes();
-  return [0, 0.2, 0.4, 0.6, 0.8, 1].map((grade) =>
-    Math.round(grade * maxVotes)
+const getMaxVotes = () =>
+  regionStore.getMaxVotes(
+    props.geojsonData,
+    selectedCandidates.value,
+    getVotesForNeighborhood,
+    getCandidateTotalVotes
   );
-};
 
 const { updateMap } = useMapUpdates(
   props,
@@ -133,7 +120,8 @@ const { updateMap } = useMapUpdates(
     getTotalVotesForList,
     getVotesForCandidateInNeighborhood,
   },
-  { groupCandidatesByParty, groupListsByParty, groupedSelectedItems }
+  { groupCandidatesByParty, groupListsByParty, groupedSelectedItems },
+  getColor
 );
 
 const isLoading = ref(true);

@@ -15,9 +15,9 @@ export function useMapUpdates(
   map: L.Map | null,
   getMaxVotes: () => number,
   voteCalculations,
-  voteGrouping
+  voteGrouping,
+  getColor
 ) {
-  const { getColor } = useColorScale();
   const { groupedSelectedItems } = voteGrouping;
 
   const updateMap = (currentMap: L.Map) => {
@@ -27,6 +27,7 @@ export function useMapUpdates(
     }
 
     const maxVotes = getMaxVotes();
+    console.log("Max votes for map update:", maxVotes);
 
     // Remove existing layers
     currentMap.eachLayer((layer) => {
