@@ -54,6 +54,7 @@ export const useRegionStore = defineStore("region", () => {
     isODN.value = false;
     selectedParty.value = "";
     currentRegion.value = region;
+    console.log("Current region set to:", currentRegion.value);
     await fetchRegionData();
   };
 
@@ -86,6 +87,8 @@ export const useRegionStore = defineStore("region", () => {
         precandidatosByList: precandidatosByList || {},
         geojsonData: geojsonData || null,
       };
+
+      console.log("Fetched region data:", currentRegion.value);
     } catch (error) {
       console.error("Error fetching region data:", error);
     }
@@ -121,6 +124,14 @@ export const useRegionStore = defineStore("region", () => {
         maxVotosPorListas[row.HOJA],
         votosPorListas[row.HOJA][row.ZONA]
       );
+    });
+
+    console.log("Processed CSV data:", {
+      votosPorListas,
+      maxVotosPorListas,
+      lists,
+      partiesByList,
+      precandidatosByList,
     });
 
     return {

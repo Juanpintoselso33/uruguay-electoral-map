@@ -47,13 +47,13 @@ export const createOnEachFeature = (
     layer: L.Layer
   ) => void,
   handleFeatureClick: (feature: GeoJSON.Feature) => void,
-  getVotesForNeighborhood2: (neighborhood: string) => number,
+  getVotesForNeighborhood: (neighborhood: string) => number,
   getColor: (votes: number) => string,
-  map: L.Map // Add map parameter here
+  map: L.Map
 ) => {
   return (feature: GeoJSON.Feature, layer: L.Layer) => {
     const neighborhood = getNormalizedNeighborhood(feature);
-    const votes = getVotesForNeighborhood2(neighborhood);
+    const votes = getVotesForNeighborhood(neighborhood);
     const originalColor = getColor(votes);
     const hoverColor = chroma(originalColor).darken(0.3).hex();
 
@@ -62,7 +62,7 @@ export const createOnEachFeature = (
         if (e.latlng) {
           handleFeatureMouseover(e, feature, layer, map, (feature) => {
             const neighborhood = getNormalizedNeighborhood(feature);
-            const votes = getVotesForNeighborhood2(neighborhood);
+            const votes = getVotesForNeighborhood(neighborhood);
             return `<strong>${neighborhood}</strong><br>Votes: ${votes}`;
           });
         }
@@ -79,24 +79,32 @@ export const getTotalVotesForList = (
   votosPorListas: Record<string, Record<string, number>>,
   list: string
 ) => {
-  return Object.values(votosPorListas[list] || {}).reduce((a, b) => a + b, 0);
+  if (!votosPorListas[list]) {
+    return 0;
+  }
+  return Object.values(votosPorListas[list]).reduce((a, b) => a + b, 0);
 };
 
 export const getCandidateTotalVotesAllNeighborhoods = (
-  geojsonData: any,
-  getCandidateVotesForNeighborhood: (
-    neighborhood: string
-  ) => { candidate: string; votes: number }[],
-  candidate: string
+  votosPorListas: Record<string, Record<string, number>>,
+  selectedCandidates: Record<number, string>,
+  precandidatosByList: Record<string, string>
 ): number => {
-  return Object.values(geojsonData.features).reduce(
-    (total: number, feature: any) => {
-      const neighborhood = getNormalizedNeighborhood(feature);
-      const candidateVotes = getCandidateVotesForNeighborhood(neighborhood);
-      const candidateVote = candidateVotes.find(
-        (c) => c.candidate === candidate
+  const candidatesArray = Object.values(selectedCandidates);
+  return Object.entries(votosPorListas).reduce(
+    (total, [list, neighborhoodVotes]) => {
+      const candidate = Object.entries(precandidatosByList).find(([_, c]) =>
+        candidatesArray.includes(c)
+      )?.[0];
+      return (
+        total +
+        (candidate
+          ? Object.values(neighborhoodVotes).reduce(
+              (sum, votes) => sum + votes,
+              0
+            )
+          : 0)
       );
-      return total + (candidateVote?.votes || 0);
     },
     0
   );

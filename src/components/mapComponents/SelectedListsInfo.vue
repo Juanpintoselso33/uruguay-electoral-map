@@ -9,7 +9,7 @@
           class="party-item"
         >
           <span class="party-name">{{ party }}</span>
-          <ul v-if="selectedCandidates.length > 0" class="candidate-items">
+          <ul v-if="partyData.candidates" class="candidate-items">
             <li
               v-for="candidate in partyData.candidates"
               :key="candidate.name"
@@ -18,7 +18,7 @@
               {{ candidate.name }}: {{ candidate.votes }} votos
             </li>
           </ul>
-          <ul v-else class="list-items">
+          <ul v-else-if="partyData.lists" class="list-items">
             <li
               v-for="list in partyData.lists"
               :key="list.number"
@@ -38,7 +38,10 @@
 interface Props {
   isMobileHidden: boolean;
   selectedCandidates: string[];
-  groupedSelectedItems: Record<string, { candidates: any[]; lists: any[] }>;
+  groupedSelectedItems: Record<
+    string,
+    { candidates: { name: string; votes: number }[]; lists: any[] }
+  >;
   getTotalVotes: () => number;
 }
 
@@ -73,7 +76,7 @@ console.log("Is Mobile Hidden:", props.isMobileHidden);
 .selected-lists-title {
   margin-top: 0;
   margin-bottom: 15px;
-  font-size: 1.2em;
+  font-size: 1.5em;
   color: #333;
 }
 
@@ -85,6 +88,14 @@ console.log("Is Mobile Hidden:", props.isMobileHidden);
 
 .party-item {
   margin-bottom: 10px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  padding: 10px;
+  transition: background-color 0.3s;
+}
+
+.party-item:hover {
+  background-color: #e0e0e0;
 }
 
 .party-name {
@@ -111,7 +122,7 @@ console.log("Is Mobile Hidden:", props.isMobileHidden);
   margin-top: 20px;
   padding-top: 10px;
   border-top: 1px solid #ddd;
-  font-size: 1.1em;
+  font-size: 1.2em;
   color: #333;
 }
 

@@ -46,9 +46,8 @@ import {
 import { createTooltipContent } from "../utils/tooltipUtils";
 import { useTooltip } from "../composables/useToolTip";
 import { useVoteCalculations } from "../composables/useVoteCalculations";
-import { useVoteGrouping } from "../composables/useVoteGrouping"; // Import the composable
+import { useVoteGrouping } from "../composables/useVoteGrouping";
 
-// Define props using an interface
 interface Props {
   regionName: string;
   selectedLists: string[];
@@ -65,12 +64,13 @@ interface Props {
   mapCenter: [number, number];
   mapZoom: number;
   currentRegion: string;
-  getCandidateVotesForNeighborhood: (neighborhood: string) => number; // Add this line
+  getCandidateVotesForNeighborhood: (
+    neighborhood: string
+  ) => { candidate: string; votes: number; party: string }[];
 }
 
 const props = defineProps<Props>();
 
-// Define emits
 const emit = defineEmits<{
   (e: "updateSelectedNeighborhood", neighborhood: string | null): void;
   (e: "mapInitialized"): void;
@@ -84,44 +84,17 @@ const { map, showLegend, isMobileHidden, selectedNeighborhood } =
 const mapContainer = ref<HTMLElement | null>(null);
 const { handleFeatureMouseover, handleFeatureMouseout } = useTooltip();
 const {
+  getVotesForNeighborhood,
   getCandidateVotesForNeighborhood,
   getCandidateTotalVotes,
   getTotalVotes,
+  getCandidateTotalVotesForAllNeighborhoods,
 } = useVoteCalculations(props, props.currentRegion);
 
-const { groupCandidatesByParty, groupListsByParty } = useVoteGrouping(props); // Call useVoteGrouping and get the necessary functions
-
-const groupedSelectedItems = computed(() => {
-  console.log("Selected Candidates:", props.selectedCandidates);
-  if (props.selectedCandidates.length > 0) {
-    const grouped = props.selectedCandidates.reduce((acc, candidate) => {
-      const party = props.partiesByList[candidate];
-      if (!acc[party]) acc[party] = { candidates: [], lists: [] };
-      acc[party].candidates.push({
-        name: candidate,
-        votes: getCandidateVotesForNeighborhood(candidate),
-      });
-      return acc;
-    }, {} as Record<string, { candidates: any[]; lists: any[] }>);
-
-    // Debugging grouped items
-    console.log("Grouped Selected Items:", grouped);
-    console.log("Selected Candidates:", props.selectedCandidates);
-    console.log("Grouped Selected Items:", grouped);
-    return grouped;
-  } else {
-    const grouped = props.selectedLists.reduce((acc, list) => {
-      const party = props.partiesByList[list];
-      if (!acc[party]) acc[party] = { candidates: [], lists: [] };
-      acc[party].lists.push({
-        name: list,
-        votes: getTotalVotesForList(props.votosPorListas, list),
-      });
-      return acc;
-    }, {} as Record<string, { candidates: any[]; lists: any[] }>);
-    return grouped;
-  }
-});
+const { groupCandidatesByParty, groupListsByParty, groupedSelectedItems } =
+  useVoteGrouping(props, {
+    getCandidateTotalVotesForAllNeighborhoods,
+  });
 
 const legendGrades = [0, 0.2, 0.4, 0.6, 0.8, 1];
 
@@ -155,9 +128,7 @@ const getColor = (votes: number): string => {
 };
 
 const initializeLocalMap = () => {
-  console.log("Initializing map...");
   if (mapContainer.value && !map.value) {
-    console.log("mapContainer and map check passed");
     initializeMap(mapContainer.value, props.mapCenter, props.mapZoom);
     updateLocalMap();
     fitMapToBounds(props.geojsonData);
@@ -175,9 +146,22 @@ const updateLocalMap = () => {
     return;
   }
 
+  const getVotesFunction = (neighborhood: string): number => {
+    if (props.selectedCandidates.length > 0) {
+      return getCandidateTotalVotes(neighborhood);
+    }
+    return props.getVotosForNeighborhood(neighborhood);
+  };
+
   mapStore.updateMap(
     props.geojsonData,
-    (feature) => styleFeature(feature, props.getVotosForNeighborhood, getColor),
+    (feature) =>
+      styleFeature(
+        feature,
+        getVotesFunction,
+        getColor,
+        getNormalizedNeighborhood
+      ),
     createOnEachFeature(
       (e, feature, layer) => {
         if (!feature || !e.latlng) {
@@ -193,8 +177,14 @@ const updateLocalMap = () => {
             props.selectedCandidates,
             props.partiesAbbrev,
             getCandidateVotesForNeighborhood,
-            groupCandidatesByParty, // Pass the function here
-            groupListsByParty // Pass the function here
+            (candidateVotes) =>
+              groupCandidatesByParty(
+                candidateVotes,
+                props.partiesAbbrev,
+                props.precandidatosByList,
+                props.partiesByList
+              ),
+            groupListsByParty
           );
         });
       },
@@ -212,7 +202,7 @@ const updateLocalMap = () => {
         }
         mapStore.setSelectedNeighborhood(getNormalizedNeighborhood(feature));
       },
-      props.getVotosForNeighborhood,
+      (neighborhood: string) => getCandidateTotalVotes(neighborhood),
       getColor,
       map.value!
     )
@@ -223,8 +213,6 @@ const toggleMobileVisibility = () => {
   mapStore.toggleMobileVisibility();
 };
 
-// Watchers
-// Watch for changes in region name and geojsonData
 watch(
   [() => props.regionName, () => props.geojsonData],
   ([newRegionName, newGeojsonData]) => {
@@ -235,7 +223,6 @@ watch(
   { deep: true }
 );
 
-// Watch for changes in selected lists and candidates
 watch(
   [() => props.selectedLists, () => props.selectedCandidates],
   () => {

@@ -286,8 +286,7 @@ const onPartySelect = () => {
 };
 
 const onCandidateSelect = (candidate: string, isSelected: boolean) => {
-  if (props.selectedLists.length > 0) return;
-
+  console.log(`Candidate selected: ${candidate}, isSelected: ${isSelected}`);
   const newSelectedCandidates = isSelected
     ? [...props.selectedCandidates, candidate]
     : props.selectedCandidates.filter((item) => item !== candidate);
