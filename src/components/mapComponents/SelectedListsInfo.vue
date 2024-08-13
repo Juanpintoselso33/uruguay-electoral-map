@@ -8,7 +8,7 @@
           :key="party"
           class="party-item"
         >
-          <span class="party-name">{{ party }}</span>
+          <span class="party-name">{{ parseFullPartyName(party) }}</span>
           <ul v-if="partyData.candidates" class="candidate-items">
             <li
               v-for="candidate in partyData.candidates"
@@ -27,6 +27,21 @@
               Lista {{ list.number }}: {{ list.votes }} votos
             </li>
           </ul>
+          <div class="party-total">
+            <span class="total-label"
+              >Total:
+
+              {{
+                partyData.candidates
+                  ? partyData.candidates.reduce(
+                      (sum, candidate) => sum + candidate.votes,
+                      0
+                    )
+                  : partyData.lists.reduce((sum, list) => sum + list.votes, 0)
+              }}
+              votos
+            </span>
+          </div>
         </li>
       </ul>
     </div>
@@ -35,6 +50,8 @@
 </template>
 
 <script setup lang="ts">
+import { parseFullPartyName } from "../../utils/stringUtils";
+
 interface Props {
   isMobileHidden: boolean;
   selectedCandidates: string[];
@@ -116,6 +133,22 @@ console.log("Is Mobile Hidden:", props.isMobileHidden);
   margin-bottom: 3px;
   font-size: 0.9em;
   color: #666;
+}
+
+.party-total {
+  margin-top: 5px;
+  font-size: 0.9em;
+  color: #666;
+  display: flex;
+  justify-content: space-between; /* Aligns total label and value */
+}
+
+.total-label {
+  font-weight: bold; /* Makes the label bold */
+}
+
+.total-votes {
+  color: #333;
 }
 
 .total-votes {

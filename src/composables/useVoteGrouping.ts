@@ -18,43 +18,30 @@ export function useVoteGrouping(props, voteCalculations) {
     partiesAbbrev: Record<string, string> | undefined,
     precandidatosByList: Record<string, string> | undefined,
     partiesByList: Record<string, string> | undefined
-  ): Record<string, { totalVotes: number; candidates: string[] }> => {
-    console.log("candidateVotes:", candidateVotes);
-    console.log("partiesAbbrev:", partiesAbbrev);
-    console.log("precandidatosByList:", precandidatosByList);
-    console.log("partiesByList:", partiesByList);
+  ): Record<
+    string,
+    { totalVotes: number; candidates: { name: string; votes: number }[] }
+  > => {
     const grouped: Record<
       string,
-      { totalVotes: number; candidates: string[] }
+      { totalVotes: number; candidates: { name: string; votes: number }[] }
     > = {};
 
     if (candidateVotes && typeof candidateVotes === "object") {
       Object.entries(candidateVotes).forEach(([candidate, votes]) => {
-        if (precandidatosByList && partiesByList) {
-          const list = Object.entries(precandidatosByList).find(
-            ([_, c]) => c === candidate
-          )?.[0];
-          if (list) {
-            const party = partiesByList[list] || "Unknown";
-            const partyAbbrev = partiesAbbrev?.[party] || party;
-            if (!grouped[partyAbbrev]) {
-              grouped[partyAbbrev] = { totalVotes: 0, candidates: [] };
-            }
-            grouped[partyAbbrev].totalVotes += votes;
-            grouped[partyAbbrev].candidates.push(candidate);
-          }
-        } else {
-          // If precandidatosByList or partiesByList are undefined, group all candidates under "Unknown"
-          const partyAbbrev = "Unknown";
-          if (!grouped[partyAbbrev]) {
-            grouped[partyAbbrev] = { totalVotes: 0, candidates: [] };
-          }
-          grouped[partyAbbrev].totalVotes += votes;
-          grouped[partyAbbrev].candidates.push(candidate);
+        const list = Object.entries(precandidatosByList).find(
+          ([_, c]) => c === candidate
+        )?.[0];
+        const party = list ? partiesByList[list] || "Unknown" : "Unknown";
+
+        if (!grouped[party]) {
+          grouped[party] = { totalVotes: 0, candidates: [] };
         }
+        grouped[party].totalVotes += votes;
+        grouped[party].candidates.push({ name: candidate, votes });
       });
     }
-
+    console.log("Grouped Candidates by Party:", grouped);
     return grouped;
   };
 

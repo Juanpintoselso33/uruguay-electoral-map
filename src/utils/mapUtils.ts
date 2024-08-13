@@ -8,10 +8,20 @@ export const styleFeature = (
   getVotesForNeighborhood: (neighborhood: string) => number,
   getColor: (votes: number) => string
 ): L.PathOptions => {
-  if (!feature || !feature.properties) return {};
+  if (!feature || !feature.properties) {
+    console.log("Feature or properties are undefined:", feature);
+    return {};
+  }
+
   const neighborhood = getNormalizedNeighborhood(feature);
+  console.log("Normalized Neighborhood:", neighborhood);
+
   const votes = getVotesForNeighborhood(neighborhood);
+  console.log("Votes for Neighborhood:", votes);
+
   const fillColor = getColor(votes);
+  console.log("Fill Color based on Votes:", fillColor);
+
   return {
     color: "#000000",
     weight: 1,

@@ -141,27 +141,52 @@ const initializeLocalMap = () => {
 };
 
 const updateLocalMap = () => {
+  console.log("DEBUG: Entered updateLocalMap");
+
   if (!props.geojsonData) {
     console.warn("GeoJSON data is undefined");
     return;
   }
 
   const getVotesFunction = (neighborhood: string): number => {
+    console.log(
+      "DEBUG: Entered getVotesFunction for neighborhood:",
+      neighborhood
+    );
+
     if (props.selectedCandidates.length > 0) {
-      return getCandidateTotalVotes(neighborhood);
+      console.log("DEBUG: Selected Candidates are:", props.selectedCandidates);
+
+      const candidateVotes = getCandidateVotesForNeighborhood(neighborhood);
+      console.log("DEBUG: Candidate Votes:", candidateVotes);
+
+      const totalVotes = Object.values(candidateVotes).reduce(
+        (sum, { votes }) => sum + votes,
+        0
+      );
+
+      console.log(`Votes for neighborhood ${neighborhood}:`, totalVotes);
+      return totalVotes;
     }
-    return props.getVotosForNeighborhood(neighborhood);
+
+    const votes = props.getVotosForNeighborhood(neighborhood);
+    console.log(`Votes for neighborhood ${neighborhood} from lists:`, votes);
+    return votes;
   };
 
   mapStore.updateMap(
     props.geojsonData,
-    (feature) =>
-      styleFeature(
+    (feature) => {
+      const neighborhood = getNormalizedNeighborhood(feature);
+      const votes = getVotesFunction(neighborhood);
+      console.log(`SE MANDA PARA PINTAR: Votes for ${neighborhood}:`, votes); // Debugging line
+      return styleFeature(
         feature,
         getVotesFunction,
         getColor,
         getNormalizedNeighborhood
-      ),
+      );
+    },
     createOnEachFeature(
       (e, feature, layer) => {
         if (!feature || !e.latlng) {
@@ -207,6 +232,9 @@ const updateLocalMap = () => {
       map.value!
     )
   );
+
+  // Force map refresh
+  map.value?.invalidateSize();
 };
 
 const toggleMobileVisibility = () => {
@@ -226,6 +254,11 @@ watch(
 watch(
   [() => props.selectedLists, () => props.selectedCandidates],
   () => {
+    console.log(
+      "DEBUG: Selected Lists or Candidates changed:",
+      props.selectedLists,
+      props.selectedCandidates
+    );
     updateLocalMap();
   },
   { deep: true }

@@ -20,3 +20,12 @@ export function shadeColor(color: string, percent: number): string {
     .toString(16)
     .slice(1)}`;
 }
+
+const partiesWithPrefix = ["Cabildo Abierto", "Frente Amplio"];
+
+export function parseFullPartyName(party: string): string {
+  if (partiesWithPrefix.includes(party) || party.startsWith("Partido ")) {
+    return party;
+  }
+  return `Partido ${party}`;
+}

@@ -1,16 +1,24 @@
-import {
-  getTotalVotesForList,
-  getCandidateTotalVotesAllNeighborhoods,
-} from "../utils/mapUtils";
+import { getTotalVotesForList } from "../utils/mapUtils";
 
 export function useVoteCalculations(props, currentRegion) {
   const getVotesForNeighborhood = (neighborhood: string): number => {
+    console.log("Calculating votes for neighborhood:", neighborhood);
+
     if (props.selectedCandidates.length > 0) {
-      return getCandidateTotalVotes(neighborhood);
+      const candidateVotes = getCandidateTotalVotes(neighborhood);
+      console.log("Votes for candidates in neighborhood:", candidateVotes);
+      return candidateVotes;
     } else {
-      return props.selectedLists.reduce((total, list) => {
-        return total + (props.votosPorListas[list]?.[neighborhood] || 0);
+      const totalVotes = props.selectedLists.reduce((total, list) => {
+        const listVotes = props.votosPorListas[list]?.[neighborhood] || 0;
+        console.log(
+          `Votes for list ${list} in neighborhood ${neighborhood}:`,
+          listVotes
+        );
+        return total + listVotes;
       }, 0);
+      console.log("Total votes for lists in neighborhood:", totalVotes);
+      return totalVotes;
     }
   };
 
@@ -29,14 +37,36 @@ export function useVoteCalculations(props, currentRegion) {
     candidate: string,
     neighborhood: string
   ) => {
+    console.log(
+      "Calculating votes for candidate:",
+      candidate,
+      "in neighborhood:",
+      neighborhood
+    );
+
     const candidateLists = Object.entries(props.precandidatosByList)
       .filter(([, precandidato]) => precandidato === candidate)
       .map(([list]) => list);
 
+    console.log("Candidate lists:", candidateLists);
+
     const votes = candidateLists.reduce((total, list) => {
-      return total + (props.votosPorListas[list]?.[neighborhood] || 0);
+      const neighborhoodVotes = props.votosPorListas[list]?.[neighborhood] || 0;
+      console.log(
+        `Votes for ${candidate} in ${neighborhood} from list ${list}:`,
+        neighborhoodVotes
+      );
+      return total + neighborhoodVotes;
     }, 0);
 
+    console.log(
+      "Total votes for candidate:",
+      candidate,
+      "in neighborhood:",
+      neighborhood,
+      "is:",
+      votes
+    );
     return votes;
   };
 
