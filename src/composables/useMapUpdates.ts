@@ -1,32 +1,16 @@
 import L from "leaflet";
-import { useColorScale } from "./useColorScale";
-import {
-  getNormalizedNeighborhood,
-  styleFeature,
-  createOnEachFeature,
-} from "../utils/mapUtils";
+import { getNormalizedNeighborhood, styleFeature } from "../utils/mapUtils";
 import { createTooltipContent } from "../utils/tooltipUtils";
-import { useVoteGrouping } from "./useVoteGrouping";
-import { GroupedCandidates, GroupedLists } from "../types/VoteTypes";
-import { parseFullPartyName } from "../utils/stringUtils";
 
-export function useMapUpdates(
-  props,
-  map: L.Map | null,
-  getMaxVotes: () => number,
-  voteCalculations,
-  voteGrouping,
-  getColor
-) {
+export function useMapUpdates(props, voteCalculations, voteGrouping, getColor) {
   const { groupedSelectedItems } = voteGrouping;
 
-  const updateMap = (currentMap: L.Map) => {
+  const updateMap = (currentMap: L.Map, maxVotes: number) => {
     if (!props.geojsonData) {
       console.warn("GeoJSON data is undefined");
       return;
     }
 
-    const maxVotes = getMaxVotes();
     console.log("Max votes for map update:", maxVotes);
 
     // Remove existing layers
@@ -35,12 +19,6 @@ export function useMapUpdates(
         currentMap.removeLayer(layer);
       }
     });
-
-    // Check if the map is initialized
-    if (!currentMap) {
-      console.warn("Map is not initialized.");
-      return;
-    }
 
     // Store current view state
     const currentCenter = currentMap.getCenter();
@@ -85,8 +63,9 @@ export function useMapUpdates(
         );
 
         const showTooltip = (e: L.LeafletEvent) => {
-          if (e.target && "setStyle" in e.target) {
-            e.target.setStyle({ fillOpacity: 0.9 });
+          const event = e as L.LeafletMouseEvent; // Cast to L.LeafletMouseEvent
+          if (event.target && "setStyle" in event.target) {
+            event.target.setStyle({ fillOpacity: 0.9 });
           }
           safeCloseTooltip();
           if (currentMap) {
@@ -97,7 +76,7 @@ export function useMapUpdates(
               className: "custom-tooltip",
             })
               .setContent(tooltipContent)
-              .setLatLng(e.latlng);
+              .setLatLng(event.latlng); // Use the casted event
             activeTooltip.addTo(currentMap);
           }
         };

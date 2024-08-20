@@ -1,17 +1,14 @@
 <template>
   <div class="montevideo-map-wrapper">
     <div class="montevideo-map" ref="mapContainer"></div>
-    <Spinner :isLoading="isLoading" />
+    <Spinner v-if="isLoading" :isLoading="isLoading" />
     <MapLegend
       v-if="showLegend"
       :legendGrades="[0, 0.2, 0.4, 0.6, 0.8, 1]"
       :getColor="getColor"
       :maxVotes="getMaxVotes"
     />
-    <NeighborhoodInfo
-      :selectedNeighborhood="selectedNeighborhood"
-      :getVotosForNeighborhood="getVotosForNeighborhood"
-    />
+    <NeighborhoodInfo />
   </div>
   <MobileToggle
     @toggle="toggleMobileVisibility"
@@ -27,9 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed, onUnmounted } from "vue";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+import { ref, onMounted, onUnmounted, watch, computed } from "vue";
 import MapLegend from "./mapComponents/MapLegend.vue";
 import NeighborhoodInfo from "./mapComponents/NeighborhoodInfo.vue";
 import MobileToggle from "./mapComponents/MobileToggle.vue";
@@ -37,162 +32,82 @@ import SelectedListsInfo from "./mapComponents/SelectedListsInfo.vue";
 import Spinner from "./mapComponents/Spinner.vue";
 import { useMapStore } from "../stores/mapStore";
 import { storeToRefs } from "pinia";
-import { getNormalizedNeighborhood } from "../utils/mapUtils";
-import { useTooltip } from "../composables/useToolTip";
 import { useVoteCalculations } from "../composables/useVoteCalculations";
 import { useVoteGrouping } from "../composables/useVoteGrouping";
 import { useColorScale } from "../composables/useColorScale";
-import { useMapInitialization } from "../composables/useMapInitialization";
-import { useMapUpdates } from "../composables/useMapUpdates";
+import { useMapWatchers } from "../composables/useMapWatchers";
+import "leaflet/dist/leaflet.css";
+import GeoJSON from "geojson";
 import { useRegionStore } from "../stores/regionStore";
 
-interface Props {
-  regionName: string;
-  selectedLists: string[];
-  votosPorListas: Record<string, Record<string, number>>;
-  maxVotosPorListas: Record<string, number>;
-  getVotosForNeighborhood: (neighborhood: string) => number;
-  geojsonData: any;
-  selectedNeighborhood: string | null;
-  isODN: boolean;
-  partiesAbbrev: Record<string, string>;
-  partiesByList: Record<string, string>;
-  precandidatosByList: Record<string, string>;
-  selectedCandidates: string[];
-  currentRegion: string;
-  getCandidateVotesForNeighborhood: (
-    neighborhood: string
-  ) => { candidate: string; votes: number; party: string }[];
-}
-
-const props = defineProps<Props>();
-
-const emit = defineEmits<{
-  (e: "updateSelectedNeighborhood", neighborhood: string | null): void;
-  (e: "mapInitialized"): void;
-}>();
-
 const mapStore = useMapStore();
-const regionStore = useRegionStore();
-const { map, showLegend, isMobileHidden, selectedNeighborhood } =
+const { showLegend, isMobileHidden, selectedNeighborhood, isLoading } =
   storeToRefs(mapStore);
-const { selectedLists, selectedCandidates } = storeToRefs(regionStore);
 
 const mapContainer = ref<HTMLElement | null>(null);
-const { handleFeatureMouseover, handleFeatureMouseout } = useTooltip();
+
 const {
   getVotesForNeighborhood,
-  getCandidateVotesForNeighborhood,
   getCandidateTotalVotes,
   getTotalVotes,
   getCandidateTotalVotesForAllNeighborhoods,
   getTotalVotesForList,
-  getVotesForCandidateInNeighborhood,
-} = useVoteCalculations(props, props.currentRegion);
+} = useVoteCalculations(mapStore, mapStore.currentRegion);
 
-const { groupCandidatesByParty, groupListsByParty, groupedSelectedItems } =
-  useVoteGrouping(props, {
-    getTotalVotesForList,
-    getCandidateTotalVotesForAllNeighborhoods,
-  });
+const { groupedSelectedItems } = useVoteGrouping(mapStore, {
+  getTotalVotesForList,
+  getCandidateTotalVotesForAllNeighborhoods,
+});
 
 const { getColor } = useColorScale();
-const { initializeMap, fitMapToBounds } = useMapInitialization();
 
-const getMaxVotes = () =>
-  regionStore.getMaxVotes(
-    props.geojsonData,
-    selectedCandidates.value,
+const getMaxVotes = computed(() => {
+  if (!mapStore.geojsonData) return 0;
+  return mapStore.getMaxVotes(
+    mapStore.geojsonData,
+    mapStore.selectedCandidates,
     getVotesForNeighborhood,
     getCandidateTotalVotes
   );
+});
 
-const { updateMap } = useMapUpdates(
-  props,
-  map.value,
-  getMaxVotes,
-  {
-    getVotesForNeighborhood,
-    getCandidateVotesForNeighborhood,
-    getCandidateTotalVotes,
-    getTotalVotes,
-    getCandidateTotalVotesForAllNeighborhoods,
-    getTotalVotesForList,
-    getVotesForCandidateInNeighborhood,
-  },
-  { groupCandidatesByParty, groupListsByParty, groupedSelectedItems },
-  getColor
-);
+const regionStore = useRegionStore();
 
-const isLoading = ref(true);
-
-const initializeLocalMap = () => {
-  if (mapContainer.value && !map.value) {
-    isLoading.value = true;
-    map.value = initializeMap(mapContainer.value, props.geojsonData);
-    updateLocalMap();
-
-    setTimeout(() => {
-      map.value?.invalidateSize();
-      isLoading.value = false;
-      emit("mapInitialized");
-    }, 500);
+onMounted(() => {
+  if (mapStore.geojsonData) {
+    mapStore.initializeMap(mapContainer.value, mapStore.geojsonData, mapStore);
   }
-};
+  window.addEventListener("resize", () => mapStore.updateMap());
+});
 
-const updateLocalMap = () => {
-  if (map.value) {
-    updateMap(map.value);
-    map.value.invalidateSize();
+onUnmounted(() => {
+  if (mapStore.map) {
+    mapStore.map.remove();
   }
-};
+  window.removeEventListener("resize", () => mapStore.updateMap());
+});
+
+useMapWatchers(mapStore, mapContainer);
 
 const toggleMobileVisibility = () => {
   mapStore.toggleMobileVisibility();
 };
 
 watch(
-  [() => props.regionName, () => props.geojsonData],
-  ([newRegionName, newGeojsonData]) => {
-    if (newRegionName && mapContainer.value && newGeojsonData) {
-      isLoading.value = true;
-      if (map.value) {
-        map.value.remove();
-        map.value = null;
-      }
-      initializeLocalMap();
-      setTimeout(() => {
-        isLoading.value = false;
-      }, 500);
+  () => mapStore.geojsonData,
+  (newGeojsonData) => {
+    if (newGeojsonData) {
+      mapStore.initializeMap(mapContainer.value, newGeojsonData, mapStore);
     }
-  },
-  { deep: true }
+  }
 );
 
-watch(
-  [() => props.selectedLists, () => props.selectedCandidates],
-  () => {
-    console.log(
-      "DEBUG: Selected Lists or Candidates changed:",
-      props.selectedLists,
-      props.selectedCandidates
-    );
-    updateLocalMap();
-  },
-  { deep: true }
-);
-
-onMounted(() => {
-  initializeLocalMap();
-  window.addEventListener("resize", () => {
-    if (map.value) {
-      map.value.invalidateSize();
-    }
-  });
-});
-
-onUnmounted(() => {
-  map.value?.remove();
+// Update the map when selectedNeighborhood changes
+watch(selectedNeighborhood, (newNeighborhood) => {
+  if (newNeighborhood) {
+    // Highlight the selected neighborhood on the map
+    // You'll need to implement this logic
+  }
 });
 </script>
 

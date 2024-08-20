@@ -43,19 +43,26 @@ export const useRegionStore = defineStore("region", () => {
   const isODN = ref(false);
   const selectedParty = ref<string>("");
   const selectedCandidates = ref<string[]>([]);
+  const isLoading = ref(false);
 
   const setCurrentRegion = async (region: Region) => {
-    selectedLists.value = [];
-    selectedCandidates.value = [];
-    isODN.value = false;
-    selectedParty.value = "";
-    currentRegion.value = region;
-    console.log("Current region set to:", currentRegion.value);
-    await fetchRegionData();
+    isLoading.value = true;
+    try {
+      selectedLists.value = [];
+      selectedCandidates.value = [];
+      isODN.value = false;
+      selectedParty.value = "";
+      currentRegion.value = region;
+      console.log("Current region set to:", currentRegion.value);
+      await fetchRegionData();
+    } finally {
+      isLoading.value = false;
+    }
   };
 
   const fetchRegionData = async () => {
     try {
+      isLoading.value = true;
       const csvPath = isODN.value
         ? currentRegion.value.odnCsvPath
         : currentRegion.value.oddCsvPath;
@@ -87,6 +94,8 @@ export const useRegionStore = defineStore("region", () => {
       console.log("Fetched region data:", currentRegion.value);
     } catch (error) {
       console.error("Error fetching region data:", error);
+    } finally {
+      isLoading.value = false;
     }
   };
 
@@ -243,10 +252,14 @@ export const useRegionStore = defineStore("region", () => {
     getCandidateTotalVotes: Function
   ) => {
     console.log("getMaxVotes called");
+    console.log("geojsonData:", geojsonData);
+    console.log("selectedCandidates:", selectedCandidates);
+
     if (!geojsonData || !geojsonData.features) {
       console.log("No geojsonData or features");
-      return 0;
+      return 0; // Return 0 when there is no data
     }
+
     const maxVotes =
       selectedCandidates.length > 0
         ? Math.max(
@@ -265,8 +278,9 @@ export const useRegionStore = defineStore("region", () => {
               return votes;
             })
           );
+
     console.log(`Max votes: ${maxVotes}`);
-    return maxVotes;
+    return maxVotes || 0; // Return 0 if maxVotes is 0
   };
 
   return {
@@ -292,5 +306,6 @@ export const useRegionStore = defineStore("region", () => {
     groupCandidatesByParty: voteGrouping.groupCandidatesByParty,
     groupListsByParty: voteGrouping.groupListsByParty,
     getMaxVotes,
+    isLoading,
   };
 });

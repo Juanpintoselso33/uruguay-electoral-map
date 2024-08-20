@@ -6,7 +6,8 @@
           <RegionSelector
             :regions="regions"
             :currentRegion="currentRegion"
-            @regionSelected="regionStore.setCurrentRegion"
+            @regionSelected="handleRegionSelected"
+            :isLoading="regionStore.isLoading"
           />
           <a
             href="https://github.com/juanpintoselso33"
@@ -70,6 +71,8 @@
           "
           @updateSelectedNeighborhood="regionStore.updateSelectedNeighborhood"
           @mapInitialized="handleMapInitialized"
+          @initializeMap="handleInitializeMap"
+          :isLoading="regionStore.isLoading"
         />
       </div>
     </main>
@@ -77,13 +80,15 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import ListSelector from "./components/ListSelector.vue";
 import RegionMap from "./components/RegionMap.vue";
 import RegionSelector from "./components/RegionSelector.vue";
 import partiesAbbrev from "../public/partidos_abrev.json";
 import { useRegionStore } from "./stores/regionStore";
 import { storeToRefs } from "pinia";
+import { useMapStore } from "./stores/mapStore";
+import { Region } from "../src/types/Region"; // Add this import
 
 const regionStore = useRegionStore();
 const {
@@ -106,8 +111,45 @@ const handleMapInitialized = () => {
   }
 };
 
+const handleInitializeMap = async () => {
+  console.log("Initializing map from App.vue");
+  if (currentRegion.value.geojsonData) {
+    regionStore.updateCurrentRegion({ ...currentRegion.value });
+    const mapComponent = document.querySelector(".montevideo-map");
+    if (mapComponent instanceof HTMLElement) {
+      const mapStore = useMapStore();
+      try {
+        await mapStore.initializeMap(
+          mapComponent,
+          currentRegion.value.geojsonData,
+          {
+            ...currentRegion.value,
+            selectedLists: selectedLists.value,
+            selectedCandidates: selectedCandidates.value,
+          }
+        );
+        console.log("Map initialization completed");
+      } catch (error) {
+        console.error("Error initializing map:", error);
+      }
+    } else {
+      console.error("Map container not found or is not an HTMLElement");
+    }
+  } else {
+    console.error("No geojsonData available for initialization");
+  }
+};
+
+const handleRegionSelected = async (region: Region) => {
+  await regionStore.setCurrentRegion(region);
+};
+
 onMounted(() => {
-  regionStore.fetchRegionData();
+  regionStore.fetchRegionData().then(() => {
+    if (currentRegion.value.geojsonData) {
+      regionStore.updateCurrentRegion({ ...currentRegion.value });
+    }
+  });
 });
 </script>
 

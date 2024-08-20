@@ -2,27 +2,33 @@
   <Transition name="fade">
     <div v-if="selectedNeighborhood" class="neighborhood-info">
       <h3 class="neighborhood-name">{{ selectedNeighborhood }}</h3>
-      <p class="vote-count">
-        {{ getVotosForNeighborhood(selectedNeighborhood) }}
-        <span class="vote-label">votos</span>
-      </p>
+      <div v-html="neighborhoodContent"></div>
       <div class="spinner" v-if="isLoading"></div>
     </div>
   </Transition>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { storeToRefs } from "pinia";
+import { useMapStore } from "../../stores/mapStore";
+import { createNeighborhoodInfoContent } from "../../utils/tooltipUtils";
 
-defineProps<{
-  selectedNeighborhood: string | null;
-  getVotosForNeighborhood: (neighborhood: string) => number;
-}>();
+const mapStore = useMapStore();
+const { selectedNeighborhood, isLoading } = storeToRefs(mapStore);
 
-const isLoading = ref(false);
-
-// Export the isLoading ref to be used in the parent component
-defineExpose({ isLoading });
+const neighborhoodContent = computed(() => {
+  if (!selectedNeighborhood.value) return "";
+  return createNeighborhoodInfoContent(
+    selectedNeighborhood.value,
+    mapStore.getVotesForNeighborhood(selectedNeighborhood.value),
+    mapStore.selectedCandidates,
+    mapStore.partiesAbbrev,
+    mapStore.groupedSelectedItems,
+    mapStore.voteCalculations,
+    mapStore.sortBy
+  );
+});
 </script>
 
 <style scoped>
@@ -41,6 +47,8 @@ defineExpose({ isLoading });
   backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   position: relative;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 .neighborhood-name {

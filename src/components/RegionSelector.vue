@@ -31,6 +31,7 @@ import { ref, watch } from "vue";
 const props = defineProps<{
   regions: Array<{ name: string }>;
   currentRegion: { name: string };
+  isLoading: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -44,14 +45,23 @@ const toggleMenu = () => {
 };
 
 const selectRegion = (region: { name: string }) => {
+  console.log("RegionSelector: Starting region selection");
   emit("regionSelected", region);
   isMenuOpen.value = false;
+  console.log("RegionSelector: Region selection completed");
 };
 
 watch(
   () => props.currentRegion,
   (newRegion) => {
     // Update the selected region if it changes externally
+  }
+);
+
+watch(
+  () => props.isLoading,
+  (newValue) => {
+    console.log("RegionSelector: isLoading changed to", newValue);
   }
 );
 </script>

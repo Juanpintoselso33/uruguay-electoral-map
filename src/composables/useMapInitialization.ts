@@ -14,8 +14,10 @@ export function useMapInitialization() {
     }
 
     const map = L.map(container, {
-      zoomControl: false,
+      zoomControl: true,
       attributionControl: false,
+      zoomAnimation: true,
+      fadeAnimation: true,
     });
 
     if (
@@ -27,23 +29,22 @@ export function useMapInitialization() {
       const bounds = geoJsonLayer.getBounds();
 
       if (bounds.isValid()) {
-        map.fitBounds(bounds);
-
-        // Set a minimum zoom level
-        const minZoom = 10;
-        if (map.getZoom() < minZoom) {
-          map.setZoom(minZoom);
-        }
+        map.fitBounds(bounds, {
+          padding: [50, 50],
+          maxZoom: 13,
+          animate: true,
+          duration: 1,
+        });
 
         // Add the GeoJSON layer to the map
         geoJsonLayer.addTo(map);
       } else {
         console.warn("Invalid bounds for the GeoJSON data.");
-        map.setView([0, 0], 2);
+        map.setView([0, 0], 2, { animate: true, duration: 1 });
       }
     } else {
       console.warn("No valid GeoJSON data provided.");
-      map.setView([0, 0], 2);
+      map.setView([0, 0], 2, { animate: true, duration: 1 });
     }
 
     return map;
@@ -62,6 +63,8 @@ export function useMapInitialization() {
         map.fitBounds(bounds, {
           padding: [50, 50], // Add some padding
           maxZoom: 13, // Limit max zoom
+          animate: true,
+          duration: 1,
         });
 
         // Optionally, you can set a minimum zoom level
