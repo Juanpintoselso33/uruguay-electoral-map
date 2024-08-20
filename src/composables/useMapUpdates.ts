@@ -20,14 +20,6 @@ export function useMapUpdates(props, voteCalculations, voteGrouping, getColor) {
       voteCalculations.getCandidateTotalVotes
     );
 
-    console.log("Max votes for map update:", maxVotes);
-    console.log("Selected lists:", props.selectedLists);
-    console.log("Selected candidates:", props.selectedCandidates);
-    console.log(
-      "votosPorListas:",
-      JSON.stringify(props.votosPorListas, null, 2)
-    );
-
     // Remove existing layers
     currentMap.eachLayer((layer) => {
       if (layer instanceof L.GeoJSON) {
@@ -75,11 +67,12 @@ export function useMapUpdates(props, voteCalculations, voteGrouping, getColor) {
       onEachFeature: (feature, layer) => {
         const neighborhood = getNormalizedNeighborhood(feature);
         const votes = voteCalculations.getVotesForNeighborhood(neighborhood);
-        console.log(`Tooltip votes for ${neighborhood}:`, votes);
+        console.log(`HOVER_DEBUG: onEachFeature for ${neighborhood}:`, votes);
         const tooltipContent = createTooltipContent(
           neighborhood,
           votes,
           props.selectedCandidates,
+          props.selectedLists,
           props.partiesAbbrev,
           groupedSelectedItems.value,
           voteCalculations,
@@ -87,6 +80,7 @@ export function useMapUpdates(props, voteCalculations, voteGrouping, getColor) {
         );
 
         const showTooltip = (e: L.LeafletEvent) => {
+          console.log("HOVER_DEBUG: showTooltip called");
           const event = e as L.LeafletMouseEvent; // Cast to L.LeafletMouseEvent
           if (event.target && "setStyle" in event.target) {
             event.target.setStyle({ fillOpacity: 0.9 });

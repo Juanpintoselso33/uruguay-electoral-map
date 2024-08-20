@@ -57,13 +57,6 @@ watch(
     // Update the selected region if it changes externally
   }
 );
-
-watch(
-  () => props.isLoading,
-  (newValue) => {
-    console.log("RegionSelector: isLoading changed to", newValue);
-  }
-);
 </script>
 
 <style scoped>

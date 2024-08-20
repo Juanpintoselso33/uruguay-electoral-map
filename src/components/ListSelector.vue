@@ -174,7 +174,6 @@ interface Props {
   partiesByList: Record<string, string>;
   precandidatosByList: Record<string, string>;
   candidates: string[];
-  candidatesByParty: Record<string, string>;
   selectedLists: string[];
   selectedCandidates: string[];
 }

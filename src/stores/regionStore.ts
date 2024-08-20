@@ -3,9 +3,9 @@ import { ref, computed, watch } from "vue";
 import Papa from "papaparse";
 import { Region } from "../types/Region";
 import { CandidateVote } from "../types/VoteTypes";
-import { useVoteCalculations } from "../composables/useVoteCalculations";
-import { useVoteGrouping } from "../composables/useVoteGrouping";
+import { useVoteOperations } from "../composables/useVoteOperations";
 import { getNormalizedNeighborhood } from "../utils/mapUtils";
+import partiesAbbrev from "../../public/partidos_abrev.json";
 
 export const useRegionStore = defineStore("region", () => {
   const regions = ref<Region[]>([
@@ -36,7 +36,10 @@ export const useRegionStore = defineStore("region", () => {
     // Add other regions here
   ]);
 
-  const currentRegion = ref<Region>(regions.value[0]);
+  const currentRegion = ref<Region>({
+    ...regions.value[0],
+    partiesAbbrev: partiesAbbrev,
+  });
   const availableLists = ref<string[]>([]);
   const selectedLists = ref<string[]>([]);
   const selectedNeighborhood = ref<string | null>(null);
@@ -44,18 +47,7 @@ export const useRegionStore = defineStore("region", () => {
   const selectedParty = ref<string>("");
   const selectedCandidates = ref<string[]>([]);
   const isLoading = ref(false);
-
-  watch(selectedLists, (newValue) => {
-    console.log("Selected lists updated:", newValue);
-  });
-
-  watch(
-    () => currentRegion.value.votosPorListas,
-    (newValue) => {
-      console.log("votosPorListas updated:", newValue);
-    },
-    { deep: true }
-  );
+  const groupedSelectedItems = ref({});
 
   const setCurrentRegion = async (region: Region) => {
     isLoading.value = true;
@@ -65,8 +57,8 @@ export const useRegionStore = defineStore("region", () => {
       isODN.value = false;
       selectedParty.value = "";
       currentRegion.value = region;
-      console.log("Current region set to:", currentRegion.value);
       await fetchRegionData();
+      updateGroupedItems(); // Add this line
     } finally {
       isLoading.value = false;
     }
@@ -87,6 +79,8 @@ export const useRegionStore = defineStore("region", () => {
         lists,
         partiesByList,
         precandidatosByList,
+        precandidatosByParty,
+        partiesAbbrev,
       } = processCSV(csvText);
 
       const geojsonResponse = await fetch(currentRegion.value.geojsonPath);
@@ -100,10 +94,10 @@ export const useRegionStore = defineStore("region", () => {
         maxVotosPorListas: maxVotosPorListas || {},
         partiesByList: partiesByList || {},
         precandidatosByList: precandidatosByList || {},
+        precandidatosByParty: precandidatosByParty || {},
         geojsonData: geojsonData || null,
+        partiesAbbrev: partiesAbbrev || {},
       };
-
-      console.log("Fetched region data:", currentRegion.value);
     } catch (error) {
       console.error("Error fetching region data:", error);
     } finally {
@@ -112,7 +106,6 @@ export const useRegionStore = defineStore("region", () => {
   };
 
   const processCSV = (csvText: string) => {
-    console.log("Processing CSV data...");
     const result = Papa.parse(csvText, { header: true });
     const data = result.data as Array<{
       ZONA: string;
@@ -126,6 +119,7 @@ export const useRegionStore = defineStore("region", () => {
     const maxVotosPorListas: Record<string, number> = {};
     const partiesByList: Record<string, string> = {};
     const precandidatosByList: Record<string, string> = {};
+    const precandidatosByParty: Record<string, string[]> = {};
     const lists: string[] = [];
 
     data.forEach((row) => {
@@ -135,6 +129,13 @@ export const useRegionStore = defineStore("region", () => {
         maxVotosPorListas[row.HOJA] = 0;
         partiesByList[row.HOJA] = row.PARTIDO;
         precandidatosByList[row.HOJA] = row.PRECANDIDATO;
+
+        if (!precandidatosByParty[row.PARTIDO]) {
+          precandidatosByParty[row.PARTIDO] = [];
+        }
+        if (!precandidatosByParty[row.PARTIDO].includes(row.PRECANDIDATO)) {
+          precandidatosByParty[row.PARTIDO].push(row.PRECANDIDATO);
+        }
       }
       votosPorListas[row.HOJA][row.ZONA] =
         (votosPorListas[row.HOJA][row.ZONA] || 0) + parseInt(row.CNT_VOTOS, 10);
@@ -144,65 +145,38 @@ export const useRegionStore = defineStore("region", () => {
       );
     });
 
-    console.log("Processed CSV data:", {
-      votosPorListas,
-      maxVotosPorListas,
-      lists,
-      partiesByList,
-      precandidatosByList,
-    });
-
     return {
       votosPorListas,
       maxVotosPorListas,
       lists,
       partiesByList,
       precandidatosByList,
+      precandidatosByParty,
+      partiesAbbrev, // Add this line
     };
   };
 
-  const voteCalculations = computed(() => {
-    const calculations = useVoteCalculations(
-      {
-        selectedCandidates: selectedCandidates.value,
-        selectedLists: selectedLists.value,
-        votosPorListas: currentRegion.value.votosPorListas || {},
-        precandidatosByList: currentRegion.value.precandidatosByList || {},
-      },
-      currentRegion.value
-    );
-
-    return {
-      ...calculations,
-      getTotalVotesForList: (list: string) =>
-        calculations.getTotalVotesForList(
-          currentRegion.value.votosPorListas || {},
-          list
-        ),
-      getCandidateTotalVotesForAllNeighborhoods: (candidate: string) =>
-        calculations.getCandidateTotalVotesForAllNeighborhoods(candidate),
-    };
+  const voteOperations = computed(() => {
+    return useVoteOperations({
+      votosPorListas: currentRegion.value.votosPorListas || {},
+      precandidatosByList: currentRegion.value.precandidatosByList || {},
+      selectedLists: selectedLists.value,
+      selectedCandidates: selectedCandidates.value,
+      partiesByList: currentRegion.value.partiesByList || {},
+    });
   });
 
-  const voteGrouping = useVoteGrouping(
-    {
-      selectedCandidates,
-      selectedLists,
-      votosPorListas: computed(() => currentRegion.value.votosPorListas || {}),
-      partiesByList: computed(() => currentRegion.value.partiesByList || {}),
-      precandidatosByList: computed(
-        () => currentRegion.value.precandidatosByList || {}
-      ),
-    },
-    {
-      getTotalVotesForList: (list: string) =>
-        voteCalculations.value.getTotalVotesForList(list),
-      getCandidateTotalVotesForAllNeighborhoods: (candidate: string) =>
-        voteCalculations.value.getCandidateTotalVotesForAllNeighborhoods(
-          candidate
-        ),
-    }
-  );
+  const setGroupedSelectedItems = (items) => {
+    groupedSelectedItems.value = items;
+  };
+
+  const updateGroupedItems = () => {
+    const items = voteOperations.value.groupedSelectedItems;
+    setGroupedSelectedItems(items.value);
+    console.log("Grouped items:", items.value);
+  };
+
+  watch([selectedCandidates, selectedLists], updateGroupedItems);
 
   const uniqueSortedCandidates = computed(() => {
     if (!currentRegion.value || !currentRegion.value.precandidatosByList) {
@@ -213,25 +187,6 @@ export const useRegionStore = defineStore("region", () => {
     )
       .filter(Boolean)
       .sort((a, b) => a.localeCompare(b, "es"));
-  });
-
-  const candidatesByParty = computed(() => {
-    const result: Record<string, string> = {};
-    if (
-      currentRegion.value &&
-      currentRegion.value.precandidatosByList &&
-      currentRegion.value.partiesByList
-    ) {
-      Object.entries(currentRegion.value.precandidatosByList).forEach(
-        ([list, candidate]) => {
-          const party = currentRegion.value.partiesByList?.[list];
-          if (party && candidate) {
-            result[candidate] = party;
-          }
-        }
-      );
-    }
-    return result;
   });
 
   const currentPartiesByList = computed(
@@ -262,7 +217,7 @@ export const useRegionStore = defineStore("region", () => {
 
     selectedCandidates.value.forEach((candidate) => {
       votes[candidate] =
-        voteCalculations.value.getVotesForNeighborhood(neighborhood);
+        voteOperations.value.getVotesForNeighborhood(neighborhood);
     });
 
     console.log("Candidate votes for neighborhood:", votes);
@@ -286,16 +241,6 @@ export const useRegionStore = defineStore("region", () => {
     getVotesForNeighborhood: Function,
     getCandidateTotalVotes: Function
   ) => {
-    console.log("getMaxVotes called with:", {
-      geojsonData,
-      selectedCandidates,
-      getVotesForNeighborhood,
-      getCandidateTotalVotes,
-    });
-    console.log("getMaxVotes called");
-    console.log("geojsonData:", geojsonData);
-    console.log("selectedCandidates:", selectedCandidates);
-
     if (!geojsonData || !geojsonData.features) {
       console.log("No geojsonData or features");
       return 0; // Return 0 when there is no data
@@ -317,13 +262,11 @@ export const useRegionStore = defineStore("region", () => {
               return votes;
             })
           );
-
-    console.log(`Max votes: ${maxVotes}`);
     return maxVotes || 0; // Return 0 if maxVotes is 0
   };
 
   const getVotesForNeighborhood = (neighborhood: string) => {
-    return voteCalculations.value.getVotesForNeighborhood(neighborhood);
+    return voteOperations.value.getVotesForNeighborhood(neighborhood);
   };
 
   function updateSelectedLists(lists: string[]) {
@@ -342,7 +285,6 @@ export const useRegionStore = defineStore("region", () => {
     setCurrentRegion,
     fetchRegionData,
     uniqueSortedCandidates,
-    candidatesByParty,
     currentPartiesByList,
     updateCurrentRegion,
     updateIsODN,
@@ -350,10 +292,12 @@ export const useRegionStore = defineStore("region", () => {
     updateSelectedParty,
     getVotesForNeighborhood,
     getCandidateVotesForNeighborhood,
-    groupCandidatesByParty: voteGrouping.groupCandidatesByParty,
-    groupListsByParty: voteGrouping.groupListsByParty,
+    groupCandidatesByParty: voteOperations.value.groupCandidatesByParty,
+    groupListsByParty: voteOperations.value.groupListsByParty,
     getMaxVotes,
     isLoading,
     updateSelectedLists,
+    groupedSelectedItems,
+    setGroupedSelectedItems,
   };
 });

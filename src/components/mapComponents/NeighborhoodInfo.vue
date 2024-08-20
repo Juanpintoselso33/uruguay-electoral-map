@@ -3,38 +3,36 @@
     <div v-if="selectedNeighborhood" class="neighborhood-info">
       <h3 class="neighborhood-name">{{ selectedNeighborhood }}</h3>
       <div v-html="neighborhoodContent"></div>
-      <div class="spinner" v-if="isLoading"></div>
+      <div class="spinner" v-if="props.isLoading"></div>
     </div>
   </Transition>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { storeToRefs } from "pinia";
-import { useMapStore } from "../../stores/mapStore";
 import { createNeighborhoodInfoContent } from "../../utils/tooltipUtils";
 
-const mapStore = useMapStore();
-const {
-  selectedNeighborhood,
-  isLoading,
-  voteCalculations,
-  groupedSelectedItems,
-  selectedCandidates,
-  partiesAbbrev,
-  sortBy,
-} = storeToRefs(mapStore);
+const props = defineProps<{
+  selectedNeighborhood: string | null;
+  voteOperations: any;
+  selectedCandidates: string[];
+  selectedLists: string[];
+  partiesAbbrev: Record<string, string>;
+  groupedSelectedItems: any;
+  isLoading: boolean;
+  sortBy: "votes" | "alphabetical";
+}>();
 
 const neighborhoodContent = computed(() => {
-  if (!selectedNeighborhood.value) return "";
+  if (!props.selectedNeighborhood) return "";
   return createNeighborhoodInfoContent(
-    selectedNeighborhood.value,
-    voteCalculations.value.getVotesForNeighborhood(selectedNeighborhood.value),
-    selectedCandidates.value,
-    partiesAbbrev.value,
-    groupedSelectedItems.value,
-    voteCalculations.value,
-    sortBy.value
+    props.selectedNeighborhood,
+    props.voteOperations,
+    props.selectedCandidates,
+    props.selectedLists,
+    props.partiesAbbrev,
+    props.groupedSelectedItems,
+    props.sortBy
   );
 });
 </script>

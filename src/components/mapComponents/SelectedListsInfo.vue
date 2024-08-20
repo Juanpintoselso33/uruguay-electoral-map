@@ -1,26 +1,32 @@
 <template>
   <div class="selected-lists-info" :class="{ 'mobile-hidden': isMobileHidden }">
-    <h3 class="selected-lists-title">Listas seleccionadas</h3>
+    <h3 class="selected-lists-title">
+      {{
+        selectedCandidates.length > 0
+          ? "Candidatos seleccionados"
+          : "Listas seleccionadas"
+      }}
+    </h3>
     <div class="selected-lists-content">
       <ul class="party-list">
         <li
-          v-for="(partyData, party) in sortedGroupedItems"
+          v-for="(partyData, party) in groupedSelectedItems"
           :key="party"
           class="party-item"
         >
           <span class="party-name">{{
             parseFullPartyName(String(party))
           }}</span>
-          <ul v-if="partyData.candidates" class="candidate-items">
+          <ul v-if="partyData?.candidates?.length" class="candidate-items">
             <li
               v-for="candidate in partyData.candidates"
-              :key="candidate.name"
+              :key="candidate.candidate"
               class="candidate-item"
             >
-              {{ candidate.name }}: {{ candidate.votes }} votos
+              {{ candidate.candidate }}: {{ candidate.votes }} votos
             </li>
           </ul>
-          <ul v-else-if="partyData.lists" class="list-items">
+          <ul v-else-if="partyData?.lists?.length" class="list-items">
             <li
               v-for="list in partyData.lists"
               :key="list.number"
@@ -31,86 +37,75 @@
           </ul>
           <div class="party-total">
             <span class="total-label"
-              >Total:
-              {{
-                partyData.candidates
-                  ? partyData.candidates.reduce(
-                      (sum, candidate) => sum + candidate.votes,
-                      0
-                    )
-                  : partyData.lists.reduce((sum, list) => sum + list.votes, 0)
-              }}
-              votos
-            </span>
+              >Total: {{ partyData.totalVotes }} votos</span
+            >
           </div>
         </li>
       </ul>
     </div>
-    <div class="total-votes">Total votos: {{ getTotalVotes() }}</div>
+    <div class="total-votes">
+      Total votos: {{ getTotalVotes(selectedLists, selectedCandidates) }}
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { parseFullPartyName } from "../../utils/stringUtils";
 import { computed } from "vue";
+import { useRegionStore } from "../../stores/regionStore";
 
-interface Props {
+const props = defineProps<{
   isMobileHidden: boolean;
   selectedCandidates: string[];
-  groupedSelectedItems: Record<
-    string,
-    {
-      candidates: { name: string; votes: number }[];
-      lists: { number: string; votes: number }[];
-    }
-  >;
-  getTotalVotes: () => number;
-  sortBy: "votes" | "alphabetical";
+  selectedLists: string[];
+  getTotalVotes: (
+    selectedLists: string[],
+    selectedCandidates: string[]
+  ) => number;
+}>();
+
+const regionStore = useRegionStore();
+
+interface PartyData {
+  candidates?: { candidate: string; votes: number }[];
+  lists?: { number: string; votes: number }[];
+  totalVotes: number;
 }
 
-const props = defineProps<Props>();
-
-// Sorting function
-const sortByVotes = <T extends { votes: number }>(a: T, b: T) =>
-  b.votes - a.votes;
-const sortAlphabetically = <T extends { name?: string; number?: string }>(
-  a: T,
-  b: T
+// Local sorting functions
+const sortCandidatesByVotes = (
+  candidates: { candidate: string; votes: number }[]
 ) => {
-  const aValue = a.name || a.number || "";
-  const bValue = b.name || b.number || "";
-  return aValue.localeCompare(bValue);
+  return [...candidates].sort((a, b) => b.votes - a.votes);
 };
 
-// Sorted grouped items
-const sortedGroupedItems = computed(() => {
-  const sorted = Object.entries(props.groupedSelectedItems).sort(
-    ([, a], [, b]) => {
-      const aVotes = a.candidates
-        ? a.candidates.reduce((sum, c) => sum + c.votes, 0)
-        : a.lists.reduce((sum, l) => sum + l.votes, 0);
-      const bVotes = b.candidates
-        ? b.candidates.reduce((sum, c) => sum + c.votes, 0)
-        : b.lists.reduce((sum, l) => sum + l.votes, 0);
-      return bVotes - aVotes;
-    }
-  );
+const sortListsByVotes = (lists: { number: string; votes: number }[]) => {
+  return [...lists].sort((a, b) => b.votes - a.votes);
+};
 
+// Update the computed property to use the interface
+const groupedSelectedItems = computed<Record<string, PartyData>>(() => {
+  const items = regionStore.groupedSelectedItems as Record<string, PartyData>;
+
+  // Ordenar candidatos dentro de cada partido
+  Object.values(items).forEach((partyData) => {
+    if (partyData.candidates) {
+      partyData.candidates = sortCandidatesByVotes(partyData.candidates);
+    }
+    // Ordenar listas dentro de cada partido
+    if (partyData.lists) {
+      partyData.lists = sortListsByVotes(partyData.lists);
+    }
+  });
+
+  // Ordenar partidos por total de votos
   return Object.fromEntries(
-    sorted.map(([party, data]) => {
-      if (data.candidates) {
-        data.candidates.sort(
-          props.sortBy === "votes" ? sortByVotes : sortAlphabetically
-        );
-      } else if (data.lists) {
-        data.lists.sort(
-          props.sortBy === "votes" ? sortByVotes : sortAlphabetically
-        );
-      }
-      return [party, data];
-    })
+    Object.entries(items).sort(([, a], [, b]) => b.totalVotes - a.totalVotes)
   );
 });
+
+const selectedCandidates = computed(() => props.selectedCandidates);
+const selectedLists = computed(() => props.selectedLists);
 </script>
 
 <style scoped>
@@ -165,14 +160,23 @@ const sortedGroupedItems = computed(() => {
   font-weight: bold;
 }
 
-.list-items,
 .candidate-items {
   padding-left: 15px;
   margin: 0;
 }
 
-.list-item,
 .candidate-item {
+  margin-bottom: 3px;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.list-items {
+  padding-left: 15px;
+  margin: 0;
+}
+
+.list-item {
   margin-bottom: 3px;
   font-size: 0.9em;
   color: #666;
@@ -183,23 +187,19 @@ const sortedGroupedItems = computed(() => {
   font-size: 0.9em;
   color: #666;
   display: flex;
-  justify-content: space-between; /* Aligns total label and value */
+  justify-content: space-between;
 }
 
 .total-label {
-  font-weight: bold; /* Makes the label bold */
+  font-weight: bold;
 }
 
 .total-votes {
   color: #333;
-}
-
-.total-votes {
   margin-top: 20px;
   padding-top: 10px;
   border-top: 1px solid #ddd;
   font-size: 1.2em;
-  color: #333;
 }
 
 @media (max-width: 767px) {

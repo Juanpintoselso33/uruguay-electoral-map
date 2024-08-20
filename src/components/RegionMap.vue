@@ -5,12 +5,18 @@
     <MapLegend
       v-if="showLegend"
       :legendGrades="[0, 0.2, 0.4, 0.6, 0.8, 1]"
-      :getColor="getColor"
-      :maxVotes="getMaxVotes"
+      :getColor="mapStore.getColor"
+      :maxVotes="mapStore.getMaxVotes"
     />
     <NeighborhoodInfo
       :selectedNeighborhood="selectedNeighborhood"
-      :getVotosForNeighborhood="getVotesForNeighborhood"
+      :voteOperations="props.voteOperations"
+      :selectedCandidates="props.selectedCandidates"
+      :selectedLists="props.selectedLists"
+      :partiesAbbrev="props.partiesAbbrev"
+      :groupedSelectedItems="props.voteOperations.groupedSelectedItems"
+      :sortBy="'votes'"
+      :isLoading="props.isLoading"
     />
   </div>
   <MobileToggle
@@ -18,10 +24,11 @@
     :isMobileHidden="isMobileHidden"
   />
   <SelectedListsInfo
+    :groupedSelectedItems="voteOperations.groupedSelectedItems"
     :isMobileHidden="isMobileHidden"
     :selectedCandidates="selectedCandidates"
-    :groupedSelectedItems="groupedSelectedItems"
-    :getTotalVotes="getTotalVotes"
+    :selectedLists="selectedLists"
+    :getTotalVotes="voteOperations.getTotalVotes"
     :sortBy="'votes'"
   />
 </template>
@@ -35,20 +42,15 @@ import SelectedListsInfo from "./mapComponents/SelectedListsInfo.vue";
 import Spinner from "./mapComponents/Spinner.vue";
 import { useMapStore } from "../stores/mapStore";
 import { storeToRefs } from "pinia";
-import { useVoteGrouping } from "../composables/useVoteGrouping";
 import { useColorScale } from "../composables/useColorScale";
 import { useMapWatchers } from "../composables/useMapWatchers";
 import "leaflet/dist/leaflet.css";
-import GeoJSON from "geojson";
-import { useRegionStore } from "../stores/regionStore";
-import { useVoteCalculations } from "../composables/useVoteCalculations";
 
 interface Props {
   regionName: string;
   selectedLists: string[];
   votosPorListas: Record<string, Record<string, number>>;
   maxVotosPorListas: Record<string, number>;
-  getVotosForNeighborhood: (neighborhood: string) => number;
   geojsonData: any;
   selectedNeighborhood: string | null;
   isODN: boolean;
@@ -57,12 +59,9 @@ interface Props {
   precandidatosByList: Record<string, string>;
   selectedCandidates: string[];
   currentRegion: string;
-  getCandidateVotesForNeighborhood: (
-    neighborhood: string
-  ) => { candidate: string; votes: number; party: string }[];
   isLoading: boolean;
-  voteCalculations: ReturnType<
-    typeof import("../composables/useVoteCalculations").useVoteCalculations
+  voteOperations: ReturnType<
+    typeof import("../composables/useVoteOperations").useVoteOperations
   >;
 }
 
@@ -80,30 +79,11 @@ const { showLegend, isMobileHidden, selectedNeighborhood, isLoading } =
 
 const mapContainer = ref<HTMLElement | null>(null);
 
-const { voteCalculations } = storeToRefs(mapStore);
-
-const {
-  getVotesForNeighborhood,
-  getTotalVotes,
-  getCandidateTotalVotesForAllNeighborhoods,
-  getTotalVotesForList,
-} = voteCalculations.value;
-
-const { groupedSelectedItems } = useVoteGrouping(props, {
-  getTotalVotesForList,
-  getCandidateTotalVotesForAllNeighborhoods,
-});
-
-const { getColor } = useColorScale();
-
-const getMaxVotes = computed(() => {
-  if (!props.geojsonData) return 0;
-  return mapStore.getMaxVotes;
-});
-
 onMounted(() => {
-  if (props.geojsonData) {
-    mapStore.initializeMap(mapContainer.value, props.geojsonData, props);
+  console.log("HOVER_DEBUG: RegionMap component mounted");
+  if (props.geojsonData && mapContainer.value) {
+    mapStore.initializeMap(mapContainer.value, props.geojsonData);
+    emit("mapInitialized");
   }
   window.addEventListener("resize", () => mapStore.updateMap());
 });
@@ -123,9 +103,9 @@ const toggleMobileVisibility = () => {
 
 watch(
   () => props.geojsonData,
-  (newGeojsonData) => {
-    if (newGeojsonData) {
-      mapStore.initializeMap(mapContainer.value, newGeojsonData, props);
+  (newData) => {
+    if (newData && mapContainer.value) {
+      mapStore.initializeMap(mapContainer.value, newData);
     }
   }
 );
