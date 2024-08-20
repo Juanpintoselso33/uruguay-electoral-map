@@ -62,12 +62,10 @@
           :partiesAbbrev="partiesAbbrev"
           :selectedCandidates="selectedCandidates"
           :currentRegion="currentRegion.name"
-          :getVotosForNeighborhood="
-            (neighborhood) => regionStore.getVotesForNeighborhood(neighborhood)
-          "
+          :voteCalculations="voteCalculations"
+          :getVotosForNeighborhood="voteCalculations.getVotesForNeighborhood"
           :getCandidateVotesForNeighborhood="
-            (neighborhood) =>
-              regionStore.getCandidateVotesForNeighborhood(neighborhood)
+            voteCalculations.getCandidateVotesForNeighborhood
           "
           @updateSelectedNeighborhood="regionStore.updateSelectedNeighborhood"
           @mapInitialized="handleMapInitialized"
@@ -80,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import ListSelector from "./components/ListSelector.vue";
 import RegionMap from "./components/RegionMap.vue";
 import RegionSelector from "./components/RegionSelector.vue";
@@ -89,6 +87,7 @@ import { useRegionStore } from "./stores/regionStore";
 import { storeToRefs } from "pinia";
 import { useMapStore } from "./stores/mapStore";
 import { Region } from "../src/types/Region"; // Add this import
+import { useVoteCalculations } from "./composables/useVoteCalculations";
 
 const regionStore = useRegionStore();
 const {
@@ -104,6 +103,35 @@ const {
   candidatesByParty,
   currentPartiesByList,
 } = storeToRefs(regionStore);
+
+const voteCalculations = computed(() => {
+  console.log("Computing voteCalculations");
+  console.log("currentRegion:", currentRegion.value);
+  console.log("selectedLists:", selectedLists.value);
+  console.log("selectedCandidates:", selectedCandidates.value);
+  console.log("votosPorListas:", currentRegion.value.votosPorListas);
+
+  const calculations = useVoteCalculations(
+    {
+      selectedCandidates: selectedCandidates.value,
+      selectedLists: selectedLists.value,
+      votosPorListas: currentRegion.value.votosPorListas || {},
+      precandidatosByList: currentRegion.value.precandidatosByList || {},
+    },
+    currentRegion.value
+  );
+
+  console.log("voteCalculations:", calculations);
+  return calculations;
+});
+
+watch(
+  voteCalculations,
+  (newVal) => {
+    console.log("voteCalculations updated:", newVal);
+  },
+  { deep: true }
+);
 
 const handleMapInitialized = () => {
   if (currentRegion.value.geojsonData) {
@@ -121,12 +149,7 @@ const handleInitializeMap = async () => {
       try {
         await mapStore.initializeMap(
           mapComponent,
-          currentRegion.value.geojsonData,
-          {
-            ...currentRegion.value,
-            selectedLists: selectedLists.value,
-            selectedCandidates: selectedCandidates.value,
-          }
+          currentRegion.value.geojsonData
         );
         console.log("Map initialization completed");
       } catch (error) {

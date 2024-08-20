@@ -1,14 +1,17 @@
 <template>
   <div class="montevideo-map-wrapper">
     <div class="montevideo-map" ref="mapContainer"></div>
-    <Spinner v-if="isLoading" :isLoading="isLoading" />
+    <Spinner v-if="props.isLoading" :isLoading="props.isLoading" />
     <MapLegend
       v-if="showLegend"
       :legendGrades="[0, 0.2, 0.4, 0.6, 0.8, 1]"
       :getColor="getColor"
       :maxVotes="getMaxVotes"
     />
-    <NeighborhoodInfo />
+    <NeighborhoodInfo
+      :selectedNeighborhood="selectedNeighborhood"
+      :getVotosForNeighborhood="getVotesForNeighborhood"
+    />
   </div>
   <MobileToggle
     @toggle="toggleMobileVisibility"
@@ -32,13 +35,44 @@ import SelectedListsInfo from "./mapComponents/SelectedListsInfo.vue";
 import Spinner from "./mapComponents/Spinner.vue";
 import { useMapStore } from "../stores/mapStore";
 import { storeToRefs } from "pinia";
-import { useVoteCalculations } from "../composables/useVoteCalculations";
 import { useVoteGrouping } from "../composables/useVoteGrouping";
 import { useColorScale } from "../composables/useColorScale";
 import { useMapWatchers } from "../composables/useMapWatchers";
 import "leaflet/dist/leaflet.css";
 import GeoJSON from "geojson";
 import { useRegionStore } from "../stores/regionStore";
+import { useVoteCalculations } from "../composables/useVoteCalculations";
+
+interface Props {
+  regionName: string;
+  selectedLists: string[];
+  votosPorListas: Record<string, Record<string, number>>;
+  maxVotosPorListas: Record<string, number>;
+  getVotosForNeighborhood: (neighborhood: string) => number;
+  geojsonData: any;
+  selectedNeighborhood: string | null;
+  isODN: boolean;
+  partiesAbbrev: Record<string, string>;
+  partiesByList: Record<string, string>;
+  precandidatosByList: Record<string, string>;
+  selectedCandidates: string[];
+  currentRegion: string;
+  getCandidateVotesForNeighborhood: (
+    neighborhood: string
+  ) => { candidate: string; votes: number; party: string }[];
+  isLoading: boolean;
+  voteCalculations: ReturnType<
+    typeof import("../composables/useVoteCalculations").useVoteCalculations
+  >;
+}
+
+const props = defineProps<Props>();
+
+const emit = defineEmits<{
+  (e: "updateSelectedNeighborhood", neighborhood: string | null): void;
+  (e: "mapInitialized"): void;
+  (e: "initializeMap"): void;
+}>();
 
 const mapStore = useMapStore();
 const { showLegend, isMobileHidden, selectedNeighborhood, isLoading } =
@@ -46,15 +80,16 @@ const { showLegend, isMobileHidden, selectedNeighborhood, isLoading } =
 
 const mapContainer = ref<HTMLElement | null>(null);
 
+const { voteCalculations } = storeToRefs(mapStore);
+
 const {
   getVotesForNeighborhood,
-  getCandidateTotalVotes,
   getTotalVotes,
   getCandidateTotalVotesForAllNeighborhoods,
   getTotalVotesForList,
-} = useVoteCalculations(mapStore, mapStore.currentRegion);
+} = voteCalculations.value;
 
-const { groupedSelectedItems } = useVoteGrouping(mapStore, {
+const { groupedSelectedItems } = useVoteGrouping(props, {
   getTotalVotesForList,
   getCandidateTotalVotesForAllNeighborhoods,
 });
@@ -62,20 +97,13 @@ const { groupedSelectedItems } = useVoteGrouping(mapStore, {
 const { getColor } = useColorScale();
 
 const getMaxVotes = computed(() => {
-  if (!mapStore.geojsonData) return 0;
-  return mapStore.getMaxVotes(
-    mapStore.geojsonData,
-    mapStore.selectedCandidates,
-    getVotesForNeighborhood,
-    getCandidateTotalVotes
-  );
+  if (!props.geojsonData) return 0;
+  return mapStore.getMaxVotes;
 });
 
-const regionStore = useRegionStore();
-
 onMounted(() => {
-  if (mapStore.geojsonData) {
-    mapStore.initializeMap(mapContainer.value, mapStore.geojsonData, mapStore);
+  if (props.geojsonData) {
+    mapStore.initializeMap(mapContainer.value, props.geojsonData, props);
   }
   window.addEventListener("resize", () => mapStore.updateMap());
 });
@@ -87,28 +115,20 @@ onUnmounted(() => {
   window.removeEventListener("resize", () => mapStore.updateMap());
 });
 
-useMapWatchers(mapStore, mapContainer);
+useMapWatchers(props, mapContainer);
 
 const toggleMobileVisibility = () => {
   mapStore.toggleMobileVisibility();
 };
 
 watch(
-  () => mapStore.geojsonData,
+  () => props.geojsonData,
   (newGeojsonData) => {
     if (newGeojsonData) {
-      mapStore.initializeMap(mapContainer.value, newGeojsonData, mapStore);
+      mapStore.initializeMap(mapContainer.value, newGeojsonData, props);
     }
   }
 );
-
-// Update the map when selectedNeighborhood changes
-watch(selectedNeighborhood, (newNeighborhood) => {
-  if (newNeighborhood) {
-    // Highlight the selected neighborhood on the map
-    // You'll need to implement this logic
-  }
-});
 </script>
 
 <style scoped>

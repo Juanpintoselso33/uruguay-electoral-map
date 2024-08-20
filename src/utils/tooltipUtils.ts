@@ -160,3 +160,29 @@ export function createTooltipContent(
   `;
   return content;
 }
+
+export function createNeighborhoodInfoContent(
+  neighborhood: string,
+  votes: number,
+  selectedCandidates: string[],
+  partiesAbbrev: Record<string, string>,
+  groupedSelectedItems: Record<
+    string,
+    {
+      candidates?: { name: string; votes: number }[];
+      lists?: { number: string; votes: number }[];
+    }
+  >,
+  voteCalculations: ReturnType<typeof useVoteCalculations>,
+  sortBy: "votes" | "alphabetical" = "votes"
+): string {
+  return createTooltipContent(
+    neighborhood,
+    votes,
+    selectedCandidates,
+    partiesAbbrev,
+    groupedSelectedItems,
+    voteCalculations,
+    sortBy
+  );
+}

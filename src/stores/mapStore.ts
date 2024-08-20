@@ -4,6 +4,7 @@ import chroma from "chroma-js";
 import { styleFeature, getNormalizedNeighborhood } from "../utils/mapUtils";
 import { useVoteCalculations } from "../composables/useVoteCalculations";
 import { useVoteGrouping } from "../composables/useVoteGrouping";
+import { useRegionStore } from "../stores/regionStore";
 
 export const useMapStore = defineStore("map", {
   state: () => ({
@@ -14,51 +15,84 @@ export const useMapStore = defineStore("map", {
     isMobileHidden: false,
     isLoading: false,
     selectedCandidates: [] as string[],
-    partiesAbbrev: {} as Record<string, string>,
+    selectedLists: [] as string[],
     votosPorListas: {} as Record<string, Record<string, number>>,
     precandidatosByList: {} as Record<string, string>,
+    partiesAbbrev: {} as Record<string, string>,
+    partiesByList: {} as Record<string, string>,
+    geojsonData: null as any,
     sortBy: "votes" as "votes" | "alphabetical",
+    voteCalculations: {
+      getVotesForNeighborhood: () => 0,
+      getCandidateVotesForNeighborhood: () => ({}),
+      getCandidateTotalVotes: () => 0,
+      getTotalVotes: () => 0,
+      getCandidateTotalVotesForAllNeighborhoods: () => 0,
+      getTotalVotesForList: () => 0,
+      getVotesForCandidateInNeighborhood: () => 0,
+    } as ReturnType<typeof useVoteCalculations>,
   }),
+
   getters: {
-    voteCalculations: (state) =>
-      useVoteCalculations(
-        {
-          votosPorListas: state.votosPorListas,
-          precandidatosByList: state.precandidatosByList,
-        },
-        null
-      ),
-    groupedSelectedItems: (state) => {
-      const { groupSelectedItems } = useVoteGrouping(
+    computedVoteCalculations: (state) => {
+      const currentRegion = useRegionStore().currentRegion;
+      return useVoteCalculations(
         {
           selectedCandidates: state.selectedCandidates,
+          selectedLists: state.selectedLists,
           votosPorListas: state.votosPorListas,
           precandidatosByList: state.precandidatosByList,
         },
-        state.voteCalculations
+        currentRegion
       );
-      return groupSelectedItems();
+    },
+
+    groupedSelectedItems: (state) => {
+      const { groupedSelectedItems } = useVoteGrouping(
+        {
+          selectedCandidates: state.selectedCandidates,
+          selectedLists: state.selectedLists,
+          votosPorListas: state.votosPorListas,
+          partiesByList: state.partiesByList,
+          precandidatosByList: state.precandidatosByList,
+        },
+        state.voteCalculations || {
+          getTotalVotesForList: () => 0,
+          getCandidateTotalVotesForAllNeighborhoods: () => ({}),
+        }
+      );
+      return groupedSelectedItems.value;
+    },
+
+    getMaxVotes: (state) => {
+      const regionStore = useRegionStore();
+      return regionStore.getMaxVotes(
+        state.geojsonData,
+        state.selectedCandidates,
+        state.voteCalculations.getVotesForNeighborhood,
+        state.voteCalculations.getCandidateTotalVotes
+      );
     },
   },
+
   actions: {
-    async initializeMap(container: HTMLElement, geojsonData: any, props: any) {
+    async initializeMap(container: HTMLElement, geojsonData: any) {
       this.isLoading = true;
       if (this.map) {
         this.map.remove();
       }
       this.map = L.map(container).setView([0, 0], 2);
-      await this.updateMap(geojsonData, props);
+      this.geojsonData = geojsonData;
+      await this.updateMap();
       this.isLoading = false;
       return this.map;
     },
 
-    setMap(newMap: L.Map | null) {
-      this.map = newMap;
-    },
-
-    async updateMap(geojsonData: any, props: any) {
+    async updateMap() {
+      console.log("updateMap called");
       this.isLoading = true;
-      if (!this.map) {
+      if (!this.map || !this.geojsonData) {
+        console.log("No map or geojsonData");
         this.isLoading = false;
         return;
       }
@@ -69,51 +103,57 @@ export const useMapStore = defineStore("map", {
         }
       });
 
-      const { getVotesForNeighborhood } = this.voteCalculations;
-      const maxVotes = this.getMaxVotes(
-        geojsonData,
-        this.selectedCandidates,
-        getVotesForNeighborhood,
-        this.voteCalculations.getCandidateTotalVotes
-      );
-
+      const maxVotes = this.getMaxVotes;
       return new Promise<void>((resolve) => {
-        L.geoJSON(geojsonData, {
-          style: (feature) =>
-            styleFeature(feature, getVotesForNeighborhood, (votes) =>
-              this.getColor(votes, maxVotes, false)
-            ),
+        L.geoJSON(this.geojsonData, {
+          style: (feature) => {
+            if (!feature) return {};
+            const neighborhood = getNormalizedNeighborhood(feature);
+            const votes =
+              this.selectedCandidates.length > 0
+                ? this.voteCalculations.getCandidateTotalVotes(neighborhood)
+                : this.voteCalculations.getVotesForNeighborhood(neighborhood);
+            return styleFeature(
+              feature,
+              this.voteCalculations.getVotesForNeighborhood,
+              (votes) => this.getColor(votes, maxVotes, false)
+            );
+          },
           onEachFeature: (feature, layer) => {
             layer.on({
-              mouseover: (e) =>
-                this.handleFeatureMouseover(e, getVotesForNeighborhood),
+              mouseover: (e) => {
+                const neighborhood = getNormalizedNeighborhood(feature);
+                const votes =
+                  this.selectedCandidates.length > 0
+                    ? this.voteCalculations.getCandidateTotalVotes(neighborhood)
+                    : this.voteCalculations.getVotesForNeighborhood(
+                        neighborhood
+                      );
+                this.handleFeatureMouseover(e, votes);
+              },
               mouseout: this.handleFeatureMouseout,
+              click: (e) => this.handleFeatureClick(e),
             });
           },
         }).addTo(this.map);
 
-        this.fitMapToBounds(geojsonData);
+        this.fitMapToBounds();
         this.isLoading = false;
         resolve();
       });
     },
 
-    fitMapToBounds(geojsonData: any) {
-      if (this.map && geojsonData) {
-        const geojsonLayer = L.geoJSON(geojsonData);
+    fitMapToBounds() {
+      if (this.map && this.geojsonData) {
+        const geojsonLayer = L.geoJSON(this.geojsonData);
         const bounds = geojsonLayer.getBounds();
         this.map.fitBounds(bounds);
       }
     },
 
-    handleFeatureMouseover(
-      e: L.LeafletMouseEvent,
-      getVotesForNeighborhood: Function
-    ) {
+    handleFeatureMouseover(e: L.LeafletMouseEvent, votes: number) {
       const layer = e.target;
-      const votes = getVotesForNeighborhood(
-        getNormalizedNeighborhood(layer.feature)
-      );
+      const neighborhood = getNormalizedNeighborhood(layer.feature);
       const tooltipContent = `Votes: ${votes}`;
       if (this.map) {
         this.currentTooltip = L.tooltip()
@@ -128,6 +168,12 @@ export const useMapStore = defineStore("map", {
         this.map.closeTooltip(this.currentTooltip);
         this.currentTooltip = null;
       }
+    },
+
+    handleFeatureClick(e: L.LeafletMouseEvent) {
+      const layer = e.target;
+      const neighborhood = getNormalizedNeighborhood(layer.feature);
+      this.setSelectedNeighborhood(neighborhood);
     },
 
     getColor(votes: number, maxVotes: number, isCandidate: boolean): string {
@@ -155,41 +201,39 @@ export const useMapStore = defineStore("map", {
       return colorScale(ratio).hex();
     },
 
-    getMaxVotes(
-      geojsonData: any,
-      selectedCandidates: string[],
-      getVotesForNeighborhood: Function,
-      getCandidateTotalVotes: Function
-    ): number {
-      if (!geojsonData || !geojsonData.features) {
-        return 1;
-      }
-      return selectedCandidates.length > 0
-        ? Math.max(
-            ...geojsonData.features.map((feature: any) =>
-              getCandidateTotalVotes(getNormalizedNeighborhood(feature))
-            )
-          )
-        : Math.max(
-            ...geojsonData.features.map((feature: any) =>
-              getVotesForNeighborhood(getNormalizedNeighborhood(feature))
-            )
-          );
-    },
-
-    closeTooltip() {
-      if (this.map && this.currentTooltip) {
-        this.map.closeTooltip(this.currentTooltip);
-        this.currentTooltip = null;
-      }
-    },
-
     setSelectedNeighborhood(neighborhood: string | null) {
       this.selectedNeighborhood = neighborhood;
     },
 
     toggleMobileVisibility() {
       this.isMobileHidden = !this.isMobileHidden;
+    },
+
+    updateMapData(data: {
+      selectedCandidates: string[];
+      selectedLists: string[];
+      votosPorListas: Record<string, Record<string, number>>;
+      precandidatosByList: Record<string, string>;
+      partiesAbbrev: Record<string, string>;
+      partiesByList: Record<string, string>;
+    }) {
+      this.selectedCandidates = data.selectedCandidates;
+      this.selectedLists = data.selectedLists;
+      this.votosPorListas = data.votosPorListas;
+      this.precandidatosByList = data.precandidatosByList;
+      this.partiesAbbrev = data.partiesAbbrev;
+      this.partiesByList = data.partiesByList;
+      this.voteCalculations = useVoteCalculations(
+        {
+          selectedCandidates: this.selectedCandidates,
+          selectedLists: this.selectedLists,
+          votosPorListas: this.votosPorListas,
+          precandidatosByList: this.precandidatosByList,
+        },
+        null
+      );
+
+      this.updateMap();
     },
   },
 });

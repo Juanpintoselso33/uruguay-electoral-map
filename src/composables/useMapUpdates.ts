@@ -1,17 +1,32 @@
 import L from "leaflet";
 import { getNormalizedNeighborhood, styleFeature } from "../utils/mapUtils";
 import { createTooltipContent } from "../utils/tooltipUtils";
+import { useRegionStore } from "../stores/regionStore";
 
 export function useMapUpdates(props, voteCalculations, voteGrouping, getColor) {
   const { groupedSelectedItems } = voteGrouping;
 
-  const updateMap = (currentMap: L.Map, maxVotes: number) => {
+  const updateMap = (currentMap: L.Map) => {
+    const regionStore = useRegionStore();
     if (!props.geojsonData) {
       console.warn("GeoJSON data is undefined");
       return;
     }
 
+    const maxVotes = regionStore.getMaxVotes(
+      props.geojsonData,
+      props.selectedCandidates,
+      voteCalculations.getVotesForNeighborhood,
+      voteCalculations.getCandidateTotalVotes
+    );
+
     console.log("Max votes for map update:", maxVotes);
+    console.log("Selected lists:", props.selectedLists);
+    console.log("Selected candidates:", props.selectedCandidates);
+    console.log(
+      "votosPorListas:",
+      JSON.stringify(props.votosPorListas, null, 2)
+    );
 
     // Remove existing layers
     currentMap.eachLayer((layer) => {
@@ -42,7 +57,15 @@ export function useMapUpdates(props, voteCalculations, voteGrouping, getColor) {
       style: (feature) => {
         if (!feature) return {}; // Return a default style if feature is undefined
         const neighborhood = getNormalizedNeighborhood(feature);
+        console.log(`Styling feature for neighborhood: ${neighborhood}`);
         const votes = voteCalculations.getVotesForNeighborhood(neighborhood);
+        console.log(`Votes for ${neighborhood} in map update:`, votes);
+        console.log(
+          "Vote calculation function:",
+          voteCalculations.getVotesForNeighborhood.toString()
+        );
+        const color = getColor(votes, maxVotes);
+        console.log(`Color for ${neighborhood}: ${color}`);
         return styleFeature(
           feature,
           voteCalculations.getVotesForNeighborhood,
@@ -52,6 +75,7 @@ export function useMapUpdates(props, voteCalculations, voteGrouping, getColor) {
       onEachFeature: (feature, layer) => {
         const neighborhood = getNormalizedNeighborhood(feature);
         const votes = voteCalculations.getVotesForNeighborhood(neighborhood);
+        console.log(`Tooltip votes for ${neighborhood}:`, votes);
         const tooltipContent = createTooltipContent(
           neighborhood,
           votes,

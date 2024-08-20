@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import Papa from "papaparse";
 import { Region } from "../types/Region";
 import { CandidateVote } from "../types/VoteTypes";
@@ -44,6 +44,18 @@ export const useRegionStore = defineStore("region", () => {
   const selectedParty = ref<string>("");
   const selectedCandidates = ref<string[]>([]);
   const isLoading = ref(false);
+
+  watch(selectedLists, (newValue) => {
+    console.log("Selected lists updated:", newValue);
+  });
+
+  watch(
+    () => currentRegion.value.votosPorListas,
+    (newValue) => {
+      console.log("votosPorListas updated:", newValue);
+    },
+    { deep: true }
+  );
 
   const setCurrentRegion = async (region: Region) => {
     isLoading.value = true;
@@ -100,6 +112,7 @@ export const useRegionStore = defineStore("region", () => {
   };
 
   const processCSV = (csvText: string) => {
+    console.log("Processing CSV data...");
     const result = Papa.parse(csvText, { header: true });
     const data = result.data as Array<{
       ZONA: string;
@@ -148,17 +161,28 @@ export const useRegionStore = defineStore("region", () => {
     };
   };
 
-  const voteCalculations = useVoteCalculations(
-    {
-      selectedCandidates,
-      selectedLists,
-      votosPorListas: computed(() => currentRegion.value.votosPorListas || {}),
-      precandidatosByList: computed(
-        () => currentRegion.value.precandidatosByList || {}
-      ),
-    },
-    currentRegion
-  );
+  const voteCalculations = computed(() => {
+    const calculations = useVoteCalculations(
+      {
+        selectedCandidates: selectedCandidates.value,
+        selectedLists: selectedLists.value,
+        votosPorListas: currentRegion.value.votosPorListas || {},
+        precandidatosByList: currentRegion.value.precandidatosByList || {},
+      },
+      currentRegion.value
+    );
+
+    return {
+      ...calculations,
+      getTotalVotesForList: (list: string) =>
+        calculations.getTotalVotesForList(
+          currentRegion.value.votosPorListas || {},
+          list
+        ),
+      getCandidateTotalVotesForAllNeighborhoods: (candidate: string) =>
+        calculations.getCandidateTotalVotesForAllNeighborhoods(candidate),
+    };
+  });
 
   const voteGrouping = useVoteGrouping(
     {
@@ -170,7 +194,14 @@ export const useRegionStore = defineStore("region", () => {
         () => currentRegion.value.precandidatosByList || {}
       ),
     },
-    voteCalculations
+    {
+      getTotalVotesForList: (list: string) =>
+        voteCalculations.value.getTotalVotesForList(list),
+      getCandidateTotalVotesForAllNeighborhoods: (candidate: string) =>
+        voteCalculations.value.getCandidateTotalVotesForAllNeighborhoods(
+          candidate
+        ),
+    }
   );
 
   const uniqueSortedCandidates = computed(() => {
@@ -227,22 +258,26 @@ export const useRegionStore = defineStore("region", () => {
   const getCandidateVotesForNeighborhood = (
     neighborhood: string
   ): CandidateVote[] => {
-    const votes: Record<string, number> = {}; // Assuming this is how you get the votes
+    const votes: Record<string, number> = {};
 
-    // Populate the votes object with candidate names and their respective votes
     selectedCandidates.value.forEach((candidate) => {
-      votes[candidate] = voteCalculations.getVotesForCandidateInNeighborhood(
-        candidate,
-        neighborhood
-      );
+      votes[candidate] =
+        voteCalculations.value.getVotesForNeighborhood(neighborhood);
     });
 
-    // Convert the votes object to an array of CandidateVote
-    return Object.entries(votes).map(([candidate, voteCount]) => ({
-      candidate,
-      votes: voteCount,
-      party: currentRegion.value.partiesByList?.[candidate] || "Unknown", // Adjust this based on your data structure
-    }));
+    console.log("Candidate votes for neighborhood:", votes);
+
+    return Object.entries(votes).map(([candidate, voteCount]) => {
+      const party = Object.entries(
+        currentRegion.value.partiesByList || {}
+      ).find(([list, precandidato]) => precandidato === candidate)?.[0];
+
+      return {
+        candidate,
+        votes: voteCount,
+        party: party || "Unknown",
+      };
+    });
   };
 
   const getMaxVotes = (
@@ -251,6 +286,12 @@ export const useRegionStore = defineStore("region", () => {
     getVotesForNeighborhood: Function,
     getCandidateTotalVotes: Function
   ) => {
+    console.log("getMaxVotes called with:", {
+      geojsonData,
+      selectedCandidates,
+      getVotesForNeighborhood,
+      getCandidateTotalVotes,
+    });
     console.log("getMaxVotes called");
     console.log("geojsonData:", geojsonData);
     console.log("selectedCandidates:", selectedCandidates);
@@ -266,7 +307,6 @@ export const useRegionStore = defineStore("region", () => {
             ...geojsonData.features.map((feature: any) => {
               const neighborhood = getNormalizedNeighborhood(feature);
               const votes = getCandidateTotalVotes(neighborhood);
-              console.log(`Candidate votes for ${neighborhood}: ${votes}`);
               return votes;
             })
           )
@@ -274,7 +314,6 @@ export const useRegionStore = defineStore("region", () => {
             ...geojsonData.features.map((feature: any) => {
               const neighborhood = getNormalizedNeighborhood(feature);
               const votes = getVotesForNeighborhood(neighborhood);
-              console.log(`Total votes for ${neighborhood}: ${votes}`);
               return votes;
             })
           );
@@ -282,6 +321,14 @@ export const useRegionStore = defineStore("region", () => {
     console.log(`Max votes: ${maxVotes}`);
     return maxVotes || 0; // Return 0 if maxVotes is 0
   };
+
+  const getVotesForNeighborhood = (neighborhood: string) => {
+    return voteCalculations.value.getVotesForNeighborhood(neighborhood);
+  };
+
+  function updateSelectedLists(lists: string[]) {
+    selectedLists.value = lists;
+  }
 
   return {
     regions,
@@ -301,11 +348,12 @@ export const useRegionStore = defineStore("region", () => {
     updateIsODN,
     updateSelectedNeighborhood,
     updateSelectedParty,
-    getVotesForNeighborhood: voteCalculations.getVotesForNeighborhood,
+    getVotesForNeighborhood,
     getCandidateVotesForNeighborhood,
     groupCandidatesByParty: voteGrouping.groupCandidatesByParty,
     groupListsByParty: voteGrouping.groupListsByParty,
     getMaxVotes,
     isLoading,
+    updateSelectedLists,
   };
 });

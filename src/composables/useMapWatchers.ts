@@ -6,7 +6,7 @@ export function useMapWatchers(props, mapContainer) {
 
   onMounted(() => {
     if (mapContainer.value && props.geojsonData) {
-      mapStore.initializeMap(mapContainer.value, props.geojsonData, props);
+      mapStore.initializeMap(mapContainer.value, props.geojsonData); // Removed props
     }
   });
 
@@ -16,14 +16,10 @@ export function useMapWatchers(props, mapContainer) {
       () => props.selectedCandidates,
       () => props.geojsonData,
     ],
-    ([newSelectedLists, newSelectedCandidates, newGeojsonData]) => {
+    () => {
       if (mapStore.map) {
-        console.log("Updating map with new data");
-        mapStore.updateMap(newGeojsonData, {
-          selectedLists: newSelectedLists,
-          selectedCandidates: newSelectedCandidates,
-          ...props,
-        });
+        // console.log("Updating map with new data"); // Optional: Uncomment if needed
+        mapStore.updateMap(); // Adjusted to call without arguments
       }
     }
   );

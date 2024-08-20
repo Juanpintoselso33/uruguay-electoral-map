@@ -106,12 +106,19 @@ export function useVoteGrouping(
   // Helper function to group selected lists
   const groupSelectedLists = (): Record<string, PartyData> => {
     const grouped: Record<string, PartyData> = {};
-    props.selectedLists.forEach((list) => {
+    const selectedLists = Array.isArray(props.selectedLists)
+      ? props.selectedLists
+      : [];
+
+    selectedLists.forEach((list) => {
       const party = props.partiesByList[list];
+
       if (!grouped[party]) {
         grouped[party] = { totalVotes: 0, lists: [] };
       }
+
       const votes = getTotalVotesForList(props.votosPorListas, list);
+
       grouped[party].totalVotes += votes;
       grouped[party].lists!.push({ number: list, votes });
     });

@@ -9,24 +9,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useMapStore } from "../../stores/mapStore";
 import { createNeighborhoodInfoContent } from "../../utils/tooltipUtils";
 
 const mapStore = useMapStore();
-const { selectedNeighborhood, isLoading } = storeToRefs(mapStore);
+const {
+  selectedNeighborhood,
+  isLoading,
+  voteCalculations,
+  groupedSelectedItems,
+  selectedCandidates,
+  partiesAbbrev,
+  sortBy,
+} = storeToRefs(mapStore);
 
 const neighborhoodContent = computed(() => {
   if (!selectedNeighborhood.value) return "";
   return createNeighborhoodInfoContent(
     selectedNeighborhood.value,
-    mapStore.getVotesForNeighborhood(selectedNeighborhood.value),
-    mapStore.selectedCandidates,
-    mapStore.partiesAbbrev,
-    mapStore.groupedSelectedItems,
-    mapStore.voteCalculations,
-    mapStore.sortBy
+    voteCalculations.value.getVotesForNeighborhood(selectedNeighborhood.value),
+    selectedCandidates.value,
+    partiesAbbrev.value,
+    groupedSelectedItems.value,
+    voteCalculations.value,
+    sortBy.value
   );
 });
 </script>

@@ -3,17 +3,19 @@ export interface RegionMapProps {
   selectedLists: string[];
   votosPorListas: Record<string, Record<string, number>>;
   maxVotosPorListas: Record<string, number>;
-  getVotosForNeighborhood: (neighborhood: string) => number;
+  partiesByList: Record<string, string>;
+  precandidatosByList: Record<string, string>;
   geojsonData: any;
   selectedNeighborhood: string | null;
   isODN: boolean;
   partiesAbbrev: Record<string, string>;
-  partiesByList: Record<string, string>;
-  precandidatosByList: Record<string, string>;
   selectedCandidates: string[];
   mapCenter: [number, number];
   mapZoom: number;
   currentRegion: string;
+  showLegend: boolean;
+  isMobileHidden: boolean;
+  isLoading: boolean;
 }
 
 export interface ListSelectorProps {
