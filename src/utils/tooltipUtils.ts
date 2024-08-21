@@ -2,6 +2,18 @@ import { GroupedCandidates, GroupedLists } from "../types/VoteTypes";
 import { parseFullPartyName } from "../utils/stringUtils";
 import { useVoteOperations } from "../composables/useVoteOperations";
 
+const sortByVotes = <T extends { votes: number }>(a: T, b: T) =>
+  b.votes - a.votes;
+
+const sortByNameOrNumber = <T extends { name?: string; number?: string }>(
+  a: T,
+  b: T
+) => {
+  if (a.name && b.name) return a.name.localeCompare(b.name);
+  if (a.number && b.number) return a.number.localeCompare(b.number);
+  return 0;
+};
+
 export function createTooltipContent(
   neighborhood: string,
   votes: number,
@@ -29,42 +41,49 @@ export function createTooltipContent(
     const sortedParties = Object.entries(groupedSelectedItems)
       .map(([party, data]) => {
         let partyVotes = 0;
-
-        if (data.candidates) {
-          data.candidates.forEach((candidateObj) => {
-            if (
-              candidateObj &&
-              candidateObj.candidate &&
-              selectedCandidates.includes(candidateObj.candidate)
-            ) {
-              const candidateVotes =
-                voteOperations.getVotesForCandidateInNeighborhood(
-                  candidateObj.candidate,
+        const sortedCandidates = data.candidates
+          ? data.candidates
+              .filter((c) => selectedCandidates.includes(c.name))
+              .map((c) => ({
+                ...c,
+                votes: voteOperations.getVotesForCandidateInNeighborhood(
+                  c.name,
                   neighborhood
-                );
-              partyVotes += candidateVotes;
-            }
-          });
-        }
+                ),
+              }))
+              .filter((c) => c.votes > 0)
+              .sort(sortBy === "votes" ? sortByVotes : sortByNameOrNumber)
+          : [];
 
-        if (data.lists) {
-          data.lists.forEach((list) => {
-            if (selectedLists.includes(list.number)) {
-              const listVotes = voteOperations.getVotesForNeighborhood(
-                neighborhood,
-                list.number
-              );
-              partyVotes += listVotes;
-            }
-          });
-        }
+        const sortedLists = data.lists
+          ? data.lists
+              .filter((l) => selectedLists.includes(l.number))
+              .map((l) => ({
+                ...l,
+                votes: voteOperations.getVotesForNeighborhood(
+                  neighborhood,
+                  l.number
+                ),
+              }))
+              .filter((l) => l.votes > 0)
+              .sort(sortBy === "votes" ? sortByVotes : sortByNameOrNumber)
+          : [];
 
-        return { party, data, partyVotes };
+        partyVotes =
+          sortedCandidates.reduce((sum, c) => sum + c.votes, 0) +
+          sortedLists.reduce((sum, l) => sum + l.votes, 0);
+
+        return { party, sortedCandidates, sortedLists, partyVotes };
       })
       .filter(({ partyVotes }) => partyVotes > 0)
       .sort((a, b) => b.partyVotes - a.partyVotes);
 
-    for (const { party, data, partyVotes } of sortedParties) {
+    for (const {
+      party,
+      sortedCandidates,
+      sortedLists,
+      partyVotes,
+    } of sortedParties) {
       content += `
         <div style="margin-bottom: 10px;">
           <span style="display: block; margin-bottom: 4px; color: #555; font-weight: 600; font-size: 14px;">${parseFullPartyName(
@@ -73,39 +92,16 @@ export function createTooltipContent(
           <ul style="list-style-type: none; padding: 0; margin: 0;">
       `;
 
-      if (data.candidates) {
-        data.candidates
-          .filter(
-            (c) => c && c.candidate && selectedCandidates.includes(c.candidate)
-          )
-          .forEach((candidate) => {
-            const candidateVotes =
-              voteOperations.getVotesForCandidateInNeighborhood(
-                candidate.candidate,
-                neighborhood
-              );
-            if (candidateVotes > 0) {
-              content += `<li style="margin-bottom: 2px; font-size: 13px; color: #333;"><strong>${
-                candidate.candidate
-              }</strong>: <span style="font-weight: 600;">${candidateVotes.toLocaleString()}</span> votos</li>`;
-            }
-          });
+      for (const candidate of sortedCandidates) {
+        content += `<li style="margin-bottom: 2px; font-size: 13px; color: #333;"><strong>${
+          candidate.name
+        }</strong>: <span style="font-weight: 600;">${candidate.votes.toLocaleString()}</span> votos</li>`;
       }
 
-      if (data.lists) {
-        data.lists
-          .filter((l) => selectedLists.includes(l.number))
-          .forEach((list) => {
-            const listVotes = voteOperations.getVotesForNeighborhood(
-              neighborhood,
-              list.number
-            );
-            if (listVotes > 0) {
-              content += `<li style="margin-bottom: 2px; font-size: 13px; color: #333;">Lista ${
-                list.number
-              }: <span style="font-weight: 600;">${listVotes.toLocaleString()}</span> votos</li>`;
-            }
-          });
+      for (const list of sortedLists) {
+        content += `<li style="margin-bottom: 2px; font-size: 13px; color: #333;">Lista ${
+          list.number
+        }: <span style="font-weight: 600;">${list.votes.toLocaleString()}</span> votos</li>`;
       }
 
       content += `
