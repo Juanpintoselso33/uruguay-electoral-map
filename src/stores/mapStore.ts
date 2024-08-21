@@ -7,6 +7,7 @@ import { useVoteOperations } from "../composables/useVoteOperations";
 import { useRegionStore } from "../stores/regionStore";
 import { createTooltipContent } from "../utils/tooltipUtils";
 import { useColorScale } from "../composables/useColorScale";
+import { shallowRef } from "vue";
 
 export const useMapStore = defineStore("map", {
   state: () => ({
@@ -21,10 +22,12 @@ export const useMapStore = defineStore("map", {
     votosPorListas: {} as Record<string, Record<string, number>>,
     precandidatosByList: {} as Record<string, string>,
     partiesByList: {} as Record<string, string>,
-    geojsonData: null as any,
+    geojsonData: shallowRef(null) as any,
     sortBy: "votes" as "votes" | "alphabetical",
     voteOperations: null as ReturnType<typeof useVoteOperations> | null,
     activeTooltip: null as L.Tooltip | null,
+    cachedMaxVotes: 0,
+    cachedStyles: new Map<string, L.PathOptions>(),
   }),
 
   getters: {
@@ -44,8 +47,10 @@ export const useMapStore = defineStore("map", {
     },
 
     getMaxVotes() {
+      if (this.cachedMaxVotes > 0) return this.cachedMaxVotes;
       if (!this.geojsonData || !this.geojsonData.features) return 0;
-      return Math.max(
+
+      this.cachedMaxVotes = Math.max(
         ...this.geojsonData.features.map((feature) => {
           const neighborhood = getNormalizedNeighborhood(feature);
           if (this.selectedCandidates.length > 0) {
@@ -71,6 +76,8 @@ export const useMapStore = defineStore("map", {
           }
         })
       );
+
+      return this.cachedMaxVotes;
     },
   },
 
@@ -103,118 +110,127 @@ export const useMapStore = defineStore("map", {
 
       const maxVotes = this.getMaxVotes;
       const simplifiedGeojsonData = turf.simplify(this.geojsonData, {
-        tolerance: 0.0001,
+        tolerance: 0.0004,
         highQuality: true,
       });
 
       return new Promise<void>((resolve) => {
-        L.geoJSON(simplifiedGeojsonData, {
-          style: (feature) => {
-            if (!feature) return {};
-            const neighborhood = getNormalizedNeighborhood(feature);
-            let votes;
-            if (this.selectedCandidates.length > 0) {
-              votes = this.selectedCandidates.reduce((total, candidate) => {
-                return (
-                  total +
-                  this.computedVoteOperations.getVotesForCandidateInNeighborhood(
-                    candidate,
-                    neighborhood
-                  )
+        requestAnimationFrame(() => {
+          L.geoJSON(simplifiedGeojsonData, {
+            style: (feature) => {
+              if (!feature) return {};
+              const neighborhood = getNormalizedNeighborhood(feature);
+              const cacheKey = `${neighborhood}-${this.selectedCandidates.join(
+                ","
+              )}-${this.selectedLists.join(",")}`;
+
+              if (this.cachedStyles.has(cacheKey)) {
+                return this.cachedStyles.get(cacheKey)!;
+              }
+
+              let votes;
+              if (this.selectedCandidates.length > 0) {
+                votes = this.selectedCandidates.reduce((total, candidate) => {
+                  return (
+                    total +
+                    this.computedVoteOperations.getVotesForCandidateInNeighborhood(
+                      candidate,
+                      neighborhood
+                    )
+                  );
+                }, 0);
+              } else {
+                votes = this.selectedLists.reduce((total, list) => {
+                  return (
+                    total +
+                    this.computedVoteOperations.getVotesForNeighborhood(
+                      neighborhood,
+                      list
+                    )
+                  );
+                }, 0);
+              }
+              const color = this.getColor(votes, maxVotes);
+              const style = {
+                fillColor: color,
+                weight: 2,
+                opacity: 1,
+                color: "black",
+                fillOpacity: 0.7,
+              };
+              this.cachedStyles.set(cacheKey, style);
+              return style;
+            },
+            onEachFeature: (feature, layer) => {
+              const neighborhood = getNormalizedNeighborhood(feature);
+              const votes =
+                this.computedVoteOperations.getVotesForNeighborhood(
+                  neighborhood
                 );
-              }, 0);
-            } else {
-              votes = this.selectedLists.reduce((total, list) => {
-                return (
-                  total +
-                  this.computedVoteOperations.getVotesForNeighborhood(
-                    neighborhood,
-                    list
-                  )
-                );
-              }, 0);
-            }
-            const color = this.getColor(votes, maxVotes);
-            return {
-              fillColor: color,
-              weight: 2,
-              opacity: 1,
-              color: "black",
-              fillOpacity: 0.7,
-            };
-          },
-          onEachFeature: (feature, layer) => {
-            const neighborhood = getNormalizedNeighborhood(feature);
-            const votes =
-              this.computedVoteOperations.getVotesForNeighborhood(neighborhood);
-            console.log(
-              `HOVER_DEBUG: onEachFeature for ${neighborhood}:`,
-              votes
-            );
-            const tooltipContent = createTooltipContent(
-              neighborhood,
-              votes,
-              this.selectedCandidates,
-              this.selectedLists,
-              this.partiesByList,
-              this.groupedSelectedItems,
-              this.computedVoteOperations,
-              this.sortBy
-            );
+              const tooltipContent = createTooltipContent(
+                neighborhood,
+                votes,
+                this.selectedCandidates,
+                this.selectedLists,
+                this.partiesByList,
+                this.groupedSelectedItems,
+                this.computedVoteOperations,
+                this.sortBy
+              );
 
-            const showTooltip = (e: L.LeafletEvent) => {
-              console.log("HOVER_DEBUG: showTooltip called");
-              const event = e as L.LeafletMouseEvent;
-              if (event.target && "setStyle" in event.target) {
-                event.target.setStyle({ fillOpacity: 0.9 });
+              const showTooltip = (e: L.LeafletEvent) => {
+                const event = e as L.LeafletMouseEvent;
+                if (event.target && "setStyle" in event.target) {
+                  event.target.setStyle({ fillOpacity: 0.9 });
+                }
+                this.safeCloseTooltip();
+                if (this.map) {
+                  this.activeTooltip = L.tooltip({
+                    sticky: true,
+                    direction: "top",
+                    offset: L.point(0, -20),
+                    className: "custom-tooltip",
+                  })
+                    .setContent(tooltipContent)
+                    .setLatLng(event.latlng);
+                  this.activeTooltip.addTo(this.map);
+                }
+              };
+
+              const hideTooltip = (e: L.LeafletEvent) => {
+                if (e.target && "setStyle" in e.target) {
+                  e.target.setStyle({ fillOpacity: 0.7 });
+                }
+                this.safeCloseTooltip();
+              };
+
+              const isTouchDevice = () => {
+                return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+              };
+
+              if (isTouchDevice()) {
+                layer.on({
+                  click: (e: L.LeafletMouseEvent) => {
+                    showTooltip(e);
+                    this.handleFeatureClick(e);
+                  },
+                });
+              } else {
+                layer.on({
+                  mouseover: showTooltip,
+                  mouseout: hideTooltip,
+                  click: (e: L.LeafletMouseEvent) => {
+                    this.handleFeatureClick(e);
+                  },
+                });
               }
-              this.safeCloseTooltip();
-              if (this.map) {
-                this.activeTooltip = L.tooltip({
-                  sticky: true,
-                  direction: "top",
-                  offset: L.point(0, -20),
-                  className: "custom-tooltip",
-                })
-                  .setContent(tooltipContent)
-                  .setLatLng(event.latlng);
-                this.activeTooltip.addTo(this.map);
-              }
-            };
+            },
+          }).addTo(this.map!);
 
-            const hideTooltip = (e: L.LeafletEvent) => {
-              if (e.target && "setStyle" in e.target) {
-                e.target.setStyle({ fillOpacity: 0.7 });
-              }
-              this.safeCloseTooltip();
-            };
-
-            const isTouchDevice = () => {
-              return "ontouchstart" in window || navigator.maxTouchPoints > 0;
-            };
-
-            if (isTouchDevice()) {
-              layer.on({
-                click: (e: L.LeafletMouseEvent) => {
-                  showTooltip(e);
-                  this.handleFeatureClick(e);
-                },
-              });
-            } else {
-              layer.on({
-                mouseover: showTooltip,
-                mouseout: hideTooltip,
-                click: (e: L.LeafletMouseEvent) => {
-                  this.handleFeatureClick(e);
-                },
-              });
-            }
-          },
-        }).addTo(this.map);
-
-        this.fitMapToBounds();
-        this.isLoading = false;
-        resolve();
+          this.fitMapToBounds();
+          this.isLoading = false;
+          resolve();
+        });
       });
     },
 
@@ -300,6 +316,9 @@ export const useMapStore = defineStore("map", {
         partiesByList: this.partiesByList,
       });
 
+      // Clear the cache before updating the map
+      this.clearCache();
+
       // Update the map
       this.updateMap();
     },
@@ -309,6 +328,11 @@ export const useMapStore = defineStore("map", {
         this.map.closeTooltip(this.activeTooltip);
         this.activeTooltip = null;
       }
+    },
+
+    clearCache() {
+      this.cachedMaxVotes = 0;
+      this.cachedStyles.clear();
     },
   },
 });

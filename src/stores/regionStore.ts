@@ -6,6 +6,7 @@ import { CandidateVote } from "../types/VoteTypes";
 import { useVoteOperations } from "../composables/useVoteOperations";
 import { getNormalizedNeighborhood } from "../utils/mapUtils";
 import partiesAbbrev from "../../public/partidos_abrev.json";
+import { useMapStore } from "../stores/mapStore";
 
 export const useRegionStore = defineStore("region", () => {
   const regions = ref<Region[]>([
@@ -48,6 +49,8 @@ export const useRegionStore = defineStore("region", () => {
     // Add other regions here
   ]);
 
+  const mapStore = useMapStore();
+
   const currentRegion = ref<Region>({
     ...regions.value[0],
     partiesAbbrev: partiesAbbrev,
@@ -62,6 +65,7 @@ export const useRegionStore = defineStore("region", () => {
   const groupedSelectedItems = ref({});
 
   const setCurrentRegion = async (region: Region) => {
+    console.log("setCurrentRegion called with:", region);
     isLoading.value = true;
     try {
       selectedLists.value = [];
@@ -70,7 +74,9 @@ export const useRegionStore = defineStore("region", () => {
       selectedParty.value = "";
       currentRegion.value = region;
       await fetchRegionData();
-      updateGroupedItems(); // Add this line
+      updateGroupedItems();
+      console.log("Calling mapStore.updateMapData");
+      mapStore.updateMapData();
     } finally {
       isLoading.value = false;
     }

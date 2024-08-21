@@ -17,6 +17,7 @@
     "leaflet": "^1.9.4",
     "leaflet.markercluster": "^1.5.3",
     "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "mapbox-gl": "^3.5.0",
     "montevideo-map": "file:",
     "ol": "^9.2.4",
