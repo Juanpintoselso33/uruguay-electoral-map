@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import L from "leaflet";
 import chroma from "chroma-js";
+import * as turf from "@turf/turf";
 import { styleFeature, getNormalizedNeighborhood } from "../utils/mapUtils";
 import { useVoteOperations } from "../composables/useVoteOperations";
 import { useRegionStore } from "../stores/regionStore";
@@ -101,8 +102,13 @@ export const useMapStore = defineStore("map", {
       });
 
       const maxVotes = this.getMaxVotes;
+      const simplifiedGeojsonData = turf.simplify(this.geojsonData, {
+        tolerance: 0.0001,
+        highQuality: true,
+      });
+
       return new Promise<void>((resolve) => {
-        L.geoJSON(this.geojsonData, {
+        L.geoJSON(simplifiedGeojsonData, {
           style: (feature) => {
             if (!feature) return {};
             const neighborhood = getNormalizedNeighborhood(feature);

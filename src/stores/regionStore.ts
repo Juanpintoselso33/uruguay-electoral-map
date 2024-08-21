@@ -22,6 +22,12 @@ export const useRegionStore = defineStore("region", () => {
       geojsonPath: "/canelones_map.json",
     },
     {
+      name: "Rivera",
+      odnCsvPath: "/rivera_odn.csv",
+      oddCsvPath: "/rivera_odd.csv",
+      geojsonPath: "/rivera_map.json",
+    },
+    {
       name: "Treinta y Tres",
       odnCsvPath: "/treinta_y_tres_odn.csv",
       oddCsvPath: "/treinta_y_tres_odd.csv",
