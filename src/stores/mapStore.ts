@@ -5,6 +5,7 @@ import { styleFeature, getNormalizedNeighborhood } from "../utils/mapUtils";
 import { useVoteOperations } from "../composables/useVoteOperations";
 import { useRegionStore } from "../stores/regionStore";
 import { createTooltipContent } from "../utils/tooltipUtils";
+import { useColorScale } from "../composables/useColorScale";
 
 export const useMapStore = defineStore("map", {
   state: () => ({
@@ -40,13 +41,33 @@ export const useMapStore = defineStore("map", {
       return state.voteOperations?.groupedSelectedItems || {};
     },
 
-    getMaxVotes: (state) => {
-      const regionStore = useRegionStore();
-      return regionStore.getMaxVotes(
-        state.geojsonData,
-        state.selectedCandidates,
-        state.voteOperations?.getVotesForNeighborhood || (() => 0),
-        state.voteOperations?.getCandidateTotalVotes || (() => 0)
+    getMaxVotes() {
+      if (!this.geojsonData || !this.geojsonData.features) return 0;
+      return Math.max(
+        ...this.geojsonData.features.map((feature) => {
+          const neighborhood = getNormalizedNeighborhood(feature);
+          if (this.selectedCandidates.length > 0) {
+            return this.selectedCandidates.reduce((total, candidate) => {
+              return (
+                total +
+                this.computedVoteOperations.getVotesForCandidateInNeighborhood(
+                  candidate,
+                  neighborhood
+                )
+              );
+            }, 0);
+          } else {
+            return this.selectedLists.reduce((total, list) => {
+              return (
+                total +
+                this.computedVoteOperations.getVotesForNeighborhood(
+                  neighborhood,
+                  list
+                )
+              );
+            }, 0);
+          }
+        })
       );
     },
   },
@@ -84,9 +105,29 @@ export const useMapStore = defineStore("map", {
           style: (feature) => {
             if (!feature) return {};
             const neighborhood = getNormalizedNeighborhood(feature);
-            const votes =
-              this.computedVoteOperations.getVotesForNeighborhood(neighborhood);
-            const color = this.getColor(votes, maxVotes, false);
+            let votes;
+            if (this.selectedCandidates.length > 0) {
+              votes = this.selectedCandidates.reduce((total, candidate) => {
+                return (
+                  total +
+                  this.computedVoteOperations.getVotesForCandidateInNeighborhood(
+                    candidate,
+                    neighborhood
+                  )
+                );
+              }, 0);
+            } else {
+              votes = this.selectedLists.reduce((total, list) => {
+                return (
+                  total +
+                  this.computedVoteOperations.getVotesForNeighborhood(
+                    neighborhood,
+                    list
+                  )
+                );
+              }, 0);
+            }
+            const color = this.getColor(votes, maxVotes);
             return {
               fillColor: color,
               weight: 2,
@@ -166,28 +207,10 @@ export const useMapStore = defineStore("map", {
       this.setSelectedNeighborhood(neighborhood);
     },
 
-    getColor(votes: number, maxVotes: number, isCandidate: boolean): string {
-      if (votes === 0 || maxVotes === 0) {
-        return "#FFFFFF";
-      }
-      const ratio = votes / maxVotes;
-      const colorScale = chroma
-        .scale(
-          isCandidate
-            ? ["#e6f2ff", "#0066cc"]
-            : [
-                "#ffffcc",
-                "#ffeda0",
-                "#fed976",
-                "#feb24c",
-                "#fd8d3c",
-                "#fc4e2a",
-                "#e31a1c",
-                "#b10026",
-              ]
-        )
-        .mode("lab");
-      return colorScale(ratio).hex();
+    getColor(votes: number, maxVotes: number): string {
+      const { getColor: colorScaleGetColor } = useColorScale();
+      const percentage = maxVotes > 0 ? votes / maxVotes : 0;
+      return colorScaleGetColor(percentage, 1);
     },
 
     setSelectedNeighborhood(neighborhood: string | null) {

@@ -1,20 +1,24 @@
 import chroma from "chroma-js";
 
 export function useColorScale() {
-  const getColor = (votes: number, maxVotes: number) => {
-    console.log(`getColor called with votes: ${votes}, maxVotes: ${maxVotes}`);
-    if (maxVotes === 0) {
-      console.log("maxVotes is 0, returning white");
-      return "#FFFFFF";
-    }
-    const ratio = votes / maxVotes;
-    console.log(`Calculated ratio: ${ratio}`);
-    const scale = chroma
-      .scale(["#ffffcc", "#fed976", "#fd8d3c", "#e31a1c", "#b10026"])
-      .mode("lab");
-    const color = scale(ratio).hex();
-    console.log(`Returning color: ${color}`);
-    return color;
+  const colorScale = chroma
+    .scale([
+      "#ffffcc",
+      "#ffeda0",
+      "#fed976",
+      "#feb24c",
+      "#fd8d3c",
+      "#fc4e2a",
+      "#e31a1c",
+      "#b10026",
+    ])
+    .mode("lab")
+    .correctLightness();
+
+  const getColor = (value: number, max: number) => {
+    if (value === 0) return "#ffffff"; // Return white for zero votes
+    const percentage = max > 0 ? value / max : 0;
+    return colorScale(percentage).hex();
   };
 
   return {

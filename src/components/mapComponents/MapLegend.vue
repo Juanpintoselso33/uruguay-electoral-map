@@ -1,6 +1,6 @@
 <template>
   <div class="map-legend">
-    <div class="gradient-bar"></div>
+    <div class="gradient-bar" :style="gradientStyle"></div>
     <div class="legend-labels">
       <span
         v-for="(grade, index) in legendGrades"
@@ -15,6 +15,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useColorScale } from "../../composables/useColorScale";
 
 const props = defineProps<{
   legendGrades: number[];
@@ -22,10 +23,29 @@ const props = defineProps<{
   maxVotes: number | (() => number);
 }>();
 
+const { getColor } = useColorScale();
+
 const legendGrades = computed(() => {
   const maxVotes =
     typeof props.maxVotes === "function" ? props.maxVotes() : props.maxVotes;
   return props.legendGrades.map((grade) => Math.round(grade * maxVotes));
+});
+
+const gradientColors = computed(() => {
+  return props.legendGrades.map((grade) => getColor(grade, 1));
+});
+
+const gradientStyle = computed(() => {
+  const colorStops = gradientColors.value
+    .map((color, index) => {
+      const percentage = (index / (gradientColors.value.length - 1)) * 100;
+      return `${color} ${percentage}%`;
+    })
+    .join(", ");
+
+  return {
+    background: `linear-gradient(to right, ${colorStops})`,
+  };
 });
 
 const formatLegendLabel = (grade: number, index: number) => {
@@ -49,17 +69,6 @@ const formatLegendLabel = (grade: number, index: number) => {
 
 .gradient-bar {
   height: 20px;
-  background: linear-gradient(
-    to right,
-    #ffffcc,
-    #ffeda0,
-    #fed976,
-    #feb24c,
-    #fd8d3c,
-    #fc4e2a,
-    #e31a1c,
-    #b10026
-  );
   margin-bottom: 5px;
 }
 
