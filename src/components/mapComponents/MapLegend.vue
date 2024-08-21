@@ -84,9 +84,9 @@ const formatLegendLabel = (grade: number, index: number) => {
 
 @media (max-width: 767px) {
   .map-legend {
-    top: 60px;
+    left: 10px;
+    top: 650px !important;
     right: 10px;
-    width: 150px;
   }
 }
 </style>

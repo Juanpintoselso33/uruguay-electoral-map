@@ -1,7 +1,7 @@
 <template>
-  <div class="montevideo-map-wrapper">
+  <v-card class="montevideo-map-wrapper">
     <div class="montevideo-map" ref="mapContainer"></div>
-    <Spinner v-if="props.isLoading" :isLoading="props.isLoading" />
+    <Spinner :isLoading="props.isLoading" />
     <MapLegend
       v-if="showLegend"
       :legendGrades="[0, 0.2, 0.4, 0.6, 0.8, 1]"
@@ -18,11 +18,15 @@
       :sortBy="'votes'"
       :isLoading="props.isLoading"
     />
-  </div>
-  <MobileToggle
-    @toggle="toggleMobileVisibility"
-    :isMobileHidden="isMobileHidden"
-  />
+  </v-card>
+  <v-btn
+    class="mobile-toggle"
+    @click="toggleMobileVisibility"
+    :color="isMobileHidden ? '#212121' : '#0b0e11'"
+    style="text-transform: none"
+  >
+    {{ isMobileHidden ? "Mostrar" : "Ocultar" }} listas seleccionadas
+  </v-btn>
   <SelectedListsInfo
     :groupedSelectedItems="voteOperations.groupedSelectedItems"
     :isMobileHidden="isMobileHidden"
@@ -45,6 +49,7 @@ import { storeToRefs } from "pinia";
 import { useColorScale } from "../composables/useColorScale";
 import { useMapWatchers } from "../composables/useMapWatchers";
 import "leaflet/dist/leaflet.css";
+import { VCard, VProgressCircular, VBtn } from "vuetify/components";
 
 interface Props {
   regionName: string;
@@ -362,5 +367,11 @@ watch(
   padding: 5px;
   font-size: 12px;
   pointer-events: none;
+}
+
+@media (min-width: 768px) {
+  .mobile-toggle {
+    display: none;
+  }
 }
 </style>
