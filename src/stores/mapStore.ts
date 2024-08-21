@@ -23,6 +23,7 @@ export const useMapStore = defineStore("map", {
     geojsonData: null as any,
     sortBy: "votes" as "votes" | "alphabetical",
     voteOperations: null as ReturnType<typeof useVoteOperations> | null,
+    activeTooltip: null as L.Tooltip | null,
   }),
 
   getters: {
@@ -137,18 +138,71 @@ export const useMapStore = defineStore("map", {
             };
           },
           onEachFeature: (feature, layer) => {
-            layer.on({
-              mouseover: (e) => {
-                const neighborhood = getNormalizedNeighborhood(feature);
-                const votes =
-                  this.computedVoteOperations.getVotesForNeighborhood(
-                    neighborhood
-                  );
-                this.handleFeatureMouseover(e, votes);
-              },
-              mouseout: this.handleFeatureMouseout,
-              click: (e) => this.handleFeatureClick(e),
-            });
+            const neighborhood = getNormalizedNeighborhood(feature);
+            const votes =
+              this.computedVoteOperations.getVotesForNeighborhood(neighborhood);
+            console.log(
+              `HOVER_DEBUG: onEachFeature for ${neighborhood}:`,
+              votes
+            );
+            const tooltipContent = createTooltipContent(
+              neighborhood,
+              votes,
+              this.selectedCandidates,
+              this.selectedLists,
+              this.partiesByList,
+              this.groupedSelectedItems,
+              this.computedVoteOperations,
+              this.sortBy
+            );
+
+            const showTooltip = (e: L.LeafletEvent) => {
+              console.log("HOVER_DEBUG: showTooltip called");
+              const event = e as L.LeafletMouseEvent;
+              if (event.target && "setStyle" in event.target) {
+                event.target.setStyle({ fillOpacity: 0.9 });
+              }
+              this.safeCloseTooltip();
+              if (this.map) {
+                this.activeTooltip = L.tooltip({
+                  sticky: true,
+                  direction: "top",
+                  offset: L.point(0, -20),
+                  className: "custom-tooltip",
+                })
+                  .setContent(tooltipContent)
+                  .setLatLng(event.latlng);
+                this.activeTooltip.addTo(this.map);
+              }
+            };
+
+            const hideTooltip = (e: L.LeafletEvent) => {
+              if (e.target && "setStyle" in e.target) {
+                e.target.setStyle({ fillOpacity: 0.7 });
+              }
+              this.safeCloseTooltip();
+            };
+
+            const isTouchDevice = () => {
+              return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+            };
+
+            if (isTouchDevice()) {
+              layer.on({
+                click: (e: L.LeafletMouseEvent) => {
+                  showTooltip(e);
+                  this.handleFeatureClick(e);
+                },
+              });
+            } else {
+              layer.on({
+                mouseover: showTooltip,
+                mouseout: hideTooltip,
+                click: (e: L.LeafletMouseEvent) => {
+                  this.handleFeatureClick(e);
+                },
+              });
+            }
           },
         }).addTo(this.map);
 
@@ -242,6 +296,13 @@ export const useMapStore = defineStore("map", {
 
       // Update the map
       this.updateMap();
+    },
+
+    safeCloseTooltip() {
+      if (this.activeTooltip && this.map) {
+        this.map.closeTooltip(this.activeTooltip);
+        this.activeTooltip = null;
+      }
     },
   },
 });

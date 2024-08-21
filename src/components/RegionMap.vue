@@ -74,10 +74,15 @@ const emit = defineEmits<{
 }>();
 
 const mapStore = useMapStore();
-const { showLegend, isMobileHidden, selectedNeighborhood, isLoading } =
-  storeToRefs(mapStore);
+const { showLegend, selectedNeighborhood, isLoading } = storeToRefs(mapStore);
 
 const mapContainer = ref<HTMLElement | null>(null);
+
+const isMobileHidden = ref(true);
+
+const toggleMobileVisibility = () => {
+  isMobileHidden.value = !isMobileHidden.value;
+};
 
 onMounted(() => {
   console.log("HOVER_DEBUG: RegionMap component mounted");
@@ -96,10 +101,6 @@ onUnmounted(() => {
 });
 
 useMapWatchers(props, mapContainer);
-
-const toggleMobileVisibility = () => {
-  mapStore.toggleMobileVisibility();
-};
 
 watch(
   () => props.geojsonData,
