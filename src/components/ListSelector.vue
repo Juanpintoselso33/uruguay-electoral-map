@@ -151,7 +151,9 @@
       tabindex="0"
       aria-label="Toggle list selector visibility"
     >
-      <a class="mobile-toggle-text">Ver listas, partidos y ordenes</a>
+      <span class="mobile-toggle-text">
+        {{ isMobileHidden ? "Mostrar" : "Ocultar" }} listas seleccionadas
+      </span>
       <span
         class="arrow"
         :class="{ 'arrow-up': !isMobileHidden, 'arrow-down': isMobileHidden }"
@@ -190,9 +192,8 @@ interface Emits {
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
-// Refs
+// RefsW
 const searchQuery = ref("");
-const filteredLists = ref<string[]>([]);
 const isMobileHidden = ref(true);
 const localIsODN = ref(props.isODN);
 const showLists = ref(true);
@@ -200,6 +201,7 @@ const selectedParty = ref(props.selectedParty);
 
 // Step 3: Organize computed properties
 const uniqueParties = computed(() => {
+  if (!props.partiesAbbrev) return [];
   return Object.keys(props.partiesAbbrev)
     .map((party) => (party.startsWith("Partido ") ? party : `Partido ${party}`))
     .sort();
@@ -209,14 +211,22 @@ const { sortListsAlphabetically, sortCandidatesAlphabetically } =
   useSorting(props);
 
 const filteredListsByParty = computed(() => {
-  const lists = !selectedParty.value
+  let lists = !selectedParty.value
     ? props.lists
     : props.lists.filter(
         (list) =>
           props.partiesByList[list] ===
           selectedParty.value.replace("Partido ", "")
       );
-  return lists.sort((a, b) => parseInt(a) - parseInt(b)); // Sort lists by number
+
+  // Apply search filter
+  if (searchQuery.value.trim()) {
+    lists = lists.filter(
+      (list) => list && list.includes(searchQuery.value.trim())
+    );
+  }
+
+  return lists.sort((a, b) => parseInt(a) - parseInt(b));
 });
 
 const filteredCandidates = computed(() => {
@@ -234,29 +244,21 @@ const filteredCandidates = computed(() => {
 
 const isAllSelected = computed(() => {
   return (
-    filteredLists.value.length > 0 &&
-    props.selectedLists.length === filteredLists.value.length
+    filteredListsByParty.value.length > 0 &&
+    props.selectedLists.length === filteredListsByParty.value.length
   );
 });
 
 // Methods
-const filterLists = () => {
-  const validLists = filteredListsByParty.value.filter(
-    (list) => list !== undefined && list !== null
-  );
-
-  filteredLists.value = searchQuery.value
-    ? validLists.filter((list) => list.includes(searchQuery.value.trim()))
-    : validLists;
-};
-
 const toggleAllLists = () => {
   const currentSelectedLists = new Set(props.selectedLists);
-  const filteredListsSet = new Set(filteredLists.value);
+  const filteredListsSet = new Set(filteredListsByParty.value);
 
   const newSelectedLists = isAllSelected.value
     ? props.selectedLists.filter((list) => !filteredListsSet.has(list))
-    : Array.from(new Set([...currentSelectedLists, ...filteredLists.value]));
+    : Array.from(
+        new Set([...currentSelectedLists, ...filteredListsByParty.value])
+      );
 
   emit("update:selectedLists", newSelectedLists);
 };
@@ -293,7 +295,6 @@ const toggleMobileVisibility = () => {
 
 const onPartySelect = () => {
   emit("updateSelectedParty", selectedParty.value);
-  filterLists();
 };
 
 const onCandidateSelect = (candidate: string, isSelected: boolean) => {
@@ -310,17 +311,9 @@ const clearSelection = () => {
 };
 
 // Step 5: Improve watch functions
-const debouncedSearchQuery = useDebounce(searchQuery, 300);
-
-watch(debouncedSearchQuery, filterLists);
-
-watch(
-  () => filteredListsByParty.value,
-  (newFilteredLists) => {
-    filteredLists.value = newFilteredLists;
-    emit("listsSelected", props.selectedLists);
-  }
-);
+watch([() => searchQuery.value, () => selectedParty.value], () => {
+  // This will trigger a re-computation of filteredListsByParty
+});
 
 watch(
   () => props.lists,
@@ -328,7 +321,6 @@ watch(
     if (newLists.length !== props.lists.length) {
       emit("update:selectedLists", []);
     }
-    filterLists();
     emit("listsSelected", props.selectedLists);
   },
   { immediate: true }
@@ -341,10 +333,7 @@ watch(
   }
 );
 
-watch([() => searchQuery.value, () => selectedParty.value], filterLists);
-
 onMounted(() => {
-  filterLists();
   toggleMobileVisibility();
 });
 
@@ -352,7 +341,7 @@ onMounted(() => {
 watch(
   [() => props.lists, () => props.partiesByList, () => selectedParty.value],
   () => {
-    filterLists();
+    // This will trigger a re-computation of filteredListsByParty
   },
   { immediate: true }
 );
@@ -373,13 +362,15 @@ watch(
 );
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "@/styles/variables";
+
 .list-selector-wrapper {
   position: relative;
 }
 
 .list-selector {
-  background-color: white;
+  background-color: $background-color;
   border: 1px solid #e0e0e0;
   border-radius: 8px 8px 0 0;
   padding: 20px;
@@ -393,65 +384,45 @@ watch(
   z-index: 999;
 }
 
-@media (max-width: 767px) {
+@media (max-width: $mobile-breakpoint) {
   .list-selector {
     position: fixed;
-    top: 140px; /* Adjusted to account for the header */
+    top: 130px; // Adjust this value to match your header height
     left: 0;
     right: 0;
-    height: calc(70vh - 40px);
+    max-height: calc(
+      100vh - 250px
+    ); // Subtract header height and some extra space
+    height: auto;
     transform: translateY(-100%);
-  }
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+    overflow-y: auto;
+    background-color: $background-color;
+    border-radius: 0 0 15px 15px;
 
-  .list-selector.mobile-hidden {
-    transform: translateY(0);
+    &:not(.mobile-hidden) {
+      transform: translateY(0);
+    }
   }
 
   .mobile-toggle {
+    position: fixed;
+    top: 100px; // Adjust this value to match your header height
+    left: 0;
+    right: 0;
     height: 40px;
+    z-index: 1001;
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
-    position: fixed;
-    left: 0;
-    right: 0;
-    background-color: white;
-    border-radius: 0 0 8px 8px;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    z-index: 1001;
-  }
-
-  .mobile-toggle-text {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #333;
-    margin-right: 10px;
-  }
-
-  .arrow {
-    width: 0;
-    height: 0;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    transition: transform 0.3s ease-in-out;
-  }
-
-  .arrow-up {
-    border-bottom: 12px solid #333;
-  }
-
-  .arrow-down {
-    border-top: 12px solid #333;
-  }
-
-  .list-selector-content {
-    overflow-y: auto;
-    height: calc(100% - 40px);
+    background-color: $background-color;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: $mobile-breakpoint) {
   .list-selector {
     height: 100%;
   }
@@ -465,7 +436,7 @@ h2 {
   margin-top: 0;
   margin-bottom: 20px;
   font-size: 1.4rem;
-  color: #333;
+  color: $primary-color;
 }
 
 .search-bar {
@@ -522,7 +493,7 @@ h2 {
   margin-top: 0;
   margin-bottom: 10px;
   font-size: 1.2rem;
-  color: #333;
+  color: $primary-color;
 }
 
 .toggle-container {
@@ -551,11 +522,11 @@ h2 {
 }
 
 .toggle-option input[type="radio"]:checked + .toggle-label {
-  background-color: #333;
-  color: white;
+  background-color: $primary-color;
+  color: $background-color;
 }
 
-@media (max-width: 767px) {
+@media (max-width: $mobile-breakpoint) {
   .data-source-toggle {
     background-color: rgba(255, 255, 255, 0.9);
     padding: 10px;
@@ -571,7 +542,7 @@ h2 {
   margin-top: 0;
   margin-bottom: 10px;
   font-size: 1.2rem;
-  color: #333;
+  color: $primary-color;
 }
 
 .party-selector select {
@@ -580,7 +551,7 @@ h2 {
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1rem;
-  background-color: white;
+  background-color: $background-color;
 }
 
 .select-all {
@@ -600,7 +571,7 @@ h2 {
   margin-top: 0;
   margin-bottom: 10px;
   font-size: 1.2rem;
-  color: #333;
+  color: $primary-color;
 }
 
 .no-results {
@@ -616,8 +587,8 @@ h2 {
 
 .clear-selection button {
   padding: 10px 20px;
-  background-color: #333;
-  color: white;
+  background-color: $primary-color;
+  color: $background-color;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -626,5 +597,51 @@ h2 {
 .clear-selection button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+.mobile-toggle {
+  display: none;
+  cursor: pointer;
+  padding: 10px;
+  text-align: center;
+}
+
+@media (max-width: $mobile-breakpoint) {
+  .mobile-toggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+  }
+
+  .mobile-toggle-text {
+    font-size: 1.2rem;
+    color: #333;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+
+  .arrow {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+  }
+
+  .arrow-up {
+    border-bottom: 5px solid black;
+  }
+
+  .arrow-down {
+    border-top: 5px solid black;
+  }
 }
 </style>

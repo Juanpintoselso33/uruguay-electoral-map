@@ -14,7 +14,7 @@ export function useMapInitialization() {
     }
 
     const map = L.map(container, {
-      zoomControl: true,
+      zoomControl: false,
       attributionControl: false,
       zoomAnimation: true,
       fadeAnimation: true,

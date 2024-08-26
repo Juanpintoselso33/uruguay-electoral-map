@@ -87,7 +87,10 @@ export const useMapStore = defineStore("map", {
       if (this.map) {
         this.map.remove();
       }
-      this.map = L.map(container).setView([0, 0], 2);
+      this.map = L.map(container, {
+        zoomControl: false,
+        attributionControl: false, // Desactivar el control de atribución
+      }).setView([0, 0], 2);
       this.geojsonData = geojsonData;
       await this.updateMap();
       this.isLoading = false;

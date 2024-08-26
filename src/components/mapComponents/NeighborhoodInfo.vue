@@ -37,12 +37,14 @@ const neighborhoodContent = computed(() => {
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "@/styles/variables";
+
 .neighborhood-info {
   position: absolute;
   bottom: 20px;
   left: 20px;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba($background-color, 0.95);
   padding: 12px 16px;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -51,36 +53,34 @@ const neighborhoodContent = computed(() => {
   max-width: 300px;
   width: auto;
   backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  position: relative;
+  border: 1px solid rgba($background-color, 0.2);
   max-height: 80vh;
   overflow-y: auto;
+
+  .neighborhood-name {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 4px;
+    color: $text-color;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .vote-count {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+    color: $primary-color;
+  }
+
+  .vote-label {
+    font-size: 14px;
+    font-weight: 400;
+    color: lighten($text-color, 20%);
+  }
 }
 
-.neighborhood-name {
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 4px;
-  color: #333;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.vote-count {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0;
-  color: #0066cc;
-}
-
-.vote-label {
-  font-size: 14px;
-  font-weight: 400;
-  color: #666;
-}
-
-/* Transition styles */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease, transform 0.3s ease;
@@ -92,37 +92,14 @@ const neighborhoodContent = computed(() => {
   transform: translateY(10px);
 }
 
-/* Responsive styles */
-@media (max-width: 768px) {
-  .neighborhood-info {
-    bottom: 10px;
-    left: 10px;
-    padding: 10px 14px;
-    min-width: 150px;
-  }
-
-  .neighborhood-name {
-    font-size: 14px;
-  }
-
-  .vote-count {
-    font-size: 18px;
-  }
-
-  .vote-label {
-    font-size: 12px;
-  }
-}
-
-/* Add this new style for the spinner */
 .spinner {
   position: absolute;
   top: 5px;
   right: 5px;
   width: 20px;
   height: 20px;
-  border: 2px solid #f3f3f3;
-  border-top: 2px solid #3498db;
+  border: 2px solid $background-color;
+  border-top: 2px solid $primary-color;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -133,6 +110,27 @@ const neighborhoodContent = computed(() => {
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@media (max-width: $mobile-breakpoint) {
+  .neighborhood-info {
+    bottom: 10px;
+    left: 10px;
+    padding: 10px 14px;
+    min-width: 150px;
+
+    .neighborhood-name {
+      font-size: 14px;
+    }
+
+    .vote-count {
+      font-size: 18px;
+    }
+
+    .vote-label {
+      font-size: 12px;
+    }
   }
 }
 </style>
