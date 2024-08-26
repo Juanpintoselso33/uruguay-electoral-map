@@ -152,7 +152,8 @@
       aria-label="Toggle list selector visibility"
     >
       <span class="mobile-toggle-text">
-        {{ isMobileHidden ? "Mostrar" : "Ocultar" }} listas seleccionadas
+        {{ isMobileHidden ? "Mostrar" : "Ocultar" }} listas, candidatos y
+        ordenes
       </span>
       <span
         class="arrow"
@@ -631,7 +632,7 @@ h2 {
   }
 
   .mobile-toggle-text {
-    font-size: 1.2rem;
+    font-size: 1rem;
     color: #333;
     font-weight: bold;
     margin-right: 10px;
