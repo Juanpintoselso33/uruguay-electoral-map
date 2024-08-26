@@ -219,7 +219,11 @@ watch(
   }
 
   .region-selector h2 {
-    font-size: 0.9rem; // Reducir el tamaño del texto en vista móvil
+    font-size: 0.8rem; // Reducir el tamaño del texto en vista móvil
+  }
+
+  .region-selector {
+    min-width: 100px;
   }
 }
 </style>

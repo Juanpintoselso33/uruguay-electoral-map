@@ -290,7 +290,9 @@ const onSelectorToggle = () => {
 };
 
 const toggleMobileVisibility = () => {
-  isMobileHidden.value = !isMobileHidden.value;
+  if (window.innerWidth <= 767) {
+    isMobileHidden.value = !isMobileHidden.value;
+  }
 };
 
 const onPartySelect = () => {
@@ -334,7 +336,8 @@ watch(
 );
 
 onMounted(() => {
-  toggleMobileVisibility();
+  const mobileMediaQuery = window.matchMedia("(max-width: 767px)");
+  isMobileHidden.value = mobileMediaQuery.matches;
 });
 
 // Add this after the existing watch functions
@@ -400,6 +403,9 @@ watch(
     overflow-y: auto;
     background-color: $background-color;
     border-radius: 0 0 15px 15px;
+    &.mobile-hidden {
+      transform: translateY(-100%);
+    }
 
     &:not(.mobile-hidden) {
       transform: translateY(0);

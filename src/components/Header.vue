@@ -123,25 +123,31 @@ const handleRegionSelected = async (region: Region) => {
   @media (max-width: $mobile-breakpoint - 1) {
     &-content {
       flex-wrap: wrap;
+      padding-bottom: 20px;
+    }
+
+    &-left,
+    &-right {
+      flex-basis: 50%;
     }
 
     &-left {
       order: 1;
-      flex-basis: 50%;
     }
 
     &-right {
       order: 2;
-      flex-basis: 50%;
       display: flex;
       justify-content: flex-end;
+      padding-right: 5px;
     }
 
     &-title {
       order: 3;
       flex-basis: 100%;
       font-size: 1rem;
-      margin-top: 10px;
+      margin-top: 5px;
+      text-align: center;
     }
 
     .github-link {
@@ -155,6 +161,14 @@ const handleRegionSelected = async (region: Region) => {
 
       span {
         font-size: 0.7rem;
+      }
+    }
+  }
+
+  @media (max-width: 420px) {
+    .github-link {
+      span {
+        display: none;
       }
     }
   }
