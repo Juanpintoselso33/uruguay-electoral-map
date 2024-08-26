@@ -8,7 +8,7 @@
       >
         <span class="hamburger-icon"></span>
       </button>
-      <h2 @click="$emit('toggleMenu')">Elegir departamento</h2>
+      <h2 @click="$emit('toggleMenu')">Departamento</h2>
     </div>
     <div class="menu" :class="{ 'menu-open': isMenuOpen }">
       <ul>
