@@ -12,7 +12,7 @@
         />
       </div>
       <h1 class="header-title">
-        Votos por listas por zona de {{ currentRegion.name }}
+        Votos por listas por zona de {{ currentRegionName }}
       </h1>
       <div class="header-right">
         <a
@@ -41,15 +41,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRegionStore } from "@/stores/regionStore";
 import RegionSelector from "./RegionSelector.vue";
 import type { Region } from "@/types/Region";
+import { storeToRefs } from "pinia";
 
 const regionStore = useRegionStore();
-const { currentRegion, regions } = regionStore;
+const { currentRegion, regions, isLoading } = storeToRefs(regionStore);
 
 const isMenuOpen = ref(false);
+
+const currentRegionName = computed(() => currentRegion.value.name);
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
@@ -57,6 +60,7 @@ const toggleMenu = () => {
 
 const handleRegionSelected = async (region: Region) => {
   await regionStore.setCurrentRegion(region);
+  console.log("Header: Region selected", region.name);
   isMenuOpen.value = false;
 };
 </script>
@@ -120,7 +124,7 @@ const handleRegionSelected = async (region: Region) => {
     }
   }
 
-  @media (max-width: $mobile-breakpoint - 1) {
+  @media (max-width: ($mobile-breakpoint - 1)) {
     &-content {
       flex-wrap: wrap;
       padding-bottom: 20px;

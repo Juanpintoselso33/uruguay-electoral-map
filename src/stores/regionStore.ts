@@ -46,6 +46,12 @@ export const useRegionStore = defineStore("region", () => {
       oddCsvPath: "/colonia_odd.csv",
       geojsonPath: "/colonia_map.json",
     },
+    {
+      name: "Salto",
+      odnCsvPath: "/salto_odn.csv",
+      oddCsvPath: "/salto_odd.csv",
+      geojsonPath: "/salto_map.json",
+    },
     // Add other regions here
   ]);
 
@@ -65,14 +71,15 @@ export const useRegionStore = defineStore("region", () => {
   const groupedSelectedItems = ref({});
 
   const setCurrentRegion = async (region: Region) => {
-    console.log("setCurrentRegion called with:", region);
+    currentRegion.value = { ...region };
+    console.log("Region store updated:", currentRegion.value.name);
+    // Add any additional logic needed when changing regions
     isLoading.value = true;
     try {
       selectedLists.value = [];
       selectedCandidates.value = [];
       isODN.value = false;
       selectedParty.value = "";
-      currentRegion.value = region;
       await fetchRegionData();
       updateGroupedItems();
       console.log("Calling mapStore.updateMapData");
@@ -298,6 +305,9 @@ export const useRegionStore = defineStore("region", () => {
     selectedLists,
     selectedNeighborhood,
     isODN,
+    precandidatosByParty: computed(
+      () => currentRegion.value.precandidatosByParty
+    ),
     selectedParty,
     selectedCandidates,
     setCurrentRegion,

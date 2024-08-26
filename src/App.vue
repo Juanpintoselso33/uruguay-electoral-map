@@ -110,8 +110,9 @@ const handleInitializeMap = async () => {
   }
 };
 
-const handleRegionSelected = (region: { name: string }) => {
-  regionStore.updateCurrentRegion(region.name);
+const handleRegionSelected = async (region: Region) => {
+  await regionStore.setCurrentRegion(region);
+  console.log("New region selected:", region.name);
 };
 
 onMounted(() => {

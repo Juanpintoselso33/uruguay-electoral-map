@@ -147,7 +147,7 @@ const onTouchEnd = () => {
   isDragging.value = false;
 };
 
-const containerRef = ref(null);
+const containerRef = ref<HTMLElement | null>(null);
 
 const totalSelectedItems = computed(() => {
   return props.selectedLists.length + props.selectedCandidates.length;
@@ -164,8 +164,8 @@ const updateContainerHeight = async () => {
     calculatedHeight = Math.min(calculatedHeight, maxHeight);
     calculatedHeight = Math.max(calculatedHeight, minHeight);
 
-    containerRef.value.style.height = `${calculatedHeight}px`;
-    containerRef.value.style.overflowY =
+    (containerRef.value as HTMLElement).style.height = `${calculatedHeight}px`;
+    (containerRef.value as HTMLElement).style.overflowY =
       totalSelectedItems.value > 0 ? "auto" : "hidden";
   }
 };

@@ -50,7 +50,7 @@ const selectRegion = (region: { name: string }) => {
 watch(
   () => props.currentRegion,
   (newRegion) => {
-    // Update the selected region if it changes externally
+    console.log("RegionSelector: Current region updated to", newRegion.name);
   }
 );
 </script>
@@ -138,7 +138,7 @@ watch(
   z-index: 1000;
   max-height: 0;
   font-size: 0.9rem;
-  overflow: hidden;
+  overflow: auto;
   transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
 
   &-open {
@@ -196,7 +196,7 @@ watch(
   }
 }
 
-@media (max-width: $mobile-breakpoint - 1) {
+@media (max-width: ($mobile-breakpoint - 1)) {
   .selector-header {
     gap: 10px; // Reducir el espacio entre elementos en vista móvil
   }

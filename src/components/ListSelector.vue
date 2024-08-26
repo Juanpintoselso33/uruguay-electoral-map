@@ -178,6 +178,7 @@ interface Props {
   candidates: string[];
   selectedLists: string[];
   selectedCandidates: string[];
+  candidatesByParty: Record<string, string>;
 }
 
 interface Emits {
@@ -198,7 +199,9 @@ const isMobileHidden = ref(true);
 const localIsODN = ref(props.isODN);
 const showLists = ref(true);
 const selectedParty = ref(props.selectedParty);
-
+if (props.candidatesByParty) {
+  console.log("Candidates by party", props.candidatesByParty.value);
+}
 // Step 3: Organize computed properties
 const uniqueParties = computed(() => {
   if (!props.partiesAbbrev) return [];

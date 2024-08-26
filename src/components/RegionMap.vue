@@ -8,16 +8,6 @@
       :getColor="mapStore.getColor"
       :maxVotes="mapStore.getMaxVotes"
     />
-    <NeighborhoodInfo
-      :selectedNeighborhood="selectedNeighborhood"
-      :voteOperations="props.voteOperations"
-      :selectedCandidates="props.selectedCandidates"
-      :selectedLists="props.selectedLists"
-      :partiesAbbrev="props.partiesAbbrev"
-      :groupedSelectedItems="props.voteOperations.groupedSelectedItems"
-      :sortBy="'votes'"
-      :isLoading="props.isLoading"
-    />
   </v-card>
   <MobileToggle
     :isMobileHidden="isMobileHidden"
@@ -36,7 +26,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch, computed } from "vue";
 import MapLegend from "./mapComponents/MapLegend.vue";
-import NeighborhoodInfo from "./mapComponents/NeighborhoodInfo.vue";
 import MobileToggle from "./mapComponents/MobileToggle.vue";
 import SelectedListsInfo from "./mapComponents/SelectedListsInfo.vue";
 import Spinner from "./mapComponents/Spinner.vue";
@@ -173,7 +162,7 @@ watch(
     right: 20px;
   }
 
-  @media (max-width: $mobile-breakpoint - 1) {
+  @media (max-width: ($mobile-breakpoint - 1)) {
     bottom: 60px; // Mover la leyenda a la parte inferior
     left: 20px; // Mover la leyenda a la izquierda
     right: auto; // Asegurarse de que no esté alineada a la derecha
