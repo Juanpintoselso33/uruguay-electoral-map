@@ -47,6 +47,12 @@ export const useRegionStore = defineStore("region", () => {
       geojsonPath: "/colonia_map.json",
     },
     {
+      name: "Paysandú",
+      odnCsvPath: "/paysandú_odn.csv",
+      oddCsvPath: "/paysandú_odd.csv",
+      geojsonPath: "/paysandú_map.json",
+    },
+    {
       name: "Salto",
       odnCsvPath: "/salto_odn.csv",
       oddCsvPath: "/salto_odd.csv",
