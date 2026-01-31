@@ -2,6 +2,9 @@
   <!-- Screen Reader Live Region for Announcements -->
   <ScreenReaderLive />
 
+  <!-- Mobile Gesture Hint -->
+  <MapGestureHint />
+
   <!-- Global Loading Overlay -->
   <Transition name="fade">
     <div v-if="store.isLoading" class="global-loading-overlay" role="status" aria-live="polite">
@@ -24,7 +27,7 @@
       <div class="sidebar-section">
         <h3 class="section-title">Departamentos</h3>
         <RegionSelector
-          :regions="store.regions"
+          :regions="store.availableRegions"
           :currentRegion="store.currentRegion"
           @regionSelected="store.setCurrentRegion"
         />
@@ -34,6 +37,7 @@
         <ListSelectorContainer
           :lists="store.availableLists"
           :isODN="store.isODN"
+          :isInternasElection="store.isInternasElection"
           :partiesAbbrev="partiesAbbrev"
           :selectedParty="store.selectedParty"
           :partiesByList="store.currentPartiesByList"
@@ -122,6 +126,7 @@ import { ref, onMounted } from 'vue'
 import { useElectoralStore } from './stores/electoral'
 import AppLayout from './components/layout/AppLayout.vue'
 import ScreenReaderLive from './components/accessibility/ScreenReaderLive.vue'
+import MapGestureHint from './components/mobile/MapGestureHint.vue'
 import ElectionSelector from './components/elections/ElectionSelector.vue'
 import RegionSelector from './components/RegionSelectorModern.vue'
 import ListSelectorContainer from './components/selectors/ListSelectorContainer.vue'

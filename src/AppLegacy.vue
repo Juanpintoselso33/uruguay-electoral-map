@@ -19,7 +19,7 @@
       <div class="header-content">
         <div class="header-top">
           <RegionSelector
-            :regions="store.regions"
+            :regions="store.availableRegions"
             :currentRegion="store.currentRegion"
             @regionSelected="store.setCurrentRegion"
           />
@@ -50,6 +50,7 @@
       <ListSelectorContainer
         :lists="store.availableLists"
         :isODN="store.isODN"
+        :isInternasElection="store.isInternasElection"
         :partiesAbbrev="partiesAbbrev"
         :selectedParty="store.selectedParty"
         :partiesByList="store.currentPartiesByList"

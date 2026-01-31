@@ -11,7 +11,12 @@
       >
         <span class="hamburger-icon"></span>
       </button>
-      <h2>Elegir departamento</h2>
+      <h2>
+        Elegir departamento
+        <span class="available-count" v-if="regions.length < 19" :title="`${regions.length} de 19 departamentos con datos`">
+          ({{ regions.length }}/19)
+        </span>
+      </h2>
     </div>
     <div
       ref="menuContainer"
@@ -43,14 +48,15 @@
 import { ref, watch, nextTick } from "vue";
 import { useKeyboardNavigation } from "@/composables/useKeyboardNavigation";
 import { useScreenReaderAnnouncements } from "@/composables/useScreenReaderAnnouncements";
+import type { Region } from "@/stores/electoral";
 
 const props = defineProps<{
-  regions: Array<{ name: string }>;
-  currentRegion: { name: string };
+  regions: Region[];
+  currentRegion: Region;
 }>();
 
 const emit = defineEmits<{
-  (e: "regionSelected", region: { name: string }): void;
+  (e: "regionSelected", region: Region): void;
 }>();
 
 const isMenuOpen = ref(false);
@@ -84,15 +90,22 @@ const toggleMenu = () => {
   }
 };
 
-const selectRegion = (region: { name: string }) => {
+const selectRegion = (region: Region) => {
+  console.log('[RegionSelector] ========================================')
   console.log('[RegionSelector] selectRegion called with:', region.name)
-  console.log('[RegionSelector] Emitting regionSelected event')
+  console.log('[RegionSelector] Region slug:', region.slug)
+  console.log('[RegionSelector] Has geojsonPath:', !!region.geojsonPath)
+  console.log('[RegionSelector] Has mapJsonPath:', !!region.mapJsonPath)
+  console.log('[RegionSelector] Current region:', props.currentRegion?.name)
+  console.log('[RegionSelector] Current region slug:', props.currentRegion?.slug)
+  console.log('[RegionSelector] Is same region?', region.slug === props.currentRegion?.slug)
 
   // Announce to screen readers
   announceDepartmentChange(region.name)
 
   emit("regionSelected", region);
-  console.log('[RegionSelector] Event emitted, closing menu')
+  console.log('[RegionSelector] ✅ Full Region object emitted')
+  console.log('[RegionSelector] ========================================')
   isMenuOpen.value = false;
 };
 
@@ -128,6 +141,27 @@ watch(
   border: none;
   cursor: pointer;
   padding: 12px;
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hamburger-button:active {
+  transform: scale(0.98);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Focus indicator for keyboard navigation - WCAG AA compliant */
+.hamburger-button:focus-visible {
+  outline: 3px solid var(--color-accent, #0066cc);
+  outline-offset: 2px;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .hamburger-icon {
@@ -169,6 +203,15 @@ h2 {
   font-size: 1.1rem;
   color: white;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.available-count {
+  font-size: 0.85rem;
+  font-weight: normal;
+  opacity: 0.8;
 }
 
 .menu {
@@ -207,23 +250,38 @@ h2 {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 12px 16px;
+  padding: 14px 16px;
   width: 100%;
   text-align: left;
   color: #333;
-  transition: background-color 0.3s, color 0.3s;
+  transition: all 0.2s ease;
   border-radius: 6px;
   font-size: 0.9rem;
+  min-height: var(--touch-target-min);
+  display: flex;
+  align-items: center;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .menu button:hover {
   background-color: #f0f0f0;
 }
 
+.menu button:active {
+  transform: scale(0.98);
+}
+
 .menu button.active {
   background-color: #0b0e11;
   color: white;
   font-weight: bold;
+}
+
+/* Focus indicator for keyboard navigation on menu items */
+.menu button:focus-visible {
+  outline: 3px solid var(--color-accent, #0066cc);
+  outline-offset: 2px;
 }
 
 @media (min-width: 769px) {
@@ -236,8 +294,9 @@ h2 {
   }
 
   .menu button {
-    padding: 14px 18px;
+    padding: 16px 18px;
     font-size: 0.9rem;
+    min-height: 48px; /* Comfortable touch target on desktop */
   }
 }
 
@@ -266,7 +325,9 @@ h2 {
   }
 
   .menu button {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
+    padding: 16px 14px;
+    min-height: 48px; /* Larger touch targets on mobile */
   }
 }
 </style>

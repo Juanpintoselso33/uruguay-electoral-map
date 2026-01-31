@@ -10,7 +10,8 @@
       <label
         v-for="candidate in filteredCandidates"
         :key="candidate"
-        class="flex items-center p-2.5 cursor-pointer transition-colors border border-gray-200 rounded hover:bg-gray-100"
+        class="flex items-center p-3 cursor-pointer transition-colors border border-gray-200 rounded hover:bg-gray-100 focus-within:ring-2 focus-within:ring-gray-400 active:scale-98"
+        style="min-height: var(--touch-target-min); user-select: none; -webkit-tap-highlight-color: transparent;"
         v-memo="[candidate, selectedCandidates.includes(candidate)]"
       >
         <input
@@ -18,7 +19,9 @@
           :value="candidate"
           :checked="selectedCandidates.includes(candidate)"
           @change="(e) => handleCandidateSelect(candidate, (e.target as HTMLInputElement).checked)"
-          class="mr-2.5"
+          class="mr-2 w-5 h-5"
+          style="min-width: 20px; min-height: 20px;"
+          :aria-label="`Candidato ${candidate}`"
         />
         <span class="text-base text-gray-600">{{ candidate }}</span>
       </label>
@@ -53,3 +56,20 @@ const handleCandidateSelect = (candidate: string, isSelected: boolean) => {
   emit('update:selectedCandidates', newSelectedCandidates);
 };
 </script>
+
+<style scoped>
+/* Touch feedback for checkboxes */
+label:active {
+  transform: scale(0.98);
+}
+
+label {
+  transition: all 0.2s ease;
+}
+
+/* Larger checkboxes for better touch targets */
+input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: #1f2937; /* gray-800 */
+}
+</style>

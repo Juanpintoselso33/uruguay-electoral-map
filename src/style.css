@@ -3,54 +3,558 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Base styles */
-* {
+/* ========================================
+   Global Design System
+   ======================================== */
+
+:root {
+  /* Color System - Light Mode */
+  --color-bg: #fafafa;
+  --color-surface: #ffffff;
+  --color-text: #1a1a1a;
+  --color-text-secondary: #666666;
+  --color-border: #e5e5e5;
+  --color-accent: #0066cc;
+  --color-accent-hover: #0052a3;
+  --color-accent-light: #e6f0fa;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+
+  /* Safe area inset variables for notches and safe edges */
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+
+  /* Touch-friendly sizing (WCAG 2.1 Level AA) */
+  --touch-target-min: 44px;
+  --touch-target-comfortable: 48px;
+  --touch-spacing-min: 8px;
+
+  /* Spacing Scale */
+  --spacing-xs: 0.25rem;   /* 4px */
+  --spacing-sm: 0.5rem;    /* 8px */
+  --spacing-md: 1rem;      /* 16px */
+  --spacing-lg: 1.5rem;    /* 24px */
+  --spacing-xl: 2rem;      /* 32px */
+  --spacing-2xl: 3rem;     /* 48px */
+
+  /* Fluid Typography */
+  --font-size-xs: clamp(0.6875rem, 1.2vw, 0.75rem);     /* 11-12px */
+  --font-size-sm: clamp(0.75rem, 1.5vw, 0.875rem);      /* 12-14px */
+  --font-size-base: clamp(0.875rem, 2vw, 1rem);         /* 14-16px */
+  --font-size-lg: clamp(1rem, 2.5vw, 1.125rem);         /* 16-18px */
+  --font-size-xl: clamp(1.125rem, 3vw, 1.5rem);         /* 18-24px */
+  --font-size-2xl: clamp(1.5rem, 4vw, 2rem);            /* 24-32px */
+
+  /* Line Heights */
+  --line-height-tight: 1.2;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 350ms cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* Z-Index Scale */
+  --z-base: 0;
+  --z-above: 10;
+  --z-dropdown: 30;
+  --z-sticky: 40;
+  --z-sidebar: 50;
+  --z-header: 100;
+  --z-sheet: 150;
+  --z-modal: 200;
+  --z-overlay: 250;
+  --z-max: 9999;
+}
+
+/* Dark Mode Colors */
+.dark,
+:root.dark {
+  --color-bg: #0a0a0a;
+  --color-surface: #1a1a1a;
+  --color-text: #fafafa;
+  --color-text-secondary: #a3a3a3;
+  --color-border: #2a2a2a;
+  --color-accent: #3b82f6;
+  --color-accent-hover: #2563eb;
+  --color-accent-light: #1e3a5f;
+}
+
+/* Desktop adjustments for spacing */
+@media (min-width: 768px) {
+  :root {
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    --line-height-normal: 1.6;
+  }
+}
+
+/* ========================================
+   Base Styles
+   ======================================== */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+}
+
+html {
+  /* Prevent font scaling in landscape on iOS */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* Improve text rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  min-height: 100dvh; /* Dynamic viewport height for mobile */
+  font-family: 'Plus Jakarta Sans', Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
   font-weight: 400;
-  color: #213547;
-  background-color: #ffffff;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+
+  /* Prevent pull-to-refresh overscroll on mobile */
+  overscroll-behavior-y: contain;
 }
 
 #app {
   width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
 }
 
-h1 {
-  font-size: 2.5em;
-  line-height: 1.1;
+/* ========================================
+   Typography
+   ======================================== */
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: var(--line-height-tight);
   margin: 0;
+  font-weight: 600;
 }
 
-/* Custom utility classes */
+h1 {
+  font-size: var(--font-size-2xl);
+}
+
+h2 {
+  font-size: var(--font-size-xl);
+}
+
+h3 {
+  font-size: var(--font-size-lg);
+}
+
+small,
+.text-small {
+  font-size: var(--font-size-sm);
+}
+
+.text-xs {
+  font-size: var(--font-size-xs);
+}
+
+/* ========================================
+   Safe Area Support
+   ======================================== */
+
+@supports (padding: max(0px)) {
+  #app {
+    padding-top: max(0px, var(--safe-area-top));
+    padding-bottom: max(0px, var(--safe-area-bottom));
+    padding-left: max(0px, var(--safe-area-left));
+    padding-right: max(0px, var(--safe-area-right));
+  }
+}
+
+/* ========================================
+   Mobile Touch Utilities
+   ======================================== */
+
+@layer utilities {
+  /* Touch target sizes */
+  .touch-target {
+    min-height: var(--touch-target-min);
+    min-width: var(--touch-target-min);
+  }
+
+  .touch-target-lg {
+    min-height: var(--touch-target-comfortable);
+    min-width: var(--touch-target-comfortable);
+  }
+
+  /* Touch feedback prevention */
+  .touch-none {
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  /* No text selection */
+  .no-select {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* No tap highlight */
+  .no-highlight {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Active press state */
+  .press-scale:active {
+    transform: scale(0.97);
+  }
+
+  .press-scale-sm:active {
+    transform: scale(0.98);
+  }
+
+  /* Focus visible utilities */
+  .focus-ring:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .focus-ring-inset:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: -3px;
+  }
+}
+
+/* ========================================
+   Responsive Utilities
+   ======================================== */
+
 @layer components {
+  /* Responsive padding */
+  .p-responsive {
+    padding: var(--spacing-md);
+  }
+
+  .px-responsive {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+  }
+
+  .py-responsive {
+    padding-top: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+  }
+
+  @media (min-width: 768px) {
+    .p-responsive {
+      padding: var(--spacing-lg);
+    }
+
+    .px-responsive {
+      padding-left: var(--spacing-lg);
+      padding-right: var(--spacing-lg);
+    }
+
+    .py-responsive {
+      padding-top: var(--spacing-lg);
+      padding-bottom: var(--spacing-lg);
+    }
+  }
+
+  /* Gap responsive */
+  .gap-responsive {
+    gap: var(--spacing-md);
+  }
+
+  @media (min-width: 768px) {
+    .gap-responsive {
+      gap: var(--spacing-lg);
+    }
+  }
+
+  /* Button variants */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: var(--touch-target-min);
+    padding: 0.625rem 1rem;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  .btn:active {
+    transform: scale(0.97);
+  }
+
+  .btn:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
   .btn-primary {
-    @apply px-4 py-2 bg-electoral-primary text-white rounded-md hover:bg-electoral-secondary transition-colors;
+    background: var(--color-accent);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: var(--color-accent-hover);
   }
 
   .btn-secondary {
-    @apply px-4 py-2 bg-gray-200 text-electoral-primary rounded-md hover:bg-gray-300 transition-colors;
+    background: var(--color-bg);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
   }
 
+  .btn-secondary:hover {
+    background: var(--color-border);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--color-text);
+  }
+
+  .btn-ghost:hover {
+    background: var(--color-bg);
+  }
+
+  /* Card */
   .card {
-    @apply bg-white rounded-lg shadow-md p-4;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: var(--spacing-md);
   }
 
+  /* Input field */
   .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-electoral-accent;
+    width: 100%;
+    min-height: var(--touch-target-min);
+    padding: 0.75rem 1rem;
+    font-size: var(--font-size-base);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    transition: all var(--transition-fast);
   }
 
-  .select-field {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-electoral-accent;
+  .input-field:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-accent-light);
   }
+
+  .input-field::placeholder {
+    color: var(--color-text-secondary);
+  }
+
+  /* Select field */
+  .select-field {
+    width: 100%;
+    min-height: var(--touch-target-min);
+    padding: 0.75rem 2.5rem 0.75rem 1rem;
+    font-size: var(--font-size-base);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+  }
+
+  .select-field:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-accent-light);
+  }
+}
+
+/* ========================================
+   Landscape Orientation Support
+   ======================================== */
+
+@media (orientation: landscape) and (max-height: 500px) {
+  :root {
+    /* Reduce spacing in compact landscape */
+    --spacing-md: 0.75rem;
+    --spacing-lg: 1rem;
+    --font-size-xl: clamp(1rem, 2.5vw, 1.25rem);
+    --touch-target-min: 40px;
+  }
+
+  /* Compact header in landscape */
+  header {
+    padding-top: var(--safe-area-top);
+    padding-left: var(--safe-area-left);
+    padding-right: var(--safe-area-right);
+  }
+
+  /* Reduce touch target sizes in landscape */
+  .touch-target,
+  button,
+  .btn {
+    min-height: 40px;
+  }
+}
+
+/* ========================================
+   Accessibility - Reduced Motion
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ========================================
+   Accessibility - High Contrast
+   ======================================== */
+
+@media (prefers-contrast: high) {
+  :root {
+    --color-border: #333;
+  }
+
+  .dark,
+  :root.dark {
+    --color-border: #ccc;
+  }
+
+  button,
+  .btn,
+  input,
+  select {
+    border-width: 2px;
+  }
+}
+
+/* ========================================
+   Scrollbar Styling
+   ======================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-secondary);
+}
+
+/* Hide scrollbar on mobile for cleaner look */
+@media (max-width: 767px) {
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* ========================================
+   Screen Reader Utilities
+   ======================================== */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: inherit;
+}
+
+/* ========================================
+   Skip Link (Accessibility)
+   ======================================== */
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-accent);
+  color: white;
+  padding: 0.5rem 1rem;
+  z-index: var(--z-max);
+  transition: top var(--transition-fast);
+}
+
+.skip-link:focus {
+  top: 0;
 }

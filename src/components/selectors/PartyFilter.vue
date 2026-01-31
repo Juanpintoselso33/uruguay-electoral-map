@@ -6,7 +6,8 @@
       :value="modelValue"
       @change="handleChange"
       @keydown.escape="clearSelection"
-      class="w-full p-1.5 text-sm border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all"
+      class="w-full p-3 text-sm border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all"
+      style="min-height: var(--touch-target-min);"
       aria-label="Filtrar por partido político"
     >
       <option value="">Todos los partidos</option>

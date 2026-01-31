@@ -86,11 +86,24 @@ export const useElectoralStore = defineStore('electoral', () => {
 
   // Multi-election state
   const availableElections = ref<string[]>([]);
-  const currentElection = ref<string>('internas-2024');
+  const currentElection = ref<string>('internas-2024');  // Default to internas-2024 (most recent)
   const electionsMeta = ref<ElectionsMeta | null>(null);
   const electionsFromCatalog = ref<Election[]>([]);
 
   // Getters
+  const availableRegions = computed(() => {
+    // Filter regions that have data for the current election
+    return regions.value.filter(region => {
+      const hasElection = region.availableElections?.includes(currentElection.value);
+      return hasElection;
+    });
+  });
+
+  const isInternasElection = computed(() => {
+    // Check if current election is "internas" type (has precandidatos/ODN)
+    return currentElection.value.includes('internas');
+  });
+
   const currentPartiesByList = computed(() => {
     return currentRegion.value?.partiesByList || {};
   });
@@ -175,9 +188,20 @@ export const useElectoralStore = defineStore('electoral', () => {
       const regionsConfig = await response.json();
       regions.value = regionsConfig;
 
-      // Set first region as current if none selected
+      // Set first region that has data for current election
       if (regionsConfig.length > 0 && !currentRegion.value) {
-        currentRegion.value = regionsConfig[0];
+        const firstAvailable = regionsConfig.find((r: Region) =>
+          r.availableElections?.includes(currentElection.value)
+        );
+
+        if (firstAvailable) {
+          currentRegion.value = firstAvailable;
+          console.log('[Electoral Store] Initial region set to:', firstAvailable.name);
+        } else {
+          // Fallback to first region
+          currentRegion.value = regionsConfig[0];
+          console.warn('[Electoral Store] No region found for current election, using first region');
+        }
       }
 
       return regionsConfig;
@@ -250,11 +274,19 @@ export const useElectoralStore = defineStore('electoral', () => {
 
     const electionToUse = election || currentElection.value || region.defaultElection || 'internas-2024';
 
+    console.log('[Electoral Store] fetchRegionData called')
+    console.log('[Electoral Store] Region:', region.name)
+    console.log('[Electoral Store] Region slug:', region.slug)
+    console.log('[Electoral Store] Election:', electionToUse)
+    console.log('[Electoral Store] isODN:', isODN.value)
+
     try {
       // Try to use JSON format first (multi-election support)
       const jsonPath = isODN.value
         ? `/data/electoral/${electionToUse}/${region.slug}/odn.json`
         : `/data/electoral/${electionToUse}/${region.slug}/odd.json`;
+
+      console.log('[Electoral Store] Attempting to fetch:', jsonPath)
 
       let votosPorListas: Record<string, Record<string, number>>;
       let maxVotosPorListas: Record<string, number>;
@@ -264,6 +296,7 @@ export const useElectoralStore = defineStore('electoral', () => {
 
       // Try to fetch JSON data first
       const jsonResponse = await fetch(jsonPath);
+      console.log('[Electoral Store] JSON fetch response status:', jsonResponse.status)
 
       if (jsonResponse.ok) {
         // Use new JSON format with election-specific paths
@@ -300,13 +333,26 @@ export const useElectoralStore = defineStore('electoral', () => {
         precandidatos = processed.precandidatosByList;
       }
 
-      // Load GeoJSON (same for all elections)
-      const geojsonPath = region.mapJsonPath || region.geojsonPath;
+      // Load GeoJSON - use series map for internas elections, regular map for nacionales
+      let geojsonPath = region.mapJsonPath || region.geojsonPath;
+
+      // For internas elections, use series_map.json which has electoral series boundaries
+      if (electionToUse.includes('internas') && region.slug) {
+        const seriesMapPath = `/data/geographic/${region.slug}_series_map.json`;
+        geojsonPath = seriesMapPath;
+        console.log('[Electoral Store] Using series map for internas election:', seriesMapPath);
+      } else {
+        console.log('[Electoral Store] Using regular map for election:', geojsonPath);
+      }
+
+      console.log('[Electoral Store] Attempting to fetch GeoJSON:', geojsonPath)
       const geojsonResponse = await fetch(geojsonPath);
+      console.log('[Electoral Store] GeoJSON fetch response status:', geojsonResponse.status)
       if (!geojsonResponse.ok) {
         throw new Error('Failed to fetch GeoJSON data');
       }
       const geojsonData = await geojsonResponse.json();
+      console.log('[Electoral Store] GeoJSON loaded, features count:', geojsonData.features?.length)
 
       // Load series-to-locality mapping if available
       let seriesLocalityMapping: Record<string, string> = {};
@@ -347,43 +393,98 @@ export const useElectoralStore = defineStore('electoral', () => {
         seriesLocalityMapping,
         seriesBarrioMapping,
       };
+      console.log('[Electoral Store] currentRegion updated successfully')
+      console.log('[Electoral Store] Available lists count:', lists.length)
+      console.log('[Electoral Store] GeoJSON features in currentRegion:', currentRegion.value.geojsonData?.features?.length)
+
+      // Debug: Show sample of electoral data structure
+      const sampleLists = Object.keys(votosPorListas).slice(0, 3);
+      console.log('[Electoral Store] Sample electoral data (first 3 lists):');
+      sampleLists.forEach(list => {
+        const zones = Object.keys(votosPorListas[list]).slice(0, 5);
+        console.log(`  List ${list}:`, zones.map(z => `${z}=${votosPorListas[list][z]}`).join(', '));
+      });
+
+      // Debug: Show sample of GeoJSON zone identifiers
+      const sampleFeatures = currentRegion.value.geojsonData?.features?.slice(0, 3) || [];
+      console.log('[Electoral Store] Sample GeoJSON zone identifiers:');
+      sampleFeatures.forEach((f: any, i: number) => {
+        console.log(`  Feature ${i}: serie=${f.properties?.serie}, BARRIO=${f.properties?.BARRIO}, zona=${f.properties?.zona}`);
+      });
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Unknown error';
-      console.error('Error fetching region data:', err);
+      console.error('[Electoral Store] Error fetching region data:', err);
+      console.error('[Electoral Store] Error details:', err);
     } finally {
       isLoading.value = false;
+      console.log('[Electoral Store] fetchRegionData completed, isLoading:', isLoading.value)
     }
   }
 
   async function switchElection(electionId: string) {
-    if (!currentRegion.value) return;
-
-    // Check if region has this election
-    const hasElection = currentRegion.value.availableElections?.includes(electionId);
-    if (!hasElection) {
-      console.warn(`Election ${electionId} not available for ${currentRegion.value.name}`);
-      return;
-    }
+    console.log('[Electoral Store] switchElection called:', electionId);
 
     currentElection.value = electionId;
     selectedLists.value = [];
     selectedCandidates.value = [];
+    selectedParty.value = '';
 
-    await fetchRegionData(currentRegion.value, electionId);
+    // Check if current region has this election
+    const hasElection = currentRegion.value?.availableElections?.includes(electionId);
+
+    if (!hasElection) {
+      console.warn(`[Electoral Store] Current region "${currentRegion.value?.name}" doesn't have data for ${electionId}`);
+
+      // Find first region that has this election
+      const firstAvailableRegion = regions.value.find(r =>
+        r.availableElections?.includes(electionId)
+      );
+
+      if (firstAvailableRegion) {
+        console.log(`[Electoral Store] Switching to first available region: ${firstAvailableRegion.name}`);
+        currentRegion.value = firstAvailableRegion;
+        await fetchRegionData(firstAvailableRegion, electionId);
+      } else {
+        console.error(`[Electoral Store] No regions available for election: ${electionId}`);
+        error.value = `No hay departamentos con datos para ${electionId}`;
+      }
+    } else {
+      // Current region has this election, just reload data
+      console.log(`[Electoral Store] Current region has ${electionId}, reloading data`);
+      await fetchRegionData(currentRegion.value!, electionId);
+    }
   }
 
-  function setCurrentRegion(region: Region) {
+  function setCurrentRegion(region: Region, forceReload = false) {
     console.log('[Electoral Store] setCurrentRegion called with:', region.name)
     console.log('[Electoral Store] Current region:', currentRegion.value?.name)
+    console.log('[Electoral Store] Force reload:', forceReload)
 
-    if (currentRegion.value?.name !== region.name) {
-      console.log('[Electoral Store] Changing region from', currentRegion.value?.name, 'to', region.name)
-      currentRegion.value = region;
+    // Always allow switching if the slug is different, even if names appear similar
+    const isDifferentRegion = !currentRegion.value ||
+                               currentRegion.value.slug !== region.slug ||
+                               currentRegion.value.name !== region.name;
+
+    if (isDifferentRegion || forceReload) {
+      console.log('[Electoral Store] ✅ Changing region from', currentRegion.value?.name, 'to', region.name)
+      console.log('[Electoral Store] New mapCenter:', region.mapCenter)
+      console.log('[Electoral Store] New mapZoom:', region.mapZoom)
+
+      // Clear previous state
       selectedLists.value = [];
       selectedCandidates.value = [];
+      selectedParty.value = '';
+      selectedNeighborhood.value = null;
+
+      // Directly update to new region (don't set to null, that dismounts the map!)
+      currentRegion.value = region;
+
+      // Fetch new data
       fetchRegionData(region);
+
+      console.log('[Electoral Store] Region changed, data loading...')
     } else {
-      console.log('[Electoral Store] Region already selected, skipping')
+      console.log('[Electoral Store] ⚠️ Region already selected, skipping')
     }
   }
 
@@ -505,6 +606,8 @@ export const useElectoralStore = defineStore('electoral', () => {
     electionsFromCatalog,
 
     // Getters
+    availableRegions,
+    isInternasElection,
     currentPartiesByList,
     precandidatosByList,
     uniqueSortedCandidates,

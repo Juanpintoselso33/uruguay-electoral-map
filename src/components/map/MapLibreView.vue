@@ -1,5 +1,15 @@
 <template>
   <div class="maplibre-container">
+    <!-- Screen reader live region for map interactions -->
+    <div
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      class="sr-only"
+    >
+      {{ screenReaderAnnouncement }}
+    </div>
+
     <!-- Loading skeleton -->
     <MapSkeleton v-if="isMapLoading" />
 
@@ -16,7 +26,7 @@
         title="Zoom in (tecla +)"
         aria-label="Acercar mapa"
       >
-        <Plus :size="18" />
+        <Plus :size="20" />
       </button>
       <button
         @click="zoomOut"
@@ -26,7 +36,7 @@
         title="Zoom out (tecla -)"
         aria-label="Alejar mapa"
       >
-        <Minus :size="18" />
+        <Minus :size="20" />
       </button>
       <button
         @click="resetView"
@@ -36,7 +46,7 @@
         title="Reset view (tecla R)"
         aria-label="Restablecer vista"
       >
-        <Maximize2 :size="18" />
+        <Maximize2 :size="20" />
       </button>
     </div>
 
@@ -77,7 +87,7 @@
           class="tooltip-close-btn"
           aria-label="Cerrar tooltip"
         >
-          <X :size="14" />
+          <X :size="16" />
         </button>
 
         <div class="tooltip-header">
@@ -196,6 +206,20 @@ const { generateListTooltip } = tooltipContent
 
 // Screen reader announcements
 const { announceZoneSelection } = useScreenReaderAnnouncements()
+const screenReaderAnnouncement = ref('')
+
+// Function to announce to screen reader
+const announceToScreenReader = (message: string) => {
+  // Clear first to ensure the announcement is always read
+  screenReaderAnnouncement.value = ''
+  setTimeout(() => {
+    screenReaderAnnouncement.value = message
+    // Clear after 3 seconds to avoid stale announcements
+    setTimeout(() => {
+      screenReaderAnnouncement.value = ''
+    }, 3000)
+  }, 100)
+}
 
 // Color system with ColorBrewer palette (from feature branch)
 const { calculateBreaks, getColorForValue, getColorScale } = useMapColors('blues', 6, 'jenks')
@@ -493,8 +517,9 @@ const initMap = () => {
         pinTooltip()
       }
 
-      // Announce to screen readers
-      announceZoneSelection(zoneName, votes)
+      // Announce to screen readers using our local function
+      const displayName = feature.properties.displayLabel || zoneName
+      announceToScreenReader(`Zona ${displayName} seleccionada. ${votes.toLocaleString()} votos.`)
 
       emit('updateSelectedNeighborhood', zoneName)
     }
@@ -524,8 +549,9 @@ const initMap = () => {
         pinTooltip()
       }
 
-      // Announce to screen readers
-      announceZoneSelection(zoneName, votes)
+      // Announce to screen readers using our local function
+      const displayName = feature.properties.displayLabel || zoneName
+      announceToScreenReader(`Zona ${displayName} seleccionada. ${votes.toLocaleString()} votos.`)
 
       emit('updateSelectedNeighborhood', zoneName)
     }
@@ -799,7 +825,11 @@ watch(() => props.geojsonData, (newGeoJson, oldGeoJson) => {
     console.log('[MapLibreView] Map exists and is loaded, updating data')
     updateMapData()
   } else if (map.value && !map.value.loaded()) {
-    console.warn('[MapLibreView] Map exists but not fully loaded yet, waiting...')
+    console.warn('[MapLibreView] Map exists but not fully loaded yet, waiting for idle event...')
+    map.value.once('idle', () => {
+      console.log('[MapLibreView] 🎯 Map is now idle after animation, updating data')
+      updateMapData()
+    })
   } else {
     console.warn('[MapLibreView] Map not ready')
   }
@@ -818,6 +848,12 @@ watch(() => [props.selectedLists, props.selectedCandidates], () => {
   if (map.value && map.value.loaded()) {
     console.log('[MapLibreView] Updating map colors due to selection changes')
     updateMapData()
+  } else if (map.value && !map.value.loaded()) {
+    console.log('[MapLibreView] Map animating, waiting for idle before updating colors')
+    map.value.once('idle', () => {
+      console.log('[MapLibreView] 🎨 Updating colors after map idle')
+      updateMapData()
+    })
   } else {
     console.log('[MapLibreView] Map not ready for update')
   }
@@ -882,13 +918,24 @@ watch(() => props.regionName, (newRegionName, oldRegionName) => {
 
   // When region changes, ensure map data is fully updated
   // This is a fallback in case the GeoJSON watcher didn't catch it
-  if (oldRegionName && newRegionName !== oldRegionName && map.value && map.value.loaded() && props.geojsonData) {
-    console.log('[MapLibreView] Region changed! Force updating map data')
-    setTimeout(() => {
-      if (map.value && map.value.loaded()) {
+  if (oldRegionName && newRegionName !== oldRegionName && map.value && props.geojsonData) {
+    console.log('[MapLibreView] Region changed! Scheduling map data update')
+
+    if (map.value.loaded()) {
+      setTimeout(() => {
+        if (map.value && map.value.loaded()) {
+          console.log('[MapLibreView] 🔄 Updating map data after region change (loaded)')
+          updateMapData()
+        }
+      }, 100)  // Small delay to ensure GeoJSON is ready
+    } else {
+      // Map is animating, wait for idle
+      console.log('[MapLibreView] Map animating, waiting for idle before update')
+      map.value.once('idle', () => {
+        console.log('[MapLibreView] 🔄 Updating map data after region change (idle)')
         updateMapData()
-      }
-    }, 100)  // Small delay to ensure GeoJSON is ready
+      })
+    }
   }
   console.log('[MapLibreView] ========================================')
 })
@@ -933,6 +980,19 @@ onUnmounted(() => {
   height: 100%;
 }
 
+/* Screen reader only - visually hidden but accessible */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 /* Map Controls */
 .map-controls {
   position: absolute;
@@ -940,27 +1000,49 @@ onUnmounted(() => {
   right: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.75rem; /* Increased gap for better touch spacing */
   z-index: 100; /* High z-index to always be on top */
 }
 
 .map-control-btn {
-  width: 36px;
-  height: 36px;
+  min-width: var(--touch-target-min, 44px); /* 44px minimum for touch */
+  min-height: var(--touch-target-min, 44px); /* 44px minimum for touch */
+  width: 44px;
+  height: 44px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Prevent text selection on touch */
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .map-control-btn:hover {
   background: var(--color-bg);
   transform: scale(1.05);
+}
+
+.map-control-btn:active {
+  transform: scale(0.98);
+  background: var(--color-border);
+}
+
+/* Focus indicator for keyboard navigation - WCAG AA compliant */
+.map-control-btn:focus-visible {
+  outline: 3px solid var(--color-accent, #0066cc);
+  outline-offset: 2px;
+}
+
+/* Larger icons for better visibility on touch devices */
+.map-control-btn :deep(svg) {
+  width: 20px;
+  height: 20px;
 }
 
 /* Legend */
@@ -1046,8 +1128,10 @@ onUnmounted(() => {
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
-  width: 24px;
-  height: 24px;
+  min-width: 32px; /* Larger touch target */
+  min-height: 32px; /* Larger touch target */
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   border: none;
   background: var(--color-border);
@@ -1058,12 +1142,27 @@ onUnmounted(() => {
   justify-content: center;
   transition: all 0.2s ease;
   z-index: 1;
+  /* Prevent text selection on touch */
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .tooltip-close-btn:hover {
   background: var(--color-accent);
   color: white;
   transform: scale(1.1);
+}
+
+.tooltip-close-btn:active {
+  transform: scale(0.95);
+  background: var(--color-accent);
+  color: white;
+}
+
+/* Focus indicator for keyboard navigation */
+.tooltip-close-btn:focus-visible {
+  outline: 3px solid var(--color-accent, #0066cc);
+  outline-offset: 2px;
 }
 
 .tooltip-header {
@@ -1183,15 +1282,46 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .map-controls {
-    top: 0.5rem;
+    top: 4.5rem; /* Below the floating header */
     right: 0.5rem;
   }
 
   .map-legend {
-    bottom: 1rem;
-    left: 1rem;
-    right: 1rem;
+    /* Position above the collapsed bottom sheet (~15% height with handle and tabs) */
+    bottom: calc(18% + 0.5rem);
+    left: 0.5rem;
+    right: auto;
     min-width: auto;
+    max-width: 140px;
+    padding: 0.5rem 0.625rem;
+    font-size: 0.65rem;
+    border-radius: 6px;
+  }
+
+  .map-legend .legend-title {
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .map-legend .legend-scale {
+    gap: 0.25rem;
+  }
+
+  .map-legend .legend-scale-item {
+    gap: 0.375rem;
+  }
+
+  .map-legend .legend-color-box {
+    width: 16px;
+    height: 10px;
+  }
+
+  .map-legend .legend-label {
+    font-size: 0.65rem;
+  }
+
+  .map-legend .legend-info {
+    display: none; /* Hide extra info on mobile */
   }
 }
 </style>

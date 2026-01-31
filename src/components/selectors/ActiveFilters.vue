@@ -21,7 +21,7 @@
           class="chip-remove"
           :aria-label="`Remover filtro: ${selectedParty}`"
         >
-          <X :size="14" />
+          <X :size="16" />
         </button>
       </div>
 
@@ -33,7 +33,7 @@
           class="chip-remove"
           aria-label="Remover búsqueda"
         >
-          <X :size="14" />
+          <X :size="16" />
         </button>
       </div>
 
@@ -47,7 +47,7 @@
           class="chip-remove"
           aria-label="Deseleccionar todo"
         >
-          <X :size="14" />
+          <X :size="16" />
         </button>
       </div>
     </div>
@@ -131,7 +131,8 @@ const selectedType = computed(() => {
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.25rem 0.5rem;
+  padding: 0.5rem 0.75rem;
+  min-height: 36px; /* Slightly smaller but still touch-friendly */
   background: transparent;
   border: 1px solid var(--color-border);
   border-radius: 4px;
@@ -139,12 +140,18 @@ const selectedType = computed(() => {
   color: var(--color-text-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .clear-all-btn:hover {
   background: var(--color-border);
   border-color: var(--color-text-secondary);
   color: var(--color-text);
+}
+
+.clear-all-btn:active {
+  transform: scale(0.98);
 }
 
 .filter-chips {
@@ -183,8 +190,10 @@ const selectedType = computed(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
+  min-width: 24px; /* Larger touch target */
+  min-height: 24px; /* Larger touch target */
+  width: 24px;
+  height: 24px;
   padding: 0;
   background: rgba(255, 255, 255, 0.2);
   border: none;
@@ -193,11 +202,17 @@ const selectedType = computed(() => {
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .chip-remove:hover {
   background: rgba(255, 255, 255, 0.3);
   transform: scale(1.1);
+}
+
+.chip-remove:active {
+  transform: scale(0.95);
 }
 
 .info-chip .chip-remove {

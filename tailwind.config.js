@@ -18,11 +18,25 @@ export default {
           'success': '#28a745',
         },
         'party': {
-          'fa': '#0066cc',       // Frente Amplio - Blue
-          'pn': '#ffffff',       // Partido Nacional - White (with border)
-          'pc': '#dc3545',       // Partido Colorado - Red
-          'pi': '#6f42c1',       // Partido Independiente - Purple
-          'ca': '#28a745',       // Cabildo Abierto - Green
+          'fa': '#A569BD',       // Frente Amplio - Violeta claro
+          'pn': '#55B5E5',       // Partido Nacional - Celeste (NOT white!)
+          'pc': '#E52828',       // Partido Colorado - Rojo
+          'pi': '#7B2CBF',       // Partido Independiente - Morado oscuro
+          'ca': '#2D7D3E',       // Cabildo Abierto - Verde
+          'ap': '#C0392B',       // Asamblea Popular - Rojo oscuro
+          'ar': '#1ABC9C',       // Avanzar Republicano - Turquesa
+          'by': '#F39C12',       // Basta Ya - Naranja dorado
+          'cr': '#3498DB',       // Coalición Republicana - Azul
+          'coa': '#27AE60',      // Constitucional Ambientalista - Verde claro
+          'dev': '#8E44AD',      // Devolución - Púrpura
+          'is': '#D35400',       // Identidad Soberana - Naranja oscuro
+          'ind': '#95A5A6',      // Independiente - Gris
+          'lib': '#F1C40F',      // Libertario - Amarillo
+          'peri': '#E74C3C',     // P.E.R.I. - Coral
+          'pa': '#9B59B6',       // Partido de la Armonía - Lila
+          'pal': '#16A085',      // Patria Alternativa - Verde azulado
+          'pcn': '#2980B9',      // Por Los Cambios Necesarios - Azul medio
+          'pva': '#2ECC71',      // Verde Animalista - Verde brillante
         },
         'heatmap': {
           'low': '#ffffb2',
