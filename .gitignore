@@ -22,3 +22,22 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Backup files
+public/backups/
+*.backup
+
+# Claude Code template directory (can be removed after setup)
+claude-code-universal-guide/
+
+# ETL Data directories (large files, download via npm run etl:extract)
+data/raw/electoral/*.csv
+data/raw/geographic/*.geojson
+data/raw/geographic/*.json
+data/cache/
+
+# Keep processed data in git for deployment
+# !data/processed/
+
+# But ignore very large files
+*.backup.json

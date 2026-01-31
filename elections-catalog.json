@@ -1,0 +1,199 @@
+{
+  "elections": [
+    {
+      "id": "nacionales-2014",
+      "year": 2014,
+      "type": "nacionales",
+      "name": "Elecciones Nacionales 2014",
+      "date": "2014-10-26",
+      "datasetUrl": "https://catalogodatos.gub.uy/dataset/corte-electoral-elecciones_nacionales_2014",
+      "resources": {
+        "desgloseVotos": {
+          "url": "https://catalogodatos.gub.uy/dataset/1d025bf7-5b0d-42c5-8a9a-0696e24f7634/resource/91bc8eeb-227a-47a3-96e9-c2fe4e4a3e1c/download/desglose-de-votos.csv",
+          "format": "CSV",
+          "description": "Información desagregada de votos con hojas de votación válidas"
+        },
+        "planCircuital": {
+          "url": "https://catalogodatos.gub.uy/dataset/1d025bf7-5b0d-42c5-8a9a-0696e24f7634/resource/766fb082-4d93-4fe6-8927-558ae15a17b4/download/plan-circuital.csv",
+          "format": "CSV",
+          "description": "Plan circuital electoral"
+        },
+        "totalesGenerales": {
+          "url": "https://catalogodatos.gub.uy/dataset/1d025bf7-5b0d-42c5-8a9a-0696e24f7634/resource/...",
+          "format": "CSV",
+          "description": "Totales generales por Comisión Receptora de Votos"
+        }
+      },
+      "departments": ["all"],
+      "available": true,
+      "notes": "Elecciones Nacionales - Primera vuelta"
+    },
+    {
+      "id": "internas-2019",
+      "year": 2019,
+      "type": "internas",
+      "name": "Elecciones Internas 2019",
+      "date": "2019-06-30",
+      "datasetUrl": "https://catalogodatos.gub.uy/dataset/corte-electoral-elecciones_internas_2019",
+      "resources": {
+        "desgloseVotos": {
+          "url": "https://catalogodatos.gub.uy/dataset/corte-electoral-elecciones_internas_2019/resource/d2701044-b6ba-4faa-ae6f-424ab58392df/download/desglose-de-votos.csv",
+          "format": "CSV",
+          "description": "Desglose de votos por CRV"
+        },
+        "integracionHojas": {
+          "url": "https://catalogodatos.gub.uy/dataset/corte-electoral-elecciones_internas_2019/resource/ca84824a-1509-4a8b-a0ab-ab7287362e3f/download/integracion-de-hojas-de-votacion.csv",
+          "format": "CSV",
+          "description": "Integración de las Hojas de Votación"
+        }
+      },
+      "departments": ["all"],
+      "available": true,
+      "notes": "Elecciones Internas de los Partidos Políticos"
+    },
+    {
+      "id": "nacionales-2019",
+      "year": 2019,
+      "type": "nacionales",
+      "name": "Elecciones Nacionales 2019",
+      "date": "2019-10-27",
+      "datasetUrl": "https://catalogodatos.gub.uy/dataset/corte-electoral-elecciones-nacionales-2019",
+      "resources": {
+        "desgloseVotos": {
+          "url": "https://catalogodatos.gub.uy/dataset/7c3caf30-b59e-43de-b928-547030cc682b/resource/fae2be5e-44db-4763-8b32-9c18679d3aad/download/desglose-de-votos.csv",
+          "format": "CSV",
+          "description": "Información desagregada de votos con hojas de votación válidas"
+        },
+        "integracionHojas": {
+          "url": "https://catalogodatos.gub.uy/dataset/7c3caf30-b59e-43de-b928-547030cc682b/resource/8cca61dc-7f7e-4694-a690-97ad5fbe91df/download/integracin-de-hojas-de-votacin-nacionales.csv",
+          "format": "CSV",
+          "description": "Integración de hojas de votación nacionales"
+        },
+        "totalesGenerales": {
+          "url": "https://catalogodatos.gub.uy/dataset/7c3caf30-b59e-43de-b928-547030cc682b/resource/4e6c2564-a178-4802-b7ed-59be68485146/download/totales-generales-por-comision-receptora-de-votos.csv",
+          "format": "CSV",
+          "description": "Totales generales por Comisión Receptora de Votos"
+        }
+      },
+      "departments": ["all"],
+      "available": true,
+      "notes": "Elecciones Nacionales - Primera vuelta"
+    },
+    {
+      "id": "departamentales-2020",
+      "year": 2020,
+      "type": "departamentales",
+      "name": "Elecciones Departamentales y Municipales 2020",
+      "date": "2020-09-27",
+      "datasetUrl": "https://catalogodatos.gub.uy/dataset/corte-electoral-eleccionesdepartamentales2020",
+      "resources": {
+        "desgloseVotosDepartamental": {
+          "url": "https://catalogodatos.gub.uy/dataset/corte-electoral-eleccionesdepartamentales2020/resource/.../download/desglose-de-votos-departamental.csv",
+          "format": "CSV",
+          "description": "Desglose de votos Elección Departamental"
+        },
+        "desgloseVotosMunicipal": {
+          "url": "https://catalogodatos.gub.uy/dataset/corte-electoral-eleccionesdepartamentales2020/resource/c61c004d-265a-4c1c-8106-c4ea12f1efa8/download/desglose-de-votos-municipal.csv",
+          "format": "CSV",
+          "description": "Desglose de votos Elección Municipal"
+        },
+        "integracionHojas": {
+          "url": "https://catalogodatos.gub.uy/dataset/corte-electoral-eleccionesdepartamentales2020/resource/cd83f0bf-f0b1-4c4f-a827-f8a35134fa35/download/integracion-hojas.csv",
+          "format": "CSV",
+          "description": "Integración de las hojas de votación"
+        }
+      },
+      "departments": ["all"],
+      "available": true,
+      "notes": "Elecciones Departamentales y Municipales"
+    },
+    {
+      "id": "internas-2024",
+      "year": 2024,
+      "type": "internas",
+      "name": "Elecciones Internas 2024",
+      "date": "2024-06-30",
+      "datasetUrl": "https://catalogodatos.gub.uy/dataset/corte-electoral-elecciones-internas-de-los-partidos-politicos-2024",
+      "resources": {
+        "desgloseVotos": {
+          "url": "https://catalogodatos.gub.uy/dataset/48a4e7f5-6909-41a0-aa8a-95dc42cc201f/resource/dec32eb5-1754-4810-af7a-8c1121259206/download/desglose-de-votos.csv",
+          "format": "CSV",
+          "description": "Votos desglosados por CRV y hoja de votación"
+        },
+        "integracionHojas": {
+          "url": "https://catalogodatos.gub.uy/dataset/48a4e7f5-6909-41a0-aa8a-95dc42cc201f/resource/4937d1a4-0847-4cf7-a2e1-95688ce5c40c/download/integracion-hojas-de-votacion.csv",
+          "format": "CSV",
+          "description": "Integración de hojas con candidatos por departamento"
+        }
+      },
+      "departments": ["all"],
+      "available": true,
+      "implemented": true,
+      "notes": "YA IMPLEMENTADO - Datos actuales en la app"
+    },
+    {
+      "id": "nacionales-2024",
+      "year": 2024,
+      "type": "nacionales",
+      "name": "Elecciones Nacionales 2024",
+      "date": "2024-10-27",
+      "datasetUrl": "https://catalogodatos.gub.uy/dataset/corte-electoral-elecciones-nacionales-2024",
+      "resources": {
+        "desgloseVotos": {
+          "url": "https://catalogodatos.gub.uy/dataset/corte-electoral-elecciones-nacionales-2024/resource/.../download/desglose-de-votos.csv",
+          "format": "CSV",
+          "description": "Desglose de votos (verificar URL exacta)"
+        }
+      },
+      "departments": ["all"],
+      "available": true,
+      "notes": "Elecciones Nacionales - Primera vuelta"
+    },
+    {
+      "id": "balotaje-2024",
+      "year": 2024,
+      "type": "balotaje",
+      "name": "Balotaje 2024",
+      "date": "2024-11-24",
+      "datasetUrl": "https://catalogodatos.gub.uy/dataset/corte-electoral-balotaje_2024",
+      "resources": {
+        "desgloseVotos": {
+          "url": "https://catalogodatos.gub.uy/dataset/corte-electoral-balotaje_2024/resource/.../download/desglose-de-votos.csv",
+          "format": "CSV",
+          "description": "Desglose de votos segunda vuelta (verificar URL)"
+        }
+      },
+      "departments": ["all"],
+      "available": true,
+      "notes": "Segunda vuelta presidencial"
+    },
+    {
+      "id": "departamentales-2025",
+      "year": 2025,
+      "type": "departamentales",
+      "name": "Elecciones Departamentales y Municipales 2025",
+      "date": "2025-05-11",
+      "datasetUrl": "https://catalogodatos.gub.uy/dataset/corte-electoral-elecciones_departamentales_y_municipales_2025",
+      "resources": {},
+      "departments": [],
+      "available": false,
+      "notes": "Elección futura - datos aún no disponibles"
+    }
+  ],
+  "metadata": {
+    "lastUpdated": "2026-01-30",
+    "totalElections": 8,
+    "availableElections": 7,
+    "implementedElections": 1,
+    "sources": [
+      "https://catalogodatos.gub.uy/organization/corte-electoral",
+      "https://www.gub.uy/corte-electoral/datos-y-estadisticas/datos-abiertos"
+    ]
+  },
+  "electoralCycle": {
+    "internas": "Cada 5 años (junio)",
+    "nacionales": "Cada 5 años (octubre)",
+    "departamentales": "Cada 5 años (mayo)",
+    "balotaje": "Cuando ningún candidato obtiene mayoría absoluta (noviembre)"
+  }
+}

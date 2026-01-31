@@ -1,0 +1,2 @@
+# Processed electoral data (JSON files)
+# Generated via: npm run etl:transform

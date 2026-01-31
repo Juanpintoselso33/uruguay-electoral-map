@@ -1,0 +1,2 @@
+# Electoral raw data (CSV files from Corte Electoral)
+# Downloaded via: npm run etl:extract --type electoral

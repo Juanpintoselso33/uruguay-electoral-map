@@ -1,0 +1,10 @@
+{
+  "department": "san_jose",
+  "displayName": "San jose",
+  "election": "nacionales-2019",
+  "processedAt": "2026-01-31T02:19:22.639Z",
+  "files": {
+    "odn": null,
+    "odd": "odd.json"
+  }
+}

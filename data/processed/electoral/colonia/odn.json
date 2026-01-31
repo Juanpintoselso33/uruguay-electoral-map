@@ -1,0 +1,333 @@
+{
+  "metadata": {
+    "type": "odn",
+    "processedAt": "2026-01-31T00:35:31.062Z",
+    "stats": {
+      "totalRows": 9124,
+      "uniqueLists": 25,
+      "uniqueZones": 83,
+      "uniqueParties": 14,
+      "totalVotes": 0
+    },
+    "department": "colonia"
+  },
+  "data": {
+    "votosPorListas": {
+      "Walter Gonzalo": {
+        "326": 0
+      },
+      "Felipe Martin": {
+        "937": 0
+      },
+      "Jorge Enrique": {
+        "39": 0
+      },
+      "Guido": {
+        "510": 0,
+        "1206": 0,
+        "1456": 0,
+        "4400": 0,
+        "7001": 0
+      },
+      "Eduardo Manuel": {
+        "1187": 0
+      },
+      "Ana Carolina": {
+        "90": 0,
+        "545": 0,
+        "567": 0,
+        "817": 0,
+        "1001": 0,
+        "1303": 0,
+        "1358": 0,
+        "2040": 0,
+        "3311": 0,
+        "4190": 0,
+        "5005": 0,
+        "5640": 0,
+        "8008": 0,
+        "99000": 0,
+        "800440": 0
+      },
+      "Andrés Pablo": {
+        "319": 0,
+        "1813": 0
+      },
+      "Yamandu Ramon": {
+        "9": 0,
+        "46": 0,
+        "52": 0,
+        "76": 0,
+        "77": 0,
+        "95": 0,
+        "141": 0,
+        "502": 0,
+        "609": 0,
+        "624": 0,
+        "711": 0,
+        "1828": 0,
+        "3098": 0,
+        "9949": 0
+      },
+      "Gustavo Alberto": {
+        "18010": 0
+      },
+      "Pablo Andres": {
+        "909": 0
+      },
+      "Cesar Enrique": {
+        "1330": 0
+      },
+      "Carolina": {
+        "919": 0
+      },
+      "Zaida Eloisa": {
+        "1616": 0
+      },
+      "Gabriel": {
+        "15": 0,
+        "1110": 0,
+        "29000": 0
+      },
+      "Andres": {
+        "25": 0,
+        "1125": 0,
+        "1525": 0,
+        "9007": 0
+      },
+      "Robert": {
+        "600": 0
+      },
+      "Tabare": {
+        "210": 0,
+        "152000": 0
+      },
+      "Roxana Lilián": {
+        "911": 0,
+        "1007": 0
+      },
+      "Alvaro Luis": {
+        "4": 0,
+        "28": 0,
+        "40": 0,
+        "97": 0,
+        "151": 0,
+        "404": 0,
+        "604": 0,
+        "904": 0,
+        "12404": 0
+      },
+      "Jorge Osvaldo": {
+        "6": 0,
+        "132": 0,
+        "250": 0,
+        "1212": 0,
+        "2024": 0
+      },
+      "Carlos Alberto": {
+        "252": 0
+      },
+      "Maria Laura": {
+        "5": 0,
+        "36": 0,
+        "38": 0,
+        "71": 0,
+        "112": 0,
+        "2004": 0,
+        "71028": 0,
+        "71504": 0
+      },
+      "Ruben Ariel": {
+        "1258": 0
+      },
+      "Ruben Javier": {
+        "13320": 0
+      },
+      "Guillermo Anibal": {
+        "2018": 0
+      }
+    },
+    "maxVotosPorListas": {
+      "Walter Gonzalo": 0,
+      "Felipe Martin": 0,
+      "Jorge Enrique": 0,
+      "Guido": 0,
+      "Eduardo Manuel": 0,
+      "Ana Carolina": 0,
+      "Andrés Pablo": 0,
+      "Yamandu Ramon": 0,
+      "Gustavo Alberto": 0,
+      "Pablo Andres": 0,
+      "Cesar Enrique": 0,
+      "Carolina": 0,
+      "Zaida Eloisa": 0,
+      "Gabriel": 0,
+      "Andres": 0,
+      "Robert": 0,
+      "Tabare": 0,
+      "Roxana Lilián": 0,
+      "Alvaro Luis": 0,
+      "Jorge Osvaldo": 0,
+      "Carlos Alberto": 0,
+      "Maria Laura": 0,
+      "Ruben Ariel": 0,
+      "Ruben Javier": 0,
+      "Guillermo Anibal": 0
+    },
+    "partiesByList": {
+      "Walter Gonzalo": "Asamblea Popular",
+      "Felipe Martin": "Avanzar Republicano",
+      "Jorge Enrique": "Basta Ya",
+      "Guido": "Cabildo Abierto",
+      "Eduardo Manuel": "Constitucional Ambientalista",
+      "Ana Carolina": "Frente Amplio",
+      "Andrés Pablo": "Frente Amplio",
+      "Yamandu Ramon": "Frente Amplio",
+      "Gustavo Alberto": "Identidad Soberana",
+      "Pablo Andres": "Independiente",
+      "Cesar Enrique": "P.E.R.I.",
+      "Carolina": "Colorado",
+      "Zaida Eloisa": "Colorado",
+      "Gabriel": "Colorado",
+      "Andres": "Colorado",
+      "Robert": "Colorado",
+      "Tabare": "Colorado",
+      "Roxana Lilián": "Nacional",
+      "Alvaro Luis": "Nacional",
+      "Jorge Osvaldo": "Nacional",
+      "Carlos Alberto": "Nacional",
+      "Maria Laura": "Nacional",
+      "Ruben Ariel": "Partido de la Armonía",
+      "Ruben Javier": "Patria Alternativa",
+      "Guillermo Anibal": "Por  Los Cambios Necesarios"
+    },
+    "precandidatosByList": {
+      "Walter Gonzalo": "MARTÍNEZ MARUCA",
+      "Felipe Martin": "PEREZ BANCHERO",
+      "Jorge Enrique": "BONICA SIERRA",
+      "Guido": "MANINI STRATTA",
+      "Eduardo Manuel": "LUST HITTA",
+      "Ana Carolina": "COSSE GARRIDO",
+      "Andrés Pablo": "LIMA PROSERPIO",
+      "Yamandu Ramon": "ORSI MARTINEZ",
+      "Gustavo Alberto": "SALLE LORIER",
+      "Pablo Andres": "MIERES GOMEZ",
+      "Cesar Enrique": "VEGA ERRAMUSPE",
+      "Carolina": "ACHE BATLLE",
+      "Zaida Eloisa": "GONZALEZ LEGNANI",
+      "Gabriel": "GURMENDEZ ARMAND UGON",
+      "Andres": "OJEDA SPITZ",
+      "Robert": "SILVA GARCIA",
+      "Tabare": "VIERA DUARTE",
+      "Roxana Lilián": "CORBRAN RIZZO",
+      "Alvaro Luis": "DELGADO CERETTA",
+      "Jorge Osvaldo": "GANDINI ASTESIANO",
+      "Carlos Alberto": "IAFIGLIOLA PIMENTEL",
+      "Maria Laura": "RAFFO DEGEROMINI",
+      "Ruben Ariel": "MARTINEZ IZAGUIRRE",
+      "Ruben Javier": "SCIUTO OLIVERA",
+      "Guillermo Anibal": "FRANCHI SORIA"
+    },
+    "zoneList": [
+      "1001",
+      "1007",
+      "1110",
+      "112",
+      "1125",
+      "1187",
+      "1206",
+      "1212",
+      "12404",
+      "1258",
+      "1303",
+      "132",
+      "1330",
+      "13320",
+      "1358",
+      "141",
+      "1456",
+      "15",
+      "151",
+      "152000",
+      "1525",
+      "1616",
+      "18010",
+      "1813",
+      "1828",
+      "2004",
+      "2018",
+      "2024",
+      "2040",
+      "210",
+      "25",
+      "250",
+      "252",
+      "28",
+      "29000",
+      "3098",
+      "319",
+      "326",
+      "3311",
+      "36",
+      "38",
+      "39",
+      "4",
+      "40",
+      "404",
+      "4190",
+      "4400",
+      "46",
+      "5",
+      "5005",
+      "502",
+      "510",
+      "52",
+      "545",
+      "5640",
+      "567",
+      "6",
+      "600",
+      "604",
+      "609",
+      "624",
+      "7001",
+      "71",
+      "71028",
+      "711",
+      "71504",
+      "76",
+      "77",
+      "800440",
+      "8008",
+      "817",
+      "9",
+      "90",
+      "9007",
+      "904",
+      "909",
+      "911",
+      "919",
+      "937",
+      "95",
+      "97",
+      "99000",
+      "9949"
+    ],
+    "partyList": [
+      "Asamblea Popular",
+      "Avanzar Republicano",
+      "Basta Ya",
+      "Cabildo Abierto",
+      "Colorado",
+      "Constitucional Ambientalista",
+      "Frente Amplio",
+      "Identidad Soberana",
+      "Independiente",
+      "Nacional",
+      "P.E.R.I.",
+      "Partido de la Armonía",
+      "Patria Alternativa",
+      "Por  Los Cambios Necesarios"
+    ]
+  }
+}
