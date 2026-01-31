@@ -9,6 +9,15 @@
         </div>
 
         <div class="header-actions">
+          <button
+            @click="emit('toggle-comparison')"
+            class="comparison-toggle"
+            :class="{ active: showComparison }"
+            aria-label="Toggle comparison mode"
+          >
+            <GitCompare :size="20" />
+            <span class="comparison-label">Comparar</span>
+          </button>
           <SearchBar @select="handleDepartmentSelect" />
           <button @click="toggleDark" class="theme-toggle" aria-label="Toggle theme">
             <Moon v-if="!isDark" :size="20" />
@@ -58,10 +67,14 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useWindowSize, useLocalStorage } from '@vueuse/core'
-import { Moon, Sun, ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { Moon, Sun, ChevronLeft, ChevronRight, GitCompare } from 'lucide-vue-next'
 import SearchBar from '../search/SearchBar.vue'
 
-const emit = defineEmits(['department-select'])
+const emit = defineEmits(['department-select', 'toggle-comparison'])
+
+const props = defineProps<{
+  showComparison?: boolean
+}>()
 
 // Theme
 const isDark = useLocalStorage('electoral-theme-dark', false)
@@ -197,6 +210,47 @@ const handleDragEnd = () => {
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+
+.comparison-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.comparison-toggle:hover {
+  background: var(--color-bg);
+  border-color: var(--color-accent);
+}
+
+.comparison-toggle.active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: white;
+}
+
+.comparison-label {
+  font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .comparison-label {
+    display: none;
+  }
+
+  .comparison-toggle {
+    width: 40px;
+    padding: 0.5rem;
+    justify-content: center;
+  }
 }
 
 .theme-toggle {

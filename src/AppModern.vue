@@ -1,7 +1,11 @@
 <template>
-  <AppLayout @department-select="handleDepartmentSelect">
+  <AppLayout
+    :showComparison="isComparisonMode"
+    @department-select="handleDepartmentSelect"
+    @toggle-comparison="toggleComparisonMode"
+  >
     <!-- Sidebar Content -->
-    <template #sidebar>
+    <template #sidebar v-if="!isComparisonMode">
       <!-- Election Selector -->
       <div class="sidebar-section" v-if="store.electionsFromCatalog.length > 0">
         <ElectionSelector />
@@ -34,8 +38,8 @@
       </div>
     </template>
 
-    <!-- Map -->
-    <template #map>
+    <!-- Map (Normal Mode) -->
+    <template #map v-if="!isComparisonMode">
       <MapLibreView
         v-if="store.currentRegion"
         :regionName="store.currentRegion.name"
@@ -57,8 +61,17 @@
       />
     </template>
 
-    <!-- Stats Panel (Desktop) -->
-    <template #stats>
+    <!-- Comparison Mode -->
+    <template #map v-else>
+      <ComparisonView
+        v-if="store.currentRegion"
+        :departmentSlug="store.currentRegion.slug || 'montevideo'"
+        @close="toggleComparisonMode"
+      />
+    </template>
+
+    <!-- Stats Panel (Desktop) - Only in normal mode -->
+    <template #stats v-if="!isComparisonMode">
       <StatsPanel
         :currentRegion="store.currentRegion"
         :availableLists="store.availableLists"
@@ -93,7 +106,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useElectoralStore } from './stores/electoral'
 import AppLayout from './components/layout/AppLayout.vue'
 import ElectionSelector from './components/elections/ElectionSelector.vue'
@@ -101,9 +114,15 @@ import RegionSelector from './components/RegionSelectorModern.vue'
 import ListSelectorContainer from './components/selectors/ListSelectorContainer.vue'
 import MapLibreView from './components/map/MapLibreView.vue'
 import StatsPanel from './components/charts/StatsPanel.vue'
+import ComparisonView from './components/comparison/ComparisonView.vue'
 import partiesAbbrev from '../public/partidos_abrev.json'
 
 const store = useElectoralStore()
+const isComparisonMode = ref(false)
+
+const toggleComparisonMode = () => {
+  isComparisonMode.value = !isComparisonMode.value
+}
 
 const handleDepartmentSelect = (dept: any) => {
   store.setCurrentRegion(dept)
