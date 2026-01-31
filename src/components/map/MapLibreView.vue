@@ -731,14 +731,9 @@ watch(() => [props.geojsonData, props.selectedLists, props.selectedCandidates], 
     isMapLoading.value = true
     initMap()
   } else if (map.value && map.value.loaded()) {
-    try {
-      updateMapData()
-    } catch (error) {
-      console.error('[MapLibreView] Error updating map data:', error)
-      isMapLoading.value = false
-    }
+    updateMapData()
   }
-})
+}, { deep: true })
 
 watch(() => [props.mapCenter, props.mapZoom], () => {
   if (map.value) {
