@@ -543,6 +543,10 @@ const initMap = () => {
 const updateMapData = () => {
   if (!map.value || !props.geojsonData) return
 
+  console.log('[MapLibreView] updateMapData called')
+  console.log('[MapLibreView] geojsonData features:', props.geojsonData.features?.length)
+  console.log('[MapLibreView] First feature:', props.geojsonData.features?.[0])
+
   const sourceId = 'electoral-data'
   const layerId = 'electoral-fill'
   const outlineLayerId = 'electoral-outline'
@@ -583,7 +587,7 @@ const updateMapData = () => {
   // Add updated source with colors
   const geoJsonWithColors = {
     ...props.geojsonData,
-    features: props.geojsonData.features.map((feature: any) => {
+    features: props.geojsonData.features.map((feature: any, index: number) => {
       // Try different zone identifiers in order of priority:
       // 1. serie (electoral series - most specific)
       // 2. BARRIO (neighborhood name)
@@ -591,6 +595,10 @@ const updateMapData = () => {
       const zoneName = feature.properties.serie || feature.properties.BARRIO || feature.properties.zona
       const votes = props.getVotosForNeighborhood(zoneName)
       const color = getColor(votes, maxVotes)
+
+      if (index < 3) {
+        console.log(`[MapLibreView] Feature ${index}:`, { zoneName, votes, color, properties: feature.properties })
+      }
 
       return {
         ...feature,
@@ -602,6 +610,9 @@ const updateMapData = () => {
       }
     })
   }
+
+  console.log('[MapLibreView] Processed features:', geoJsonWithColors.features.length)
+  console.log('[MapLibreView] Sample colors:', geoJsonWithColors.features.slice(0, 3).map((f: any) => f.properties.color))
 
   // Add new source and layers
   map.value.addSource(sourceId, {
