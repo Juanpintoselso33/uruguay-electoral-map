@@ -7,7 +7,7 @@
     "geojsonPath": "/artigas_map.json",
     "odnJsonPath": "/data/electoral/nacionales-2019/artigas/odn.json",
     "oddJsonPath": "/data/electoral/nacionales-2019/artigas/odd.json",
-    "mapJsonPath": "/data/geographic/artigas_map.json",
+    "mapJsonPath": "/artigas_series_map.json",
     "availableElections": [
       "nacionales-2019"
     ],
@@ -26,7 +26,7 @@
     "geojsonPath": "/canelones_map.json",
     "odnJsonPath": "/data/electoral/nacionales-2019/canelones/odn.json",
     "oddJsonPath": "/data/electoral/nacionales-2019/canelones/odd.json",
-    "mapJsonPath": "/data/geographic/canelones_map.json",
+    "mapJsonPath": "/canelones_series_map.json",
     "availableElections": [
       "nacionales-2019"
     ],
@@ -45,7 +45,7 @@
     "geojsonPath": "/cerro_largo_map.json",
     "odnJsonPath": "/data/electoral/nacionales-2019/cerro_largo/odn.json",
     "oddJsonPath": "/data/electoral/nacionales-2019/cerro_largo/odd.json",
-    "mapJsonPath": "/data/geographic/cerro_largo_map.json",
+    "mapJsonPath": "/cerro_largo_series_map.json",
     "availableElections": [
       "nacionales-2019"
     ],
@@ -64,7 +64,7 @@
     "geojsonPath": "/colonia_map.json",
     "odnJsonPath": "/data/electoral/nacionales-2019/colonia/odn.json",
     "oddJsonPath": "/data/electoral/nacionales-2019/colonia/odd.json",
-    "mapJsonPath": "/data/geographic/colonia_map.json",
+    "mapJsonPath": "/colonia_series_map.json",
     "availableElections": [
       "nacionales-2019"
     ],
@@ -83,7 +83,7 @@
     "geojsonPath": "/durazno_map.json",
     "odnJsonPath": "/data/electoral/nacionales-2019/durazno/odn.json",
     "oddJsonPath": "/data/electoral/nacionales-2019/durazno/odd.json",
-    "mapJsonPath": "/data/geographic/durazno_map.json",
+    "mapJsonPath": "/durazno_series_map.json",
     "availableElections": [
       "nacionales-2019"
     ],
@@ -102,7 +102,7 @@
     "geojsonPath": "/flores_map.json",
     "odnJsonPath": "/data/electoral/nacionales-2019/flores/odn.json",
     "oddJsonPath": "/data/electoral/nacionales-2019/flores/odd.json",
-    "mapJsonPath": "/data/geographic/flores_map.json",
+    "mapJsonPath": "/flores_series_map.json",
     "availableElections": [
       "nacionales-2019"
     ],
@@ -121,7 +121,7 @@
     "geojsonPath": "/florida_map.json",
     "odnJsonPath": "/data/electoral/nacionales-2019/florida/odn.json",
     "oddJsonPath": "/data/electoral/nacionales-2019/florida/odd.json",
-    "mapJsonPath": "/data/geographic/florida_map.json",
+    "mapJsonPath": "/florida_series_map.json",
     "availableElections": [
       "nacionales-2019"
     ],
@@ -140,7 +140,7 @@
     "geojsonPath": "/lavalleja_map.json",
     "odnJsonPath": "/data/electoral/nacionales-2019/lavalleja/odn.json",
     "oddJsonPath": "/data/electoral/nacionales-2019/lavalleja/odd.json",
-    "mapJsonPath": "/data/geographic/lavalleja_map.json",
+    "mapJsonPath": "/lavalleja_series_map.json",
     "availableElections": [
       "nacionales-2019"
     ],
@@ -159,7 +159,7 @@
     "geojsonPath": "/maldonado_map.json",
     "odnJsonPath": "/data/electoral/nacionales-2019/maldonado/odn.json",
     "oddJsonPath": "/data/electoral/nacionales-2019/maldonado/odd.json",
-    "mapJsonPath": "/data/geographic/maldonado_map.json",
+    "mapJsonPath": "/maldonado_series_map.json",
     "availableElections": [
       "nacionales-2019"
     ],
@@ -178,7 +178,7 @@
     "geojsonPath": "/montevideo_map.json",
     "odnJsonPath": "/data/electoral/nacionales-2019/montevideo/odn.json",
     "oddJsonPath": "/data/electoral/nacionales-2019/montevideo/odd.json",
-    "mapJsonPath": "/data/geographic/montevideo_map.json",
+    "mapJsonPath": "/montevideo_series_map.json",
     "availableElections": [
       "nacionales-2019"
     ],
@@ -197,7 +197,7 @@
     "geojsonPath": "/paysandu_map.json",
     "odnJsonPath": "/data/electoral/nacionales-2019/paysandu/odn.json",
     "oddJsonPath": "/data/electoral/nacionales-2019/paysandu/odd.json",
-    "mapJsonPath": "/data/geographic/paysandu_map.json",
+    "mapJsonPath": "/paysandu_series_map.json",
     "availableElections": [
       "nacionales-2019"
     ],
@@ -216,7 +216,7 @@
     "geojsonPath": "/rio_negro_map.json",
     "odnJsonPath": "/data/electoral/nacionales-2019/rio_negro/odn.json",
     "oddJsonPath": "/data/electoral/nacionales-2019/rio_negro/odd.json",
-    "mapJsonPath": "/data/geographic/rio_negro_map.json",
+    "mapJsonPath": "/rio_negro_series_map.json",
     "availableElections": [
       "nacionales-2019"
     ],
@@ -235,7 +235,7 @@
     "geojsonPath": "/rivera_map.json",
     "odnJsonPath": "/data/electoral/nacionales-2019/rivera/odn.json",
     "oddJsonPath": "/data/electoral/nacionales-2019/rivera/odd.json",
-    "mapJsonPath": "/data/geographic/rivera_map.json",
+    "mapJsonPath": "/rivera_series_map.json",
     "availableElections": [
       "nacionales-2019"
     ],
@@ -254,7 +254,7 @@
     "geojsonPath": "/rocha_map.json",
     "odnJsonPath": "/data/electoral/nacionales-2019/rocha/odn.json",
     "oddJsonPath": "/data/electoral/nacionales-2019/rocha/odd.json",
-    "mapJsonPath": "/data/geographic/rocha_map.json",
+    "mapJsonPath": "/rocha_series_map.json",
     "availableElections": [
       "nacionales-2019"
     ],
@@ -273,7 +273,7 @@
     "geojsonPath": "/salto_map.json",
     "odnJsonPath": "/data/electoral/nacionales-2019/salto/odn.json",
     "oddJsonPath": "/data/electoral/nacionales-2019/salto/odd.json",
-    "mapJsonPath": "/data/geographic/salto_map.json",
+    "mapJsonPath": "/salto_series_map.json",
     "availableElections": [
       "nacionales-2019"
     ],
@@ -292,7 +292,7 @@
     "geojsonPath": "/san_jose_map.json",
     "odnJsonPath": "/data/electoral/nacionales-2019/san_jose/odn.json",
     "oddJsonPath": "/data/electoral/nacionales-2019/san_jose/odd.json",
-    "mapJsonPath": "/data/geographic/san_jose_map.json",
+    "mapJsonPath": "/san_jose_series_map.json",
     "availableElections": [
       "nacionales-2019"
     ],
@@ -311,7 +311,7 @@
     "geojsonPath": "/soriano_map.json",
     "odnJsonPath": "/data/electoral/nacionales-2019/soriano/odn.json",
     "oddJsonPath": "/data/electoral/nacionales-2019/soriano/odd.json",
-    "mapJsonPath": "/data/geographic/soriano_map.json",
+    "mapJsonPath": "/soriano_series_map.json",
     "availableElections": [
       "nacionales-2019"
     ],
@@ -330,7 +330,7 @@
     "geojsonPath": "/tacuarembo_map.json",
     "odnJsonPath": "/data/electoral/nacionales-2019/tacuarembo/odn.json",
     "oddJsonPath": "/data/electoral/nacionales-2019/tacuarembo/odd.json",
-    "mapJsonPath": "/data/geographic/tacuarembo_map.json",
+    "mapJsonPath": "/tacuarembo_series_map.json",
     "availableElections": [
       "nacionales-2019"
     ],
@@ -349,7 +349,7 @@
     "geojsonPath": "/treinta_y_tres_map.json",
     "odnJsonPath": "/data/electoral/nacionales-2019/treinta_y_tres/odn.json",
     "oddJsonPath": "/data/electoral/nacionales-2019/treinta_y_tres/odd.json",
-    "mapJsonPath": "/data/geographic/treinta_y_tres_map.json",
+    "mapJsonPath": "/treinta_y_tres_series_map.json",
     "availableElections": [
       "nacionales-2019"
     ],
