@@ -373,11 +373,17 @@ export const useElectoralStore = defineStore('electoral', () => {
   }
 
   function setCurrentRegion(region: Region) {
+    console.log('[Electoral Store] setCurrentRegion called with:', region.name)
+    console.log('[Electoral Store] Current region:', currentRegion.value?.name)
+
     if (currentRegion.value?.name !== region.name) {
+      console.log('[Electoral Store] Changing region from', currentRegion.value?.name, 'to', region.name)
       currentRegion.value = region;
       selectedLists.value = [];
       selectedCandidates.value = [];
       fetchRegionData(region);
+    } else {
+      console.log('[Electoral Store] Region already selected, skipping')
     }
   }
 
