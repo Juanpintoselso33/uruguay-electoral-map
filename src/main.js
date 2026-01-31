@@ -1,9 +1,11 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import './style.css'
-import App from './App.vue'
+import 'maplibre-gl/dist/maplibre-gl.css'
+import AppModern from './AppModern.vue'
+// import App from './App.vue' // Old version
 
-const app = createApp(App)
+const app = createApp(AppModern)
 const pinia = createPinia()
 
 app.use(pinia)

@@ -20,12 +20,16 @@
     "etl:migrate": "node -e \"import('./etl/extractors/index.js').then(m => m.migrateExistingData({rawDir:'data/raw',publicDir:'public'}))\""
   },
   "dependencies": {
-    "@vueuse/core": "^10.11.0",
+    "@vueuse/core": "^10.11.1",
+    "chart.js": "^4.5.1",
     "chroma-js": "^2.6.0",
     "leaflet": "^1.9.4",
+    "lucide-vue-next": "^0.563.0",
+    "maplibre-gl": "^5.17.0",
     "papaparse": "^5.4.1",
     "pinia": "^2.1.7",
-    "vue": "^3.4.29"
+    "vue": "^3.4.29",
+    "vue-chartjs": "^5.3.3"
   },
   "devDependencies": {
     "@types/chroma-js": "^2.4.4",
