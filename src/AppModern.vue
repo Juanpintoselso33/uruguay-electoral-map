@@ -1,4 +1,7 @@
 <template>
+  <!-- Screen Reader Live Region for Announcements -->
+  <ScreenReaderLive />
+
   <AppLayout
     :showComparison="isComparisonMode"
     @department-select="handleDepartmentSelect"
@@ -109,6 +112,7 @@
 import { ref, onMounted } from 'vue'
 import { useElectoralStore } from './stores/electoral'
 import AppLayout from './components/layout/AppLayout.vue'
+import ScreenReaderLive from './components/accessibility/ScreenReaderLive.vue'
 import ElectionSelector from './components/elections/ElectionSelector.vue'
 import RegionSelector from './components/RegionSelectorModern.vue'
 import ListSelectorContainer from './components/selectors/ListSelectorContainer.vue'

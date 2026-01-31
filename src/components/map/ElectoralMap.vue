@@ -1,5 +1,5 @@
 <template>
-  <div class="electoral-map-wrapper">
+  <div class="electoral-map-wrapper" data-testid="map-container">
     <div class="electoral-map" ref="mapContainer"></div>
 
     <MapLegend
@@ -47,6 +47,8 @@ const props = defineProps<{
   selectedCandidates: string[];
   mapCenter: [number, number];
   mapZoom: number;
+  seriesLocalityMapping: Record<string, string>;
+  seriesBarrioMapping?: Record<string, string[]>;
 }>();
 
 const emit = defineEmits<{
@@ -202,6 +204,29 @@ const onEachFeature = (feature: GeoJSON.Feature, layer: L.Layer) => {
               feature.properties.zona
           )
         : '';
+
+      // Get series code from originalName property (uppercase 3-letter code)
+      const seriesCode = feature.properties?.originalName?.toUpperCase();
+
+      // Try to use series-to-locality mapping if available
+      let displayName: string;
+      if (seriesCode && props.seriesLocalityMapping[seriesCode]) {
+        // Use the mapped locality name
+        displayName = props.seriesLocalityMapping[seriesCode];
+      } else if (seriesCode && seriesCode.length === 3) {
+        // Fallback to "Serie XXX" format for 3-letter codes without mapping
+        displayName = `Serie ${seriesCode}`;
+      } else {
+        // Fallback to other properties for non-series data
+        displayName =
+          feature.properties?.name ||
+          feature.properties?.normalizedName?.toUpperCase() ||
+          feature.properties?.BARRIO?.toUpperCase() ||
+          feature.properties?.texto ||
+          feature.properties?.zona ||
+          neighborhood.toUpperCase();
+      }
+
       const votes =
         props.selectedCandidates.length > 0
           ? getCandidateTotalVotes(neighborhood)
@@ -213,6 +238,11 @@ const onEachFeature = (feature: GeoJSON.Feature, layer: L.Layer) => {
         fillOpacity: 0.7,
       });
 
+      // Get barrios for this series if available (Rivera only)
+      const barrios = seriesCode && props.seriesBarrioMapping?.[seriesCode]
+        ? props.seriesBarrioMapping[seriesCode]
+        : undefined;
+
       let tooltipHtml = '';
 
       if (props.selectedCandidates.length > 0) {
@@ -220,14 +250,22 @@ const onEachFeature = (feature: GeoJSON.Feature, layer: L.Layer) => {
         const groupedCandidates = groupCandidatesByParty(candidateVotes);
         const totalVotes = getCandidateTotalVotes(neighborhood);
         tooltipHtml = generateCandidateTooltip(
-          neighborhood,
+          displayName,
           candidateVotes,
           groupedCandidates,
-          totalVotes
+          totalVotes,
+          seriesCode,
+          barrios
         );
       } else {
         const groupedLists = groupListsByParty(neighborhood);
-        tooltipHtml = generateListTooltip(neighborhood, groupedLists, votes);
+        tooltipHtml = generateListTooltip(
+          displayName,
+          groupedLists,
+          votes,
+          seriesCode,
+          barrios
+        );
       }
 
       layer

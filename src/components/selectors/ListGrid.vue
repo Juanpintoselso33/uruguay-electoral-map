@@ -1,39 +1,47 @@
 <template>
   <div>
-    <h2 class="mt-0 mb-5 text-xl text-gray-800">Listas</h2>
+    <h2 class="mt-0 mb-2 text-lg text-gray-800">Listas</h2>
 
-    <div v-if="filteredLists.length === 0" class="text-center text-gray-500 mb-5">
+    <div v-if="filteredLists.length === 0" class="text-center text-gray-500 text-sm mb-3">
       No se encontraron listas que coincidan con la búsqueda.
     </div>
 
-    <div class="mb-5">
+    <div class="mb-3">
       <input
         v-model="searchQuery"
         type="text"
         placeholder="Buscar por numero de lista"
-        class="w-full p-2.5 border border-gray-300 rounded text-base focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all"
+        class="w-full p-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all"
+        aria-label="Buscar listas por número"
       />
     </div>
 
-    <div class="flex-grow overflow-y-auto grid grid-cols-2 gap-2.5">
+    <div
+      ref="gridContainer"
+      class="flex-grow overflow-y-auto grid grid-cols-2 gap-1.5 max-h-96"
+      role="group"
+      aria-label="Lista de listas electorales"
+    >
       <!-- Select all checkbox -->
       <label
-        class="flex items-center p-2.5 cursor-pointer transition-colors border border-gray-200 rounded hover:bg-gray-100 col-span-2 bg-gray-100 font-bold"
+        class="flex items-center p-1.5 text-sm cursor-pointer transition-colors border border-gray-200 rounded hover:bg-gray-100 col-span-2 bg-gray-100 font-bold focus-within:ring-2 focus-within:ring-gray-400"
       >
         <input
           type="checkbox"
           :checked="isAllSelected"
           @change="handleToggleAll"
-          class="mr-2.5"
+          @keydown.enter.prevent="handleToggleAll"
+          class="mr-1.5"
+          aria-label="Seleccionar todas las listas"
         />
-        <span class="text-base text-gray-600">Seleccionar todas las listas</span>
+        <span class="text-sm text-gray-600">Seleccionar todas</span>
       </label>
 
       <!-- Individual list checkboxes -->
       <label
         v-for="list in filteredLists"
         :key="list"
-        class="flex items-center p-2.5 cursor-pointer transition-colors border border-gray-200 rounded hover:bg-gray-100"
+        class="flex items-center p-1.5 text-sm cursor-pointer transition-colors border border-gray-200 rounded hover:bg-gray-100 focus-within:ring-2 focus-within:ring-gray-400"
         v-memo="[list, selectedLists.includes(list)]"
       >
         <input
@@ -41,9 +49,15 @@
           :value="list"
           :checked="selectedLists.includes(list)"
           @change="(e) => handleListSelect(list, (e.target as HTMLInputElement).checked)"
-          class="mr-2.5"
+          @keydown.enter.prevent="(e) => {
+            const target = e.target as HTMLInputElement;
+            target.checked = !target.checked;
+            handleListSelect(list, target.checked);
+          }"
+          class="mr-1.5"
+          :aria-label="`Lista ${list}`"
         />
-        <span class="text-base text-gray-600">Lista {{ parseInt(list) }}</span>
+        <span class="text-sm text-gray-600">Lista {{ list }}</span>
       </label>
     </div>
   </div>
@@ -51,6 +65,8 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
+import { useKeyboardNavigation } from '@/composables/useKeyboardNavigation';
+import { useScreenReaderAnnouncements } from '@/composables/useScreenReaderAnnouncements';
 
 interface Props {
   lists: string[];
@@ -71,6 +87,18 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>();
 
 const searchQuery = ref('');
+const gridContainer = ref<HTMLElement>();
+
+// Screen reader announcements
+const { announceListSelection, announceMultipleListsSelection } = useScreenReaderAnnouncements()
+
+// Keyboard navigation for grid (2 columns)
+useKeyboardNavigation({
+  gridNavigation: {
+    container: gridContainer,
+    columns: 2
+  }
+});
 
 const isAllSelected = computed(() => {
   return (
@@ -86,6 +114,9 @@ const handleListSelect = (list: string, isSelected: boolean) => {
     ? [...props.selectedLists, list]
     : props.selectedLists.filter((item) => item !== list);
 
+  // Announce to screen readers
+  announceListSelection(list, isSelected)
+
   emit('update:selectedLists', newSelectedLists);
 };
 
@@ -96,6 +127,10 @@ const handleToggleAll = () => {
   const newSelectedLists = isAllSelected.value
     ? props.selectedLists.filter((list) => !filteredListsSet.has(list))
     : Array.from(new Set([...currentSelectedLists, ...props.filteredLists]));
+
+  // Announce to screen readers
+  const action = isAllSelected.value ? 'deselected' : 'selected'
+  announceMultipleListsSelection(props.filteredLists.length, action)
 
   emit('update:selectedLists', newSelectedLists);
 };

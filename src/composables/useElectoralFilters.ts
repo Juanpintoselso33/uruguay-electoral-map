@@ -1,12 +1,13 @@
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, Ref } from 'vue';
 import { useDebounce } from '@vueuse/core';
+import { MaybeRefOrGetter, toValue } from '@vueuse/core';
 
 interface UseElectoralFiltersOptions {
-  lists: string[];
-  candidates: string[];
-  partiesAbbrev: Record<string, string>;
-  partiesByList: Record<string, string>;
-  candidatesByParty: Record<string, string>;
+  lists: MaybeRefOrGetter<string[]>;
+  candidates: MaybeRefOrGetter<string[]>;
+  partiesAbbrev: MaybeRefOrGetter<Record<string, string>>;
+  partiesByList: MaybeRefOrGetter<Record<string, string>>;
+  candidatesByParty: MaybeRefOrGetter<Record<string, string>>;
 }
 
 export function useElectoralFilters(options: UseElectoralFiltersOptions) {
@@ -14,30 +15,35 @@ export function useElectoralFilters(options: UseElectoralFiltersOptions) {
   const selectedParty = ref('');
   const filteredLists = ref<string[]>([]);
 
-  // Computed properties
+  // Computed properties that properly unwrap the refs
   const uniqueParties = computed(() => {
-    return Object.keys(options.partiesAbbrev)
+    const abbrev = toValue(options.partiesAbbrev) || {};
+    return Object.keys(abbrev)
       .map((party) => (party.startsWith('Partido ') ? party : `Partido ${party}`))
       .sort();
   });
 
   const filteredListsByParty = computed(() => {
-    if (!selectedParty.value) return options.lists;
+    if (!selectedParty.value) return toValue(options.lists) || [];
 
     const selectedPartyName = selectedParty.value.replace('Partido ', '');
+    const byList = toValue(options.partiesByList) || {};
+    const lists = toValue(options.lists) || [];
 
-    return options.lists.filter(
-      (list) => options.partiesByList[list] === selectedPartyName
+    return lists.filter(
+      (list) => byList[list] === selectedPartyName
     );
   });
 
   const filteredCandidates = computed(() => {
-    if (!selectedParty.value) return options.candidates;
+    if (!selectedParty.value) return toValue(options.candidates) || [];
 
     const selectedPartyName = selectedParty.value.replace('Partido ', '');
+    const byParty = toValue(options.candidatesByParty) || {};
+    const candidates = toValue(options.candidates) || [];
 
-    return options.candidates.filter(
-      (candidate) => options.candidatesByParty[candidate] === selectedPartyName
+    return candidates.filter(
+      (candidate) => byParty[candidate] === selectedPartyName
     );
   });
 

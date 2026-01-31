@@ -1,3 +1,18 @@
+<!--
+  LEGACY VERSION - NOT IN USE
+
+  This file contains the original Leaflet-based implementation of the electoral map.
+  It has been replaced by AppModern.vue which uses MapLibre GL JS for better performance
+  and modern features.
+
+  This file is kept for:
+  - Historical reference
+  - Comparison with the new implementation
+  - Potential fallback if needed
+
+  DO NOT USE THIS FILE - Use AppModern.vue instead
+  See main.js for the active implementation
+-->
 <template>
   <div id="app">
     <header class="header">
@@ -61,6 +76,8 @@
           :selectedCandidates="store.selectedCandidates"
           :mapCenter="store.currentRegion?.mapCenter || [-34.8211, -56.225]"
           :mapZoom="store.currentRegion?.mapZoom || 11.5"
+          :seriesLocalityMapping="store.currentRegion?.seriesLocalityMapping || {}"
+          :seriesBarrioMapping="store.currentRegion?.seriesBarrioMapping"
           :getVotosForNeighborhood="store.getVotosForNeighborhood"
           @updateSelectedNeighborhood="store.setSelectedNeighborhood"
           @mapInitialized="handleMapInitialized"

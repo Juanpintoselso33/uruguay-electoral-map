@@ -130,16 +130,30 @@ const handleDragEnd = () => {
 
 <style scoped>
 .app-layout {
+  /* Color Variables */
   --color-bg: #fafafa;
   --color-surface: #ffffff;
   --color-text: #1a1a1a;
   --color-text-secondary: #666666;
   --color-border: #e5e5e5;
   --color-accent: #0066cc;
+
+  /* Layout Variables */
   --header-height: 72px;
   --sidebar-width: 320px;
   --sidebar-collapsed-width: 60px;
   --stats-width: 360px;
+
+  /* Z-Index Scale */
+  --z-base: 0;
+  --z-map-controls: 10;
+  --z-sidebar-toggle: 10;
+  --z-tooltip: 20;
+  --z-dropdown: 30;
+  --z-sidebar: 50;
+  --z-header: 100;
+  --z-modal: 200;
+  --z-max: 9999;
 
   min-height: 100vh;
   background: var(--color-bg);
@@ -166,7 +180,7 @@ const handleDragEnd = () => {
   height: var(--header-height);
   background: var(--color-surface);
   border-bottom: 2px solid var(--color-border);
-  z-index: 100;
+  z-index: var(--z-header);
   backdrop-filter: blur(10px);
   background: rgba(255, 255, 255, 0.9);
 }
@@ -305,7 +319,7 @@ const handleDragEnd = () => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 10;
+  z-index: var(--z-sidebar-toggle);
   transition: all 0.2s ease;
 }
 
@@ -341,7 +355,7 @@ const handleDragEnd = () => {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 200;
+  z-index: var(--z-modal);
   display: flex;
   align-items: flex-end;
 }
@@ -392,7 +406,7 @@ const handleDragEnd = () => {
     left: -100%;
     top: var(--header-height);
     height: calc(100vh - var(--header-height));
-    z-index: 50;
+    z-index: var(--z-sidebar);
     transition: left 0.3s ease;
   }
 

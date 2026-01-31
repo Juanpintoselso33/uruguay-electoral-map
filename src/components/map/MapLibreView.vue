@@ -3,14 +3,35 @@
     <div ref="mapContainer" class="map"></div>
 
     <!-- Map Controls -->
-    <div class="map-controls">
-      <button @click="zoomIn" class="map-control-btn" title="Zoom in">
+    <div class="map-controls" role="group" aria-label="Controles del mapa">
+      <button
+        @click="zoomIn"
+        @keydown.enter="zoomIn"
+        @keydown.space.prevent="zoomIn"
+        class="map-control-btn"
+        title="Zoom in (tecla +)"
+        aria-label="Acercar mapa"
+      >
         <Plus :size="18" />
       </button>
-      <button @click="zoomOut" class="map-control-btn" title="Zoom out">
+      <button
+        @click="zoomOut"
+        @keydown.enter="zoomOut"
+        @keydown.space.prevent="zoomOut"
+        class="map-control-btn"
+        title="Zoom out (tecla -)"
+        aria-label="Alejar mapa"
+      >
         <Minus :size="18" />
       </button>
-      <button @click="resetView" class="map-control-btn" title="Reset view">
+      <button
+        @click="resetView"
+        @keydown.enter="resetView"
+        @keydown.space.prevent="resetView"
+        class="map-control-btn"
+        title="Reset view (tecla R)"
+        aria-label="Restablecer vista"
+      >
         <Maximize2 :size="18" />
       </button>
     </div>
@@ -18,11 +39,14 @@
     <!-- Legend -->
     <div class="map-legend">
       <div class="legend-title">Intensidad de votos</div>
-      <div class="legend-gradient">
-        <div class="gradient-bar"></div>
-        <div class="gradient-labels">
-          <span>Bajo</span>
-          <span>Alto</span>
+      <div class="legend-scale">
+        <div
+          v-for="(item, index) in legendItems"
+          :key="index"
+          class="legend-scale-item"
+        >
+          <div class="legend-color-box" :style="{ backgroundColor: item.color }"></div>
+          <div class="legend-label">{{ item.label }}</div>
         </div>
       </div>
       <div v-if="selectedLists.length > 0" class="legend-info">
@@ -63,7 +87,9 @@ import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { Plus, Minus, Maximize2 } from 'lucide-vue-next'
-import chroma from 'chroma-js'
+import { useKeyboardNavigation } from '@/composables/useKeyboardNavigation'
+import { useScreenReaderAnnouncements } from '@/composables/useScreenReaderAnnouncements'
+import { useMapColors } from '@/composables/useMapColors'
 
 const props = defineProps<{
   regionName: string
@@ -98,16 +124,41 @@ const selectedParty = computed(() => {
   return null
 })
 
+// Screen reader announcements
+const { announceZoneSelection } = useScreenReaderAnnouncements()
+
+// Color system with ColorBrewer palette
+const { calculateBreaks, getColorForValue, getColorScale } = useMapColors('blues', 6, 'jenks')
+
+// Legend items
+const legendItems = computed(() => {
+  const scale = getColorScale()
+  return scale.map((item, index) => {
+    if (index === 0) {
+      return { ...item, label: 'Sin datos / Muy bajo' }
+    } else if (index === scale.length - 1) {
+      return { ...item, label: `> ${item.label}` }
+    } else {
+      const nextValue = scale[index + 1]?.value || item.value
+      return { ...item, label: `${item.label} - ${nextValue.toLocaleString()}` }
+    }
+  })
+})
+
+// Keyboard shortcuts for map controls
+useKeyboardNavigation({
+  customKeys: {
+    '+': () => zoomIn(),
+    '=': () => zoomIn(), // For keyboards without numpad
+    '-': () => zoomOut(),
+    '_': () => zoomOut(),
+    'r': () => resetView(),
+    'R': () => resetView()
+  }
+})
+
 const getColor = (votes: number): string => {
-  const maxVotes = Math.max(...Object.values(props.votosPorListas).flatMap(v => Object.values(v)))
-  if (votes === 0 || maxVotes === 0) return '#f0f0f0'
-
-  const ratio = votes / maxVotes
-  const colorScale = chroma.scale(['#ffffb2', '#fecc5c', '#fd8d3c', '#f03b20', '#bd0026'])
-    .mode('lab')
-    .domain([0, 1])
-
-  return colorScale(ratio).hex()
+  return getColorForValue(votes)
 }
 
 const initMap = () => {
@@ -178,6 +229,11 @@ const initMap = () => {
     if (e.features && e.features.length > 0) {
       const feature = e.features[0]
       const zoneName = feature.properties.BARRIO || feature.properties.zona
+      const votes = props.getVotosForNeighborhood(zoneName)
+
+      // Announce to screen readers
+      announceZoneSelection(zoneName, votes)
+
       emit('updateSelectedNeighborhood', zoneName)
     }
   })
@@ -200,6 +256,13 @@ const updateMapData = () => {
   if (map.value.getSource(sourceId)) {
     map.value.removeSource(sourceId)
   }
+
+  // Calculate breaks for Jenks classification
+  const allVotes = props.geojsonData.features.map((feature: any) => {
+    const zoneName = feature.properties.BARRIO || feature.properties.zona
+    return props.getVotosForNeighborhood(zoneName)
+  })
+  calculateBreaks(allVotes)
 
   // Add updated source with colors
   const geoJsonWithColors = {
@@ -310,7 +373,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  z-index: 10;
+  z-index: var(--z-map-controls);
 }
 
 .map-control-btn {
@@ -343,7 +406,7 @@ onUnmounted(() => {
   padding: 1rem;
   min-width: 200px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 10;
+  z-index: var(--z-map-controls);
 }
 
 .legend-title {
@@ -352,18 +415,30 @@ onUnmounted(() => {
   margin-bottom: 0.75rem;
 }
 
-.gradient-bar {
-  height: 12px;
-  border-radius: 6px;
-  background: linear-gradient(to right, #ffffb2, #fecc5c, #fd8d3c, #f03b20, #bd0026);
-  margin-bottom: 0.5rem;
+.legend-scale {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
 }
 
-.gradient-labels {
+.legend-scale-item {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 0.75rem;
+}
+
+.legend-color-box {
+  width: 20px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.legend-label {
   color: var(--color-text-secondary);
+  font-size: 0.7rem;
 }
 
 .legend-info {
@@ -387,7 +462,7 @@ onUnmounted(() => {
   min-width: 150px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   pointer-events: none;
-  z-index: 20;
+  z-index: var(--z-tooltip);
 }
 
 .tooltip-header {

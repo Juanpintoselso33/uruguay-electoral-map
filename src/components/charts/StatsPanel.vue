@@ -2,27 +2,71 @@
   <div class="stats-panel">
     <div class="stats-header">
       <h2 class="stats-title">Estadísticas</h2>
-      <button @click="handleExport" class="export-btn" title="Exportar datos">
-        <Download :size="16" />
-        <span>Exportar</span>
-      </button>
+      <div class="export-group">
+        <button
+          @click="toggleExportMenu"
+          class="export-btn"
+          title="Exportar datos"
+          :aria-expanded="showExportMenu"
+        >
+          <Download :size="16" />
+          <span>Exportar</span>
+        </button>
+
+        <!-- Export Format Menu -->
+        <div v-if="showExportMenu" class="export-menu">
+          <button @click="handleExport('csv')" class="export-menu-item">
+            <FileText :size="16" />
+            <div class="export-item-info">
+              <span class="export-item-title">CSV Completo</span>
+              <span class="export-item-desc">Todos los votos por zona</span>
+            </div>
+          </button>
+          <button @click="handleExport('geojson')" class="export-menu-item">
+            <Map :size="16" />
+            <div class="export-item-info">
+              <span class="export-item-title">GeoJSON</span>
+              <span class="export-item-desc">Para análisis GIS</span>
+            </div>
+          </button>
+          <button @click="handleExport('png')" class="export-menu-item">
+            <Image :size="16" />
+            <div class="export-item-info">
+              <span class="export-item-title">Imagen PNG</span>
+              <span class="export-item-desc">Captura del mapa</span>
+            </div>
+          </button>
+          <button @click="handleExport('pdf')" class="export-menu-item">
+            <FileDown :size="16" />
+            <div class="export-item-info">
+              <span class="export-item-title">Reporte PDF</span>
+              <span class="export-item-desc">Estadísticas completas</span>
+            </div>
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Current Department Info -->
-    <div v-if="currentRegion" class="department-card">
+    <div
+      v-if="currentRegion"
+      class="department-card"
+      role="region"
+      aria-label="Estadísticas del departamento"
+    >
       <h3 class="department-name">{{ currentRegion.name }}</h3>
-      <div class="department-stats">
+      <div class="department-stats" role="group" aria-live="polite">
         <div class="stat-item">
           <span class="stat-label">Listas disponibles</span>
-          <span class="stat-value">{{ availableLists.length }}</span>
+          <span class="stat-value" aria-label="Listas disponibles">{{ availableLists.length }}</span>
         </div>
         <div class="stat-item">
           <span class="stat-label">Partidos</span>
-          <span class="stat-value">{{ uniqueParties.length }}</span>
+          <span class="stat-value" aria-label="Partidos políticos">{{ uniqueParties.length }}</span>
         </div>
         <div class="stat-item">
           <span class="stat-label">Total votos</span>
-          <span class="stat-value">{{ totalVotes.toLocaleString() }}</span>
+          <span class="stat-value" aria-label="Total de votos">{{ totalVotes.toLocaleString() }}</span>
         </div>
       </div>
     </div>
@@ -30,16 +74,20 @@
     <!-- Data Source Toggle -->
     <div class="data-source-section">
       <label class="section-label">Fuente de datos</label>
-      <div class="toggle-group">
+      <div class="toggle-group" role="group" aria-label="Cambiar fuente de datos">
         <button
           :class="['toggle-btn', { active: !isODN }]"
-          @click="emit('toggle-source', false)"
+          @click="handleToggleSource(false)"
+          :aria-pressed="!isODN"
+          aria-label="Orden Departamental Departamental"
         >
           ODD
         </button>
         <button
           :class="['toggle-btn', { active: isODN }]"
-          @click="emit('toggle-source', true)"
+          @click="handleToggleSource(true)"
+          :aria-pressed="isODN"
+          aria-label="Orden Departamental Nacional"
         >
           ODN
         </button>
@@ -100,10 +148,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { Pie } from 'vue-chartjs'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
-import { Download, X } from 'lucide-vue-next'
+import { Download, X, FileText, Map, Image, FileDown } from 'lucide-vue-next'
+import { useScreenReaderAnnouncements } from '@/composables/useScreenReaderAnnouncements'
+import { useDataExport, type ExportFormat } from '@/composables/useDataExport'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -117,6 +167,15 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['toggle-source', 'remove-list', 'export'])
+
+// Export menu state
+const showExportMenu = ref(false)
+
+// Screen reader announcements
+const { announceDataSourceChange, announceStatisticsUpdate } = useScreenReaderAnnouncements()
+
+// Data export
+const { exportData } = useDataExport()
 
 // Calculate unique parties
 const uniqueParties = computed(() => {
@@ -219,29 +278,41 @@ const topLists = computed(() => {
   return lists.sort((a, b) => b.votes - a.votes).slice(0, 5)
 })
 
-const handleExport = () => {
-  emit('export')
-  // Generate CSV
-  const headers = ['Lista', 'Partido', 'Votos Total']
-  const rows = topLists.value.map(list => [
-    list.number,
-    list.party,
-    list.votes
-  ])
-
-  const csv = [
-    headers.join(','),
-    ...rows.map(row => row.join(','))
-  ].join('\n')
-
-  const blob = new Blob([csv], { type: 'text/csv' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `electoral-${props.currentRegion?.slug || 'data'}.csv`
-  a.click()
-  URL.revokeObjectURL(url)
+const handleToggleSource = (isODN: boolean) => {
+  const source = isODN ? 'ODN' : 'ODD'
+  announceDataSourceChange(source)
+  emit('toggle-source', isODN)
 }
+
+const toggleExportMenu = () => {
+  showExportMenu.value = !showExportMenu.value
+}
+
+const handleExport = async (format: ExportFormat) => {
+  showExportMenu.value = false
+  emit('export')
+
+  if (!props.currentRegion) return
+
+  await exportData(format, {
+    departmentName: props.currentRegion.name,
+    departmentSlug: props.currentRegion.slug || 'data',
+    votosPorListas: props.votosPorListas,
+    partiesByList: props.partiesByList,
+    geojsonData: props.currentRegion.geojsonData,
+    mapElement: document.querySelector('.maplibre-container') as HTMLElement
+  })
+}
+
+// Announce statistics updates
+watch([totalVotes, uniqueParties], () => {
+  const zonesCount = Object.keys(props.votosPorListas).length
+  announceStatisticsUpdate({
+    totalVotes: totalVotes.value,
+    lists: props.availableLists.length,
+    zones: zonesCount
+  })
+}, { immediate: false })
 </script>
 
 <style scoped>
@@ -264,6 +335,10 @@ const handleExport = () => {
   margin: 0;
 }
 
+.export-group {
+  position: relative;
+}
+
 .export-btn {
   display: flex;
   align-items: center;
@@ -281,6 +356,59 @@ const handleExport = () => {
 .export-btn:hover {
   opacity: 0.9;
   transform: translateY(-1px);
+}
+
+/* Export Menu */
+.export-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 250px;
+  z-index: var(--z-dropdown);
+  overflow: hidden;
+}
+
+.export-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.export-menu-item:last-child {
+  border-bottom: none;
+}
+
+.export-menu-item:hover {
+  background: var(--color-bg);
+}
+
+.export-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.export-item-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.export-item-desc {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
 }
 
 /* Department Card */
