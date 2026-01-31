@@ -27,10 +27,28 @@
       </div>
     </header>
 
+    <!-- Mobile Hamburger Button -->
+    <button
+      v-if="isMobile"
+      @click="toggleMobileMenu"
+      class="mobile-menu-button"
+      aria-label="Toggle mobile menu"
+    >
+      <Menu v-if="!mobileMenuOpen" :size="24" />
+      <X v-else :size="24" />
+    </button>
+
+    <!-- Mobile Overlay -->
+    <div
+      v-if="isMobile && mobileMenuOpen"
+      class="mobile-overlay"
+      @click="closeMobileMenu"
+    ></div>
+
     <!-- Main Content -->
     <div class="app-main">
       <!-- Sidebar -->
-      <aside class="sidebar" :class="{ 'collapsed': sidebarCollapsed }">
+      <aside class="sidebar" :class="{ 'collapsed': sidebarCollapsed, 'open': mobileMenuOpen }">
         <button class="sidebar-toggle" @click="toggleSidebar">
           <ChevronLeft v-if="!sidebarCollapsed" :size="20" />
           <ChevronRight v-else :size="20" />
@@ -67,7 +85,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useWindowSize, useLocalStorage } from '@vueuse/core'
-import { Moon, Sun, ChevronLeft, ChevronRight, GitCompare } from 'lucide-vue-next'
+import { Moon, Sun, ChevronLeft, ChevronRight, GitCompare, Menu, X } from 'lucide-vue-next'
 import SearchBar from '../search/SearchBar.vue'
 
 const emit = defineEmits(['department-select', 'toggle-comparison'])
@@ -80,9 +98,18 @@ const props = defineProps<{
 const isDark = useLocalStorage('electoral-theme-dark', false)
 const toggleDark = () => isDark.value = !isDark.value
 
-// Sidebar
+// Sidebar (Desktop)
 const sidebarCollapsed = useLocalStorage('electoral-sidebar-collapsed', false)
 const toggleSidebar = () => sidebarCollapsed.value = !sidebarCollapsed.value
+
+// Mobile Sidebar
+const mobileMenuOpen = ref(false)
+const toggleMobileMenu = () => {
+  mobileMenuOpen.value = !mobileMenuOpen.value
+}
+const closeMobileMenu = () => {
+  mobileMenuOpen.value = false
+}
 
 // Responsive
 const { width } = useWindowSize()
@@ -369,6 +396,53 @@ const handleDragEnd = () => {
   cursor: grabbing;
 }
 
+/* Mobile Hamburger Button */
+.mobile-menu-button {
+  position: fixed;
+  top: calc(var(--header-height) + 1rem);
+  left: 1rem;
+  width: 48px;
+  height: 48px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-menu-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.mobile-menu-button:active {
+  transform: scale(0.95);
+}
+
+/* Mobile Overlay */
+.mobile-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 40;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .app-header {
@@ -387,17 +461,29 @@ const handleDragEnd = () => {
     display: none;
   }
 
+  .mobile-menu-button {
+    display: flex;
+  }
+
   .sidebar {
     position: fixed;
     left: -100%;
     top: var(--header-height);
     height: calc(100vh - var(--header-height));
+    width: 85vw;
+    max-width: 320px;
     z-index: 50;
-    transition: left 0.3s ease;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: none;
   }
 
   .sidebar.open {
     left: 0;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
+  }
+
+  .sidebar-toggle {
+    display: none;
   }
 }
 </style>
