@@ -2,6 +2,11 @@
   <AppLayout @department-select="handleDepartmentSelect">
     <!-- Sidebar Content -->
     <template #sidebar>
+      <!-- Election Selector -->
+      <div class="sidebar-section" v-if="store.electionsFromCatalog.length > 0">
+        <ElectionSelector />
+      </div>
+
       <div class="sidebar-section">
         <h3 class="section-title">Departamentos</h3>
         <RegionSelector
@@ -91,6 +96,7 @@
 import { onMounted } from 'vue'
 import { useElectoralStore } from './stores/electoral'
 import AppLayout from './components/layout/AppLayout.vue'
+import ElectionSelector from './components/elections/ElectionSelector.vue'
 import RegionSelector from './components/RegionSelectorModern.vue'
 import ListSelectorContainer from './components/selectors/ListSelectorContainer.vue'
 import MapLibreView from './components/map/MapLibreView.vue'
