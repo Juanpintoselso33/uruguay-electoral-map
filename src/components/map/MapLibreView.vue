@@ -545,8 +545,12 @@ const updateMapData = () => {
   const sourceId = 'electoral-data'
   const layerId = 'electoral-fill'
   const outlineLayerId = 'electoral-outline'
+  const labelsLayerId = 'electoral-labels'
 
   // Remove existing layers and source
+  if (map.value.getLayer(labelsLayerId)) {
+    map.value.removeLayer(labelsLayerId)
+  }
   if (map.value.getLayer(outlineLayerId)) {
     map.value.removeLayer(outlineLayerId)
   }
@@ -624,6 +628,28 @@ const updateMapData = () => {
       'line-color': '#666666',
       'line-width': 0.5,
       'line-opacity': 0.6
+    }
+  })
+
+  // Add label layer for series/barrios
+  map.value.addLayer({
+    id: 'electoral-labels',
+    type: 'symbol',
+    source: sourceId,
+    layout: {
+      'text-field': ['coalesce', ['get', 'serie'], ['get', 'BARRIO'], ['get', 'zona'], ''],
+      'text-font': ['Open Sans Regular', 'Arial Unicode MS Regular'],
+      'text-size': 11,
+      'text-anchor': 'center',
+      'text-allow-overlap': false,
+      'text-ignore-placement': false,
+      'symbol-placement': 'point'
+    },
+    paint: {
+      'text-color': '#333333',
+      'text-halo-color': '#ffffff',
+      'text-halo-width': 1.5,
+      'text-halo-blur': 0.5
     }
   })
 
