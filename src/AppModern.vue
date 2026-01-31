@@ -1,4 +1,11 @@
 <template>
+  <!-- Global Loading Overlay -->
+  <Transition name="fade">
+    <div v-if="store.isLoading" class="global-loading-overlay" role="status" aria-live="polite">
+      <LoadingSpinner size="large" text="Cargando datos electorales..." />
+    </div>
+  </Transition>
+
   <AppLayout
     :showComparison="isComparisonMode"
     @department-select="handleDepartmentSelect"
@@ -56,6 +63,8 @@
         :mapCenter="store.currentRegion.mapCenter"
         :mapZoom="store.currentRegion.mapZoom"
         :getVotosForNeighborhood="store.getVotosForNeighborhood"
+        :seriesLocalityMapping="store.currentRegion.seriesLocalityMapping || {}"
+        :seriesBarrioMapping="store.currentRegion.seriesBarrioMapping || {}"
         @updateSelectedNeighborhood="store.setSelectedNeighborhood"
         @mapInitialized="handleMapInitialized"
       />
@@ -115,6 +124,7 @@ import ListSelectorContainer from './components/selectors/ListSelectorContainer.
 import MapLibreView from './components/map/MapLibreView.vue'
 import StatsPanel from './components/charts/StatsPanel.vue'
 import ComparisonView from './components/comparison/ComparisonView.vue'
+import LoadingSpinner from './components/ui/LoadingSpinner.vue'
 import partiesAbbrev from '../public/partidos_abrev.json'
 
 const store = useElectoralStore()
@@ -220,5 +230,35 @@ body {
 
 .dark ::-webkit-scrollbar-thumb {
   background: var(--color-border);
+}
+
+/* Global Loading Overlay */
+.global-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+}
+
+.dark .global-loading-overlay {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+/* Fade transition */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

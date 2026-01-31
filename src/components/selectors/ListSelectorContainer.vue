@@ -1,20 +1,25 @@
 <template>
-  <div class="relative">
+  <div class="relative" data-testid="list-selector">
     <!-- Main selector panel -->
     <div
-      class="bg-white border border-gray-200 rounded-t-lg p-5 w-full shadow-md flex flex-col h-auto overflow-y-auto transition-transform duration-300 ease-in-out z-[999]"
+      class="bg-white border border-gray-200 rounded-t-lg p-3 w-full shadow-md flex flex-col h-auto overflow-y-auto transition-transform duration-300 ease-in-out z-[999]"
       :class="{ 'mobile-hidden': isMobileHidden }"
       role="region"
       aria-label="List and candidate selector"
     >
-      <div class="list-selector-content">
+      <!-- Loading state -->
+      <div v-if="isLoading" class="flex items-center justify-center py-8">
+        <LoadingSpinner size="medium" text="Cargando listas..." />
+      </div>
+
+      <div v-else class="list-selector-content">
         <!-- Data source toggle (ODD/ODN) -->
         <DataSourceToggle v-model="localIsODN" @update:modelValue="onDataSourceToggle" />
 
         <!-- Selector toggle (Lists/Candidates) - ODN only -->
-        <div v-if="localIsODN" class="bg-gray-100 rounded-lg p-4 mb-5">
-          <h3 class="mt-0 mb-2.5 text-lg text-gray-800">Seleccionar por</h3>
-          <div class="flex justify-around bg-gray-300 rounded-full p-1">
+        <div v-if="localIsODN" class="bg-gray-100 rounded-lg p-2 mb-3">
+          <h3 class="mt-0 mb-1.5 text-base text-gray-800">Seleccionar por</h3>
+          <div class="flex justify-around bg-gray-300 rounded-full p-0.5">
             <label
               v-for="option in selectorOptions"
               :key="option.label"
@@ -64,11 +69,11 @@
         />
 
         <!-- Clear selection button -->
-        <div class="mt-5 text-center">
+        <div class="mt-3 text-center">
           <button
             @click="clearSelection"
             :disabled="selectedLists.length === 0 && selectedCandidates.length === 0"
-            class="py-2.5 px-5 bg-gray-800 text-white border-none rounded cursor-pointer transition-all disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-gray-700"
+            class="py-1.5 px-4 text-sm bg-gray-800 text-white border-none rounded cursor-pointer transition-all disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-gray-700"
           >
             Limpiar selección
           </button>
@@ -104,6 +109,7 @@ import DataSourceToggle from './DataSourceToggle.vue';
 import PartyFilter from './PartyFilter.vue';
 import ListGrid from './ListGrid.vue';
 import CandidateGrid from './CandidateGrid.vue';
+import LoadingSpinner from '@/components/ui/LoadingSpinner.vue';
 
 interface Props {
   lists: string[];
@@ -133,13 +139,14 @@ const emit = defineEmits<Emits>();
 const isMobileHidden = ref(true);
 const localIsODN = ref(props.isODN);
 const showLists = ref(true);
+const isLoading = ref(false);
 
 const selectorOptions = [
   { value: true, label: 'Listas' },
   { value: false, label: 'Candidatos' },
 ];
 
-// Use electoral filters composable
+// Use electoral filters composable with computed props for reactivity
 const {
   searchQuery,
   selectedParty,
@@ -148,11 +155,11 @@ const {
   filteredCandidates,
   filterLists,
 } = useElectoralFilters({
-  lists: props.lists,
-  candidates: props.candidates,
-  partiesAbbrev: props.partiesAbbrev,
-  partiesByList: props.partiesByList,
-  candidatesByParty: props.candidatesByParty,
+  lists: computed(() => props.lists),
+  candidates: computed(() => props.candidates),
+  partiesAbbrev: computed(() => props.partiesAbbrev),
+  partiesByList: computed(() => props.partiesByList),
+  candidatesByParty: computed(() => props.candidatesByParty),
 });
 
 // Initialize selected party from props
@@ -201,7 +208,16 @@ const clearSelection = () => {
 // Watchers
 watch(
   () => props.lists,
-  (newLists) => {
+  async (newLists, oldLists) => {
+    // Show loading when lists change (new data being loaded)
+    if (oldLists && oldLists.length > 0 && newLists.length === 0) {
+      isLoading.value = true;
+    }
+
+    if (newLists.length > 0) {
+      isLoading.value = false;
+    }
+
     if (newLists.length !== props.lists.length) {
       emit('update:selectedLists', []);
     }
@@ -223,6 +239,7 @@ watch(filteredLists, () => {
 });
 
 onMounted(() => {
+  isLoading.value = props.lists.length === 0;
   filterLists();
   toggleMobileVisibility();
 });
