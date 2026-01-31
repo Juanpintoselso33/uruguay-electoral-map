@@ -177,8 +177,8 @@ const handleRetry = async () => {
   store.error = null
   try {
     await store.loadRegionsConfig()
-    if (store.regions.length > 0) {
-      await store.fetchRegionData(store.regions[0])
+    if (store.currentRegion) {
+      await store.fetchRegionData(store.currentRegion)
     }
   } catch (error) {
     console.error('[AppModern] Error during retry:', error)
@@ -190,10 +190,10 @@ const handleRetry = async () => {
 onMounted(async () => {
   try {
     await store.loadRegionsConfig()
-    if (store.regions.length > 0) {
-      await store.fetchRegionData(store.regions[0])
+    if (store.currentRegion) {
+      await store.fetchRegionData(store.currentRegion)
     } else {
-      console.error('[AppModern] No regions available after loading config')
+      console.error('[AppModern] No current region set after loading config')
       store.isLoading = false
     }
   } catch (error) {
