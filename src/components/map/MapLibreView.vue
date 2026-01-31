@@ -363,6 +363,7 @@ const initMap = () => {
     container: mapContainer.value,
     style: {
       version: 8,
+      glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
       sources: {
         'carto-light': {
           type: 'raster',
@@ -638,7 +639,7 @@ const updateMapData = () => {
     source: sourceId,
     layout: {
       'text-field': ['coalesce', ['get', 'serie'], ['get', 'BARRIO'], ['get', 'zona'], ''],
-      'text-font': ['Open Sans Regular', 'Arial Unicode MS Regular'],
+      'text-font': ['Noto Sans Regular'],
       'text-size': 11,
       'text-anchor': 'center',
       'text-allow-overlap': false,
