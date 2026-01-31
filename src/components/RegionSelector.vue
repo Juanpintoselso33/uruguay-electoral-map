@@ -85,10 +85,14 @@ const toggleMenu = () => {
 };
 
 const selectRegion = (region: { name: string }) => {
+  console.log('[RegionSelector] selectRegion called with:', region.name)
+  console.log('[RegionSelector] Emitting regionSelected event')
+
   // Announce to screen readers
   announceDepartmentChange(region.name)
 
   emit("regionSelected", region);
+  console.log('[RegionSelector] Event emitted, closing menu')
   isMenuOpen.value = false;
 };
 
