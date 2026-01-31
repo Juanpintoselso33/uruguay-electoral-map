@@ -1,4 +1,62 @@
 {
+  "electionSchemas": {
+    "internas-2024": {
+      "type": "internas",
+      "columnMapping": {
+        "party": "PARTIDO",
+        "department": "DEPTO",
+        "circuit": "CIRCUITO",
+        "series": "SERIES",
+        "scrutiny": "ESCRUTINIO",
+        "candidate": "PRECANDIDATO",
+        "list": "HOJA",
+        "votes": "CNT_VOTOS",
+        "zone": "ZONA"
+      }
+    },
+    "internas-2019": {
+      "type": "internas",
+      "columnMapping": {
+        "party": "PARTIDO",
+        "department": "DEPTO",
+        "circuit": "CIRCUITO",
+        "series": "SERIES",
+        "scrutiny": "ESCRUTINIO",
+        "candidate": "PRECANDIDATO",
+        "list": "HOJA",
+        "votes": "CNT_VOTOS",
+        "zone": "ZONA"
+      }
+    },
+    "nacionales-2019": {
+      "type": "nacionales",
+      "columnMapping": {
+        "recordType": "TipoRegistro",
+        "department": "Departamento",
+        "crv": "CRV",
+        "series": "Series",
+        "party": "Lema",
+        "list": "Descripcion1",
+        "votes": "CantidadVotos"
+      },
+      "hasZone": false,
+      "useListAsHoja": true
+    },
+    "nacionales-2014": {
+      "type": "nacionales",
+      "columnMapping": {
+        "recordType": "TipoRegistro",
+        "department": "Departamento",
+        "crv": "CRV",
+        "series": "Series",
+        "party": "Lema",
+        "list": "Descripcion1",
+        "votes": "CantidadVotos"
+      },
+      "hasZone": false,
+      "useListAsHoja": true
+    }
+  },
   "csv": {
     "electoral": {
       "odn": {

@@ -60,10 +60,76 @@ function downloadFile(url, destPath) {
 /**
  * Extract electoral data from Corte Electoral
  */
-export async function extractElectoralData(config) {
+export async function extractElectoralData(config, electionId = null) {
   const rawElectoralDir = path.join(config.rawDir, 'electoral');
 
   console.log('\n📊 Extracting Electoral Data\n');
+
+  // If specific election requested
+  if (electionId) {
+    const electionKey = electionId.includes('-') ? electionId : `internas-${electionId}`;
+    const election = sources.elections[electionKey];
+
+    if (!election) {
+      throw new Error(`Election not found: ${electionId}`);
+    }
+
+    console.log(`Election: ${election.name} (${election.date})`);
+    const electionDir = path.join(rawElectoralDir, electionKey);
+
+    if (!fs.existsSync(electionDir)) {
+      fs.mkdirSync(electionDir, { recursive: true });
+    }
+
+    console.log(`Destination: ${electionDir}\n`);
+
+    // Download desglose de votos
+    if (election.desgloseVotosUrl) {
+      const destPath = path.join(electionDir, 'desglose-de-votos.csv');
+      if (fs.existsSync(destPath)) {
+        console.log(`  ⏭ Skipping desglose-de-votos.csv (already exists)`);
+      } else {
+        try {
+          await downloadFile(election.desgloseVotosUrl, destPath);
+        } catch (error) {
+          console.log(`  ✗ Failed: ${error.message}`);
+        }
+      }
+    }
+
+    // Download integración hojas (if available)
+    if (election.integracionHojasUrl) {
+      const destPath = path.join(electionDir, 'integracion-hojas.csv');
+      if (fs.existsSync(destPath)) {
+        console.log(`  ⏭ Skipping integracion-hojas.csv (already exists)`);
+      } else {
+        try {
+          await downloadFile(election.integracionHojasUrl, destPath);
+        } catch (error) {
+          console.log(`  ✗ Failed: ${error.message}`);
+        }
+      }
+    }
+
+    // Download municipal votes (departamentales only)
+    if (election.desgloseVotosMunicipalUrl) {
+      const destPath = path.join(electionDir, 'desglose-votos-municipal.csv');
+      if (fs.existsSync(destPath)) {
+        console.log(`  ⏭ Skipping desglose-votos-municipal.csv (already exists)`);
+      } else {
+        try {
+          await downloadFile(election.desgloseVotosMunicipalUrl, destPath);
+        } catch (error) {
+          console.log(`  ✗ Failed: ${error.message}`);
+        }
+      }
+    }
+
+    console.log('\n✓ Electoral data extraction complete\n');
+    return;
+  }
+
+  // Default: use internas-2024
   console.log(`Source: ${sources.electoral.name}`);
   console.log(`Destination: ${rawElectoralDir}\n`);
 

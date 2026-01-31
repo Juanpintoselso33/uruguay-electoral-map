@@ -56,10 +56,57 @@ function parseCSV(content) {
 }
 
 /**
+ * Detect election schema from CSV headers
+ */
+function detectElectionSchema(headers) {
+  const headerSet = new Set(headers);
+
+  // Check for internas schema (PARTIDO, DEPTO, HOJA, CNT_VOTOS, ZONA)
+  if (headerSet.has('PARTIDO') && headerSet.has('HOJA') && headerSet.has('CNT_VOTOS') && headerSet.has('ZONA')) {
+    return 'internas';
+  }
+
+  // Check for nacionales schema (TipoRegistro, Departamento, Lema, Descripcion1, CantidadVotos)
+  if (headerSet.has('TipoRegistro') && headerSet.has('Lema') && headerSet.has('Descripcion1') && headerSet.has('CantidadVotos')) {
+    return 'nacionales';
+  }
+
+  // Default to internas
+  return 'internas';
+}
+
+/**
+ * Normalize row data based on schema
+ */
+function normalizeRow(row, schemaType) {
+  if (schemaType === 'nacionales') {
+    return {
+      HOJA: row.Descripcion1 || '',
+      ZONA: row.CRV || row.Series || '', // Use CRV or Series as zone
+      PARTIDO: row.Lema || '',
+      PRECANDIDATO: '',
+      CNT_VOTOS: row.CantidadVotos || '0'
+    };
+  }
+
+  // internas schema (default)
+  return {
+    HOJA: row.HOJA || '',
+    ZONA: row.ZONA || '',
+    PARTIDO: row.PARTIDO || '',
+    PRECANDIDATO: row.PRECANDIDATO || '',
+    CNT_VOTOS: row.CNT_VOTOS || '0'
+  };
+}
+
+/**
  * Process electoral CSV data for a department
  */
 function processElectoralCSV(csvContent, type) {
   const { headers, data } = parseCSV(csvContent);
+
+  // Detect schema type
+  const schemaType = detectElectionSchema(headers);
 
   const votosPorListas = {};
   const maxVotosPorListas = {};
@@ -72,13 +119,16 @@ function processElectoralCSV(csvContent, type) {
   let totalVotes = 0;
 
   data.forEach(row => {
-    if (!row.HOJA) return;
+    // Normalize row based on schema
+    const normalized = normalizeRow(row, schemaType);
 
-    const hoja = row.HOJA;
-    const zona = row.ZONA || '';
-    const partido = row.PARTIDO || '';
-    const precandidato = row.PRECANDIDATO || '';
-    const votos = parseInt(row.CNT_VOTOS, 10) || 0;
+    if (!normalized.HOJA) return;
+
+    const hoja = normalized.HOJA;
+    const zona = normalized.ZONA || '';
+    const partido = normalized.PARTIDO || '';
+    const precandidato = normalized.PRECANDIDATO || '';
+    const votos = parseInt(normalized.CNT_VOTOS, 10) || 0;
 
     // Initialize structures
     if (!votosPorListas[hoja]) {
@@ -104,6 +154,7 @@ function processElectoralCSV(csvContent, type) {
   return {
     metadata: {
       type,
+      schemaType,
       processedAt: new Date().toISOString(),
       stats: {
         totalRows: data.length,
@@ -127,14 +178,33 @@ function processElectoralCSV(csvContent, type) {
 /**
  * Transform electoral data
  */
-export async function transformElectoralData(config, department = null) {
-  const rawDir = path.join(config.rawDir, 'electoral');
-  const processedDir = path.join(config.processedDir, 'electoral');
+export async function transformElectoralData(config, department = null, electionId = null) {
+  let rawDir = path.join(config.rawDir, 'electoral');
+  let processedDir = path.join(config.processedDir, 'electoral');
 
   console.log('\n📊 Transforming Electoral Data\n');
 
+  // If specific election, use election subdirectory
+  if (electionId) {
+    const electionKey = electionId.includes('-') ? electionId : `internas-${electionId}`;
+    console.log(`Election: ${electionKey}`);
+    rawDir = path.join(rawDir, electionKey);
+    processedDir = path.join(processedDir, electionKey);
+
+    if (!fs.existsSync(processedDir)) {
+      fs.mkdirSync(processedDir, { recursive: true });
+    }
+
+    // If election has master CSV, need to split it first
+    const masterCSV = path.join(rawDir, 'desglose-de-votos.csv');
+    if (fs.existsSync(masterCSV)) {
+      console.log('  Master CSV found, splitting by department...\n');
+      await splitMasterCSV(masterCSV, rawDir);
+    }
+  }
+
   // Find CSV files to process
-  const files = fs.readdirSync(rawDir).filter(f => f.endsWith('.csv'));
+  const files = fs.readdirSync(rawDir).filter(f => f.endsWith('.csv') && !f.startsWith('desglose-de-votos'));
 
   // Group by department
   const deptFiles = {};
@@ -165,6 +235,7 @@ export async function transformElectoralData(config, department = null) {
       const csvContent = fs.readFileSync(csvPath, 'utf-8');
       const processed = processElectoralCSV(csvContent, 'odn');
       processed.metadata.department = dept;
+      if (electionId) processed.metadata.election = electionId;
 
       const outputPath = path.join(deptDir, 'odn.json');
       fs.writeFileSync(outputPath, JSON.stringify(processed, null, 2));
@@ -177,6 +248,7 @@ export async function transformElectoralData(config, department = null) {
       const csvContent = fs.readFileSync(csvPath, 'utf-8');
       const processed = processElectoralCSV(csvContent, 'odd');
       processed.metadata.department = dept;
+      if (electionId) processed.metadata.election = electionId;
 
       const outputPath = path.join(deptDir, 'odd.json');
       fs.writeFileSync(outputPath, JSON.stringify(processed, null, 2));
@@ -189,6 +261,7 @@ export async function transformElectoralData(config, department = null) {
       department: dept,
       displayName: sources.departments.codes[dept.toUpperCase()] ||
                    dept.charAt(0).toUpperCase() + dept.slice(1).replace(/_/g, ' '),
+      election: electionId || 'internas-2024',
       processedAt: new Date().toISOString(),
       files: {
         odn: types.odn ? 'odn.json' : null,
@@ -198,6 +271,52 @@ export async function transformElectoralData(config, department = null) {
   }
 
   console.log('\n✓ Electoral data transformation complete\n');
+}
+
+/**
+ * Split master CSV by department (helper for elections with single master file)
+ */
+async function splitMasterCSV(masterPath, outputDir) {
+  const content = fs.readFileSync(masterPath, 'utf-8');
+  const lines = content.split('\n');
+  const header = lines[0];
+
+  const deptData = {};
+
+  // Group by department and type
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+
+    const parts = line.split(',');
+    const tipoRegistro = parts[0];
+    const deptCode = parts[1];
+
+    if (!deptCode) continue;
+
+    const deptName = sources.departments.codes[deptCode];
+    if (!deptName) continue;
+
+    const deptSlug = sources.departments.slugs[deptName];
+    if (!deptSlug) continue;
+
+    const type = tipoRegistro.includes('ODN') ? 'odn' : 'odd';
+    const key = `${deptSlug}_${type}`;
+
+    if (!deptData[key]) {
+      deptData[key] = [header];
+    }
+
+    deptData[key].push(line);
+  }
+
+  // Write files
+  for (const [key, lines] of Object.entries(deptData)) {
+    const filePath = path.join(outputDir, `${key}.csv`);
+    fs.writeFileSync(filePath, lines.join('\n'));
+  }
+
+  console.log(`  Split into ${Object.keys(deptData).length / 2} departments\n`);
 }
 
 /**

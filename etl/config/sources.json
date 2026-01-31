@@ -1,4 +1,51 @@
 {
+  "defaultElection": "internas-2024",
+  "elections": {
+    "nacionales-2014": {
+      "id": "nacionales-2014",
+      "year": 2014,
+      "type": "nacionales",
+      "name": "Elecciones Nacionales 2014",
+      "date": "2014-10-26",
+      "desgloseVotosUrl": "https://catalogodatos.gub.uy/dataset/1d025bf7-5b0d-42c5-8a9a-0696e24f7634/resource/91bc8eeb-227a-47a3-96e9-c2fe4e4a3e1c/download/desglose-de-votos.csv"
+    },
+    "internas-2019": {
+      "id": "internas-2019",
+      "year": 2019,
+      "type": "internas",
+      "name": "Elecciones Internas 2019",
+      "date": "2019-06-30",
+      "desgloseVotosUrl": "https://catalogodatos.gub.uy/dataset/corte-electoral-elecciones_internas_2019/resource/d2701044-b6ba-4faa-ae6f-424ab58392df/download/desglose-de-votos.csv",
+      "integracionHojasUrl": "https://catalogodatos.gub.uy/dataset/corte-electoral-elecciones_internas_2019/resource/ca84824a-1509-4a8b-a0ab-ab7287362e3f/download/integracion-de-hojas-de-votacion.csv"
+    },
+    "nacionales-2019": {
+      "id": "nacionales-2019",
+      "year": 2019,
+      "type": "nacionales",
+      "name": "Elecciones Nacionales 2019",
+      "date": "2019-10-27",
+      "desgloseVotosUrl": "https://catalogodatos.gub.uy/dataset/7c3caf30-b59e-43de-b928-547030cc682b/resource/fae2be5e-44db-4763-8b32-9c18679d3aad/download/desglose-de-votos.csv",
+      "integracionHojasUrl": "https://catalogodatos.gub.uy/dataset/7c3caf30-b59e-43de-b928-547030cc682b/resource/8cca61dc-7f7e-4694-a690-97ad5fbe91df/download/integracin-de-hojas-de-votacin-nacionales.csv"
+    },
+    "departamentales-2020": {
+      "id": "departamentales-2020",
+      "year": 2020,
+      "type": "departamentales",
+      "name": "Elecciones Departamentales 2020",
+      "date": "2020-09-27",
+      "desgloseVotosMunicipalUrl": "https://catalogodatos.gub.uy/dataset/corte-electoral-eleccionesdepartamentales2020/resource/c61c004d-265a-4c1c-8106-c4ea12f1efa8/download/desglose-de-votos-municipal.csv"
+    },
+    "internas-2024": {
+      "id": "internas-2024",
+      "year": 2024,
+      "type": "internas",
+      "name": "Elecciones Internas 2024",
+      "date": "2024-06-30",
+      "desgloseVotosUrl": "https://catalogodatos.gub.uy/dataset/48a4e7f5-6909-41a0-aa8a-95dc42cc201f/resource/dec32eb5-1754-4810-af7a-8c1121259206/download/desglose-de-votos.csv",
+      "integracionHojasUrl": "https://catalogodatos.gub.uy/dataset/48a4e7f5-6909-41a0-aa8a-95dc42cc201f/resource/4937d1a4-0847-4cf7-a2e1-95688ce5c40c/download/integracion-hojas-de-votacion.csv",
+      "implemented": true
+    }
+  },
   "electoral": {
     "name": "Corte Electoral Uruguay - Elecciones Internas 2024",
     "baseUrl": "https://catalogodatos.gub.uy/dataset/48a4e7f5-6909-41a0-aa8a-95dc42cc201f/resource",

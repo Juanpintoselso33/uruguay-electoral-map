@@ -1,0 +1,10 @@
+{
+  "department": "salto",
+  "displayName": "Salto",
+  "election": "nacionales-2019",
+  "processedAt": "2026-01-31T02:19:22.626Z",
+  "files": {
+    "odn": null,
+    "odd": "odd.json"
+  }
+}

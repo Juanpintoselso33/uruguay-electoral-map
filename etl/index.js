@@ -34,10 +34,11 @@ const CONFIG = {
   processedDir: path.join(__dirname, '..', 'data', 'processed'),
   cacheDir: path.join(__dirname, '..', 'data', 'cache'),
   mappingsDir: path.join(__dirname, '..', 'data', 'mappings'),
+  sourcesPath: path.join(__dirname, 'config', 'sources.json'),
 };
 
 // Ensure directories exist
-function ensureDirectories() {
+function ensureDirectories(election = null) {
   const dirs = [
     CONFIG.dataDir,
     CONFIG.rawDir,
@@ -49,6 +50,12 @@ function ensureDirectories() {
     CONFIG.cacheDir,
     CONFIG.mappingsDir,
   ];
+
+  // Add election-specific directories
+  if (election) {
+    dirs.push(path.join(CONFIG.rawDir, 'electoral', election));
+    dirs.push(path.join(CONFIG.processedDir, 'electoral', election));
+  }
 
   dirs.forEach(dir => {
     if (!fs.existsSync(dir)) {
@@ -81,10 +88,24 @@ async function extract(options) {
   console.log('\n📥 EXTRACT: Downloading raw data...\n');
 
   const type = options.type || 'all';
+  const election = options.election || options.year;
+
+  // Validate election if provided
+  if (election) {
+    const sources = JSON.parse(fs.readFileSync(CONFIG.sourcesPath, 'utf-8'));
+    const electionKey = election.includes('-') ? election : `internas-${election}`;
+
+    if (!sources.elections[electionKey]) {
+      throw new Error(`Election not found: ${election}. Available: ${Object.keys(sources.elections).join(', ')}`);
+    }
+
+    console.log(`Election: ${sources.elections[electionKey].name}`);
+    ensureDirectories(electionKey);
+  }
 
   if (type === 'all' || type === 'electoral') {
     console.log('Downloading electoral data...');
-    await extractElectoralData(CONFIG);
+    await extractElectoralData(CONFIG, election);
   }
 
   if (type === 'all' || type === 'geographic') {
@@ -99,15 +120,28 @@ async function transform(options) {
   console.log('\n🔄 TRANSFORM: Processing data...\n');
 
   const dept = options.dept;
+  const election = options.election || options.year;
   const all = options.all || !dept;
+
+  if (election) {
+    const sources = JSON.parse(fs.readFileSync(CONFIG.sourcesPath, 'utf-8'));
+    const electionKey = election.includes('-') ? election : `internas-${election}`;
+
+    if (!sources.elections[electionKey]) {
+      throw new Error(`Election not found: ${election}`);
+    }
+
+    console.log(`Election: ${sources.elections[electionKey].name}`);
+    ensureDirectories(electionKey);
+  }
 
   if (all) {
     console.log('Transforming all departments...');
-    await transformElectoralData(CONFIG, null);
+    await transformElectoralData(CONFIG, null, election);
     await transformGeographicData(CONFIG, null);
   } else {
     console.log(`Transforming department: ${dept}`);
-    await transformElectoralData(CONFIG, dept);
+    await transformElectoralData(CONFIG, dept, election);
     await transformGeographicData(CONFIG, dept);
   }
 
@@ -117,7 +151,8 @@ async function transform(options) {
 async function load(options) {
   console.log('\n📤 LOAD: Copying to public/...\n');
 
-  await loadToPublic(CONFIG);
+  const election = options.election || options.year;
+  await loadToPublic(CONFIG, election);
 
   console.log('\n✅ Load complete!\n');
 }
@@ -222,16 +257,26 @@ Commands:
   clean       Remove cache and temporary files
 
 Options:
+  --election <id>   Election ID (e.g., 'internas-2024', 'nacionales-2019')
+  --year <year>     Election year (e.g., '2024', '2019')
   --type <type>     For extract: 'electoral', 'geographic', or 'all' (default)
   --dept <name>     For transform: specific department (e.g., 'montevideo')
   --all             For transform: process all departments (default)
   --force           Overwrite existing files
   --verbose         Show detailed output
 
+Available Elections:
+  nacionales-2014   Elecciones Nacionales 2014
+  internas-2019     Elecciones Internas 2019
+  nacionales-2019   Elecciones Nacionales 2019
+  departamentales-2020  Elecciones Departamentales 2020
+  internas-2024     Elecciones Internas 2024 (default, implemented)
+
 Examples:
-  node etl/index.js extract --type electoral
-  node etl/index.js transform --dept montevideo
-  node etl/index.js run
+  node etl/index.js extract --election internas-2024
+  node etl/index.js extract --election nacionales-2019
+  node etl/index.js transform --election internas-2024 --dept montevideo
+  node etl/index.js run --election nacionales-2019
   node etl/index.js validate
 `);
 }
@@ -245,7 +290,8 @@ async function main() {
     return;
   }
 
-  ensureDirectories();
+  const election = options.election || options.year;
+  ensureDirectories(election);
 
   try {
     switch (command) {
