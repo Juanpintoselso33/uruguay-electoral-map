@@ -81,7 +81,7 @@
         </button>
 
         <div class="tooltip-header">
-          <strong>{{ hoveredFeature?.properties?.BARRIO || hoveredFeature?.properties?.zona || pinnedZoneName }}</strong>
+          <strong>{{ hoveredFeature?.properties?.displayLabel || hoveredFeature?.properties?.BARRIO || hoveredFeature?.properties?.zona || pinnedZoneName }}</strong>
         </div>
 
         <div class="tooltip-body" :class="{ 'tooltip-scrollable': shouldShowDetailedBreakdown }">
@@ -417,19 +417,11 @@ const initMap = () => {
       const normalizedZone = normalizeString(zoneName)
       hoveredVotes.value = props.getVotosForNeighborhood(normalizedZone)
 
-      // Get display name using series mapping if available
+      // Use displayLabel from feature if available (already contains locality name)
+      const displayName = feature.properties.displayLabel || zoneName
+
+      // Get barrios for this series if available (for Rivera)
       const seriesCode = feature.properties.serie?.toUpperCase()
-      let displayName = zoneName
-
-      if (seriesCode && props.seriesLocalityMapping?.[seriesCode]) {
-        displayName = props.seriesLocalityMapping[seriesCode]
-      } else if (seriesCode && seriesCode.length === 3) {
-        displayName = `Serie ${seriesCode}`
-      } else {
-        displayName = zoneName?.toUpperCase() || normalizedZone.toUpperCase()
-      }
-
-      // Get barrios for this series if available
       const barrios = seriesCode && props.seriesBarrioMapping?.[seriesCode]
 
       // Generate tooltip HTML with lists
@@ -541,29 +533,43 @@ const initMap = () => {
 }
 
 const updateMapData = () => {
-  if (!map.value || !props.geojsonData) return
+  if (!map.value || !props.geojsonData) {
+    console.log('[MapLibreView] updateMapData skipped - map or geojsonData missing')
+    return
+  }
 
+  console.log('[MapLibreView] ========================================')
   console.log('[MapLibreView] updateMapData called')
   console.log('[MapLibreView] geojsonData features:', props.geojsonData.features?.length)
   console.log('[MapLibreView] First feature:', props.geojsonData.features?.[0])
+  console.log('[MapLibreView] Map loaded:', map.value.loaded())
+  console.log('[MapLibreView] ========================================')
 
   const sourceId = 'electoral-data'
   const layerId = 'electoral-fill'
   const outlineLayerId = 'electoral-outline'
   const labelsLayerId = 'electoral-labels'
 
-  // Remove existing layers and source
-  if (map.value.getLayer(labelsLayerId)) {
-    map.value.removeLayer(labelsLayerId)
-  }
-  if (map.value.getLayer(outlineLayerId)) {
-    map.value.removeLayer(outlineLayerId)
-  }
-  if (map.value.getLayer(layerId)) {
-    map.value.removeLayer(layerId)
-  }
-  if (map.value.getSource(sourceId)) {
-    map.value.removeSource(sourceId)
+  // Remove existing layers and source safely
+  try {
+    if (map.value.getLayer(labelsLayerId)) {
+      console.log('[MapLibreView] Removing layer:', labelsLayerId)
+      map.value.removeLayer(labelsLayerId)
+    }
+    if (map.value.getLayer(outlineLayerId)) {
+      console.log('[MapLibreView] Removing layer:', outlineLayerId)
+      map.value.removeLayer(outlineLayerId)
+    }
+    if (map.value.getLayer(layerId)) {
+      console.log('[MapLibreView] Removing layer:', layerId)
+      map.value.removeLayer(layerId)
+    }
+    if (map.value.getSource(sourceId)) {
+      console.log('[MapLibreView] Removing source:', sourceId)
+      map.value.removeSource(sourceId)
+    }
+  } catch (e) {
+    console.error('[MapLibreView] Error removing layers/source:', e)
   }
 
   // Calculate breaks for Jenks classification
@@ -596,8 +602,19 @@ const updateMapData = () => {
       const votes = props.getVotosForNeighborhood(zoneName)
       const color = getColor(votes, maxVotes)
 
+      // Get display name from series mapping
+      let displayLabel = zoneName
+      if (feature.properties.serie && props.seriesLocalityMapping) {
+        const serieCode = feature.properties.serie.toLowerCase()
+        const localityName = props.seriesLocalityMapping[serieCode]
+        if (localityName) {
+          // Format: "Localidad - SERIE"
+          displayLabel = `${localityName} - ${feature.properties.serie.toUpperCase()}`
+        }
+      }
+
       if (index < 3) {
-        console.log(`[MapLibreView] Feature ${index}:`, { zoneName, votes, color, properties: feature.properties })
+        console.log(`[MapLibreView] Feature ${index}:`, { zoneName, votes, color, displayLabel, properties: feature.properties })
       }
 
       return {
@@ -605,7 +622,8 @@ const updateMapData = () => {
         properties: {
           ...feature.properties,
           color,
-          votes
+          votes,
+          displayLabel
         }
       }
     })
@@ -615,55 +633,68 @@ const updateMapData = () => {
   console.log('[MapLibreView] Sample colors:', geoJsonWithColors.features.slice(0, 3).map((f: any) => f.properties.color))
 
   // Add new source and layers
-  map.value.addSource(sourceId, {
-    type: 'geojson',
-    data: geoJsonWithColors
-  })
+  try {
+    console.log('[MapLibreView] Adding source:', sourceId)
+    map.value.addSource(sourceId, {
+      type: 'geojson',
+      data: geoJsonWithColors
+    })
+    console.log('[MapLibreView] Source added successfully')
 
-  // Add fill layer
-  map.value.addLayer({
-    id: layerId,
-    type: 'fill',
-    source: sourceId,
-    paint: {
-      'fill-color': ['get', 'color'],
-      'fill-opacity': 0.8
-    }
-  })
+    // Add fill layer
+    console.log('[MapLibreView] Adding fill layer:', layerId)
+    map.value.addLayer({
+      id: layerId,
+      type: 'fill',
+      source: sourceId,
+      paint: {
+        'fill-color': ['get', 'color'],
+        'fill-opacity': 0.8
+      }
+    })
+    console.log('[MapLibreView] Fill layer added successfully')
 
-  // Add outline layer
-  map.value.addLayer({
-    id: outlineLayerId,
-    type: 'line',
-    source: sourceId,
-    paint: {
-      'line-color': '#666666',
-      'line-width': 0.5,
-      'line-opacity': 0.6
-    }
-  })
+    // Add outline layer
+    console.log('[MapLibreView] Adding outline layer:', outlineLayerId)
+    map.value.addLayer({
+      id: outlineLayerId,
+      type: 'line',
+      source: sourceId,
+      paint: {
+        'line-color': '#666666',
+        'line-width': 0.5,
+        'line-opacity': 0.6
+      }
+    })
+    console.log('[MapLibreView] Outline layer added successfully')
 
-  // Add label layer for series/barrios
-  map.value.addLayer({
-    id: 'electoral-labels',
-    type: 'symbol',
-    source: sourceId,
-    layout: {
-      'text-field': ['coalesce', ['get', 'serie'], ['get', 'BARRIO'], ['get', 'zona'], ''],
-      'text-font': ['Noto Sans Regular'],
-      'text-size': 11,
-      'text-anchor': 'center',
-      'text-allow-overlap': false,
-      'text-ignore-placement': false,
-      'symbol-placement': 'point'
-    },
-    paint: {
-      'text-color': '#333333',
-      'text-halo-color': '#ffffff',
-      'text-halo-width': 1.5,
-      'text-halo-blur': 0.5
-    }
-  })
+    // Add label layer for series/barrios - now uses displayLabel which includes locality name
+    console.log('[MapLibreView] Adding label layer:', labelsLayerId)
+    map.value.addLayer({
+      id: labelsLayerId,
+      type: 'symbol',
+      source: sourceId,
+      layout: {
+        'text-field': ['coalesce', ['get', 'displayLabel'], ['get', 'serie'], ['get', 'BARRIO'], ['get', 'zona'], ''],
+        'text-font': ['Noto Sans Regular'],
+        'text-size': 10,
+        'text-anchor': 'center',
+        'text-allow-overlap': false,
+        'text-ignore-placement': false,
+        'symbol-placement': 'point'
+      },
+      paint: {
+        'text-color': '#333333',
+        'text-halo-color': '#ffffff',
+        'text-halo-width': 1.5,
+        'text-halo-blur': 0.5
+      }
+    })
+    console.log('[MapLibreView] Label layer added successfully')
+  } catch (e) {
+    console.error('[MapLibreView] Error adding source/layers:', e)
+    throw e
+  }
 
   // Fit map to data bounds
   try {
@@ -736,25 +767,101 @@ const resetView = () => {
   })
 }
 
-watch(() => [props.geojsonData, props.selectedLists, props.selectedCandidates], () => {
-  // If map not initialized yet and geojsonData is now available, initialize it
-  if (!map.value && props.geojsonData && mapContainer.value) {
+// Separate watcher for GeoJSON changes to ensure they're always processed
+watch(() => props.geojsonData, (newGeoJson, oldGeoJson) => {
+  console.log('[MapLibreView] ========================================')
+  console.log('[MapLibreView] geojsonData watcher triggered')
+  console.log('[MapLibreView] Old features count:', oldGeoJson?.features?.length)
+  console.log('[MapLibreView] New features count:', newGeoJson?.features?.length)
+  console.log('[MapLibreView] Map exists:', !!map.value)
+  console.log('[MapLibreView] Map loaded:', map.value?.loaded())
+
+  if (!newGeoJson) {
+    console.log('[MapLibreView] New GeoJSON is null, skipping update')
+    console.log('[MapLibreView] ========================================')
+    return
+  }
+
+  // Check if GeoJSON actually changed (comparing feature counts)
+  const featuresChanged = oldGeoJson?.features?.length !== newGeoJson.features?.length
+
+  if (!featuresChanged && oldGeoJson && newGeoJson) {
+    console.log('[MapLibreView] GeoJSON features count is the same, skipping update')
+    console.log('[MapLibreView] ========================================')
+    return
+  }
+
+  if (!map.value && mapContainer.value) {
+    console.log('[MapLibreView] Map not initialized, initializing...')
     isMapLoading.value = true
     initMap()
   } else if (map.value && map.value.loaded()) {
+    console.log('[MapLibreView] Map exists and is loaded, updating data')
     updateMapData()
+  } else if (map.value && !map.value.loaded()) {
+    console.warn('[MapLibreView] Map exists but not fully loaded yet, waiting...')
+  } else {
+    console.warn('[MapLibreView] Map not ready')
   }
-}, { deep: true })
+  console.log('[MapLibreView] ========================================')
+}, { flush: 'post' })
 
-watch(() => [props.mapCenter, props.mapZoom], () => {
-  if (map.value) {
-    map.value.flyTo({
-      center: [props.mapCenter[1], props.mapCenter[0]],
-      zoom: props.mapZoom,
-      duration: 800
-    })
+// Separate watcher for selection changes (lists/candidates) to update colors/data
+watch(() => [props.selectedLists, props.selectedCandidates], () => {
+  console.log('[MapLibreView] ========================================')
+  console.log('[MapLibreView] selectedLists/selectedCandidates watcher triggered')
+  console.log('[MapLibreView] Selected lists:', props.selectedLists.length)
+  console.log('[MapLibreView] Selected candidates:', props.selectedCandidates.length)
+  console.log('[MapLibreView] Map exists:', !!map.value)
+  console.log('[MapLibreView] Map loaded:', map.value?.loaded())
+
+  if (map.value && map.value.loaded()) {
+    console.log('[MapLibreView] Updating map colors due to selection changes')
+    updateMapData()
+  } else {
+    console.log('[MapLibreView] Map not ready for update')
   }
-})
+  console.log('[MapLibreView] ========================================')
+}, { deep: true, flush: 'post' })
+
+watch(() => [props.mapCenter, props.mapZoom], (newVal, oldVal) => {
+  console.log('[MapLibreView] ========================================')
+  console.log('[MapLibreView] mapCenter/mapZoom watcher triggered')
+  console.log('[MapLibreView] Old center:', oldVal?.[0], 'zoom:', oldVal?.[1])
+  console.log('[MapLibreView] New center:', newVal[0], 'zoom:', newVal[1])
+  console.log('[MapLibreView] Map exists:', !!map.value)
+  console.log('[MapLibreView] Map loaded:', map.value?.loaded())
+
+  if (map.value && map.value.loaded()) {
+    const center = [props.mapCenter[1], props.mapCenter[0]]
+    console.log('[MapLibreView] ✈️ Executing flyTo:', center, 'zoom:', props.mapZoom)
+
+    try {
+      map.value.flyTo({
+        center: center,
+        zoom: props.mapZoom,
+        duration: 1200,  // Increased duration to make movement more visible
+        essential: true  // Ensures animation happens even if user prefers reduced motion
+      })
+      console.log('[MapLibreView] ✅ flyTo command sent successfully')
+
+      // After flight completes, ensure GeoJSON is updated if needed
+      map.value.once('moveend', () => {
+        console.log('[MapLibreView] 🏁 flyTo animation completed')
+        if (map.value && map.value.loaded()) {
+          console.log('[MapLibreView] Map ready after flight, checking if data update needed')
+        }
+      })
+    } catch (e) {
+      console.error('[MapLibreView] ❌ Error during flyTo:', e)
+    }
+  } else {
+    console.warn('[MapLibreView] ⚠️ Map not ready for flyTo')
+    console.warn('[MapLibreView] Map value:', map.value)
+    console.warn('[MapLibreView] Map loaded:', map.value?.loaded())
+  }
+  console.log('[MapLibreView] ========================================')
+}, { deep: true, flush: 'post' })
 
 // Watch for selection changes - unpin tooltip when selections change
 watch(() => [props.selectedLists, props.selectedCandidates], () => {
@@ -762,6 +869,29 @@ watch(() => [props.selectedLists, props.selectedCandidates], () => {
     unpinTooltip()
   }
 }, { deep: true })
+
+// Watch for region name changes (indicates a department switch)
+watch(() => props.regionName, (newRegionName, oldRegionName) => {
+  console.log('[MapLibreView] ========================================')
+  console.log('[MapLibreView] Region name changed')
+  console.log('[MapLibreView] Old region:', oldRegionName)
+  console.log('[MapLibreView] New region:', newRegionName)
+  console.log('[MapLibreView] Current GeoJSON features:', props.geojsonData?.features?.length)
+  console.log('[MapLibreView] Map exists:', !!map.value)
+  console.log('[MapLibreView] Map loaded:', map.value?.loaded())
+
+  // When region changes, ensure map data is fully updated
+  // This is a fallback in case the GeoJSON watcher didn't catch it
+  if (oldRegionName && newRegionName !== oldRegionName && map.value && map.value.loaded() && props.geojsonData) {
+    console.log('[MapLibreView] Region changed! Force updating map data')
+    setTimeout(() => {
+      if (map.value && map.value.loaded()) {
+        updateMapData()
+      }
+    }, 100)  // Small delay to ensure GeoJSON is ready
+  }
+  console.log('[MapLibreView] ========================================')
+})
 
 onMounted(() => {
   initMap()
