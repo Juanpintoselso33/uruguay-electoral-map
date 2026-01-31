@@ -558,11 +558,17 @@ const updateMapData = () => {
   }
 
   // Calculate breaks for Jenks classification
-  const allVotes = props.geojsonData.features.map((feature: any) => {
-    const zoneName = feature.properties.serie || feature.properties.BARRIO || feature.properties.zona
-    return props.getVotosForNeighborhood(zoneName)
-  })
-  calculateBreaks(allVotes)
+  const allVotes = props.geojsonData.features
+    .map((feature: any) => {
+      const zoneName = feature.properties.serie || feature.properties.BARRIO || feature.properties.zona
+      if (!zoneName) return 0
+      return props.getVotosForNeighborhood(zoneName)
+    })
+    .filter(v => v > 0) // Only include zones with votes
+
+  if (allVotes.length > 0) {
+    calculateBreaks(allVotes)
+  }
 
   // Calculate max votes for fallback
   const maxVotes = props.votosPorListas
@@ -697,19 +703,15 @@ watch(() => [props.geojsonData, props.selectedLists, props.selectedCandidates], 
   if (!map.value && props.geojsonData && mapContainer.value) {
     isMapLoading.value = true
     initMap()
-  } else if (map.value) {
-    if (map.value.loaded()) {
+  } else if (map.value && map.value.loaded()) {
+    try {
       updateMapData()
-    } else {
-      // Wait for map to be idle (all tiles loaded), then update
-      isMapLoading.value = true
-      map.value.once('idle', () => {
-        updateMapData()
-        isMapLoading.value = false
-      })
+    } catch (error) {
+      console.error('[MapLibreView] Error updating map data:', error)
+      isMapLoading.value = false
     }
   }
-}, { deep: true })
+})
 
 watch(() => [props.mapCenter, props.mapZoom], () => {
   if (map.value) {

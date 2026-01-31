@@ -420,6 +420,11 @@ export const useElectoralStore = defineStore('electoral', () => {
    * @returns Total votes for the zone
    */
   function getVotesForZone(votes: Record<string, number>, zoneName: string): number {
+    // Handle undefined or null zoneName
+    if (!zoneName || typeof zoneName !== 'string') {
+      return 0;
+    }
+
     // Try direct match first
     if (votes[zoneName] !== undefined) {
       return votes[zoneName];

@@ -1,8 +1,30 @@
 {
   "availableElections": [
+    "internas-2024",
     "nacionales-2019"
   ],
   "departmentsByElection": {
+    "internas-2024": [
+      "artigas",
+      "canelones",
+      "cerro_largo",
+      "colonia",
+      "durazno",
+      "flores",
+      "florida",
+      "lavalleja",
+      "maldonado",
+      "montevideo",
+      "paysandu",
+      "rio_negro",
+      "rivera",
+      "rocha",
+      "salto",
+      "san_jose",
+      "soriano",
+      "tacuarembo",
+      "treinta_y_tres"
+    ],
     "nacionales-2019": [
       "artigas",
       "canelones",
@@ -25,5 +47,5 @@
       "treinta_y_tres"
     ]
   },
-  "generatedAt": "2026-01-31T02:19:37.829Z"
+  "generatedAt": "2026-01-31T20:00:00.000Z"
 }
