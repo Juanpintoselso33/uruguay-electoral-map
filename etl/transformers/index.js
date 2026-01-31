@@ -119,6 +119,11 @@ function processElectoralCSV(csvContent, type) {
   let totalVotes = 0;
 
   data.forEach(row => {
+    // Skip VOTO_LEMA records in nacionales (only process HOJA_EN)
+    if (schemaType === 'nacionales' && row.TipoRegistro && row.TipoRegistro !== 'HOJA_EN') {
+      return;
+    }
+
     // Normalize row based on schema
     const normalized = normalizeRow(row, schemaType);
 
@@ -345,6 +350,11 @@ function normalizeGeoJSON(geojson, department) {
         }
       }
 
+      // Preserve serie property separately for electoral data matching
+      // Convert to lowercase for consistent matching with electoral data
+      const serieValue = feature.properties?.serie || feature.properties?.SERIE || '';
+      const normalizedSerie = serieValue ? serieValue.toLowerCase() : '';
+
       return {
         type: 'Feature',
         geometry: feature.geometry,
@@ -353,7 +363,12 @@ function normalizeGeoJSON(geojson, department) {
           name: zoneName,
           originalName: zoneName,
           originalProperty: originalProp,
-          department
+          department,
+          // Include serie in lowercase for direct matching with electoral data
+          serie: normalizedSerie,
+          // Also include BARRIO and zona if they exist for backwards compatibility
+          BARRIO: feature.properties?.BARRIO || feature.properties?.barrio || normalizedSerie || zoneName,
+          zona: feature.properties?.zona || normalizedSerie || zoneName
         }
       };
     })

@@ -1,10 +1,3 @@
-{
-  "department": "rivera",
-  "displayName": "Rivera",
-  "election": "nacionales-2019",
-  "processedAt": "2026-01-31T02:19:22.598Z",
-  "files": {
-    "odn": null,
-    "odd": "odd.json"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:97882716f23a3fd1856e0e803aba483bd82f7bd533d903e0bbb09975710c68b3
+size 199

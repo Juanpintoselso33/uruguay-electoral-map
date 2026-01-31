@@ -1,10 +1,3 @@
-{
-  "department": "cerro_largo",
-  "displayName": "Cerro largo",
-  "election": "nacionales-2019",
-  "processedAt": "2026-01-31T02:19:22.230Z",
-  "files": {
-    "odn": null,
-    "odd": "odd.json"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d66839af07a1742df2425135cb69ec6d98807d48130c210e2e3bdb1ebd8e30f3
+size 209

@@ -1,10 +1,3 @@
-{
-  "department": "salto",
-  "displayName": "Salto",
-  "election": "nacionales-2019",
-  "processedAt": "2026-01-31T02:19:22.626Z",
-  "files": {
-    "odn": null,
-    "odd": "odd.json"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a5abe9025ea3396feac2f8eee675ee3b10419fc83025636af131fd693e7e9171
+size 197

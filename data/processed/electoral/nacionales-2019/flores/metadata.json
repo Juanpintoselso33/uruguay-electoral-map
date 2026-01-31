@@ -1,10 +1,3 @@
-{
-  "department": "flores",
-  "displayName": "Flores",
-  "election": "nacionales-2019",
-  "processedAt": "2026-01-31T02:19:22.259Z",
-  "files": {
-    "odn": null,
-    "odd": "odd.json"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:539b25aa2be00c6d61b79798827c1ab428ff33d5a82a4ee7ce6084dbf9fa8291
+size 199

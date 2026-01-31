@@ -1,10 +1,3 @@
-{
-  "department": "montevideo",
-  "displayName": "Montevideo",
-  "election": "nacionales-2019",
-  "processedAt": "2026-01-31T02:19:22.563Z",
-  "files": {
-    "odn": null,
-    "odd": "odd.json"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:c94bc64226d0526507662c5ff462468480ade937342909cdae1c916fc271df84
+size 207

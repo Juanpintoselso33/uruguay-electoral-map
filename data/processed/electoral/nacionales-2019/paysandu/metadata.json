@@ -1,10 +1,3 @@
-{
-  "department": "paysandu",
-  "displayName": "Paysandu",
-  "election": "nacionales-2019",
-  "processedAt": "2026-01-31T02:19:22.579Z",
-  "files": {
-    "odn": null,
-    "odd": "odd.json"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:855b32e490a8a34e9cec2d711879299c12ea0f219c9cf99e89d4476de3429668
+size 203
