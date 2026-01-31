@@ -1,0 +1,131 @@
+{
+  "csv": {
+    "electoral": {
+      "odn": {
+        "requiredColumns": [
+          "PARTIDO",
+          "DEPTO",
+          "CIRCUITO",
+          "SERIES",
+          "ESCRUTINIO",
+          "PRECANDIDATO",
+          "HOJA",
+          "ZONA"
+        ],
+        "optionalColumns": ["CNT_VOTOS"],
+        "columnTypes": {
+          "PARTIDO": "string",
+          "DEPTO": "string",
+          "CIRCUITO": "string",
+          "SERIES": "string",
+          "ESCRUTINIO": "string",
+          "PRECANDIDATO": "string",
+          "HOJA": "string",
+          "CNT_VOTOS": "integer",
+          "ZONA": "string"
+        }
+      },
+      "odd": {
+        "requiredColumns": [
+          "PARTIDO",
+          "DEPTO",
+          "CIRCUITO",
+          "SERIES",
+          "ESCRUTINIO",
+          "HOJA",
+          "CNT_VOTOS",
+          "ZONA"
+        ],
+        "optionalColumns": ["PRECANDIDATO"],
+        "columnTypes": {
+          "PARTIDO": "string",
+          "DEPTO": "string",
+          "CIRCUITO": "string",
+          "SERIES": "string",
+          "ESCRUTINIO": "string",
+          "HOJA": "string",
+          "CNT_VOTOS": "integer",
+          "ZONA": "string"
+        }
+      },
+      "desgloseVotos": {
+        "requiredColumns": [
+          "DEPTO",
+          "CIRCUITO",
+          "SERIE",
+          "MESA",
+          "PARTIDO",
+          "HOJA",
+          "VOTOS"
+        ]
+      },
+      "integracionHojas": {
+        "requiredColumns": [
+          "DEPTO",
+          "HOJA",
+          "PARTIDO",
+          "PRECANDIDATO",
+          "SUBLEMA"
+        ]
+      }
+    }
+  },
+  "geojson": {
+    "required": {
+      "type": "FeatureCollection",
+      "minFeatures": 1
+    },
+    "featureProperties": {
+      "zoneIdentifiers": ["BARRIO", "texto", "zona", "nombre", "name"],
+      "optional": ["id", "ogc_fid", "objectid", "serie", "depto"]
+    },
+    "constraints": {
+      "maxSizeMB": 3,
+      "targetSizeMB": 1,
+      "coordinatePrecision": 5,
+      "uruguayBounds": {
+        "north": -30.0,
+        "south": -35.0,
+        "east": -53.0,
+        "west": -58.5
+      }
+    }
+  },
+  "output": {
+    "electoral": {
+      "format": "json",
+      "structure": {
+        "metadata": {
+          "department": "string",
+          "type": "odn|odd",
+          "processedAt": "ISO8601",
+          "sourceVersion": "string",
+          "stats": {
+            "totalRows": "integer",
+            "uniqueLists": "integer",
+            "uniqueZones": "integer",
+            "uniqueParties": "integer",
+            "totalVotes": "integer"
+          }
+        },
+        "data": {
+          "votosPorListas": "Record<string, Record<string, number>>",
+          "maxVotosPorListas": "Record<string, number>",
+          "partiesByList": "Record<string, string>",
+          "precandidatosByList": "Record<string, string>",
+          "zoneList": "string[]",
+          "partyList": "string[]"
+        }
+      }
+    },
+    "geographic": {
+      "format": "geojson",
+      "normalizedProperties": {
+        "id": "string (unique identifier)",
+        "name": "string (normalized zone name)",
+        "originalName": "string (original property value)",
+        "department": "string"
+      }
+    }
+  }
+}

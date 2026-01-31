@@ -1,0 +1,287 @@
+[
+  {
+    "name": "Artigas",
+    "slug": "artigas",
+    "odnCsvPath": "/artigas_odn.csv",
+    "oddCsvPath": "/artigas_odd.csv",
+    "geojsonPath": "/artigas_map.json",
+    "odnJsonPath": "/data/electoral/artigas/odn.json",
+    "oddJsonPath": "/data/electoral/artigas/odd.json",
+    "mapJsonPath": "/data/geographic/artigas_map.json",
+    "mapCenter": [
+      -30.58642483467338,
+      -56.84803950659807
+    ],
+    "mapZoom": 9
+  },
+  {
+    "name": "Canelones",
+    "slug": "canelones",
+    "odnCsvPath": "/canelones_odn.csv",
+    "oddCsvPath": "/canelones_odd.csv",
+    "geojsonPath": "/canelones_map.json",
+    "odnJsonPath": "/data/electoral/canelones/odn.json",
+    "oddJsonPath": "/data/electoral/canelones/odd.json",
+    "mapJsonPath": "/data/geographic/canelones_map.json",
+    "mapCenter": [
+      -34.54285654606829,
+      -55.94249214756056
+    ],
+    "mapZoom": 9
+  },
+  {
+    "name": "Cerro largo",
+    "slug": "cerro_largo",
+    "odnCsvPath": "/cerro_largo_odn.csv",
+    "oddCsvPath": "/cerro_largo_odd.csv",
+    "geojsonPath": "/cerro_largo_map.json",
+    "odnJsonPath": "/data/electoral/cerro_largo/odn.json",
+    "oddJsonPath": "/data/electoral/cerro_largo/odd.json",
+    "mapJsonPath": "/data/geographic/cerro_largo_map.json",
+    "mapCenter": [
+      -32.34042504699127,
+      -54.26905842739728
+    ],
+    "mapZoom": 9
+  },
+  {
+    "name": "Colonia",
+    "slug": "colonia",
+    "odnCsvPath": "/colonia_odn.csv",
+    "oddCsvPath": "/colonia_odd.csv",
+    "geojsonPath": "/colonia_map.json",
+    "odnJsonPath": "/data/electoral/colonia/odn.json",
+    "oddJsonPath": "/data/electoral/colonia/odd.json",
+    "mapJsonPath": "/data/geographic/colonia_map.json",
+    "mapCenter": [
+      -34.12017047116345,
+      -57.70271813188491
+    ],
+    "mapZoom": 9
+  },
+  {
+    "name": "Durazno",
+    "slug": "durazno",
+    "odnCsvPath": "/durazno_odn.csv",
+    "oddCsvPath": "/durazno_odd.csv",
+    "geojsonPath": "/durazno_map.json",
+    "odnJsonPath": "/data/electoral/durazno/odn.json",
+    "oddJsonPath": "/data/electoral/durazno/odd.json",
+    "mapJsonPath": "/data/geographic/durazno_map.json",
+    "mapCenter": [
+      -32.958559520957664,
+      -56.097917797559916
+    ],
+    "mapZoom": 9
+  },
+  {
+    "name": "Flores",
+    "slug": "flores",
+    "odnCsvPath": "/flores_odn.csv",
+    "oddCsvPath": "/flores_odd.csv",
+    "geojsonPath": "/flores_map.json",
+    "odnJsonPath": "/data/electoral/flores/odn.json",
+    "oddJsonPath": "/data/electoral/flores/odd.json",
+    "mapJsonPath": "/data/geographic/flores_map.json",
+    "mapCenter": [
+      -33.554772238788644,
+      -56.87908763606445
+    ],
+    "mapZoom": 9
+  },
+  {
+    "name": "Florida",
+    "slug": "florida",
+    "odnCsvPath": "/florida_odn.csv",
+    "oddCsvPath": "/florida_odd.csv",
+    "geojsonPath": "/florida_map.json",
+    "odnJsonPath": "/data/electoral/florida/odn.json",
+    "oddJsonPath": "/data/electoral/florida/odd.json",
+    "mapJsonPath": "/data/geographic/florida_map.json",
+    "mapCenter": [
+      -33.76312316654034,
+      -55.81741302982016
+    ],
+    "mapZoom": 9
+  },
+  {
+    "name": "Lavalleja",
+    "slug": "lavalleja",
+    "odnCsvPath": "/lavalleja_odn.csv",
+    "oddCsvPath": "/lavalleja_odd.csv",
+    "geojsonPath": "/lavalleja_map.json",
+    "odnJsonPath": "/data/electoral/lavalleja/odn.json",
+    "oddJsonPath": "/data/electoral/lavalleja/odd.json",
+    "mapJsonPath": "/data/geographic/lavalleja_map.json",
+    "mapCenter": [
+      -33.977275298568685,
+      -54.877079018399996
+    ],
+    "mapZoom": 9
+  },
+  {
+    "name": "Maldonado",
+    "slug": "maldonado",
+    "odnCsvPath": "/maldonado_odn.csv",
+    "oddCsvPath": "/maldonado_odd.csv",
+    "geojsonPath": "/maldonado_map.json",
+    "odnJsonPath": "/data/electoral/maldonado/odn.json",
+    "oddJsonPath": "/data/electoral/maldonado/odd.json",
+    "mapJsonPath": "/data/geographic/maldonado_map.json",
+    "mapCenter": [
+      -34.45145950335741,
+      -54.97407919463234
+    ],
+    "mapZoom": 9
+  },
+  {
+    "name": "Montevideo",
+    "slug": "montevideo",
+    "odnCsvPath": "/montevideo_odn.csv",
+    "oddCsvPath": "/montevideo_odd.csv",
+    "geojsonPath": "/montevideo_map.json",
+    "odnJsonPath": "/data/electoral/montevideo/odn.json",
+    "oddJsonPath": "/data/electoral/montevideo/odd.json",
+    "mapJsonPath": "/data/geographic/montevideo_map.json",
+    "mapCenter": [
+      -34.8199625,
+      -56.2275815
+    ],
+    "mapZoom": 9
+  },
+  {
+    "name": "Paysandu",
+    "slug": "paysandu",
+    "odnCsvPath": "/paysandu_odn.csv",
+    "oddCsvPath": "/paysandu_odd.csv",
+    "geojsonPath": "/paysandu_map.json",
+    "odnJsonPath": "/data/electoral/paysandu/odn.json",
+    "oddJsonPath": "/data/electoral/paysandu/odd.json",
+    "mapJsonPath": "/data/geographic/paysandu_map.json",
+    "mapCenter": [
+      -32.02429249901908,
+      -57.21738726773006
+    ],
+    "mapZoom": 9
+  },
+  {
+    "name": "Rio negro",
+    "slug": "rio_negro",
+    "odnCsvPath": "/rio_negro_odn.csv",
+    "oddCsvPath": "/rio_negro_odd.csv",
+    "geojsonPath": "/rio_negro_map.json",
+    "odnJsonPath": "/data/electoral/rio_negro/odn.json",
+    "oddJsonPath": "/data/electoral/rio_negro/odd.json",
+    "mapJsonPath": "/data/geographic/rio_negro_map.json",
+    "mapCenter": [
+      -32.85870289903381,
+      -57.47003169317347
+    ],
+    "mapZoom": 9
+  },
+  {
+    "name": "Rivera",
+    "slug": "rivera",
+    "odnCsvPath": "/rivera_odn.csv",
+    "oddCsvPath": "/rivera_odd.csv",
+    "geojsonPath": "/rivera_map.json",
+    "odnJsonPath": "/data/electoral/rivera/odn.json",
+    "oddJsonPath": "/data/electoral/rivera/odd.json",
+    "mapJsonPath": "/data/geographic/rivera_map.json",
+    "mapCenter": [
+      -31.471484989005575,
+      -55.318348129884555
+    ],
+    "mapZoom": 9
+  },
+  {
+    "name": "Rocha",
+    "slug": "rocha",
+    "odnCsvPath": "/rocha_odn.csv",
+    "oddCsvPath": "/rocha_odd.csv",
+    "geojsonPath": "/rocha_map.json",
+    "odnJsonPath": "/data/electoral/rocha/odn.json",
+    "oddJsonPath": "/data/electoral/rocha/odd.json",
+    "mapJsonPath": "/data/geographic/rocha_map.json",
+    "mapCenter": [
+      -33.97589794910215,
+      -53.971096895476364
+    ],
+    "mapZoom": 9
+  },
+  {
+    "name": "Salto",
+    "slug": "salto",
+    "odnCsvPath": "/salto_odn.csv",
+    "oddCsvPath": "/salto_odd.csv",
+    "geojsonPath": "/salto_map.json",
+    "odnJsonPath": "/data/electoral/salto/odn.json",
+    "oddJsonPath": "/data/electoral/salto/odd.json",
+    "mapJsonPath": "/data/geographic/salto_map.json",
+    "mapCenter": [
+      -31.30822206717366,
+      -57.04427618239862
+    ],
+    "mapZoom": 9
+  },
+  {
+    "name": "San jose",
+    "slug": "san_jose",
+    "odnCsvPath": "/san_jose_odn.csv",
+    "oddCsvPath": "/san_jose_odd.csv",
+    "geojsonPath": "/san_jose_map.json",
+    "odnJsonPath": "/data/electoral/san_jose/odn.json",
+    "oddJsonPath": "/data/electoral/san_jose/odd.json",
+    "mapJsonPath": "/data/geographic/san_jose_map.json",
+    "mapCenter": [
+      -34.308503658080014,
+      -56.748631459110754
+    ],
+    "mapZoom": 9
+  },
+  {
+    "name": "Soriano",
+    "slug": "soriano",
+    "odnCsvPath": "/soriano_odn.csv",
+    "oddCsvPath": "/soriano_odd.csv",
+    "geojsonPath": "/soriano_map.json",
+    "odnJsonPath": "/data/electoral/soriano/odn.json",
+    "oddJsonPath": "/data/electoral/soriano/odd.json",
+    "mapJsonPath": "/data/geographic/soriano_map.json",
+    "mapCenter": [
+      -33.47878347886777,
+      -57.764435413191535
+    ],
+    "mapZoom": 9
+  },
+  {
+    "name": "Tacuarembo",
+    "slug": "tacuarembo",
+    "odnCsvPath": "/tacuarembo_odn.csv",
+    "oddCsvPath": "/tacuarembo_odd.csv",
+    "geojsonPath": "/tacuarembo_map.json",
+    "odnJsonPath": "/data/electoral/tacuarembo/odn.json",
+    "oddJsonPath": "/data/electoral/tacuarembo/odd.json",
+    "mapJsonPath": "/data/geographic/tacuarembo_map.json",
+    "mapCenter": [
+      -32.04799367651278,
+      -55.673216278425286
+    ],
+    "mapZoom": 9
+  },
+  {
+    "name": "Treinta y tres",
+    "slug": "treinta_y_tres",
+    "odnCsvPath": "/treinta_y_tres_odn.csv",
+    "oddCsvPath": "/treinta_y_tres_odd.csv",
+    "geojsonPath": "/treinta_y_tres_map.json",
+    "odnJsonPath": "/data/electoral/treinta_y_tres/odn.json",
+    "oddJsonPath": "/data/electoral/treinta_y_tres/odd.json",
+    "mapJsonPath": "/data/geographic/treinta_y_tres_map.json",
+    "mapCenter": [
+      -33.08036011629321,
+      -54.22556489637752
+    ],
+    "mapZoom": 9
+  }
+]

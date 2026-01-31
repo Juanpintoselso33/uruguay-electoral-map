@@ -1,0 +1,90 @@
+{
+  "electoral": {
+    "name": "Corte Electoral Uruguay - Elecciones Internas 2024",
+    "baseUrl": "https://catalogodatos.gub.uy/dataset/48a4e7f5-6909-41a0-aa8a-95dc42cc201f/resource",
+    "resources": {
+      "planCircuital": {
+        "id": "a46e47e5-72e8-4027-9c0f-f8df2a103c21",
+        "filename": "plan-circuital.csv",
+        "description": "Plan circuital con información de circuitos electorales"
+      },
+      "desgloseVotos": {
+        "id": "dec32eb5-1754-4810-af7a-8c1121259206",
+        "filename": "desglose-de-votos.csv",
+        "description": "Votos desglosados por CRV y hoja de votación"
+      },
+      "totalesGenerales": {
+        "id": "f7dd08cf-5978-43c2-acc5-b2854d7029dd",
+        "filename": "totales-generales.csv",
+        "description": "Totales generales: habilitados, votos, observados"
+      },
+      "integracionHojas": {
+        "id": "4937d1a4-0847-4cf7-a2e1-95688ce5c40c",
+        "filename": "integracion-hojas-de-votacion.csv",
+        "description": "Integración de hojas con candidatos por departamento"
+      }
+    },
+    "downloadUrl": "https://catalogodatos.gub.uy/dataset/48a4e7f5-6909-41a0-aa8a-95dc42cc201f/resource/{resourceId}/download/{filename}"
+  },
+  "geographic": {
+    "name": "IDE Uruguay - Datos Espaciales",
+    "departamentos": {
+      "url": "https://catalogodatos.gub.uy/dataset/ide-limites-departamentales",
+      "description": "Límites departamentales oficiales"
+    },
+    "alternativeSources": {
+      "montevideo": {
+        "url": "https://raw.githubusercontent.com/vierja/geojson_montevideo/master/barrios.geojson",
+        "description": "Barrios de Montevideo - GitHub"
+      },
+      "uruguayDepartamentos": {
+        "url": "https://raw.githubusercontent.com/alotropico/uruguay.geo/master/uruguay-departamentos.geojson",
+        "description": "Departamentos simplificados - GitHub"
+      }
+    }
+  },
+  "departments": {
+    "codes": {
+      "AR": "Artigas",
+      "CA": "Canelones",
+      "CL": "Cerro Largo",
+      "CO": "Colonia",
+      "DU": "Durazno",
+      "FS": "Flores",
+      "FD": "Florida",
+      "LA": "Lavalleja",
+      "MA": "Maldonado",
+      "MO": "Montevideo",
+      "PA": "Paysandú",
+      "RN": "Río Negro",
+      "RV": "Rivera",
+      "RO": "Rocha",
+      "SA": "Salto",
+      "SJ": "San José",
+      "SO": "Soriano",
+      "TA": "Tacuarembó",
+      "TT": "Treinta y Tres"
+    },
+    "slugs": {
+      "Artigas": "artigas",
+      "Canelones": "canelones",
+      "Cerro Largo": "cerro_largo",
+      "Colonia": "colonia",
+      "Durazno": "durazno",
+      "Flores": "flores",
+      "Florida": "florida",
+      "Lavalleja": "lavalleja",
+      "Maldonado": "maldonado",
+      "Montevideo": "montevideo",
+      "Paysandú": "paysandu",
+      "Río Negro": "rio_negro",
+      "Rivera": "rivera",
+      "Rocha": "rocha",
+      "Salto": "salto",
+      "San José": "san_jose",
+      "Soriano": "soriano",
+      "Tacuarembó": "tacuarembo",
+      "Treinta y Tres": "treinta_y_tres"
+    }
+  }
+}

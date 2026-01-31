@@ -1,0 +1,2 @@
+# Processed geographic data (optimized GeoJSON)
+# Generated via: npm run etl:transform

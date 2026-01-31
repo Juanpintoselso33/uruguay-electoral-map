@@ -1,0 +1,53 @@
+{
+  "project": {
+    "name": "uruguay-electoral-map",
+    "description": "Interactive electoral map visualization for Uruguay's 19 departments",
+    "version": "1.0.0"
+  },
+  "agents": {
+    "available": [
+      "electoral-data-agent",
+      "geojson-map-agent",
+      "vue-frontend-agent",
+      "electoral-orchestrator"
+    ],
+    "default": "electoral-orchestrator"
+  },
+  "skills": {
+    "available": [
+      "add-department",
+      "validate-csv",
+      "optimize-geojson",
+      "git-commit"
+    ]
+  },
+  "commands": {
+    "available": [
+      "add-department",
+      "validate-data"
+    ]
+  },
+  "conventions": {
+    "csv": {
+      "encoding": "UTF-8",
+      "delimiter": ",",
+      "required_columns": ["PARTIDO", "DEPTO", "CIRCUITO", "SERIES", "ESCRUTINIO", "PRECANDIDATO", "HOJA", "CNT_VOTOS", "ZONA"]
+    },
+    "geojson": {
+      "max_size_mb": 3,
+      "required_properties": ["BARRIO", "texto", "zona"],
+      "coordinate_system": "EPSG:4326"
+    },
+    "naming": {
+      "csv_pattern": "{department}_{type}.csv",
+      "geojson_pattern": "{department}_map.json",
+      "types": ["odn", "odd"]
+    }
+  },
+  "departments": {
+    "implemented": ["montevideo", "maldonado", "colonia", "treinta_y_tres"],
+    "priority_high": ["canelones", "san_jose", "rocha"],
+    "priority_medium": ["florida", "lavalleja", "durazno", "flores", "soriano", "rio_negro", "paysandu", "salto"],
+    "priority_low": ["artigas", "rivera", "tacuarembo", "cerro_largo"]
+  }
+}

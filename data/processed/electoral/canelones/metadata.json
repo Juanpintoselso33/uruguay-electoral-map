@@ -1,0 +1,9 @@
+{
+  "department": "canelones",
+  "displayName": "Canelones",
+  "processedAt": "2026-01-31T01:13:09.386Z",
+  "files": {
+    "odn": "odn.json",
+    "odd": "odd.json"
+  }
+}
