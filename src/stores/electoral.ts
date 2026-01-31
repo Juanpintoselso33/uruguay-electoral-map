@@ -300,13 +300,33 @@ export const useElectoralStore = defineStore('electoral', () => {
         precandidatos = processed.precandidatosByList;
       }
 
-      // Load GeoJSON (same for all elections)
-      const geojsonPath = region.mapJsonPath || region.geojsonPath;
+      // Load GeoJSON - use series map for internas, regular map for others
+      let geojsonPath = region.mapJsonPath || region.geojsonPath;
+
+      // For internas elections, try to load series map first
+      if (electionToUse.includes('internas')) {
+        const seriesMapPath = geojsonPath.replace('_map.json', '_series_map.json');
+        console.log('[Electoral Store] Loading series map:', seriesMapPath);
+
+        try {
+          const seriesResponse = await fetch(seriesMapPath);
+          if (seriesResponse.ok) {
+            geojsonPath = seriesMapPath;
+          } else {
+            console.warn('[Electoral Store] Series map not found, using regular map');
+          }
+        } catch (err) {
+          console.warn('[Electoral Store] Error loading series map, using regular map:', err);
+        }
+      }
+
+      console.log('[Electoral Store] Final geojsonPath:', geojsonPath);
       const geojsonResponse = await fetch(geojsonPath);
       if (!geojsonResponse.ok) {
         throw new Error('Failed to fetch GeoJSON data');
       }
       const geojsonData = await geojsonResponse.json();
+      console.log('[Electoral Store] Loaded GeoJSON with', geojsonData.features?.length, 'features');
 
       // Load series-to-locality mapping if available
       let seriesLocalityMapping: Record<string, string> = {};
