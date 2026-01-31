@@ -104,6 +104,7 @@ import { computed } from 'vue'
 import { Pie } from 'vue-chartjs'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 import { Download, X } from 'lucide-vue-next'
+import { PARTY_COLORS, getPartyColor } from '@/utils/partyColors'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -153,23 +154,14 @@ const votesByParty = computed(() => {
   return partyVotes
 })
 
-// Party colors (simplified)
-const partyColors: Record<string, string> = {
-  'FRENTE AMPLIO': '#ef4444',
-  'PARTIDO NACIONAL': '#3b82f6',
-  'PARTIDO COLORADO': '#f97316',
-  'CABILDO ABIERTO': '#10b981',
-  'PARTIDO INDEPENDIENTE': '#8b5cf6'
-}
-
-// Chart data
+// Chart data using official party colors
 const partyChartData = computed(() => {
   const parties = Object.keys(votesByParty.value)
   return {
     labels: parties,
     datasets: [{
       data: parties.map(p => votesByParty.value[p]),
-      backgroundColor: parties.map(p => partyColors[p] || '#94a3b8'),
+      backgroundColor: parties.map(p => getPartyColor(p)),
       borderWidth: 2,
       borderColor: '#fff'
     }]
