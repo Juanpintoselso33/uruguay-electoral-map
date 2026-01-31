@@ -49,6 +49,27 @@
         <!-- Party filter -->
         <PartyFilter v-model="selectedParty" :parties="uniqueParties" @update:modelValue="onPartySelect" />
 
+        <!-- Active filters chips -->
+        <ActiveFilters
+          :selected-party="selectedParty"
+          :search-query="searchQuery"
+          :selected-lists="selectedLists"
+          :selected-candidates="selectedCandidates"
+          :is-o-d-n="localIsODN"
+          @clear-all="handleClearAll"
+          @remove-party="handleRemoveParty"
+          @remove-search="handleRemoveSearch"
+          @remove-selections="clearSelection"
+        />
+
+        <!-- Results count -->
+        <div v-if="showLists" class="results-count">
+          <span>Mostrando {{ filteredLists.length }} de {{ lists.length }} listas</span>
+        </div>
+        <div v-else class="results-count">
+          <span>Mostrando {{ filteredCandidates.length }} candidatos</span>
+        </div>
+
         <!-- Lists or Candidates grid -->
         <ListGrid
           v-if="showLists"
@@ -109,6 +130,7 @@ import DataSourceToggle from './DataSourceToggle.vue';
 import PartyFilter from './PartyFilter.vue';
 import ListGrid from './ListGrid.vue';
 import CandidateGrid from './CandidateGrid.vue';
+import ActiveFilters from './ActiveFilters.vue';
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue';
 
 interface Props {
@@ -165,6 +187,14 @@ const {
 // Initialize selected party from props
 selectedParty.value = props.selectedParty;
 
+// Keep local selectedParty in sync with props
+watch(
+  () => props.selectedParty,
+  (newValue) => {
+    selectedParty.value = newValue;
+  }
+);
+
 // Event handlers
 const onDataSourceToggle = () => {
   emit('updateIsODN', localIsODN.value);
@@ -185,6 +215,10 @@ const toggleMobileVisibility = () => {
 
 const onPartySelect = () => {
   emit('updateSelectedParty', selectedParty.value);
+  // Clear selected lists/candidates when party changes to avoid confusion
+  // (selected lists may no longer be visible with new party filter)
+  emit('update:selectedLists', []);
+  emit('update:selectedCandidates', []);
   filterLists();
 };
 
@@ -203,6 +237,27 @@ const onSearchQueryUpdate = (query: string) => {
 const clearSelection = () => {
   emit('update:selectedLists', []);
   emit('update:selectedCandidates', []);
+};
+
+// ActiveFilters handlers
+const handleClearAll = () => {
+  selectedParty.value = '';
+  searchQuery.value = '';
+  emit('updateSelectedParty', '');
+  emit('update:selectedLists', []);
+  emit('update:selectedCandidates', []);
+};
+
+const handleRemoveParty = () => {
+  selectedParty.value = '';
+  emit('updateSelectedParty', '');
+  // Clear selections when removing party filter
+  emit('update:selectedLists', []);
+  emit('update:selectedCandidates', []);
+};
+
+const handleRemoveSearch = () => {
+  searchQuery.value = '';
 };
 
 // Watchers
@@ -246,6 +301,14 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.results-count {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  padding: 0.5rem 0;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
 @media (max-width: 767px) {
   .bg-white {
     position: fixed;

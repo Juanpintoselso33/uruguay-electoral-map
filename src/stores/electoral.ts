@@ -34,6 +34,8 @@ export interface Region {
   partiesByList?: Record<string, string>;
   precandidatosByList?: Record<string, string>;
   geojsonData?: GeoJSON.FeatureCollection | null;
+  seriesLocalityMapping?: Record<string, string>;
+  seriesBarrioMapping?: Record<string, string[]>;
 }
 
 interface CSVRow {
@@ -249,9 +251,10 @@ export const useElectoralStore = defineStore('electoral', () => {
     const electionToUse = election || currentElection.value || region.defaultElection || 'internas-2024';
 
     try {
-      // Check if region has JSON paths for this election
-      const hasJsonPaths = region.odnJsonPath && region.oddJsonPath;
-      const useJsonData = hasJsonPaths && electionToUse !== 'internas-2024';
+      // Try to use JSON format first (multi-election support)
+      const jsonPath = isODN.value
+        ? `/data/electoral/${electionToUse}/${region.slug}/odn.json`
+        : `/data/electoral/${electionToUse}/${region.slug}/odd.json`;
 
       let votosPorListas: Record<string, Record<string, number>>;
       let maxVotosPorListas: Record<string, number>;
@@ -259,20 +262,13 @@ export const useElectoralStore = defineStore('electoral', () => {
       let partiesByList: Record<string, string>;
       let precandidatos: Record<string, string>;
 
-      if (useJsonData) {
+      // Try to fetch JSON data first
+      const jsonResponse = await fetch(jsonPath);
+
+      if (jsonResponse.ok) {
         // Use new JSON format with election-specific paths
-        const jsonPath = isODN.value
-          ? `/data/electoral/${electionToUse}/${region.slug}/odn.json`
-          : `/data/electoral/${electionToUse}/${region.slug}/odd.json`;
 
-        const response = await fetch(jsonPath);
-
-        if (!response.ok) {
-          // Fallback to CSV if JSON not available
-          throw new Error(`JSON data not available, falling back to CSV`);
-        }
-
-        const jsonData: ProcessedElectoralData = await response.json();
+        const jsonData: ProcessedElectoralData = await jsonResponse.json();
 
         votosPorListas = jsonData.data.votosPorListas;
         maxVotosPorListas = jsonData.data.maxVotosPorListas;
@@ -280,15 +276,21 @@ export const useElectoralStore = defineStore('electoral', () => {
         precandidatos = jsonData.data.precandidatosByList;
         lists = Object.keys(votosPorListas).sort((a, b) => parseInt(a) - parseInt(b));
       } else {
-        // Use legacy CSV format
+        // Fallback to legacy CSV format
+        console.log(`JSON not found at ${jsonPath}, trying CSV fallback`);
         const csvPath = isODN.value ? region.odnCsvPath : region.oddCsvPath;
-        const response = await fetch(csvPath);
 
-        if (!response.ok) {
+        if (!csvPath) {
+          throw new Error(`No data available for ${region.name} - ${electionToUse}`);
+        }
+
+        const csvResponse = await fetch(csvPath);
+
+        if (!csvResponse.ok) {
           throw new Error(`Failed to fetch data: ${csvPath}`);
         }
 
-        const csvText = await response.text();
+        const csvText = await csvResponse.text();
         const processed = processCSV(csvText);
 
         votosPorListas = processed.votosPorListas;
@@ -306,6 +308,34 @@ export const useElectoralStore = defineStore('electoral', () => {
       }
       const geojsonData = await geojsonResponse.json();
 
+      // Load series-to-locality mapping if available
+      let seriesLocalityMapping: Record<string, string> = {};
+      if (region.slug) {
+        try {
+          const mappingPath = `/data/mappings/${region.slug}-series-locality.json`;
+          const mappingResponse = await fetch(mappingPath);
+          if (mappingResponse.ok) {
+            seriesLocalityMapping = await mappingResponse.json();
+          }
+        } catch (err) {
+          console.warn(`Series locality mapping not available for ${region.slug}:`, err);
+        }
+      }
+
+      // Load series-to-barrio mapping if available (for Rivera)
+      let seriesBarrioMapping: Record<string, string[]> = {};
+      if (region.slug === 'rivera') {
+        try {
+          const barrioMappingPath = `/data/mappings/${region.slug}-series-barrio.json`;
+          const barrioMappingResponse = await fetch(barrioMappingPath);
+          if (barrioMappingResponse.ok) {
+            seriesBarrioMapping = await barrioMappingResponse.json();
+          }
+        } catch (err) {
+          console.warn(`Series barrio mapping not available for ${region.slug}:`, err);
+        }
+      }
+
       availableLists.value = lists;
       currentRegion.value = {
         ...region,
@@ -314,6 +344,8 @@ export const useElectoralStore = defineStore('electoral', () => {
         partiesByList,
         precandidatosByList: precandidatos,
         geojsonData,
+        seriesLocalityMapping,
+        seriesBarrioMapping,
       };
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Unknown error';
@@ -381,6 +413,33 @@ export const useElectoralStore = defineStore('electoral', () => {
     selectedCandidates.value = [];
   }
 
+  /**
+   * Get votes for a specific zone from a votes object, supporting combined series
+   * @param votes Object mapping zone names to vote counts
+   * @param zoneName Zone name (may be combined like "sia-sib-sic")
+   * @returns Total votes for the zone
+   */
+  function getVotesForZone(votes: Record<string, number>, zoneName: string): number {
+    // Try direct match first
+    if (votes[zoneName] !== undefined) {
+      return votes[zoneName];
+    }
+
+    // Try combined series (e.g., "sia-sib-sic" → sum of "sia", "sib", "sic")
+    // Split by hyphens, spaces, or underscores
+    const parts = zoneName.split(/[-\s_]+/).filter(p => p && p.length > 0);
+
+    if (parts.length > 1) {
+      // This is a combined series, sum all parts
+      return parts.reduce((sum, part) => {
+        return sum + (votes[part] ?? 0);
+      }, 0);
+    }
+
+    // No match found
+    return 0;
+  }
+
   function getVotosForNeighborhood(neighborhood: string): number {
     if (!currentRegion.value?.votosPorListas) return 0;
 
@@ -391,7 +450,7 @@ export const useElectoralStore = defineStore('electoral', () => {
           Object.entries(currentRegion.value!.votosPorListas || {}).reduce(
             (sum, [list, votes]) => {
               if (currentRegion.value!.precandidatosByList?.[list] === candidate) {
-                return sum + (votes[neighborhood] ?? 0);
+                return sum + getVotesForZone(votes, neighborhood);
               }
               return sum;
             },
@@ -401,11 +460,17 @@ export const useElectoralStore = defineStore('electoral', () => {
       }, 0);
     }
 
+    // If no lists selected, sum ALL lists for this neighborhood
+    if (selectedLists.value.length === 0) {
+      return Object.values(currentRegion.value.votosPorListas).reduce((acc, votes) => {
+        return acc + getVotesForZone(votes, neighborhood);
+      }, 0);
+    }
+
+    // Sum only selected lists
     return selectedLists.value.reduce((acc, sheetNumber) => {
-      return (
-        acc +
-        (currentRegion.value!.votosPorListas?.[sheetNumber]?.[neighborhood] ?? 0)
-      );
+      const votes = currentRegion.value!.votosPorListas?.[sheetNumber];
+      return acc + (votes ? getVotesForZone(votes, neighborhood) : 0);
     }, 0);
   }
 

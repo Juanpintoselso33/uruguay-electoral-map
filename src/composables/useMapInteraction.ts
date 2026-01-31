@@ -34,7 +34,9 @@ export interface UseMapInteractionProps {
 
 export function useMapInteraction(props: UseMapInteractionProps) {
   const normalizeString = (str: string): string => {
-    return str;
+    if (!str) return '';
+    // Normalize to lowercase for case-insensitive comparison
+    return str.toLowerCase().trim();
   };
 
   const getCandidateVotesForNeighborhood = (neighborhood: string): CandidateVote[] => {
@@ -104,7 +106,13 @@ export function useMapInteraction(props: UseMapInteractionProps) {
 
   const groupListsByParty = (neighborhood: string): GroupedLists => {
     const grouped: GroupedLists = {};
-    props.selectedLists.value.forEach((list) => {
+
+    // If no lists are selected, show all lists with votes in this neighborhood
+    const listsToShow = props.selectedLists.value.length > 0
+      ? props.selectedLists.value
+      : Object.keys(props.votosPorListas.value);
+
+    listsToShow.forEach((list) => {
       const party = props.partiesByList.value[list];
       const votes = props.votosPorListas.value[list]?.[neighborhood] || 0;
       if (votes > 0) {
@@ -114,6 +122,7 @@ export function useMapInteraction(props: UseMapInteractionProps) {
         grouped[party].push({ number: list, votes });
       }
     });
+
     return Object.fromEntries(
       Object.entries(grouped).sort(
         ([, a], [, b]) =>
@@ -127,17 +136,20 @@ export function useMapInteraction(props: UseMapInteractionProps) {
     if (!props.geojsonData.value || !props.geojsonData.value.features) {
       return 0;
     }
-    return Math.max(
-      ...props.geojsonData.value.features.map((feature: any) =>
-        props.getVotosForNeighborhood.value(
-          normalizeString(
-            feature.properties.BARRIO ||
-              feature.properties.texto ||
-              feature.properties.zona
-          )
-        )
-      )
-    );
+
+    // Calculate max based on selected lists only
+    // This ensures the color scale adjusts to the selected data
+    const votes = props.geojsonData.value.features.map((feature: any) => {
+      const neighborhood = normalizeString(
+        feature.properties.BARRIO ||
+          feature.properties.texto ||
+          feature.properties.zona
+      );
+      return props.getVotosForNeighborhood.value(neighborhood);
+    });
+
+    const maxVote = Math.max(...votes, 0);
+    return maxVote;
   });
 
   const getColor = (votes: number): string => {

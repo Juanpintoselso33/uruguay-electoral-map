@@ -7,14 +7,35 @@
     <div v-show="!isMapLoading" ref="mapContainer" class="map"></div>
 
     <!-- Map Controls -->
-    <div class="map-controls">
-      <button @click="zoomIn" class="map-control-btn" title="Zoom in">
+    <div class="map-controls" role="group" aria-label="Controles del mapa">
+      <button
+        @click="zoomIn"
+        @keydown.enter="zoomIn"
+        @keydown.space.prevent="zoomIn"
+        class="map-control-btn"
+        title="Zoom in (tecla +)"
+        aria-label="Acercar mapa"
+      >
         <Plus :size="18" />
       </button>
-      <button @click="zoomOut" class="map-control-btn" title="Zoom out">
+      <button
+        @click="zoomOut"
+        @keydown.enter="zoomOut"
+        @keydown.space.prevent="zoomOut"
+        class="map-control-btn"
+        title="Zoom out (tecla -)"
+        aria-label="Alejar mapa"
+      >
         <Minus :size="18" />
       </button>
-      <button @click="resetView" class="map-control-btn" title="Reset view">
+      <button
+        @click="resetView"
+        @keydown.enter="resetView"
+        @keydown.space.prevent="resetView"
+        class="map-control-btn"
+        title="Reset view (tecla R)"
+        aria-label="Restablecer vista"
+      >
         <Maximize2 :size="18" />
       </button>
     </div>
@@ -22,11 +43,14 @@
     <!-- Legend -->
     <div class="map-legend">
       <div class="legend-title">Intensidad de votos</div>
-      <div class="legend-gradient">
-        <div class="gradient-bar"></div>
-        <div class="gradient-labels">
-          <span>Bajo</span>
-          <span>Alto</span>
+      <div class="legend-scale">
+        <div
+          v-for="(item, index) in legendItems"
+          :key="index"
+          class="legend-scale-item"
+        >
+          <div class="legend-color-box" :style="{ backgroundColor: item.color }"></div>
+          <div class="legend-label">{{ item.label }}</div>
         </div>
       </div>
       <div v-if="selectedLists.length > 0" class="legend-info">
@@ -39,12 +63,70 @@
     <!-- Tooltip -->
     <Transition name="tooltip">
       <div
-        v-if="hoveredFeature"
+        v-if="hoveredFeature || isTooltipPinned"
         ref="tooltipRef"
-        class="map-tooltip"
+        :class="['map-tooltip', { 'tooltip-pinned': isTooltipPinned }]"
         :style="tooltipStyle"
-        v-html="tooltipHtml"
+        @click.stop
+        @touchend.stop
       >
+        <!-- Close button (only when pinned) -->
+        <button
+          v-if="isTooltipPinned"
+          @click="unpinTooltip"
+          class="tooltip-close-btn"
+          aria-label="Cerrar tooltip"
+        >
+          <X :size="14" />
+        </button>
+
+        <div class="tooltip-header">
+          <strong>{{ hoveredFeature?.properties?.BARRIO || hoveredFeature?.properties?.zona || pinnedZoneName }}</strong>
+        </div>
+
+        <div class="tooltip-body" :class="{ 'tooltip-scrollable': shouldShowDetailedBreakdown }">
+          <!-- Simple view (no selection or pinned with no data) -->
+          <div v-if="!shouldShowDetailedBreakdown" class="tooltip-simple">
+            <div class="tooltip-stat">
+              <span>Votos:</span>
+              <strong>{{ hoveredVotes.toLocaleString() }}</strong>
+            </div>
+            <div v-if="selectedParty" class="tooltip-stat">
+              <span>Partido:</span>
+              <strong>{{ selectedParty }}</strong>
+            </div>
+          </div>
+
+          <!-- Detailed breakdown view (with selections) -->
+          <div v-else class="tooltip-detailed">
+            <div v-for="(lists, party) in detailedBreakdown" :key="party" class="tooltip-party-group">
+              <div class="tooltip-party-name">
+                {{ getPartyAbbrev(party) }}: {{ getPartyVotes(lists).toLocaleString() }} votos
+              </div>
+              <div class="tooltip-lists">
+                <div
+                  v-for="(list, index) in getDisplayedLists(lists)"
+                  :key="list.number || list.candidate"
+                  class="tooltip-list-item"
+                >
+                  {{ formatListItem(list) }}
+                </div>
+                <div v-if="shouldTruncateLists(lists)" class="tooltip-more">
+                  y {{ lists.length - MAX_LISTS_PER_PARTY }} más...
+                </div>
+              </div>
+            </div>
+
+            <div class="tooltip-total">
+              Total: {{ hoveredVotes.toLocaleString() }} votos
+            </div>
+          </div>
+
+          <!-- Sticky hint (only when not pinned and hovering) -->
+          <div v-if="!isTooltipPinned && hoveredFeature && shouldShowStickyHint" class="tooltip-hint">
+            Mantén el cursor para fijar
+          </div>
+        </div>
       </div>
     </Transition>
   </div>
@@ -54,10 +136,13 @@
 import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import { Plus, Minus, Maximize2 } from 'lucide-vue-next'
+import { Plus, Minus, Maximize2, X } from 'lucide-vue-next'
 import chroma from 'chroma-js'
 import { useMapInteraction } from '@/composables/useMapInteraction'
 import { useTooltipContent } from '@/composables/useTooltipContent'
+import { useKeyboardNavigation } from '@/composables/useKeyboardNavigation'
+import { useScreenReaderAnnouncements } from '@/composables/useScreenReaderAnnouncements'
+import { useMapColors } from '@/composables/useMapColors'
 import MapSkeleton from '@/components/ui/MapSkeleton.vue'
 
 const props = defineProps<{
@@ -109,6 +194,22 @@ const tooltipContent = useTooltipContent({
 const { normalizeString, groupListsByParty } = mapInteraction
 const { generateListTooltip } = tooltipContent
 
+// Screen reader announcements
+const { announceZoneSelection } = useScreenReaderAnnouncements()
+
+// Color system with ColorBrewer palette (from feature branch)
+const { calculateBreaks, getColorForValue, getColorScale } = useMapColors('blues', 6, 'jenks')
+
+// Sticky tooltip state
+const isTooltipPinned = ref(false)
+const pinnedZoneName = ref<string | null>(null)
+const pinnedPosition = ref({ left: '0px', top: '0px' })
+const hoverTimer = ref<number | null>(null)
+const shouldShowStickyHint = ref(false)
+const HOVER_STICKY_DELAY = 1000 // 1 second
+const STICKY_HINT_DELAY = 2000 // 2 seconds
+const MAX_LISTS_PER_PARTY = 10
+
 const selectedParty = computed(() => {
   if (props.selectedLists.length > 0) {
     return props.partiesByList[props.selectedLists[0]]
@@ -116,16 +217,143 @@ const selectedParty = computed(() => {
   return null
 })
 
+// Compute detailed breakdown for tooltip
+const detailedBreakdown = computed(() => {
+  if (!hoveredFeature.value && !isTooltipPinned.value) return {}
+
+  const zoneName = hoveredFeature.value?.properties?.BARRIO ||
+                   hoveredFeature.value?.properties?.zona ||
+                   pinnedZoneName.value
+  if (!zoneName) return {}
+
+  const breakdown: Record<string, Array<{ number?: string; candidate?: string; votes: number }>> = {}
+
+  // For ODN mode with candidates
+  if (props.isODN && props.selectedCandidates.length > 0) {
+    props.selectedCandidates.forEach(candidate => {
+      const party = Object.entries(props.precandidatosByList)
+        .find(([_, c]) => c === candidate)?.[0]
+      if (!party) return
+
+      const partyName = props.partiesByList[party]
+      if (!partyName) return
+
+      const votes = props.votosPorListas[party]?.[zoneName] || 0
+      if (votes === 0) return
+
+      if (!breakdown[partyName]) {
+        breakdown[partyName] = []
+      }
+      breakdown[partyName].push({ candidate, votes })
+    })
+  }
+  // For list mode
+  else if (props.selectedLists.length > 0) {
+    props.selectedLists.forEach(list => {
+      const party = props.partiesByList[list]
+      if (!party) return
+
+      const votes = props.votosPorListas[list]?.[zoneName] || 0
+      if (votes === 0) return
+
+      if (!breakdown[party]) {
+        breakdown[party] = []
+      }
+      breakdown[party].push({ number: list, votes })
+    })
+  }
+
+  // Sort lists within each party by votes (descending)
+  Object.keys(breakdown).forEach(party => {
+    breakdown[party].sort((a, b) => b.votes - a.votes)
+  })
+
+  return breakdown
+})
+
+const shouldShowDetailedBreakdown = computed(() => {
+  return (props.selectedLists.length > 0 || props.selectedCandidates.length > 0) &&
+         Object.keys(detailedBreakdown.value).length > 0
+})
+
+// Helper functions
+const getPartyAbbrev = (partyName: string): string => {
+  return props.partiesAbbrev[partyName] || partyName
+}
+
+const getPartyVotes = (lists: Array<{ votes: number }>): number => {
+  return lists.reduce((sum, list) => sum + list.votes, 0)
+}
+
+const getDisplayedLists = (lists: Array<any>): Array<any> => {
+  return lists.slice(0, MAX_LISTS_PER_PARTY)
+}
+
+const shouldTruncateLists = (lists: Array<any>): boolean => {
+  return lists.length > MAX_LISTS_PER_PARTY
+}
+
+const formatListItem = (item: { number?: string; candidate?: string; votes: number }): string => {
+  if (item.candidate) {
+    return `• ${item.candidate}: ${item.votes.toLocaleString()} votos`
+  }
+  return `• Lista ${item.number}: ${item.votes.toLocaleString()} votos`
+}
+
+const unpinTooltip = () => {
+  isTooltipPinned.value = false
+  pinnedZoneName.value = null
+  if (hoverTimer.value) {
+    clearTimeout(hoverTimer.value)
+    hoverTimer.value = null
+  }
+  shouldShowStickyHint.value = false
+}
+
+const pinTooltip = () => {
+  if (!hoveredFeature.value) return
+
+  isTooltipPinned.value = true
+  pinnedZoneName.value = hoveredFeature.value.properties.BARRIO || hoveredFeature.value.properties.zona
+  pinnedPosition.value = { ...tooltipStyle.value }
+  shouldShowStickyHint.value = false
+
+  if (hoverTimer.value) {
+    clearTimeout(hoverTimer.value)
+    hoverTimer.value = null
+  }
+}
+
+// Legend items
+const legendItems = computed(() => {
+  const scale = getColorScale()
+  return scale.map((item, index) => {
+    if (index === 0) {
+      return { ...item, label: 'Sin datos / Muy bajo' }
+    } else if (index === scale.length - 1) {
+      return { ...item, label: `> ${item.label}` }
+    } else {
+      const nextValue = scale[index + 1]?.value || item.value
+      return { ...item, label: `${item.label} - ${nextValue.toLocaleString()}` }
+    }
+  })
+})
+
+// Keyboard shortcuts for map controls
+useKeyboardNavigation({
+  customKeys: {
+    '+': () => zoomIn(),
+    '=': () => zoomIn(), // For keyboards without numpad
+    '-': () => zoomOut(),
+    '_': () => zoomOut(),
+    'r': () => resetView(),
+    'R': () => resetView()
+  }
+})
+
 const getColor = (votes: number, maxVotes: number): string => {
-  if (votes === 0 || maxVotes === 0) return '#f0f0f0'
-
-  const ratio = votes / maxVotes
-  // Softer, more harmonious color palette
-  const colorScale = chroma.scale(['#fff7ec', '#fee8c8', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548', '#d7301f', '#990000'])
-    .mode('lch')
-    .domain([0, 1])
-
-  return colorScale(ratio).hex()
+  // Use ColorBrewer-based color system from feature branch
+  return getColorForValue(votes)
 }
 
 const initMap = () => {
@@ -175,6 +403,13 @@ const initMap = () => {
   map.value.on('mousemove', 'electoral-fill', (e) => {
     if (e.features && e.features.length > 0) {
       const feature = e.features[0]
+
+      // Don't update if tooltip is pinned
+      if (isTooltipPinned.value) {
+        map.value!.getCanvas().style.cursor = 'pointer'
+        return
+      }
+
       hoveredFeature.value = feature
 
       const zoneName = feature.properties.serie || feature.properties.BARRIO || feature.properties.zona
@@ -214,18 +449,91 @@ const initMap = () => {
       }
 
       map.value!.getCanvas().style.cursor = 'pointer'
+
+      // Start timer for sticky mode
+      if (hoverTimer.value) {
+        clearTimeout(hoverTimer.value)
+      }
+
+      // Show hint after STICKY_HINT_DELAY
+      const hintTimer = setTimeout(() => {
+        shouldShowStickyHint.value = true
+      }, STICKY_HINT_DELAY)
+
+      // Auto-pin after HOVER_STICKY_DELAY
+      hoverTimer.value = window.setTimeout(() => {
+        pinTooltip()
+        clearTimeout(hintTimer)
+      }, HOVER_STICKY_DELAY)
     }
   })
 
   map.value.on('mouseleave', 'electoral-fill', () => {
-    hoveredFeature.value = null
+    // Don't hide if tooltip is pinned
+    if (!isTooltipPinned.value) {
+      hoveredFeature.value = null
+      shouldShowStickyHint.value = false
+    }
+
     map.value!.getCanvas().style.cursor = ''
+
+    // Clear hover timer
+    if (hoverTimer.value) {
+      clearTimeout(hoverTimer.value)
+      hoverTimer.value = null
+    }
   })
 
   map.value.on('click', 'electoral-fill', (e) => {
     if (e.features && e.features.length > 0) {
       const feature = e.features[0]
       const zoneName = feature.properties.serie || feature.properties.BARRIO || feature.properties.zona
+      const votes = props.getVotosForNeighborhood(zoneName)
+
+      // Toggle pin on click
+      if (isTooltipPinned.value && pinnedZoneName.value === zoneName) {
+        unpinTooltip()
+      } else {
+        // Pin this tooltip
+        hoveredFeature.value = feature
+        hoveredVotes.value = votes
+        pinTooltip()
+      }
+
+      // Announce to screen readers
+      announceZoneSelection(zoneName, votes)
+
+      emit('updateSelectedNeighborhood', zoneName)
+    }
+  })
+
+  // Mobile tap support
+  map.value.on('touchstart', 'electoral-fill', (e) => {
+    if (e.features && e.features.length > 0) {
+      const feature = e.features[0]
+      const zoneName = feature.properties.serie || feature.properties.BARRIO || feature.properties.zona
+      const votes = props.getVotosForNeighborhood(zoneName)
+
+      hoveredFeature.value = feature
+      hoveredVotes.value = votes
+
+      // Position tooltip at tap location
+      const point = map.value!.project(e.lngLat)
+      tooltipStyle.value = {
+        left: `${point.x + 10}px`,
+        top: `${point.y - 10}px`
+      }
+
+      // Toggle pin on tap
+      if (isTooltipPinned.value && pinnedZoneName.value === zoneName) {
+        unpinTooltip()
+      } else {
+        pinTooltip()
+      }
+
+      // Announce to screen readers
+      announceZoneSelection(zoneName, votes)
+
       emit('updateSelectedNeighborhood', zoneName)
     }
   })
@@ -249,7 +557,14 @@ const updateMapData = () => {
     map.value.removeSource(sourceId)
   }
 
-  // Calculate max votes once
+  // Calculate breaks for Jenks classification
+  const allVotes = props.geojsonData.features.map((feature: any) => {
+    const zoneName = feature.properties.serie || feature.properties.BARRIO || feature.properties.zona
+    return props.getVotosForNeighborhood(zoneName)
+  })
+  calculateBreaks(allVotes)
+
+  // Calculate max votes for fallback
   const maxVotes = props.votosPorListas
     ? Math.max(...Object.values(props.votosPorListas).flatMap(v => Object.values(v as Record<string, number>)))
     : 1
@@ -406,11 +721,37 @@ watch(() => [props.mapCenter, props.mapZoom], () => {
   }
 })
 
+// Watch for selection changes - unpin tooltip when selections change
+watch(() => [props.selectedLists, props.selectedCandidates], () => {
+  if (isTooltipPinned.value) {
+    unpinTooltip()
+  }
+}, { deep: true })
+
 onMounted(() => {
   initMap()
+
+  // Add global click listener to unpin on outside clicks
+  const handleOutsideClick = (event: MouseEvent) => {
+    if (isTooltipPinned.value && tooltipRef.value && !tooltipRef.value.contains(event.target as Node)) {
+      unpinTooltip()
+    }
+  }
+  document.addEventListener('click', handleOutsideClick)
+
+  // Cleanup
+  onUnmounted(() => {
+    document.removeEventListener('click', handleOutsideClick)
+  })
 })
 
 onUnmounted(() => {
+  // Cleanup timers
+  if (hoverTimer.value) {
+    clearTimeout(hoverTimer.value)
+  }
+
+  // Remove map
   map.value?.remove()
 })
 </script>
@@ -435,7 +776,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  z-index: 10;
+  z-index: var(--z-map-controls);
 }
 
 .map-control-btn {
@@ -468,7 +809,7 @@ onUnmounted(() => {
   padding: 1rem;
   min-width: 200px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 10;
+  z-index: var(--z-map-controls);
 }
 
 .legend-title {
@@ -477,18 +818,30 @@ onUnmounted(() => {
   margin-bottom: 0.75rem;
 }
 
-.gradient-bar {
-  height: 12px;
-  border-radius: 6px;
-  background: linear-gradient(to right, #ffffb2, #fecc5c, #fd8d3c, #f03b20, #bd0026);
-  margin-bottom: 0.5rem;
+.legend-scale {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
 }
 
-.gradient-labels {
+.legend-scale-item {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 0.75rem;
+}
+
+.legend-color-box {
+  width: 20px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.legend-label {
   color: var(--color-text-secondary);
+  font-size: 0.7rem;
 }
 
 .legend-info {
@@ -510,19 +863,82 @@ onUnmounted(() => {
   border-radius: 8px;
   padding: 0.75rem;
   min-width: 150px;
+  max-width: 350px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   pointer-events: none;
-  z-index: 20;
+  z-index: var(--z-tooltip);
+  transition: all 0.2s ease;
+}
+
+.map-tooltip.tooltip-pinned {
+  pointer-events: auto;
+  border-color: var(--color-accent);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  cursor: default;
+}
+
+.tooltip-close-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: var(--color-border);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 1;
+}
+
+.tooltip-close-btn:hover {
+  background: var(--color-accent);
+  color: white;
+  transform: scale(1.1);
 }
 
 .tooltip-header {
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
   padding-bottom: 0.5rem;
+  padding-right: 1.5rem; /* Space for close button */
   border-bottom: 1px solid var(--color-border);
 }
 
-.tooltip-stat {
+.tooltip-body {
+  max-height: 300px;
+  overflow-y: visible;
+}
+
+.tooltip-body.tooltip-scrollable {
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+/* Custom scrollbar */
+.tooltip-scrollable::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tooltip-scrollable::-webkit-scrollbar-track {
+  background: var(--color-bg);
+  border-radius: 3px;
+}
+
+.tooltip-scrollable::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+.tooltip-scrollable::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-secondary);
+}
+
+.tooltip-simple .tooltip-stat {
   display: flex;
   justify-content: space-between;
   font-size: 0.8rem;
@@ -531,6 +947,61 @@ onUnmounted(() => {
 
 .tooltip-stat span {
   color: var(--color-text-secondary);
+}
+
+.tooltip-detailed {
+  font-size: 0.8125rem;
+}
+
+.tooltip-party-group {
+  margin-bottom: 0.75rem;
+}
+
+.tooltip-party-group:last-child {
+  margin-bottom: 0;
+}
+
+.tooltip-party-name {
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 0.375rem;
+}
+
+.tooltip-lists {
+  margin-left: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.tooltip-list-item {
+  padding: 0.125rem 0;
+  line-height: 1.4;
+}
+
+.tooltip-more {
+  font-style: italic;
+  color: var(--color-text-secondary);
+  margin-top: 0.25rem;
+  opacity: 0.8;
+}
+
+.tooltip-total {
+  border-top: 1px solid var(--color-border);
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.tooltip-hint {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--color-border);
+  font-size: 0.7rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+  text-align: center;
+  opacity: 0.7;
 }
 
 /* Transitions */

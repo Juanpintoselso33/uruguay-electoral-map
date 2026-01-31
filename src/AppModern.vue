@@ -1,4 +1,7 @@
 <template>
+  <!-- Screen Reader Live Region for Announcements -->
+  <ScreenReaderLive />
+
   <!-- Global Loading Overlay -->
   <Transition name="fade">
     <div v-if="store.isLoading" class="global-loading-overlay" role="status" aria-live="polite">
@@ -118,6 +121,7 @@
 import { ref, onMounted } from 'vue'
 import { useElectoralStore } from './stores/electoral'
 import AppLayout from './components/layout/AppLayout.vue'
+import ScreenReaderLive from './components/accessibility/ScreenReaderLive.vue'
 import ElectionSelector from './components/elections/ElectionSelector.vue'
 import RegionSelector from './components/RegionSelectorModern.vue'
 import ListSelectorContainer from './components/selectors/ListSelectorContainer.vue'

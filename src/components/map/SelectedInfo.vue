@@ -97,7 +97,7 @@ const toggleVisibility = () => {
   max-width: 300px;
   max-height: 1200px;
   overflow-y: auto;
-  z-index: 1000;
+  z-index: var(--z-dropdown);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -214,7 +214,7 @@ const toggleVisibility = () => {
     background-color: white;
     border-radius: 8px 8px 0 0;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    z-index: 1001;
+    z-index: var(--z-modal);
   }
 
   .mobile-toggle-text {

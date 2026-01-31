@@ -356,7 +356,7 @@ onMounted(() => {
   height: auto;
   overflow-y: auto;
   transition: transform 0.3s ease-in-out;
-  z-index: 999;
+  z-index: var(--z-dropdown);
 }
 
 @media (max-width: 767px) {
@@ -385,7 +385,7 @@ onMounted(() => {
     background-color: white;
     border-radius: 0 0 8px 8px;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    z-index: 1001;
+    z-index: var(--z-modal);
   }
 
   .mobile-toggle-text {

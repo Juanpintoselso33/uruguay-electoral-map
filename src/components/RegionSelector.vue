@@ -1,21 +1,35 @@
 <template>
-  <div class="region-selector">
+  <div class="region-selector" data-testid="region-selector">
     <div class="selector-header">
       <button
         class="hamburger-button"
         @click="toggleMenu"
-        aria-label="Open region menu"
+        @keydown.enter="toggleMenu"
+        @keydown.space.prevent="toggleMenu"
+        aria-label="Abrir menú de departamentos"
+        :aria-expanded="isMenuOpen"
       >
         <span class="hamburger-icon"></span>
       </button>
       <h2>Elegir departamento</h2>
     </div>
-    <div class="menu" :class="{ 'menu-open': isMenuOpen }">
+    <div
+      ref="menuContainer"
+      class="menu"
+      :class="{ 'menu-open': isMenuOpen }"
+      role="menu"
+      :aria-hidden="!isMenuOpen"
+    >
       <ul>
-        <li v-for="region in regions" :key="region.name">
+        <li v-for="(region, index) in regions" :key="region.name" role="none">
           <button
             @click="selectRegion(region)"
+            @keydown.enter="selectRegion(region)"
+            @keydown.space.prevent="selectRegion(region)"
             :class="{ active: region.name === currentRegion.name }"
+            role="menuitem"
+            :tabindex="isMenuOpen ? 0 : -1"
+            :aria-current="region.name === currentRegion.name ? 'true' : undefined"
           >
             {{ region.name }}
           </button>
@@ -26,7 +40,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, nextTick } from "vue";
+import { useKeyboardNavigation } from "@/composables/useKeyboardNavigation";
+import { useScreenReaderAnnouncements } from "@/composables/useScreenReaderAnnouncements";
 
 const props = defineProps<{
   regions: Array<{ name: string }>;
@@ -38,12 +54,40 @@ const emit = defineEmits<{
 }>();
 
 const isMenuOpen = ref(false);
+const menuContainer = ref<HTMLElement>();
+
+// Screen reader announcements
+const { announceDepartmentChange } = useScreenReaderAnnouncements()
+
+// Keyboard navigation: Escape to close, arrow keys to navigate
+useKeyboardNavigation({
+  onEscape: () => {
+    if (isMenuOpen.value) {
+      isMenuOpen.value = false;
+    }
+  },
+  trapFocus: {
+    container: menuContainer,
+    active: isMenuOpen
+  }
+});
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
+
+  // Focus first menu item when opening
+  if (isMenuOpen.value) {
+    nextTick(() => {
+      const firstButton = menuContainer.value?.querySelector('button');
+      firstButton?.focus();
+    });
+  }
 };
 
 const selectRegion = (region: { name: string }) => {
+  // Announce to screen readers
+  announceDepartmentChange(region.name)
+
   emit("regionSelected", region);
   isMenuOpen.value = false;
 };
@@ -132,7 +176,7 @@ h2 {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   padding: 15px;
   display: none;
-  z-index: 1000;
+  z-index: var(--z-dropdown);
   max-height: 0;
   font-size: 0.9rem;
   overflow: hidden;
@@ -207,7 +251,7 @@ h2 {
 
   .menu-open {
     max-width: 50%;
-    z-index: 9999;
+    z-index: var(--z-max);
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     top: 20%;

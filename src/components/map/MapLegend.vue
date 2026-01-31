@@ -38,7 +38,7 @@ const legendGrades = [0, 0.2, 0.4, 0.6, 0.8, 1];
   padding: 10px;
   border-radius: 5px;
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
-  z-index: 1000;
+  z-index: var(--z-dropdown);
   font-size: 12px;
   max-width: 200px;
 }

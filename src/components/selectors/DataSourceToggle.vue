@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-gray-100 rounded-lg p-4 mb-5">
-    <h3 class="mt-0 mb-2.5 text-lg text-gray-800">Orden</h3>
-    <div class="flex justify-around bg-gray-300 rounded-full p-1">
+  <div class="bg-gray-100 rounded-lg p-2 mb-3" data-testid="data-source-toggle">
+    <h3 class="mt-0 mb-1.5 text-base text-gray-800">Orden</h3>
+    <div class="flex justify-around bg-gray-300 rounded-full p-0.5">
       <label
         v-for="option in options"
         :key="option.label"
@@ -15,7 +15,7 @@
           class="hidden"
         />
         <span
-          class="block py-2 px-4 rounded-2xl cursor-pointer transition-all duration-300"
+          class="block py-1.5 px-3 text-sm rounded-2xl cursor-pointer transition-all duration-300"
           :class="
             modelValue === option.value
               ? 'bg-gray-800 text-white'
