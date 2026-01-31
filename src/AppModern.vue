@@ -12,6 +12,20 @@
     </div>
   </Transition>
 
+  <!-- Error Overlay -->
+  <Transition name="fade">
+    <div v-if="store.error && !store.isLoading" class="error-overlay" role="alert" aria-live="assertive">
+      <div class="error-content">
+        <div class="error-icon">⚠️</div>
+        <h2 class="error-title">Error al cargar datos</h2>
+        <p class="error-message">{{ store.error }}</p>
+        <button @click="handleRetry" class="retry-button">
+          Reintentar
+        </button>
+      </div>
+    </div>
+  </Transition>
+
   <AppLayout
     :showComparison="isComparisonMode"
     @department-select="handleDepartmentSelect"
@@ -159,10 +173,33 @@ const handleExport = () => {
   console.log('Export triggered from stats panel')
 }
 
+const handleRetry = async () => {
+  store.error = null
+  try {
+    await store.loadRegionsConfig()
+    if (store.regions.length > 0) {
+      await store.fetchRegionData(store.regions[0])
+    }
+  } catch (error) {
+    console.error('[AppModern] Error during retry:', error)
+    store.isLoading = false
+    store.error = error instanceof Error ? error.message : 'Error loading application data'
+  }
+}
+
 onMounted(async () => {
-  await store.loadRegionsConfig()
-  if (store.regions.length > 0) {
-    await store.fetchRegionData(store.regions[0])
+  try {
+    await store.loadRegionsConfig()
+    if (store.regions.length > 0) {
+      await store.fetchRegionData(store.regions[0])
+    } else {
+      console.error('[AppModern] No regions available after loading config')
+      store.isLoading = false
+    }
+  } catch (error) {
+    console.error('[AppModern] Error during initialization:', error)
+    store.isLoading = false
+    store.error = error instanceof Error ? error.message : 'Error loading application data'
   }
 })
 </script>
@@ -258,6 +295,86 @@ body {
 
 .dark .global-loading-overlay {
   background: rgba(0, 0, 0, 0.85);
+}
+
+/* Error Overlay */
+.error-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.98);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 2rem;
+}
+
+.dark .error-overlay {
+  background: rgba(0, 0, 0, 0.95);
+}
+
+.error-content {
+  max-width: 500px;
+  text-align: center;
+  background: white;
+  padding: 3rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.dark .error-content {
+  background: #1a1a1a;
+}
+
+.error-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+}
+
+.error-title {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  color: #dc2626;
+}
+
+.dark .error-title {
+  color: #ef4444;
+}
+
+.error-message {
+  color: #666;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.dark .error-message {
+  color: #9ca3af;
+}
+
+.retry-button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.875rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.retry-button:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.retry-button:active {
+  transform: translateY(0);
 }
 
 /* Fade transition */
