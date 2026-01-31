@@ -778,7 +778,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  z-index: var(--z-map-controls);
+  z-index: 100; /* High z-index to always be on top */
 }
 
 .map-control-btn {
@@ -811,7 +811,7 @@ onUnmounted(() => {
   padding: 1rem;
   min-width: 200px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: var(--z-map-controls);
+  z-index: 100; /* High z-index to always be on top */
 }
 
 .legend-title {
@@ -868,7 +868,7 @@ onUnmounted(() => {
   max-width: 350px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   pointer-events: none;
-  z-index: var(--z-tooltip);
+  z-index: 200; /* Very high z-index to be above everything */
   transition: all 0.2s ease;
 }
 
