@@ -2,11 +2,31 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import Papa from 'papaparse';
 
+export interface Election {
+  id: string;
+  year: number;
+  type: 'internas' | 'nacionales' | 'balotaje' | 'departamentales';
+  name: string;
+  date: string;
+}
+
+export interface ElectionsMeta {
+  availableElections: string[];
+  departmentsByElection: Record<string, string[]>;
+  generatedAt: string;
+}
+
 export interface Region {
   name: string;
+  slug?: string;
   odnCsvPath: string;
   oddCsvPath: string;
   geojsonPath: string;
+  odnJsonPath?: string;
+  oddJsonPath?: string;
+  mapJsonPath?: string;
+  availableElections?: string[];
+  defaultElection?: string;
   mapCenter: [number, number];
   mapZoom: number;
   votosPorListas?: Record<string, Record<string, number>>;
@@ -24,6 +44,31 @@ interface CSVRow {
   PRECANDIDATO: string;
 }
 
+interface ProcessedElectoralData {
+  metadata: {
+    type: string;
+    schemaType?: string;
+    processedAt: string;
+    department: string;
+    election?: string;
+    stats: {
+      totalRows: number;
+      uniqueLists: number;
+      uniqueZones: number;
+      uniqueParties: number;
+      totalVotes: number;
+    };
+  };
+  data: {
+    votosPorListas: Record<string, Record<string, number>>;
+    maxVotosPorListas: Record<string, number>;
+    partiesByList: Record<string, string>;
+    precandidatosByList: Record<string, string>;
+    zoneList: string[];
+    partyList: string[];
+  };
+}
+
 export const useElectoralStore = defineStore('electoral', () => {
   // State
   const regions = ref<Region[]>([]);
@@ -36,6 +81,12 @@ export const useElectoralStore = defineStore('electoral', () => {
   const availableLists = ref<string[]>([]);
   const isLoading = ref(false);
   const error = ref<string | null>(null);
+
+  // Multi-election state
+  const availableElections = ref<string[]>([]);
+  const currentElection = ref<string>('internas-2024');
+  const electionsMeta = ref<ElectionsMeta | null>(null);
+  const electionsFromCatalog = ref<Election[]>([]);
 
   // Getters
   const currentPartiesByList = computed(() => {
@@ -76,11 +127,45 @@ export const useElectoralStore = defineStore('electoral', () => {
   });
 
   // Actions
+  async function loadElectionsMeta() {
+    try {
+      const response = await fetch('/data/elections-meta.json');
+      if (response.ok) {
+        const meta = await response.json();
+        electionsMeta.value = meta;
+        availableElections.value = meta.availableElections || [];
+
+        // Set current election to first available if not set
+        if (availableElections.value.length > 0 && !currentElection.value) {
+          currentElection.value = availableElections.value[0];
+        }
+      }
+    } catch (err) {
+      console.warn('Elections metadata not available:', err);
+    }
+  }
+
+  async function loadElectionsCatalog() {
+    try {
+      const response = await fetch('/elections-catalog.json');
+      if (response.ok) {
+        const catalog = await response.json();
+        electionsFromCatalog.value = catalog.elections || [];
+      }
+    } catch (err) {
+      console.warn('Elections catalog not available:', err);
+    }
+  }
+
   async function loadRegionsConfig() {
     isLoading.value = true;
     error.value = null;
 
     try {
+      // Load elections metadata first
+      await loadElectionsMeta();
+      await loadElectionsCatalog();
+
       const response = await fetch('/regions.json');
       if (!response.ok) {
         throw new Error('Failed to load regions configuration');
@@ -107,6 +192,8 @@ export const useElectoralStore = defineStore('electoral', () => {
           geojsonPath: '/montevideo_map.json',
           mapCenter: [-34.8211, -56.225] as [number, number],
           mapZoom: 11.5,
+          availableElections: ['internas-2024'],
+          defaultElection: 'internas-2024',
         },
       ];
       currentRegion.value = regions.value[0];
@@ -155,28 +242,65 @@ export const useElectoralStore = defineStore('electoral', () => {
     };
   }
 
-  async function fetchRegionData(region: Region) {
+  async function fetchRegionData(region: Region, election?: string) {
     isLoading.value = true;
     error.value = null;
 
-    try {
-      const csvPath = isODN.value ? region.odnCsvPath : region.oddCsvPath;
-      const response = await fetch(csvPath);
+    const electionToUse = election || currentElection.value || region.defaultElection || 'internas-2024';
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch CSV: ${csvPath}`);
+    try {
+      // Check if region has JSON paths for this election
+      const hasJsonPaths = region.odnJsonPath && region.oddJsonPath;
+      const useJsonData = hasJsonPaths && electionToUse !== 'internas-2024';
+
+      let votosPorListas: Record<string, Record<string, number>>;
+      let maxVotosPorListas: Record<string, number>;
+      let lists: string[];
+      let partiesByList: Record<string, string>;
+      let precandidatos: Record<string, string>;
+
+      if (useJsonData) {
+        // Use new JSON format with election-specific paths
+        const jsonPath = isODN.value
+          ? `/data/electoral/${electionToUse}/${region.slug}/odn.json`
+          : `/data/electoral/${electionToUse}/${region.slug}/odd.json`;
+
+        const response = await fetch(jsonPath);
+
+        if (!response.ok) {
+          // Fallback to CSV if JSON not available
+          throw new Error(`JSON data not available, falling back to CSV`);
+        }
+
+        const jsonData: ProcessedElectoralData = await response.json();
+
+        votosPorListas = jsonData.data.votosPorListas;
+        maxVotosPorListas = jsonData.data.maxVotosPorListas;
+        partiesByList = jsonData.data.partiesByList;
+        precandidatos = jsonData.data.precandidatosByList;
+        lists = Object.keys(votosPorListas).sort((a, b) => parseInt(a) - parseInt(b));
+      } else {
+        // Use legacy CSV format
+        const csvPath = isODN.value ? region.odnCsvPath : region.oddCsvPath;
+        const response = await fetch(csvPath);
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch data: ${csvPath}`);
+        }
+
+        const csvText = await response.text();
+        const processed = processCSV(csvText);
+
+        votosPorListas = processed.votosPorListas;
+        maxVotosPorListas = processed.maxVotosPorListas;
+        lists = processed.lists;
+        partiesByList = processed.partiesByList;
+        precandidatos = processed.precandidatosByList;
       }
 
-      const csvText = await response.text();
-      const {
-        votosPorListas,
-        maxVotosPorListas,
-        lists,
-        partiesByList,
-        precandidatosByList: precandidatos,
-      } = processCSV(csvText);
-
-      const geojsonResponse = await fetch(region.geojsonPath);
+      // Load GeoJSON (same for all elections)
+      const geojsonPath = region.mapJsonPath || region.geojsonPath;
+      const geojsonResponse = await fetch(geojsonPath);
       if (!geojsonResponse.ok) {
         throw new Error('Failed to fetch GeoJSON data');
       }
@@ -197,6 +321,23 @@ export const useElectoralStore = defineStore('electoral', () => {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  async function switchElection(electionId: string) {
+    if (!currentRegion.value) return;
+
+    // Check if region has this election
+    const hasElection = currentRegion.value.availableElections?.includes(electionId);
+    if (!hasElection) {
+      console.warn(`Election ${electionId} not available for ${currentRegion.value.name}`);
+      return;
+    }
+
+    currentElection.value = electionId;
+    selectedLists.value = [];
+    selectedCandidates.value = [];
+
+    await fetchRegionData(currentRegion.value, electionId);
   }
 
   function setCurrentRegion(region: Region) {
@@ -281,6 +422,12 @@ export const useElectoralStore = defineStore('electoral', () => {
     isLoading,
     error,
 
+    // Multi-election state
+    availableElections,
+    currentElection,
+    electionsMeta,
+    electionsFromCatalog,
+
     // Getters
     currentPartiesByList,
     precandidatosByList,
@@ -289,7 +436,10 @@ export const useElectoralStore = defineStore('electoral', () => {
 
     // Actions
     loadRegionsConfig,
+    loadElectionsMeta,
+    loadElectionsCatalog,
     fetchRegionData,
+    switchElection,
     setCurrentRegion,
     toggleDataSource,
     selectLists,
