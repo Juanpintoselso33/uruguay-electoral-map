@@ -5,13 +5,18 @@ import { Calendar, Users, Vote, Building2 } from 'lucide-vue-next';
 
 const store = useElectoralStore();
 
-// Get election details from catalog
+// Get election details from catalog (only available elections)
 const electionDetails = computed(() => {
-  return store.electionsFromCatalog.map(election => ({
-    ...election,
-    isAvailable: store.availableElections.includes(election.id),
-    isCurrent: store.currentElection === election.id,
-  }));
+  return store.electionsFromCatalog
+    .map(election => ({
+      ...election,
+      isAvailable: store.availableElections.includes(election.id),
+      isCurrent: store.currentElection === election.id,
+    }))
+    // Filter to show only available elections
+    .filter(election => election.isAvailable)
+    // Sort by date (most recent first)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 });
 
 const electionTypeIcon = (type: string) => {

@@ -66,13 +66,15 @@ export function useElectoralFilters(options: UseElectoralFiltersOptions) {
   // Watchers
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
+  // Watch debounced search query
   watch(debouncedSearchQuery, filterLists);
 
-  watch(filteredListsByParty, (newFilteredLists) => {
-    filteredLists.value = newFilteredLists;
-  });
-
+  // Watch party and search changes together
+  // Removed duplicate watcher that was causing race condition
   watch([() => searchQuery.value, () => selectedParty.value], filterLists);
+
+  // Initialize filtered lists
+  filterLists();
 
   return {
     // State
