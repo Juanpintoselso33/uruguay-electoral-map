@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maldonado · Internas 2024 — Editorial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DIRECTION: EDITORIAL — periodístico serio (NYT / El País)
+   CHROME PALETTE (non-partisan):
+     --paper      #F7F4EE  (warm off-white paper)
+     --ink        #1A1916  (near-black warm ink, headlines/body)
+     --ink-soft   #5C574E  (muted captions, metadata)
+     --hairline   #D8D2C6  (hairline rules)
+     --card       #FFFFFF  (bottom sheet surface)
+     --accent     #8A1C1C  (oxblood editorial accent, links)
+   Type: Source Serif 4 (headlines), Inter (data/labels)
+   Personality: authority, generous air, low density, hairline rules
+   PARTY DATA COLORS (fixed): FA #A569BD · PN #55B5E5 · PC #E52828
+                              CA #2D7D3E · PI #7B2CBF
+   ============================================================ */
+* { margin:0; padding:0; box-sizing:border-box; }
+body{
+  background:#e9e5dc;
+  font-family:'Inter',system-ui,sans-serif;
+  color:#1A1916;
+  display:flex; flex-wrap:wrap; gap:48px;
+  justify-content:center; align-items:flex-start;
+  padding:48px 24px; min-height:100vh;
+}
+.stage-label{
+  width:100%; text-align:center; font-family:'Source Serif 4',serif;
+  color:#5C574E; font-size:13px; letter-spacing:.14em; text-transform:uppercase;
+  margin-bottom:-16px;
+}
+/* ---- phone frame ---- */
+.phone{
+  width:360px; height:760px; background:#111; border-radius:46px;
+  padding:11px; box-shadow:0 30px 70px rgba(40,34,22,.30), 0 4px 12px rgba(0,0,0,.2);
+  position:relative;
+}
+.notch{position:absolute;top:20px;left:50%;transform:translateX(-50%);width:120px;height:26px;background:#111;border-radius:0 0 16px 16px;z-index:30;}
+.screen{
+  width:100%; height:100%; background:#F7F4EE; border-radius:36px;
+  overflow:hidden; position:relative; display:flex; flex-direction:column;
+}
+.statusbar{height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;font-size:12px;font-weight:600;color:#1A1916;font-family:'Inter';}
+.statusbar .dots{letter-spacing:2px;}
+/* ---- masthead ---- */
+.masthead{padding:14px 22px 16px;border-bottom:2px solid #1A1916;}
+.kicker{font-family:'Inter';font-size:10.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#8A1C1C;margin-bottom:7px;}
+h1{font-family:'Source Serif 4',serif;font-weight:700;font-size:27px;line-height:1.05;letter-spacing:-.01em;color:#1A1916;}
+.stamp{margin-top:10px;display:flex;align-items:center;gap:7px;font-family:'Inter';font-size:11px;color:#5C574E;font-style:normal;}
+.stamp .seal{width:13px;height:13px;border:1.4px solid #5C574E;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:8px;flex-shrink:0;}
+/* ---- map area ---- */
+.maparea{flex:1;position:relative;padding:18px 18px 0;}
+.map-cap{font-family:'Inter';font-size:10.5px;letter-spacing:.04em;color:#5C574E;text-transform:uppercase;margin-bottom:10px;}
+svg.map{width:100%;display:block;}
+.zone{stroke:#F7F4EE;stroke-width:2;cursor:pointer;transition:filter .2s;}
+.zone.sel{stroke:#1A1916;stroke-width:2.5;}
+.zlabel{font-family:'Inter';font-weight:600;font-size:9px;fill:#fff;text-anchor:middle;letter-spacing:.02em;paint-order:stroke;stroke:rgba(0,0,0,.25);stroke-width:.4px;}
+.zname{font-family:'Inter';font-weight:500;font-size:6.6px;fill:rgba(255,255,255,.92);text-anchor:middle;}
+/* ---- legend ---- */
+.legend{padding:14px 22px 8px;border-top:1px solid #D8D2C6;}
+.legend h2{font-family:'Inter';font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:#5C574E;margin-bottom:9px;}
+.legrow{display:flex;align-items:center;gap:9px;margin-bottom:6px;}
+.swatch{width:13px;height:13px;border-radius:2px;flex-shrink:0;position:relative;}
+.swatch span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:#fff;font-family:'Inter';}
+.legrow .name{font-family:'Source Serif 4',serif;font-size:13px;color:#1A1916;}
+.legrow .ab{margin-left:auto;font-family:'Inter';font-size:10px;font-weight:600;color:#5C574E;}
+/* ---- bottom sheet ---- */
+.sheet{
+  position:absolute;left:0;right:0;bottom:0;background:#FFFFFF;
+  border-radius:22px 22px 0 0;box-shadow:0 -10px 40px rgba(40,34,22,.16);
+  border-top:2px solid #1A1916;padding:14px 22px 22px;z-index:20;
+}
+.grip{width:38px;height:4px;background:#D8D2C6;border-radius:2px;margin:0 auto 14px;}
+.sheet .zhead{display:flex;align-items:baseline;justify-content:space-between;}
+.sheet .zname-b{font-family:'Source Serif 4',serif;font-weight:700;font-size:21px;color:#1A1916;letter-spacing:-.01em;}
+.sheet .zmeta{font-family:'Inter';font-size:10.5px;color:#5C574E;}
+.winner{margin-top:16px;display:flex;align-items:flex-start;gap:11px;}
+.winner .bar{width:5px;align-self:stretch;border-radius:3px;background:#55B5E5;}
+.winner .lema{font-family:'Source Serif 4',serif;font-size:17px;font-weight:600;line-height:1.15;color:#1A1916;}
+.winner .lista{font-family:'Inter';font-size:11.5px;color:#5C574E;margin-top:3px;}
+.winner .tag{display:inline-block;margin-top:6px;font-family:'Inter';font-size:9.5px;font-weight:700;letter-spacing:.06em;color:#fff;background:#55B5E5;padding:2px 7px;border-radius:3px;}
+.figures{margin-top:18px;display:flex;gap:26px;border-top:1px solid #D8D2C6;padding-top:14px;}
+.fig .num{font-family:'Source Serif 4',serif;font-weight:700;font-size:30px;line-height:1;color:#1A1916;letter-spacing:-.02em;}
+.fig .lab{font-family:'Inter';font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#5C574E;margin-top:6px;}
+.actions{margin-top:18px;display:flex;align-items:center;gap:12px;}
+.btn-share{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:#1A1916;color:#F7F4EE;font-family:'Inter';font-size:13px;font-weight:600;padding:13px;border:none;border-radius:6px;cursor:pointer;letter-spacing:.01em;}
+.compare{font-family:'Source Serif 4',serif;font-style:italic;font-size:12.5px;color:#8A1C1C;text-decoration:underline;text-underline-offset:3px;white-space:nowrap;cursor:pointer;}
+/* collapsed variant */
+.sheet.collapsed{padding-bottom:18px;}
+.collapsed-row{display:flex;align-items:center;gap:11px;}
+.collapsed-row .bar{width:5px;height:38px;border-radius:3px;background:#55B5E5;}
+.collapsed-row .ctitle{font-family:'Source Serif 4',serif;font-weight:600;font-size:15px;color:#1A1916;}
+.collapsed-row .csub{font-family:'Inter';font-size:10.5px;color:#5C574E;margin-top:2px;}
+.collapsed-row .cpct{margin-left:auto;font-family:'Source Serif 4',serif;font-weight:700;font-size:22px;color:#1A1916;}
+.chev{text-align:center;font-size:11px;color:#5C574E;margin-top:10px;font-family:'Inter';}
+</style>
+</head>
+<body>
+<div class="stage-label">Dirección · Editorial — registro periodístico</div>
+
+<!-- ============ PHONE 1: EXPANDED SHEET ============ -->
+<div class="phone">
+  <div class="notch"></div>
+  <div class="screen">
+    <div class="statusbar"><span>9:41</span><span class="dots">5G ▮▮▮ 🔋</span></div>
+    <div class="masthead">
+      <div class="kicker">Elecciones internas</div>
+      <h1>Maldonado · Internas 2024</h1>
+      <div class="stamp"><span class="seal">✓</span> Corte Electoral — escrutinio definitivo</div>
+    </div>
+    <div class="maparea">
+      <div class="map-cap">Partido ganador por zona · tocá una zona</div>
+      <svg class="map" viewBox="0 0 320 230" role="img" aria-label="Mapa de Maldonado coloreado por partido ganador">
+        <!-- FA #A569BD · PN #55B5E5 · PC #E52828 · CA #2D7D3E · PI #7B2CBF -->
+        <polygon class="zone" points="20,30 110,18 120,70 40,90" fill="#A569BD"/>
+        <text class="zlabel" x="68" y="52">FA</text><text class="zname" x="68" y="63">Maldonado N.</text>
+        <polygon class="zone sel" points="120,70 110,18 210,22 215,80 150,95" fill="#55B5E5"/>
+        <text class="zlabel" x="165" y="55">PN</text><text class="zname" x="165" y="66">Punta del Este</text>
+        <polygon class="zone" points="210,22 300,40 295,95 215,80" fill="#E52828"/>
+        <text class="zlabel" x="255" y="58">PC</text><text class="zname" x="255" y="69">San Carlos</text>
+        <polygon class="zone" points="40,90 120,70 130,140 50,150" fill="#2D7D3E"/>
+        <text class="zlabel" x="85" y="113">CA</text><text class="zname" x="85" y="124">Pan de Azúcar</text>
+        <polygon class="zone" points="150,95 215,80 220,150 130,140" fill="#A569BD"/>
+        <text class="zlabel" x="178" y="118">FA</text><text class="zname" x="178" y="129">Maldonado S.</text>
+        <polygon class="zone" points="215,80 295,95 290,160 220,150" fill="#7B2CBF"/>
+        <text class="zlabel" x="255" y="123">PI</text><text class="zname" x="255" y="134">Garzón</text>
+        <polygon class="zone" points="50,150 130,140 140,205 60,200" fill="#55B5E5"/>
+        <text class="zlabel" x="95" y="173">PN</text><text class="zname" x="95" y="184">Piriápolis</text>
+        <polygon class="zone" points="140,205 130,140 220,150 225,210" fill="#A569BD"/>
+        <text class="zlabel" x="180" y="178">FA</text><text class="zname" x="180" y="189">Aiguá</text>
+      </svg>
+    </div>
+    <div class="sheet">
+      <div class="grip"></div>
+      <div class="zhead">
+        <div class="zname-b">Punta del Este</div>
+        <div class="zmeta">Zona · 12.532 votos</div>
+      </div>
+      <div class="winner">
+        <div class="bar"></div>
+        <div>
+          <div class="lema">Partido Nacional</div>
+          <div class="lista">Lista 71 — Luis Lacalle Pou</div>
+          <span class="tag">PN · GANADOR</span>
+        </div>
+      </div>
+      <div class="figures">
+        <div class="fig"><div class="num">4.812</div><div class="lab">Votos</div></div>
+        <div class="fig"><div class="num">38,4%</div><div class="lab">del total</div></div>
+      </div>
+      <div class="actions">
+        <button class="btn-share">⤴ Compartir resultado</button>
+        <span class="compare">comparar vs. 2019</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PHONE 2: COLLAPSED SHEET (state variant) ============ -->
+<div class="phone">
+  <div class="notch"></div>
+  <div class="screen">
+    <div class="statusbar"><span>9:41</span><span class="dots">5G ▮▮▮ 🔋</span></div>
+    <div class="masthead">
+      <div class="kicker">Elecciones internas</div>
+      <h1>Maldonado · Internas 2024</h1>
+      <div class="stamp"><span class="seal">✓</span> Corte Electoral — escrutinio definitivo</div>
+    </div>
+    <div class="maparea">
+      <div class="map-cap">Partido ganador por zona · tocá una zona</div>
+      <svg class="map" viewBox="0 0 320 230" role="img" aria-label="Mapa de Maldonado coloreado por partido ganador">
+        <polygon class="zone" points="20,30 110,18 120,70 40,90" fill="#A569BD"/>
+        <text class="zlabel" x="68" y="52">FA</text><text class="zname" x="68" y="63">Maldonado N.</text>
+        <polygon class="zone" points="120,70 110,18 210,22 215,80 150,95" fill="#55B5E5"/>
+        <text class="zlabel" x="165" y="55">PN</text><text class="zname" x="165" y="66">Punta del Este</text>
+        <polygon class="zone" points="210,22 300,40 295,95 215,80" fill="#E52828"/>
+        <text class="zlabel" x="255" y="58">PC</text><text class="zname" x="255" y="69">San Carlos</text>
+        <polygon class="zone" points="40,90 120,70 130,140 50,150" fill="#2D7D3E"/>
+        <text class="zlabel" x="85" y="113">CA</text><text class="zname" x="85" y="124">Pan de Azúcar</text>
+        <polygon class="zone" points="150,95 215,80 220,150 130,140" fill="#A569BD"/>
+        <text class="zlabel" x="178" y="118">FA</text><text class="zname" x="178" y="129">Maldonado S.</text>
+        <polygon class="zone" points="215,80 295,95 290,160 220,150" fill="#7B2CBF"/>
+        <text class="zlabel" x="255" y="123">PI</text><text class="zname" x="255" y="134">Garzón</text>
+        <polygon class="zone" points="50,150 130,140 140,205 60,200" fill="#55B5E5"/>
+        <text class="zlabel" x="95" y="173">PN</text><text class="zname" x="95" y="184">Piriápolis</text>
+        <polygon class="zone" points="140,205 130,140 220,150 225,210" fill="#A569BD"/>
+        <text class="zlabel" x="180" y="178">FA</text><text class="zname" x="180" y="189">Aiguá</text>
+      </svg>
+    </div>
+    <div class="legend">
+      <h2>Partidos</h2>
+      <div class="legrow"><span class="swatch" style="background:#A569BD"><span>FA</span></span><span class="name">Frente Amplio</span><span class="ab">3 zonas</span></div>
+      <div class="legrow"><span class="swatch" style="background:#55B5E5"><span>PN</span></span><span class="name">Partido Nacional</span><span class="ab">2 zonas</span></div>
+      <div class="legrow"><span class="swatch" style="background:#E52828"><span>PC</span></span><span class="name">Partido Colorado</span><span class="ab">1 zona</span></div>
+      <div class="legrow"><span class="swatch" style="background:#2D7D3E"><span>CA</span></span><span class="name">Cabildo Abierto</span><span class="ab">1 zona</span></div>
+      <div class="legrow"><span class="swatch" style="background:#7B2CBF"><span>PI</span></span><span class="name">Partido Independiente</span><span class="ab">1 zona</span></div>
+    </div>
+    <div class="sheet collapsed">
+      <div class="grip"></div>
+      <div class="collapsed-row">
+        <div class="bar"></div>
+        <div>
+          <div class="ctitle">Punta del Este · PN</div>
+          <div class="csub">Lista 71 — 4.812 votos</div>
+        </div>
+        <div class="cpct">38,4%</div>
+      </div>
+      <div class="chev">▴ deslizá para ver el detalle</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

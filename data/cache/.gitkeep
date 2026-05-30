@@ -1,0 +1,2 @@
+# Download cache (temporary files)
+# Can be cleaned via: npm run etl:clean

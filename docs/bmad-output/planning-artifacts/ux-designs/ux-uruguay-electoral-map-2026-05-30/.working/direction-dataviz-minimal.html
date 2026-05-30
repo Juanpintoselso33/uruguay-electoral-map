@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maldonado · Internas 2024 — Dataviz Minimal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DIRECTION: DATAVIZ-MINIMAL — FiveThirtyEight / Observable
+   CHROME PALETTE (non-partisan, monochrome):
+     --bg        #FFFFFF  (pure white)
+     --panel     #FAFAFA  (faint panel fill)
+     --grey-900  #1C1C1C  (data ink, big numerals)
+     --grey-600  #6E6E6E  (labels)
+     --grey-400  #A8A8A8  (axis / secondary)
+     --grey-200  #E6E6E6  (gridlines, borders)
+     --grey-100  #F0F0F0  (skeleton fill)
+   Type: IBM Plex Sans (geometric sans), IBM Plex Mono (numerals)
+   Personality: zero ornament, tight grid, data-dominant, hairline borders
+   PARTY DATA COLORS (fixed): FA #A569BD · PN #55B5E5 · PC #E52828
+                              CA #2D7D3E · PI #7B2CBF
+   ============================================================ */
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:#EDEDED;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1C1C1C;
+  display:flex;flex-wrap:wrap;gap:44px;justify-content:center;align-items:flex-start;
+  padding:48px 24px;min-height:100vh;
+}
+.stage-label{width:100%;text-align:center;color:#6E6E6E;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;margin-bottom:-16px;font-family:'IBM Plex Mono';}
+.phone{width:360px;height:760px;background:#1C1C1C;border-radius:44px;padding:10px;box-shadow:0 24px 60px rgba(0,0,0,.22);position:relative;}
+.notch{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:108px;height:24px;background:#1C1C1C;border-radius:0 0 14px 14px;z-index:30;}
+.screen{width:100%;height:100%;background:#FFFFFF;border-radius:35px;overflow:hidden;position:relative;display:flex;flex-direction:column;}
+.statusbar{height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;font-size:12px;font-weight:600;font-family:'IBM Plex Mono';color:#1C1C1C;}
+/* header */
+.hdr{padding:16px 18px 12px;border-bottom:1px solid #E6E6E6;}
+.hdr .t{font-size:18px;font-weight:600;letter-spacing:-.01em;}
+.hdr .t b{font-weight:700;}
+.hdr .meta{margin-top:7px;display:flex;gap:6px;align-items:center;font-family:'IBM Plex Mono';font-size:10px;color:#6E6E6E;letter-spacing:.01em;}
+.hdr .meta .dot{width:5px;height:5px;border-radius:50%;background:#A8A8A8;}
+/* map */
+.maparea{padding:14px 18px 6px;}
+.axis{font-family:'IBM Plex Mono';font-size:9.5px;color:#A8A8A8;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;}
+svg.map{width:100%;display:block;}
+.zone{stroke:#FFFFFF;stroke-width:1.5;cursor:pointer;}
+.zone.sel{stroke:#1C1C1C;stroke-width:2;}
+.zlabel{font-family:'IBM Plex Mono';font-weight:600;font-size:9px;fill:#fff;text-anchor:middle;}
+.zpct{font-family:'IBM Plex Mono';font-weight:400;font-size:6.5px;fill:rgba(255,255,255,.85);text-anchor:middle;}
+/* legend — compact data table style */
+.legend{padding:8px 18px 6px;}
+.legend .axis{margin-bottom:7px;}
+.lgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+.lcell{text-align:left;}
+.lcell .sw{width:100%;height:5px;border-radius:1px;margin-bottom:5px;}
+.lcell .ab{font-family:'IBM Plex Mono';font-size:10px;font-weight:600;color:#1C1C1C;}
+.lcell .nm{font-size:8px;color:#6E6E6E;line-height:1.15;margin-top:2px;}
+/* bottom sheet */
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#FFFFFF;border-top:1px solid #E6E6E6;box-shadow:0 -6px 24px rgba(0,0,0,.07);padding:10px 18px 18px;z-index:20;}
+.grip{width:34px;height:3px;background:#E6E6E6;border-radius:2px;margin:0 auto 12px;}
+.srow{display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid #E6E6E6;padding-bottom:9px;}
+.srow .z{font-size:14px;font-weight:600;}
+.srow .tot{font-family:'IBM Plex Mono';font-size:10px;color:#6E6E6E;}
+.party{display:flex;align-items:center;gap:8px;margin-top:13px;}
+.party .chip{font-family:'IBM Plex Mono';font-size:9px;font-weight:600;color:#fff;background:#55B5E5;padding:2px 6px;border-radius:2px;}
+.party .nm{font-size:13px;font-weight:500;}
+.party .ls{font-family:'IBM Plex Mono';font-size:10px;color:#6E6E6E;margin-left:auto;}
+/* huge numerals dominate */
+.bignums{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:14px;border:1px solid #E6E6E6;}
+.bn{padding:12px 14px;}
+.bn:first-child{border-right:1px solid #E6E6E6;}
+.bn .v{font-family:'IBM Plex Mono';font-weight:600;font-size:34px;line-height:1;letter-spacing:-.02em;color:#1C1C1C;}
+.bn .l{font-family:'IBM Plex Mono';font-size:9px;color:#A8A8A8;letter-spacing:.08em;text-transform:uppercase;margin-top:7px;}
+/* share bar */
+.barchart{margin-top:13px;}
+.barchart .lab{font-family:'IBM Plex Mono';font-size:9px;color:#A8A8A8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.bartrack{height:10px;background:#F0F0F0;display:flex;overflow:hidden;border-radius:1px;}
+.bartrack i{display:block;height:100%;}
+.actions{margin-top:15px;display:flex;align-items:center;gap:10px;}
+.btn-share{flex:1;background:#1C1C1C;color:#fff;border:none;font-family:'IBM Plex Sans';font-size:12.5px;font-weight:600;padding:12px;border-radius:3px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;}
+.compare{font-family:'IBM Plex Mono';font-size:11px;color:#6E6E6E;text-decoration:underline;text-underline-offset:3px;cursor:pointer;white-space:nowrap;}
+/* skeleton variant */
+.sk{background:#F0F0F0;border-radius:3px;animation:none;}
+.sk-line{height:11px;background:#F0F0F0;border-radius:2px;}
+.maparea.skel svg .zone{fill:#F0F0F0 !important;}
+.maparea.skel svg .zlabel,.maparea.skel svg .zpct{display:none;}
+.skel-cap{font-family:'IBM Plex Mono';font-size:10px;color:#A8A8A8;letter-spacing:.04em;text-align:center;margin-top:14px;}
+.skel-spin{display:inline-block;width:10px;height:10px;border:2px solid #E6E6E6;border-top-color:#A8A8A8;border-radius:50%;margin-right:6px;vertical-align:-1px;}
+</style>
+</head>
+<body>
+<div class="stage-label">Dirección · Dataviz-Minimal — foco total en el dato</div>
+
+<!-- ============ PHONE 1: EXPANDED DATA SHEET ============ -->
+<div class="phone">
+  <div class="notch"></div>
+  <div class="screen">
+    <div class="statusbar"><span>9:41</span><span>5G ▮▮▮ 100%</span></div>
+    <div class="hdr">
+      <div class="t"><b>Maldonado</b> · Internas 2024</div>
+      <div class="meta"><span class="dot"></span>Corte Electoral — escrutinio definitivo</div>
+    </div>
+    <div class="maparea">
+      <div class="axis">Ganador por zona · n = 8 zonas</div>
+      <svg class="map" viewBox="0 0 320 220" role="img" aria-label="Mapa de Maldonado por partido ganador">
+        <!-- FA #A569BD · PN #55B5E5 · PC #E52828 · CA #2D7D3E · PI #7B2CBF -->
+        <rect class="zone" x="14" y="14" width="96" height="60" fill="#A569BD"/><text class="zlabel" x="62" y="40">FA</text><text class="zpct" x="62" y="51">41,2%</text>
+        <rect class="zone sel" x="112" y="14" width="96" height="60" fill="#55B5E5"/><text class="zlabel" x="160" y="40">PN</text><text class="zpct" x="160" y="51">38,4%</text>
+        <rect class="zone" x="210" y="14" width="96" height="60" fill="#E52828"/><text class="zlabel" x="258" y="40">PC</text><text class="zpct" x="258" y="51">33,1%</text>
+        <rect class="zone" x="14" y="76" width="96" height="60" fill="#2D7D3E"/><text class="zlabel" x="62" y="102">CA</text><text class="zpct" x="62" y="113">29,7%</text>
+        <rect class="zone" x="112" y="76" width="96" height="60" fill="#A569BD"/><text class="zlabel" x="160" y="102">FA</text><text class="zpct" x="160" y="113">44,0%</text>
+        <rect class="zone" x="210" y="76" width="96" height="60" fill="#7B2CBF"/><text class="zlabel" x="258" y="102">PI</text><text class="zpct" x="258" y="113">26,5%</text>
+        <rect class="zone" x="14" y="138" width="146" height="60" fill="#55B5E5"/><text class="zlabel" x="87" y="164">PN</text><text class="zpct" x="87" y="175">36,8%</text>
+        <rect class="zone" x="162" y="138" width="144" height="60" fill="#A569BD"/><text class="zlabel" x="234" y="164">FA</text><text class="zpct" x="234" y="175">39,5%</text>
+      </svg>
+    </div>
+    <div class="sheet">
+      <div class="grip"></div>
+      <div class="srow"><span class="z">Punta del Este</span><span class="tot">12.532 votos · zona</span></div>
+      <div class="party">
+        <span class="chip">PN</span>
+        <span class="nm">Partido Nacional</span>
+        <span class="ls">Lista 71</span>
+      </div>
+      <div class="bignums">
+        <div class="bn"><div class="v">4.812</div><div class="l">Votos</div></div>
+        <div class="bn"><div class="v">38,4%</div><div class="l">Porcentaje</div></div>
+      </div>
+      <div class="barchart">
+        <div class="lab">Distribución de la zona</div>
+        <div class="bartrack">
+          <i style="width:38.4%;background:#55B5E5"></i>
+          <i style="width:28.1%;background:#A569BD"></i>
+          <i style="width:15.0%;background:#E52828"></i>
+          <i style="width:10.5%;background:#2D7D3E"></i>
+          <i style="width:8.0%;background:#7B2CBF"></i>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-share">↗ Compartir</button>
+        <span class="compare">vs. 2019</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PHONE 2: LOADING SKELETON (state variant) ============ -->
+<div class="phone">
+  <div class="notch"></div>
+  <div class="screen">
+    <div class="statusbar"><span>9:41</span><span>5G ▮▮▮ 100%</span></div>
+    <div class="hdr">
+      <div class="t"><b>Maldonado</b> · Internas 2024</div>
+      <div class="meta"><span class="dot"></span>Corte Electoral — escrutinio definitivo</div>
+    </div>
+    <div class="maparea skel">
+      <div class="axis">Ganador por zona · n = 8 zonas</div>
+      <svg class="map" viewBox="0 0 320 220" role="img" aria-label="Mapa cargando">
+        <rect class="zone" x="14" y="14" width="96" height="60" fill="#F0F0F0"/>
+        <rect class="zone" x="112" y="14" width="96" height="60" fill="#F0F0F0"/>
+        <rect class="zone" x="210" y="14" width="96" height="60" fill="#F0F0F0"/>
+        <rect class="zone" x="14" y="76" width="96" height="60" fill="#F0F0F0"/>
+        <rect class="zone" x="112" y="76" width="96" height="60" fill="#F0F0F0"/>
+        <rect class="zone" x="210" y="76" width="96" height="60" fill="#F0F0F0"/>
+        <rect class="zone" x="14" y="138" width="146" height="60" fill="#F0F0F0"/>
+        <rect class="zone" x="162" y="138" width="144" height="60" fill="#F0F0F0"/>
+      </svg>
+      <div class="skel-cap"><span class="skel-spin"></span>Cargando escrutinio…</div>
+    </div>
+    <div class="legend">
+      <div class="axis">Partidos</div>
+      <div class="lgrid">
+        <div class="lcell"><div class="sw" style="background:#A569BD"></div><div class="ab">FA</div><div class="nm">Frente Amplio</div></div>
+        <div class="lcell"><div class="sw" style="background:#55B5E5"></div><div class="ab">PN</div><div class="nm">Partido Nacional</div></div>
+        <div class="lcell"><div class="sw" style="background:#E52828"></div><div class="ab">PC</div><div class="nm">Partido Colorado</div></div>
+        <div class="lcell"><div class="sw" style="background:#2D7D3E"></div><div class="ab">CA</div><div class="nm">Cabildo Abierto</div></div>
+        <div class="lcell"><div class="sw" style="background:#7B2CBF"></div><div class="ab">PI</div><div class="nm">P. Independiente</div></div>
+      </div>
+    </div>
+    <div class="sheet">
+      <div class="grip"></div>
+      <div class="sk-line" style="width:55%;height:14px;margin-bottom:14px;"></div>
+      <div class="sk-line" style="width:80%;margin-bottom:18px;"></div>
+      <div class="bignums">
+        <div class="bn"><div class="sk-line" style="width:70%;height:30px;"></div></div>
+        <div class="bn"><div class="sk-line" style="width:60%;height:30px;"></div></div>
+      </div>
+      <div class="actions"><div class="sk-line" style="flex:1;height:40px;"></div></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

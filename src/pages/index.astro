@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+import HelloIsland from '../components/ui/HelloIsland.vue';
+---
+
+<Base title="Uruguay Electoral Map">
+  <main class="mx-auto max-w-2xl p-6">
+    <h1 class="text-2xl font-bold">Uruguay Electoral Map</h1>
+    <p class="mt-2">Rebuild — base Astro + Vue + Tailwind + Vercel. (Story 1.1)</p>
+    <!-- Isla Vue con client:load (NO client:only) — patrón validado por spike R7 -->
+    <div class="mt-4">
+      <HelloIsland client:load />
+    </div>
+  </main>
+</Base>

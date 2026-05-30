@@ -1,0 +1,187 @@
+# CLAUDE.md — [Project Name] (Agent Operating Guide)
+
+**This file is the "how to work safely in this repo" contract.** It is intentionally focused and points to canonical docs.
+
+**Last Updated**: YYYY-MM-DD
+
+---
+
+## Canonical Sources (read first)
+
+| Resource | Purpose |
+|----------|---------|
+| `ai_docs/schema/` | **Database schema catalog** — Start at `00_START_HERE.md` |
+| `ai_docs/architecture/` | **Infrastructure inventory** — Start at `README.md` |
+| `ai_docs/api/` | **API contracts** — Endpoint specifications |
+| `ai_docs/adr/` | **Architecture Decision Records** — Major decisions in MADR format |
+| `ai_docs/runbooks/` | **Operational procedures** — Deploy, access, troubleshooting |
+
+---
+
+## Non-negotiables
+
+<!-- CUSTOMIZE: Add your project-specific rules that must never be violated -->
+
+1. **Schema conformance is MANDATORY**: All code MUST use exact field names from `ai_docs/schema/SCHEMA_CATALOG.md`. No aliases.
+
+2. **No hardcoded secrets**: All credentials from environment variables or secrets manager.
+
+3. **Test before deploy**: All deployments require passing tests.
+
+4. **Document changes**: Infrastructure changes require doc updates.
+
+5. **PR review compliance**: All PRs reviewed before merge. Address review findings.
+
+---
+
+## Quick Start (local development)
+
+<!-- CUSTOMIZE: Add your project's local setup commands -->
+
+```bash
+# Install dependencies
+npm install
+
+# Set up environment
+cp .env.example .env
+# Edit .env with your values
+
+# Start development server
+npm run dev
+
+# Run tests
+npm test
+```
+
+---
+
+## Project Structure
+
+<!-- CUSTOMIZE: Document your project's structure -->
+
+```
+your-project/
+├── src/                    # Source code
+├── tests/                  # Test files
+├── ai_docs/                # AI-readable documentation
+│   ├── schema/             # Database schema
+│   ├── architecture/       # Infrastructure
+│   └── adr/                # Architecture decisions
+├── .claude/                # Claude Code configuration
+└── .github/                # GitHub workflows
+```
+
+---
+
+## Schema Conformance Requirements
+
+<!-- CUSTOMIZE: Document your data schema rules -->
+
+### Required Resources
+
+| Resource | Purpose |
+|----------|---------|
+| `SCHEMA_CATALOG.md` | Source of truth for ALL tables |
+| `FIELD_ALIGNMENT_GUIDE.md` | Developer playbook with templates |
+
+### Golden Rules
+
+**MUST DO:**
+- Use exact column names from schema catalog
+- Include appropriate filters in queries
+- Check NULL constraints before inserting
+
+**NEVER DO:**
+- Use field aliases
+- Query deprecated/legacy tables
+- Trust code definitions over the catalog
+
+### Critical Field Names
+
+<!-- CUSTOMIZE: Add your field name conventions -->
+
+| DON'T Use | USE This | Table |
+|-----------|----------|-------|
+| `doc_id` | `document_uuid` | `documents` |
+| `user_id` | `user_uuid` | `users` |
+
+---
+
+## Deployment Requirements
+
+**MANDATORY before ANY production deploy:**
+
+1. **Tests MUST pass**: Run `npm test`
+2. **Build MUST succeed**: Run `npm run build`
+3. **Type check MUST pass**: Run `npm run type-check`
+4. **No uncommitted files**: Check `git status`
+
+---
+
+## Current Status
+
+<!-- CUSTOMIZE: Add your project metrics -->
+
+### Infrastructure
+
+| Resource | Status |
+|----------|--------|
+| Database | PostgreSQL |
+| Cache | Redis |
+| Storage | S3 |
+
+---
+
+## Authentication
+
+<!-- CUSTOMIZE: Document your auth setup -->
+
+- **Method**: JWT / OAuth / API Key
+- **Provider**: Auth0 / Cognito / Custom
+- **Domain Restriction**: @yourcompany.com (if applicable)
+
+---
+
+## Troubleshooting
+
+<!-- CUSTOMIZE: Add common issues and fixes -->
+
+### Cannot Connect to Database
+
+```bash
+# Check connection
+psql -h localhost -U user -d database
+```
+
+### Tests Failing
+
+```bash
+# Run with verbose output
+npm test -- --verbose
+```
+
+---
+
+## Legacy/Deprecated
+
+<!-- CUSTOMIZE: List deprecated directories/patterns -->
+
+These directories are **deprecated** and should not be referenced:
+- `old-docs/`
+- `deprecated/`
+
+---
+
+## Version History
+
+<!-- CUSTOMIZE: Track major changes -->
+
+- **YYYY-MM-DD**: Initial setup
+- **YYYY-MM-DD**: Added authentication
+- **YYYY-MM-DD**: Updated schema conformance rules
+
+---
+
+**Canonical sources:**
+- Schema: `ai_docs/schema/00_START_HERE.md`
+- Architecture: `ai_docs/architecture/README.md`

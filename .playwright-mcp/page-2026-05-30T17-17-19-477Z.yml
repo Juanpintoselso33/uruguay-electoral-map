@@ -1,0 +1,112 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]: Dirección · Civic-Bold — ciudadano, táctil y accesible
+  - generic [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e7]: 9:41
+      - generic [ref=e8]: 5G ▮▮▮ 🔋
+    - generic [ref=e9]:
+      - generic [ref=e10]: Elecciones internas
+      - heading "Maldonado · Internas 2024" [level=1] [ref=e11]
+      - generic [ref=e12]:
+        - generic [ref=e13]: ✓
+        - text: Corte Electoral — escrutinio definitivo
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - generic [ref=e16]: 👆
+        - text: Tocá una zona para ver quién ganó
+      - img "Mapa de Maldonado por partido ganador" [ref=e17]:
+        - generic [ref=e19]: FA
+        - generic [ref=e20]: Maldonado N.
+        - generic [ref=e22]: PN
+        - generic [ref=e23]: Punta del Este
+        - generic [ref=e25]: PC
+        - generic [ref=e26]: San Carlos
+        - generic [ref=e28]: CA
+        - generic [ref=e29]: Pan de Azúcar
+        - generic [ref=e31]: FA
+        - generic [ref=e32]: Maldonado S.
+        - generic [ref=e34]: PI
+        - generic [ref=e35]: Garzón
+        - generic [ref=e37]: PN
+        - generic [ref=e38]: Piriápolis
+        - generic [ref=e40]: FA
+        - generic [ref=e41]: Aiguá
+    - generic [ref=e42]:
+      - generic [ref=e44]:
+        - generic [ref=e45]: 📍
+        - generic [ref=e46]: Punta del Este
+      - generic [ref=e47]:
+        - generic [ref=e48]:
+          - generic [ref=e49]: PN · Partido Nacional
+          - generic [ref=e50]: GANÓ
+        - generic [ref=e51]: Lista 71
+        - generic [ref=e52]: Luis Lacalle Pou — Partido Nacional
+      - generic [ref=e53]:
+        - generic [ref=e54]:
+          - generic [ref=e55]: "4.812"
+          - generic [ref=e56]: Votos
+        - generic [ref=e57]:
+          - generic [ref=e58]: 38,4%
+          - generic [ref=e59]: De la zona
+      - generic [ref=e60]:
+        - button "↗ Compartir este resultado" [ref=e61] [cursor=pointer]
+        - button "↕ Comparar con la elección anterior" [ref=e62] [cursor=pointer]:
+          - generic [ref=e63]: ↕
+          - text: Comparar con la elección anterior
+  - generic [ref=e66]:
+    - generic [ref=e67]:
+      - generic [ref=e68]: 9:41
+      - generic [ref=e69]: 5G ▮▮▮ 🔋
+    - generic [ref=e70]:
+      - generic [ref=e71]: Elecciones internas
+      - heading "Maldonado · Internas 2024" [level=1] [ref=e72]
+      - generic [ref=e73]:
+        - generic [ref=e74]: ✓
+        - text: Corte Electoral — escrutinio definitivo
+    - generic [ref=e75]:
+      - generic [ref=e76]:
+        - generic [ref=e77]: 👆
+        - text: Tocá una zona para ver quién ganó
+      - img "Mapa de Maldonado por partido ganador" [ref=e78]:
+        - generic [ref=e80]: FA
+        - generic [ref=e81]: Maldonado N.
+        - generic [ref=e83]: PN
+        - generic [ref=e84]: Punta del Este
+        - generic [ref=e86]: PC
+        - generic [ref=e87]: San Carlos
+        - generic [ref=e89]: CA
+        - generic [ref=e90]: Pan de Azúcar
+        - generic [ref=e92]: FA
+        - generic [ref=e93]: Maldonado S.
+        - generic [ref=e95]: PI
+        - generic [ref=e96]: Garzón
+        - generic [ref=e98]: PN
+        - generic [ref=e99]: Piriápolis
+        - generic [ref=e101]: FA
+        - generic [ref=e102]: Aiguá
+    - generic [ref=e103]:
+      - heading "¿Qué color es cada partido?" [level=2] [ref=e104]
+      - generic [ref=e105]:
+        - generic [ref=e106]:
+          - generic [ref=e107]: FA
+          - text: Frente Amplio
+        - generic [ref=e108]:
+          - generic [ref=e109]: PN
+          - text: Partido Nacional
+        - generic [ref=e110]:
+          - generic [ref=e111]: PC
+          - text: Partido Colorado
+        - generic [ref=e112]:
+          - generic [ref=e113]: CA
+          - text: Cabildo Abierto
+        - generic [ref=e114]:
+          - generic [ref=e115]: PI
+          - text: P. Independiente
+    - generic [ref=e116]:
+      - generic [ref=e118]:
+        - generic [ref=e119]: PN
+        - generic [ref=e120]:
+          - generic [ref=e121]: Punta del Este
+          - generic [ref=e122]: Lista 71 · 4.812 votos
+        - generic [ref=e123]: 38,4%
+      - generic [ref=e124]: ▲ Deslizá para ver más detalle

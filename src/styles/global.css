@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+/* Tokens de identidad (editorial) — se completan desde DESIGN.md en historias de UI. */
+:root {
+  --paper: #f7f4ee;
+  --ink: #1a1916;
+}
+
+html {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: system-ui, sans-serif;
+}

@@ -1,0 +1,20 @@
+- generic [active] [ref=e25]:
+  - heading "Page B (Paris)" [level=1] [ref=e26]
+  - navigation [ref=e27]:
+    - link "Go to /a" [ref=e28] [cursor=pointer]:
+      - /url: /a
+    - link "Go to /b" [ref=e29] [cursor=pointer]:
+      - /url: /b
+  - paragraph [ref=e30]:
+    - text: This is
+    - strong [ref=e31]: Page B
+    - text: . Map should fly to Paris.
+  - generic [ref=e9]:
+    - generic [ref=e10]:
+      - region "Map" [ref=e12]
+      - group [ref=e13]:
+        - generic "Toggle attribution" [ref=e14] [cursor=pointer]
+        - link "MapLibre" [ref=e16] [cursor=pointer]:
+          - /url: https://maplibre.org/
+    - generic [ref=e11]: persistent map island
+  - generic [ref=e32]: Page B (Paris)

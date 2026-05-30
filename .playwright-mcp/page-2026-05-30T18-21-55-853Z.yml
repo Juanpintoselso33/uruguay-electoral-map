@@ -1,0 +1,11 @@
+- generic [active] [ref=e1]:
+  - heading "Page A (Uruguay)" [level=1] [ref=e2]
+  - navigation [ref=e3]:
+    - link "Go to /a" [ref=e4] [cursor=pointer]:
+      - /url: /a
+    - link "Go to /b" [ref=e5] [cursor=pointer]:
+      - /url: /b
+  - paragraph [ref=e6]:
+    - text: This is
+    - strong [ref=e7]: Page A
+    - text: . Map should center on Uruguay.

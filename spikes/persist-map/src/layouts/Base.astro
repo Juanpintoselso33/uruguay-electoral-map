@@ -1,0 +1,30 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import MapIsland from '../components/MapIsland.vue';
+const { title } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <ClientRouter />
+  </head>
+  <body style="font-family: system-ui, sans-serif; margin: 0; padding: 16px;">
+    <h1>{title}</h1>
+    <nav style="margin-bottom: 12px;">
+      <a href="/a" style="margin-right: 12px;">Go to /a</a>
+      <a href="/b">Go to /b</a>
+    </nav>
+    <slot />
+    <!-- The persistent map island: same transition:persist key across routes -->
+    <!--
+      SPIKE RESULT (R7): switch the directive below to compare:
+        client:only="vue"  -> island is DROPPED on swap; map re-inits every nav (mapCreateCount climbs 1,2,3...). FAILS persist.
+        client:load        -> island truly persists; mapCreateCount STAYS 1 across all /a<->/b navs; flyTo works. WORKS.
+      Keeping client:only here to match the original spike spec; flip to client:load for the working architecture.
+    -->
+    <MapIsland client:only="vue" transition:persist="map" />
+  </body>
+</html>
