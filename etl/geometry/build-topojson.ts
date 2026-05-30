@@ -15,7 +15,7 @@ import type { Feature, FeatureCollection } from 'geojson';
 import type { Topology } from 'topojson-specification';
 
 export interface BuildOptions {
-  /** Percentil de puntos a descartar (0..1). 0.35 = descarta el 35% menos significativo. */
+  /** Fracción de puntos a MANTENER (los más significativos). p=0.15 → mantiene 15% (agresivo). */
   simplifyQuantile: number;
   /** Propiedad de la fuente que contiene el nombre del barrio (geoId). Se canonicaliza a `name`. */
   nameProp: string;

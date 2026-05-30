@@ -17,7 +17,7 @@ import type { VotosShard } from '../../lib/contracts';
 import { $selection, bindToLocation, commit } from '../../stores/map-state';
 import MapLegend from './MapLegend.vue';
 
-const props = defineProps<{ eleccion: string; departamento: string }>();
+const props = defineProps<{ eleccion: string; departamento: string; nivel?: string }>();
 
 interface OpcionesDoc {
   opciones: { opcionId: string; nombre: string }[];
@@ -84,8 +84,9 @@ function boundsOf(fc: FeatureCollection): LngLatBoundsLike {
 
 async function loadData(): Promise<{ fc: FeatureCollection; bounds: LngLatBoundsLike }> {
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  const geoNivel = props.nivel ?? 'zona';
   const [topoRes, votesRes, opcRes] = await Promise.all([
-    fetch(`${base}/data/geo/${props.departamento}/zona.topo.json`),
+    fetch(`${base}/data/geo/${props.departamento}/${geoNivel}.topo.json`),
     fetch(`${base}/data/${props.eleccion}/${props.departamento}/votes.json`),
     fetch(`${base}/data/${props.eleccion}/${props.departamento}/opciones.json`),
   ]);

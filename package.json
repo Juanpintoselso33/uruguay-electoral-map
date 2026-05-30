@@ -13,7 +13,8 @@
     "gate:a11y": "node scripts/a11y-check.mjs",
     "gate:cwv": "node scripts/measure-cwv.mjs",
     "gate:all": "npm run gate:perf && npm run gate:a11y && npm run gate:cwv",
-    "etl:montevideo": "esbuild etl/run-montevideo.ts --bundle --platform=node --format=cjs --outfile=node_modules/.cache/etl-mvd.cjs --log-level=warning && node node_modules/.cache/etl-mvd.cjs"
+    "etl:montevideo": "esbuild etl/run-montevideo.ts --bundle --platform=node --format=cjs --outfile=node_modules/.cache/etl-mvd.cjs --log-level=warning && node node_modules/.cache/etl-mvd.cjs",
+    "etl:rivera": "esbuild etl/run-rivera.ts --bundle --platform=node --format=cjs --outfile=node_modules/.cache/etl-rvr.cjs --log-level=warning && node node_modules/.cache/etl-rvr.cjs"
   },
   "dependencies": {
     "@nanostores/vue": "^0.11.0",

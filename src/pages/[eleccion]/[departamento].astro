@@ -3,13 +3,22 @@ import Base from '../../layouts/Base.astro';
 import ChoroplethMap from '../../components/map/ChoroplethMap.vue';
 import DataTable from '../../components/a11y/DataTable.astro';
 
-// Static output: enumeramos las combinaciones disponibles. Por ahora Montevideo
-// internas-2024 (único depto con datos emitidos por el ETL). Se amplía al agregar deptos.
+// Nivel geográfico nativo por departamento (zona=barrios, serie=series electorales).
+// Se actualiza al agregar cada departamento nuevo.
+const DEPT_NIVEL: Record<string, 'zona' | 'serie'> = {
+  montevideo: 'zona',
+  rivera: 'serie',
+};
+
 export function getStaticPaths() {
-  return [{ params: { eleccion: 'internas-2024', departamento: 'montevideo' } }];
+  return [
+    { params: { eleccion: 'internas-2024', departamento: 'montevideo' } },
+    { params: { eleccion: 'internas-2024', departamento: 'rivera' } },
+  ];
 }
 
 const { eleccion, departamento } = Astro.params;
+const nivel = DEPT_NIVEL[departamento] ?? 'zona';
 const titulo = `${departamento} — ${eleccion}`;
 ---
 
@@ -20,7 +29,7 @@ const titulo = `${departamento} — ${eleccion}`;
       <p class="text-sm text-gray-600">{eleccion} · ganador por barrio</p>
     </header>
     <!-- Isla MapLibre client:load (NO client:only) — patrón validado por spike R7 -->
-    <ChoroplethMap client:load eleccion={eleccion} departamento={departamento} />
+    <ChoroplethMap client:load eleccion={eleccion} departamento={departamento} nivel={nivel} />
     <DataTable eleccion={eleccion} departamento={departamento} />
   </main>
 </Base>
