@@ -40,8 +40,8 @@ story_location: docs/bmad-output/implementation-artifacts
 development_status:
   # ---- Epic 1: El mapa confiable + el contrato ----
   epic-1: in-progress
-  1-1-inicializar-proyecto-astro-vue-vercel: review
-  1-2-data-contract-v1-polimorfico: backlog
+  1-1-inicializar-proyecto-astro-vue-vercel: done
+  1-2-data-contract-v1-polimorfico: done
   1-3-spike-geo-join: backlog
   1-4-etl-extraer-normalizar-votos: backlog
   1-5-etl-geometria-topojson-lazy-load: backlog

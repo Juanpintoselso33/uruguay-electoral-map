@@ -4,7 +4,7 @@ baseline_commit: 459a6683db03d98aca8551c8926d68b98643413a
 
 # Story 1.1: Inicializar el proyecto Astro + Vue + Vercel
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -138,3 +138,19 @@ Amelia (dev) — claude-opus-4-8[1m]
 **Movidos a `legacy/`:** todo el app Vue/Vite viejo (`src/`, `vite.config.js`, configs, `index.html`, docs `.md` deprecados, `netlify.toml`, `vercel.json`, `etl/`, `scripts/`, `tests/`, logs).
 
 **Generados (gitignored):** `dist/`, `.vercel/`, `node_modules/`, `.astro/`.
+
+## Senior Developer Review (AI)
+
+**Fecha:** 2026-05-30 · **Modo:** full (3 lentes adversariales sobre diff acotado del scaffold)
+
+**Outcome:** APPROVED (tras corregir 1 crítico)
+
+### Action Items
+- [x] **[CRÍTICO] `.gitattributes` `*.json filter=lfs` global** → convertía `package.json`/`tsconfig.json` en punteros Git LFS, rompiendo el deploy (npm install recibía un puntero). El build local lo enmascaró. **RESUELTO** (commit `17df493`): LFS acotado a `public/**/*.json` y `data/**/*.json`; config JSON re-almacenado como texto (verificado: `git show HEAD:package.json` = JSON real; data sigue en LFS).
+- [ ] **[Bajo] M2** `vercel.ts` `deployConfig` no consumido por nada (el adapter es la config real). Placeholder documentado — aceptable; revisar cuando `@vercel/config` GA.
+- [ ] **[Bajo] M3** `claude-code-universal-guide/` quedó trackeado — evaluar si sacarlo del repo en hardening.
+
+### Acceptance Criteria
+AC1 build ✅ · AC2 vercel.ts + sin netlify/vercel.json ✅ · AC4 typecheck strict ✅ · AC5 isla client:load ✅ · AC3 deploy = pendiente de auth de Vercel (acción de Juan, no-código).
+
+**Nota:** El fix de C1 era deploy-blocking; sin él AC1/AC3 fallaban en CI pese al build local verde. Historia aprobada y marcada `done`.
