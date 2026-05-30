@@ -1,0 +1,121 @@
+---
+/**
+ * Tabla de datos accesible equivalente al mapa (Story 1.9). HTML ESTÁTICO (no isla):
+ * se renderiza en build leyendo los mismos shards que el mapa → mismo dato, sin JS,
+ * navegable por teclado (alternativa textual WCAG 1.1.1 al choropleth).
+ */
+import { readFileSync } from 'node:fs';
+import { resolveParty } from '../../lib/party-meta';
+import type { VotosShard } from '../../lib/contracts';
+
+interface Props {
+  eleccion: string;
+  departamento: string;
+}
+const { eleccion, departamento } = Astro.props;
+
+interface OpcionesDoc {
+  opciones: { opcionId: string; nombre: string }[];
+}
+
+const votes = JSON.parse(
+  readFileSync(`public/data/${eleccion}/${departamento}/votes.json`, 'utf8'),
+) as VotosShard;
+const opcDoc = JSON.parse(
+  readFileSync(`public/data/${eleccion}/${departamento}/opciones.json`, 'utf8'),
+) as OpcionesDoc;
+const nombrePorOpcion = new Map(opcDoc.opciones.map((o) => [o.opcionId, o.nombre]));
+
+const filas = votes.zonas
+  .map((z) => {
+    const nombre = nombrePorOpcion.get(z.ganadorOpcionId) ?? z.ganadorOpcionId;
+    const meta = resolveParty(nombre);
+    const ganadorVotos = z.porOpcion.find((o) => o.opcionId === z.ganadorOpcionId)?.votos ?? 0;
+    const pct = z.validos > 0 ? (ganadorVotos / z.validos) * 100 : 0;
+    return { zona: z.geoId, sigla: meta.sigla, nombre, ganadorVotos, validos: z.validos, pct };
+  })
+  .sort((a, b) => a.zona.localeCompare(b.zona, 'es'));
+
+const fmt = (n: number): string => n.toLocaleString('es-UY');
+---
+
+<details class="datatable">
+  <summary>Tabla de datos (accesible){' '}— {filas.length} barrios</summary>
+  <div class="datatable__scroll">
+    <table>
+      <caption>
+        Resultados por barrio — {departamento}, {eleccion}. Partido ganador, votos del
+        ganador y porcentaje sobre votos válidos. Equivalente textual del mapa.
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">Barrio</th>
+          <th scope="col">Ganador</th>
+          <th scope="col" class="num">Votos del ganador</th>
+          <th scope="col" class="num">% válidos</th>
+          <th scope="col" class="num">Válidos</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          filas.map((f) => (
+            <tr>
+              <th scope="row">{f.zona}</th>
+              <td>
+                <span class="sigla">{f.sigla}</span> {f.nombre}
+              </td>
+              <td class="num">{fmt(f.ganadorVotos)}</td>
+              <td class="num">{f.pct.toFixed(1)}%</td>
+              <td class="num">{fmt(f.validos)}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</details>
+
+<style>
+  .datatable {
+    margin: 1rem 0;
+    padding: 0 0.75rem;
+  }
+  .datatable > summary {
+    cursor: pointer;
+    font-weight: 600;
+    padding: 0.5rem 0;
+  }
+  .datatable__scroll {
+    overflow-x: auto;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.8125rem;
+  }
+  caption {
+    text-align: left;
+    color: #4b5563;
+    font-size: 0.75rem;
+    padding-bottom: 0.5rem;
+  }
+  th,
+  td {
+    text-align: left;
+    padding: 0.375rem 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  thead th {
+    border-bottom: 2px solid #d1d5db;
+    position: sticky;
+    top: 0;
+    background: #fff;
+  }
+  .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .sigla {
+    font-weight: 700;
+  }
+</style>

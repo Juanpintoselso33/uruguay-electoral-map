@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ChoroplethMap from '../../components/map/ChoroplethMap.vue';
+import DataTable from '../../components/a11y/DataTable.astro';
 
 // Static output: enumeramos las combinaciones disponibles. Por ahora Montevideo
 // internas-2024 (único depto con datos emitidos por el ETL). Se amplía al agregar deptos.
@@ -20,5 +21,6 @@ const titulo = `${departamento} — ${eleccion}`;
     </header>
     <!-- Isla MapLibre client:load (NO client:only) — patrón validado por spike R7 -->
     <ChoroplethMap client:load eleccion={eleccion} departamento={departamento} />
+    <DataTable eleccion={eleccion} departamento={departamento} />
   </main>
 </Base>
