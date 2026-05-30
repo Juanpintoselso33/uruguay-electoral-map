@@ -8,7 +8,6 @@
  * SSR-safe: maplibre-gl se importa dinámicamente en onMounted (referencia window al evaluar).
  */
 import { onMounted, onUnmounted, ref, shallowRef } from 'vue';
-import { useStore } from '@nanostores/vue';
 import type { Map as MlMap, Marker as MlMarker, LngLatBoundsLike } from 'maplibre-gl';
 import type { Feature, FeatureCollection, Polygon, MultiPolygon, Position } from 'geojson';
 import type { Topology, GeometryCollection } from 'topojson-specification';
@@ -45,8 +44,8 @@ const legend = ref<LegendEntry[]>([]);
 const sinDatos = ref(0);
 const selected = ref<SelInfo | null>(null);
 const map = shallowRef<MlMap | null>(null);
+const fcRef = shallowRef<FeatureCollection | null>(null);
 const markers: MlMarker[] = [];
-const sel = useStore($selection);
 
 function norm(s: string): string {
   return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[.,]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -180,8 +179,11 @@ onMounted(async () => {
         id: 'zonas-sel',
         type: 'line',
         source: 'zonas',
-        paint: { 'line-color': '#111827', 'line-width': 2.5 },
-        filter: ['==', ['get', 'name'], '__none__'],
+        // Realce por feature-state (solo repinta, sin re-teselar) → INP bajo.
+        paint: {
+          'line-color': '#111827',
+          'line-width': ['case', ['boolean', ['feature-state', 'sel'], false], 2.5, 0],
+        },
       });
 
       // Siglas como markers HTML en centroides (texto real, sin glyphs).
@@ -196,23 +198,19 @@ onMounted(async () => {
         markers.push(new maplibre.Marker({ element: el }).setLngLat([lng, lat]).addTo(m));
       }
 
+      fcRef.value = fc;
+      // El tap SOLO escribe la URL; la suscripción a $selection aplica realce + readout
+      // (un único setFilter por interacción → INP bajo). No duplicar el repaint acá.
       m.on('click', 'zonas-fill', (e) => {
         const f = e.features?.[0];
         if (!f) return;
-        const name = String((f.properties as { name: string }).name);
-        commit({ zona: name });
-        m.setFilter('zonas-sel', ['==', ['get', 'name'], name]);
-        selectByName(name, fc);
+        commit({ zona: String((f.properties as { name: string }).name) });
       });
       m.on('mouseenter', 'zonas-fill', () => { m.getCanvas().style.cursor = 'pointer'; });
       m.on('mouseleave', 'zonas-fill', () => { m.getCanvas().style.cursor = ''; });
 
       // Reconstruir selección desde la URL (deep-link / recarga).
-      const z = $selection.get().zona;
-      if (z) {
-        m.setFilter('zonas-sel', ['==', ['get', 'name'], z]);
-        selectByName(z, fc);
-      }
+      applySelection($selection.get().zona);
       status.value = 'listo';
     });
   } catch (err) {
@@ -226,13 +224,22 @@ onUnmounted(() => {
   map.value?.remove();
 });
 
-// Mantener el realce sincronizado si la URL cambia por fuera (popstate).
-function syncHighlight(zona: string | null): void {
+// Única vía de aplicar selección al mapa (realce + readout). La disparan tanto el tap
+// (vía commit→$selection) como popstate/deep-link. Realce vía feature-state (repaint barato).
+let prevSelId: string | null = null;
+function applySelection(zona: string | null): void {
   const m = map.value;
-  if (!m || !m.getLayer('zonas-sel')) return;
-  m.setFilter('zonas-sel', ['==', ['get', 'name'], zona ?? '__none__']);
+  if (!m || !m.getSource('zonas')) return;
+  if (prevSelId !== null) m.setFeatureState({ source: 'zonas', id: prevSelId }, { sel: false });
+  if (zona) {
+    m.setFeatureState({ source: 'zonas', id: zona }, { sel: true });
+    if (fcRef.value) selectByName(zona, fcRef.value);
+  } else {
+    selected.value = null;
+  }
+  prevSelId = zona;
 }
-$selection.subscribe((s) => syncHighlight(s.zona));
+$selection.subscribe((s) => applySelection(s.zona));
 </script>
 
 <template>

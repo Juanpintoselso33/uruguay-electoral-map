@@ -1,0 +1,43 @@
+name: CI
+
+# Gate de calidad del slice (Story 1.10): tipos + build + perf-budget + a11y + CWV (NFR1).
+# Si algún gate excede su budget, el job falla → no se mergea deuda de performance/a11y.
+
+on:
+  push:
+    branches: [master, 'rebuild/**']
+  pull_request:
+
+jobs:
+  build-and-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true # geometría fuente (v_sig_barrios, *_map.json) vive en LFS
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Typecheck (astro check)
+        run: npm run check
+
+      - name: Build estático
+        run: npm run build
+
+      - name: Gate perf-budget (NFR1 — peso JS, MapLibre on-demand)
+        run: npm run gate:perf
+
+      - name: Gate a11y base (color+texto, contraste)
+        run: npm run gate:a11y
+
+      - name: Instalar Chromium (para medir CWV)
+        run: npx playwright install --with-deps chromium
+
+      - name: Gate Core Web Vitals (NFR1 — LCP / INP / CLS, mobile)
+        run: npm run gate:cwv

@@ -8,7 +8,12 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "astro": "astro"
+    "astro": "astro",
+    "gate:perf": "node scripts/perf-budget.mjs",
+    "gate:a11y": "node scripts/a11y-check.mjs",
+    "gate:cwv": "node scripts/measure-cwv.mjs",
+    "gate:all": "npm run gate:perf && npm run gate:a11y && npm run gate:cwv",
+    "etl:montevideo": "esbuild etl/run-montevideo.ts --bundle --platform=node --format=cjs --outfile=node_modules/.cache/etl-mvd.cjs --log-level=warning && node node_modules/.cache/etl-mvd.cjs"
   },
   "dependencies": {
     "@nanostores/vue": "^0.11.0",
@@ -29,6 +34,7 @@
     "@types/topojson-client": "^3.1.5",
     "@types/topojson-server": "^3.0.4",
     "@types/topojson-simplify": "^3.0.3",
+    "playwright": "^1.60.0",
     "tailwindcss": "^4.1.13",
     "topojson-server": "^3.0.1",
     "topojson-simplify": "^3.0.3",
