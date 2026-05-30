@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:14032482ab1da63cde68e772c65c7975c425d3423196b897c768b2a0e1578c63
-size 196
+{
+  "department": "soriano",
+  "displayName": "Soriano",
+  "election": "internas-2024",
+  "processedAt": "2026-01-31T15:51:18.341Z",
+  "files": {
+    "odn": "odn.json",
+    "odd": "odd.json"
+  }
+}

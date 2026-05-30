@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:48fa245c7371287d2b882082ddc2249fc0c87ae9b4a476bd38087afcf5f9d327
-size 202
+{
+  "department": "tacuarembo",
+  "displayName": "Tacuarembo",
+  "election": "internas-2024",
+  "processedAt": "2026-01-31T15:51:18.398Z",
+  "files": {
+    "odn": "odn.json",
+    "odd": "odd.json"
+  }
+}

@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:430eff891e3e462fd068df0e95c69bb5514b4a4480375957714c494210cddd4e
-size 197
+{
+  "department": "rocha",
+  "displayName": "Rocha",
+  "election": "nacionales-2019",
+  "processedAt": "2026-01-31T18:26:27.304Z",
+  "files": {
+    "odn": null,
+    "odd": "odd.json"
+  }
+}

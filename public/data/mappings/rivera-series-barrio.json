@@ -1,3 +1,55 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:44984c308584ecb607552521a7cec0ce3dc1043def48df94c0d0f4e434a55854
-size 805
+{
+  "HBE": [
+    "33 ORIENTALES",
+    "SACRIFICIO DE SONIA"
+  ],
+  "HAB": [
+    "MAXIMO XAVIER",
+    "CUARTEL",
+    "SAAVEDRA",
+    "RIVERA CHICO",
+    "CERRO DEL MARCO"
+  ],
+  "HAA": [
+    "CENTRO",
+    "DON BOSCO"
+  ],
+  "HBA": [
+    "CEBALLOS",
+    "MAGISTERIAL",
+    "PUEBLO NUEVO",
+    "SIÃ‘ERIZ",
+    "MISIONES",
+    "PIRINEOS",
+    "CAQUEIRO"
+  ],
+  "HBF": [
+    "INSAUSTI",
+    "BISIO",
+    "FUENTE ORIENTE",
+    "LEGISLATIVO",
+    "BELLA VISTA"
+  ],
+  "HBD": [
+    "ANSINA",
+    "LAVALLEJA",
+    "SANTA TERESA",
+    "SANTA ISABEL",
+    "CARMELO SOSA"
+  ],
+  "HBG": [
+    "VILLA SARA",
+    "PROGRESO",
+    "LAGUNON",
+    "RECREO PASO DE LA ESTIBA",
+    "PIEDRA FURADA",
+    "PICADA DE MORA"
+  ],
+  "HBC": [],
+  "HBB": [
+    "MANDUBI",
+    "LA PEDRERA",
+    "LA VIRGENCITA",
+    "LA RACCA"
+  ]
+}

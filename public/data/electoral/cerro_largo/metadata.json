@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e1f9df2954b79879f6cb77a0b3a7ab0ccbb15d344576e9d10953e42ebdddda14
-size 173
+{
+  "department": "cerro_largo",
+  "displayName": "Cerro largo",
+  "processedAt": "2026-01-31T01:15:02.134Z",
+  "files": {
+    "odn": "odn.json",
+    "odd": "odd.json"
+  }
+}

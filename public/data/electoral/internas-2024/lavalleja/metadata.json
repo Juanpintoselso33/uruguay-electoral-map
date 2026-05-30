@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:533ccb6021b7d8513f478672106f104b23d782b94936d7cff2c7ef9e3d63c5af
-size 200
+{
+  "department": "lavalleja",
+  "displayName": "Lavalleja",
+  "election": "internas-2024",
+  "processedAt": "2026-01-31T15:51:17.109Z",
+  "files": {
+    "odn": "odn.json",
+    "odd": "odd.json"
+  }
+}

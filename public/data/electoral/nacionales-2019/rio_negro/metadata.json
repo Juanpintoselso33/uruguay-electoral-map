@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:91e0159cc98e941b15f02bf1183e80833cd5de8311036dc0d1830e6e91dbd40b
-size 205
+{
+  "department": "rio_negro",
+  "displayName": "Rio negro",
+  "election": "nacionales-2019",
+  "processedAt": "2026-01-31T18:26:27.268Z",
+  "files": {
+    "odn": null,
+    "odd": "odd.json"
+  }
+}

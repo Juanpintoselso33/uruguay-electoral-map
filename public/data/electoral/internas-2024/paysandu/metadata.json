@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:436d38bc2f48bf22ec2f4667a263c3cd9423a173ae535118cd314e9b17873b61
-size 198
+{
+  "department": "paysandu",
+  "displayName": "Paysandu",
+  "election": "internas-2024",
+  "processedAt": "2026-01-31T15:51:17.960Z",
+  "files": {
+    "odn": "odn.json",
+    "odd": "odd.json"
+  }
+}

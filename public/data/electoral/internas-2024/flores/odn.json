@@ -1,3 +1,606 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b3f72bd7146461b34177fdbe5c6bd325e0f76ae378227d6d07138172f2ad031c
-size 11090
+{
+  "metadata": {
+    "type": "odn",
+    "schemaType": "internas",
+    "processedAt": "2026-01-31T15:51:17.039Z",
+    "stats": {
+      "totalRows": 1670,
+      "uniqueLists": 62,
+      "uniqueZones": 14,
+      "uniqueParties": 11,
+      "totalVotes": 9415,
+      "totalVotosExterior": 139
+    },
+    "department": "flores",
+    "election": "internas-2024"
+  },
+  "data": {
+    "votosPorListas": {
+      "8": {
+        "paa": 569,
+        "pab": 1,
+        "pac": 52,
+        "pad": 6,
+        "pba": 752,
+        "pbb": 16,
+        "pbc": 16,
+        "pbd": 244,
+        "pca": 7,
+        "pcb": 7,
+        "pcc": 2,
+        "pcd": 2,
+        "pce": 7,
+        "pcf": 7
+      },
+      "20": {
+        "paa": 41,
+        "pac": 2,
+        "pba": 59,
+        "pbd": 8,
+        "pca": 1,
+        "pcb": 1,
+        "pce": 4,
+        "pcf": 4
+      },
+      "25": {
+        "paa": 240,
+        "pab": 2,
+        "pac": 11,
+        "pba": 291,
+        "pbb": 3,
+        "pbc": 3,
+        "pbd": 20,
+        "pca": 3,
+        "pcb": 3,
+        "pcc": 1,
+        "pcd": 1,
+        "pce": 1,
+        "pcf": 1
+      },
+      "39": {
+        "paa": 6,
+        "pba": 9
+      },
+      "40": {
+        "paa": 1042,
+        "pab": 1,
+        "pac": 30,
+        "pad": 2,
+        "pba": 1421,
+        "pbb": 22,
+        "pbc": 22,
+        "pbd": 40,
+        "pca": 10,
+        "pcb": 10,
+        "pcc": 1,
+        "pcd": 1,
+        "pce": 4,
+        "pcf": 4
+      },
+      "44": {
+        "paa": 18,
+        "pad": 1,
+        "pba": 18,
+        "pcc": 1,
+        "pcd": 1
+      },
+      "46": {
+        "paa": 6,
+        "pba": 13,
+        "pbd": 5,
+        "pce": 1,
+        "pcf": 1
+      },
+      "49": {
+        "paa": 4,
+        "pba": 9,
+        "pbd": 1
+      },
+      "52": {
+        "paa": 39,
+        "pba": 24
+      },
+      "71": {
+        "paa": 80,
+        "pab": 2,
+        "pba": 88,
+        "pca": 1,
+        "pcb": 1,
+        "pcc": 1,
+        "pcd": 1,
+        "pce": 1,
+        "pcf": 1
+      },
+      "76": {
+        "paa": 4,
+        "pba": 13
+      },
+      "77": {
+        "paa": 67,
+        "pba": 74,
+        "pbd": 2
+      },
+      "90": {
+        "paa": 28,
+        "pba": 21,
+        "pbd": 6
+      },
+      "95": {
+        "paa": 22,
+        "pac": 1,
+        "pba": 42,
+        "pbd": 8
+      },
+      "97": {
+        "paa": 4,
+        "pba": 6
+      },
+      "141": {
+        "paa": 1,
+        "pba": 8
+      },
+      "250": {
+        "paa": 50,
+        "pba": 74,
+        "pbd": 1,
+        "pce": 1,
+        "pcf": 1
+      },
+      "252": {
+        "paa": 1,
+        "pba": 1
+      },
+      "319": {
+        "paa": 11,
+        "pba": 9
+      },
+      "326": {
+        "paa": 3
+      },
+      "400": {
+        "paa": 297,
+        "pab": 1,
+        "pac": 18,
+        "pba": 366,
+        "pbb": 4,
+        "pbc": 4,
+        "pbd": 95,
+        "pca": 7,
+        "pcb": 7,
+        "pce": 7,
+        "pcf": 7
+      },
+      "545": {
+        "paa": 2,
+        "pba": 3,
+        "pca": 1,
+        "pcb": 1
+      },
+      "567": {
+        "paa": 6,
+        "pba": 4,
+        "pbd": 1
+      },
+      "600": {
+        "paa": 84,
+        "pac": 2,
+        "pba": 94,
+        "pbb": 1,
+        "pbc": 1,
+        "pbd": 5,
+        "pca": 1,
+        "pcb": 1
+      },
+      "609": {
+        "paa": 280,
+        "pac": 2,
+        "pba": 379,
+        "pbb": 4,
+        "pbc": 4,
+        "pbd": 44,
+        "pca": 2,
+        "pcb": 2,
+        "pce": 1,
+        "pcf": 1
+      },
+      "624": {
+        "paa": 2
+      },
+      "711": {
+        "paa": 9,
+        "pba": 5,
+        "pbd": 1,
+        "pca": 1,
+        "pcb": 1
+      },
+      "800": {
+        "paa": 29,
+        "pac": 1,
+        "pba": 33
+      },
+      "817": {
+        "paa": 8,
+        "pac": 1,
+        "pba": 6
+      },
+      "909": {
+        "paa": 5,
+        "pba": 20
+      },
+      "919": {
+        "pba": 1
+      },
+      "937": {
+        "paa": 2
+      },
+      "939": {
+        "paa": 84,
+        "pac": 1,
+        "pba": 64,
+        "pbb": 1,
+        "pbc": 1
+      },
+      "949": {
+        "paa": 9,
+        "pba": 11
+      },
+      "1001": {
+        "paa": 59,
+        "pba": 90
+      },
+      "1007": {
+        "pba": 1
+      },
+      "1214": {
+        "paa": 15,
+        "pac": 1,
+        "pba": 25
+      },
+      "1258": {
+        "paa": 1
+      },
+      "1303": {
+        "paa": 2,
+        "pba": 1
+      },
+      "1330": {
+        "paa": 4,
+        "pba": 3
+      },
+      "1358": {
+        "paa": 62,
+        "pba": 93,
+        "pbb": 1,
+        "pbc": 1,
+        "pbd": 2
+      },
+      "1808": {
+        "paa": 47,
+        "pab": 1,
+        "pac": 1,
+        "pba": 57
+      },
+      "1813": {
+        "paa": 1,
+        "pba": 4
+      },
+      "1950": {
+        "paa": 78,
+        "pac": 2,
+        "pba": 99,
+        "pbd": 1
+      },
+      "1968": {
+        "paa": 6,
+        "pba": 8
+      },
+      "2000": {
+        "paa": 16,
+        "pba": 7,
+        "pbb": 1,
+        "pbc": 1,
+        "pca": 1,
+        "pcb": 1
+      },
+      "2004": {
+        "paa": 104,
+        "pab": 1,
+        "pac": 5,
+        "pba": 101,
+        "pbb": 5,
+        "pbc": 5,
+        "pbd": 20,
+        "pca": 3,
+        "pcb": 3,
+        "pcc": 2,
+        "pcd": 2,
+        "pce": 1,
+        "pcf": 1
+      },
+      "2018": {
+        "paa": 18,
+        "pad": 1,
+        "pba": 22,
+        "pbd": 1,
+        "pca": 1,
+        "pcb": 1
+      },
+      "2040": {
+        "paa": 4,
+        "pba": 3,
+        "pbd": 2
+      },
+      "3010": {
+        "paa": 21,
+        "pba": 14,
+        "pbb": 1,
+        "pbc": 1
+      },
+      "3311": {
+        "paa": 1,
+        "pba": 2,
+        "pbd": 1
+      },
+      "3333": {
+        "paa": 19,
+        "pba": 25
+      },
+      "4848": {
+        "paa": 7,
+        "pab": 1,
+        "pba": 19,
+        "pbb": 1,
+        "pbc": 1,
+        "pbd": 1
+      },
+      "5005": {
+        "paa": 1,
+        "pba": 2
+      },
+      "7001": {
+        "paa": 14,
+        "pba": 16,
+        "pbb": 1,
+        "pbc": 1,
+        "pbd": 1,
+        "pcc": 1,
+        "pcd": 1
+      },
+      "7171": {
+        "paa": 41,
+        "pac": 2,
+        "pba": 46,
+        "pbb": 1,
+        "pbc": 1,
+        "pbd": 2,
+        "pcc": 1,
+        "pcd": 1
+      },
+      "8009": {
+        "paa": 2,
+        "pba": 2,
+        "pbd": 1,
+        "pce": 1,
+        "pcf": 1
+      },
+      "8880": {
+        "paa": 68,
+        "pac": 3,
+        "pba": 79,
+        "pbb": 1,
+        "pbc": 1,
+        "pbd": 5
+      },
+      "9007": {
+        "paa": 32,
+        "pba": 46,
+        "pbb": 1,
+        "pbc": 1,
+        "pce": 1,
+        "pcf": 1
+      },
+      "9393": {
+        "paa": 2,
+        "pba": 1
+      },
+      "29000": {
+        "paa": 22,
+        "pba": 39,
+        "pbd": 1
+      },
+      "99000": {
+        "paa": 14,
+        "pba": 18
+      }
+    },
+    "maxVotosPorListas": {
+      "8": 752,
+      "20": 59,
+      "25": 291,
+      "39": 9,
+      "40": 1421,
+      "44": 18,
+      "46": 13,
+      "49": 9,
+      "52": 39,
+      "71": 88,
+      "76": 13,
+      "77": 74,
+      "90": 28,
+      "95": 42,
+      "97": 6,
+      "141": 8,
+      "250": 74,
+      "252": 1,
+      "319": 11,
+      "326": 3,
+      "400": 366,
+      "545": 3,
+      "567": 6,
+      "600": 94,
+      "609": 379,
+      "624": 2,
+      "711": 9,
+      "800": 33,
+      "817": 8,
+      "909": 20,
+      "919": 1,
+      "937": 2,
+      "939": 84,
+      "949": 11,
+      "1001": 90,
+      "1007": 1,
+      "1214": 25,
+      "1258": 1,
+      "1303": 2,
+      "1330": 4,
+      "1358": 93,
+      "1808": 57,
+      "1813": 4,
+      "1950": 99,
+      "1968": 8,
+      "2000": 16,
+      "2004": 104,
+      "2018": 22,
+      "2040": 4,
+      "3010": 21,
+      "3311": 2,
+      "3333": 25,
+      "4848": 19,
+      "5005": 2,
+      "7001": 16,
+      "7171": 46,
+      "8009": 2,
+      "8880": 79,
+      "9007": 46,
+      "9393": 2,
+      "29000": 39,
+      "99000": 18
+    },
+    "partiesByList": {
+      "8": "PARTIDO NACIONAL",
+      "20": "PARTIDO COLORADO",
+      "25": "PARTIDO COLORADO",
+      "39": "PARTIDO BASTA YA",
+      "40": "PARTIDO NACIONAL",
+      "44": "PARTIDO NACIONAL",
+      "46": "FRENTE AMPLIO",
+      "49": "FRENTE AMPLIO",
+      "52": "FRENTE AMPLIO",
+      "71": "PARTIDO NACIONAL",
+      "76": "FRENTE AMPLIO",
+      "77": "FRENTE AMPLIO",
+      "90": "FRENTE AMPLIO",
+      "95": "FRENTE AMPLIO",
+      "97": "PARTIDO NACIONAL",
+      "141": "FRENTE AMPLIO",
+      "250": "PARTIDO NACIONAL",
+      "252": "PARTIDO NACIONAL",
+      "319": "FRENTE AMPLIO",
+      "326": "ASAMBLEA POPULAR",
+      "400": "PARTIDO NACIONAL",
+      "545": "FRENTE AMPLIO",
+      "567": "FRENTE AMPLIO",
+      "600": "PARTIDO COLORADO",
+      "609": "FRENTE AMPLIO",
+      "624": "FRENTE AMPLIO",
+      "711": "FRENTE AMPLIO",
+      "800": "FRENTE AMPLIO",
+      "817": "FRENTE AMPLIO",
+      "909": "PARTIDO INDEPENDIENTE",
+      "919": "PARTIDO COLORADO",
+      "937": "PARTIDO AVANZAR REPUBLICANO",
+      "939": "FRENTE AMPLIO",
+      "949": "FRENTE AMPLIO",
+      "1001": "FRENTE AMPLIO",
+      "1007": "PARTIDO NACIONAL",
+      "1214": "PARTIDO COLORADO",
+      "1258": "PARTIDO DE LA ARMONÍA",
+      "1303": "FRENTE AMPLIO",
+      "1330": "PARTIDO ECOLOGISTA RADICAL INTRANSIGENTE",
+      "1358": "FRENTE AMPLIO",
+      "1808": "FRENTE AMPLIO",
+      "1813": "FRENTE AMPLIO",
+      "1950": "PARTIDO NACIONAL",
+      "1968": "FRENTE AMPLIO",
+      "2000": "PARTIDO COLORADO",
+      "2004": "PARTIDO NACIONAL",
+      "2018": "POR LOS CAMBIOS NECESARIOS (PCN)",
+      "2040": "FRENTE AMPLIO",
+      "3010": "PARTIDO COLORADO",
+      "3311": "FRENTE AMPLIO",
+      "3333": "CABILDO ABIERTO",
+      "4848": "CABILDO ABIERTO",
+      "5005": "FRENTE AMPLIO",
+      "7001": "CABILDO ABIERTO",
+      "7171": "PARTIDO NACIONAL",
+      "8009": "FRENTE AMPLIO",
+      "8880": "PARTIDO NACIONAL",
+      "9007": "PARTIDO COLORADO",
+      "9393": "FRENTE AMPLIO",
+      "29000": "PARTIDO COLORADO",
+      "99000": "FRENTE AMPLIO"
+    },
+    "precandidatosByList": {},
+    "votosExterior": {
+      "8": 30,
+      "20": 1,
+      "25": 11,
+      "39": 1,
+      "40": 22,
+      "44": 1,
+      "46": 1,
+      "71": 7,
+      "77": 6,
+      "90": 1,
+      "250": 3,
+      "319": 1,
+      "400": 18,
+      "567": 1,
+      "600": 3,
+      "609": 9,
+      "939": 1,
+      "1001": 3,
+      "1808": 1,
+      "1950": 5,
+      "1968": 1,
+      "2004": 3,
+      "2018": 1,
+      "3010": 1,
+      "3311": 1,
+      "4848": 1,
+      "7171": 1,
+      "9007": 1,
+      "29000": 3
+    },
+    "zoneList": [
+      "paa",
+      "pab",
+      "pac",
+      "pad",
+      "pba",
+      "pbb",
+      "pbc",
+      "pbd",
+      "pca",
+      "pcb",
+      "pcc",
+      "pcd",
+      "pce",
+      "pcf"
+    ],
+    "partyList": [
+      "ASAMBLEA POPULAR",
+      "CABILDO ABIERTO",
+      "FRENTE AMPLIO",
+      "PARTIDO AVANZAR REPUBLICANO",
+      "PARTIDO BASTA YA",
+      "PARTIDO COLORADO",
+      "PARTIDO DE LA ARMONÍA",
+      "PARTIDO ECOLOGISTA RADICAL INTRANSIGENTE",
+      "PARTIDO INDEPENDIENTE",
+      "PARTIDO NACIONAL",
+      "POR LOS CAMBIOS NECESARIOS (PCN)"
+    ]
+  }
+}

@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:30aaa5044c339ebf97afb5bd2a713bec4e248f4d3e453ee356c2b4c68b39f09d
-size 210
+{
+  "department": "treinta_y_tres",
+  "displayName": "Treinta y tres",
+  "election": "internas-2024",
+  "processedAt": "2026-01-31T15:51:18.436Z",
+  "files": {
+    "odn": "odn.json",
+    "odd": "odd.json"
+  }
+}

@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4b55d00d72788a62509a7f62e7b3863a45779a1503dbc98bf4387b6c60db41ca
-size 165
+{
+  "department": "durazno",
+  "displayName": "Durazno",
+  "processedAt": "2026-01-31T01:13:31.919Z",
+  "files": {
+    "odn": "odn.json",
+    "odd": "odd.json"
+  }
+}

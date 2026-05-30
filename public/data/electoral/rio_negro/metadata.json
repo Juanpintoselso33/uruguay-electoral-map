@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ac9e29ad79cdb2da73f650d27dd8d276d12d4fc21ee8bb0adbb8c11ded52c962
-size 169
+{
+  "department": "rio_negro",
+  "displayName": "Rio negro",
+  "processedAt": "2026-01-31T01:15:02.723Z",
+  "files": {
+    "odn": "odn.json",
+    "odd": "odd.json"
+  }
+}

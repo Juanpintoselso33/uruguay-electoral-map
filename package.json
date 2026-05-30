@@ -27,7 +27,11 @@
     "@types/d3-geo": "^3.1.0",
     "@types/node": "^25.9.1",
     "@types/topojson-client": "^3.1.5",
+    "@types/topojson-server": "^3.0.4",
+    "@types/topojson-simplify": "^3.0.3",
     "tailwindcss": "^4.1.13",
+    "topojson-server": "^3.0.1",
+    "topojson-simplify": "^3.0.3",
     "typescript": "^5.7.0"
   }
 }

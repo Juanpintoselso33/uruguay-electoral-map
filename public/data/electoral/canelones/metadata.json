@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f16fd7c870fbee9026fe08686d4061774441a7c29220738a4315945ae103ed70
-size 169
+{
+  "department": "canelones",
+  "displayName": "Canelones",
+  "processedAt": "2026-01-31T01:13:09.386Z",
+  "files": {
+    "odn": "odn.json",
+    "odd": "odd.json"
+  }
+}

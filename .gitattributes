@@ -1,5 +1,11 @@
-# Git LFS SOLO para datos geográficos/electorales grandes, acotado por PATH.
-# NO usar `*.json` global: convertía package.json / tsconfig.json en punteros LFS
-# y rompía el deploy (npm install recibía un puntero). Ver code review Story 1.1.
-public/**/*.json filter=lfs diff=lfs merge=lfs -text
-data/**/*.json filter=lfs diff=lfs merge=lfs -text
+# Git LFS SOLO para geometría FUENTE grande (GeoJSON crudo de IDE / ETL viejo).
+# NO usar `*.json` global ni `public/**/*.json`: eso mandaba a LFS los shards
+# chicos generados (votes.json ~45KB) y, peor, package.json/tsconfig.json.
+# Regla: LFS solo para los GeoJSON grandes; los artefactos optimizados/chicos
+# bajo public/data/** y la config quedan como TEXTO. Ver code review 1.1 + Story 1.5.
+public/*_map.json filter=lfs diff=lfs merge=lfs -text
+public/*_series_map.json filter=lfs diff=lfs merge=lfs -text
+public/montevideo_series_electorales.json filter=lfs diff=lfs merge=lfs -text
+public/uruguay_series_electorales.json filter=lfs diff=lfs merge=lfs -text
+public/uruguay_series_electorales_map.json filter=lfs diff=lfs merge=lfs -text
+data/raw/** filter=lfs diff=lfs merge=lfs -text

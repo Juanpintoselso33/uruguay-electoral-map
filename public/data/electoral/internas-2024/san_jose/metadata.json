@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9869f0bcabcc7c4cbfaabf941923abc2f8dfdbc89285914fcb30e8ae698ef614
-size 198
+{
+  "department": "san_jose",
+  "displayName": "San jose",
+  "election": "internas-2024",
+  "processedAt": "2026-01-31T15:51:18.284Z",
+  "files": {
+    "odn": "odn.json",
+    "odd": "odd.json"
+  }
+}

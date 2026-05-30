@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:48dd68e4d230f35702a463f7f282dc8091de728cad8fe79101f35e892cc240f1
-size 201
+{
+  "department": "colonia",
+  "displayName": "Colonia",
+  "election": "nacionales-2019",
+  "processedAt": "2026-01-31T18:26:26.695Z",
+  "files": {
+    "odn": null,
+    "odd": "odd.json"
+  }
+}
