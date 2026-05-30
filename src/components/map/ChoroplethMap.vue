@@ -1,23 +1,29 @@
 <script setup lang="ts">
 /**
- * Isla mapa choropleth (Story 1.8). `client:load`. Pinta los barrios por partido
- * ganador, con la SIGLA como texto (markers HTML en centroides — el text-field de
- * MapLibre exige glyphs/fuentes que no tenemos). Leyenda nombra color+sigla+partido.
- * Tap resalta y muestra el ganador. Estado de selección → URL vía nanostores.
+ * Isla mapa choropleth (Story 1.8, extendido Story 2.1).
  *
- * SSR-safe: maplibre-gl se importa dinámicamente en onMounted (referencia window al evaluar).
+ * `client:load`. Pinta las unidades geográficas (barrios o series) por partido
+ * ganador. Sigla como texto (markers HTML en centroides). Leyenda = partidos ganadores.
+ *
+ * Story 2.1: con ClientRouter + transition:persist el island sobrevive la navegación
+ * entre departamentos. En `astro:after-swap` recarga datos sin re-inicializar MapLibre
+ * (NFR1 anti-jank). La URL es la fuente de verdad; nanostores espejan.
  */
 import { onMounted, onUnmounted, ref, shallowRef } from 'vue';
-import type { Map as MlMap, Marker as MlMarker, LngLatBoundsLike } from 'maplibre-gl';
+import type { Map as MlMap, Marker as MlMarker, LngLatBoundsLike, GeoJSONSource } from 'maplibre-gl';
 import type { Feature, FeatureCollection, Polygon, MultiPolygon, Position } from 'geojson';
 import type { Topology, GeometryCollection } from 'topojson-specification';
 import { feature as topoFeature } from 'topojson-client';
 import { resolveParty } from '../../lib/party-meta';
 import type { VotosShard } from '../../lib/contracts';
-import { $selection, bindToLocation, commit } from '../../stores/map-state';
+import { $selection, bindToLocation, commit, hydrateStores } from '../../stores/map-state';
+import { parseUrl } from '../../lib/url-state';
 import MapLegend from './MapLegend.vue';
 
 const props = defineProps<{ eleccion: string; departamento: string; nivel?: string }>();
+
+// Catálogo de nivel nativo por dept (espeja [departamento].astro). Actualizar al añadir deptos.
+const DEPT_NIVEL: Record<string, string> = { montevideo: 'zona', rivera: 'serie' };
 
 interface OpcionesDoc {
   opciones: { opcionId: string; nombre: string }[];
@@ -47,11 +53,16 @@ const map = shallowRef<MlMap | null>(null);
 const fcRef = shallowRef<FeatureCollection | null>(null);
 const markers: MlMarker[] = [];
 
+// MapLibre module guardado para crear Markers en reloadData sin re-importar.
+let mlLib: typeof import('maplibre-gl') | null = null;
+// Contexto en curso (para detectar cambio en astro:after-swap).
+let activeEleccion = props.eleccion;
+let activeDepartamento = props.departamento;
+
 function norm(s: string): string {
   return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[.,]/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
-/** Centroide aproximado del anillo exterior más grande (para ubicar la sigla). */
 function centroid(geom: Polygon | MultiPolygon): [number, number] {
   const rings: Position[][] = geom.type === 'Polygon' ? [geom.coordinates[0]] : geom.coordinates.map((p) => p[0]);
   let best: Position[] = rings[0] ?? [];
@@ -82,13 +93,12 @@ function boundsOf(fc: FeatureCollection): LngLatBoundsLike {
   return [[minX, minY], [maxX, maxY]];
 }
 
-async function loadData(): Promise<{ fc: FeatureCollection; bounds: LngLatBoundsLike }> {
+async function loadData(eleccion: string, departamento: string, nivel: string): Promise<{ fc: FeatureCollection; bounds: LngLatBoundsLike }> {
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-  const geoNivel = props.nivel ?? 'zona';
   const [topoRes, votesRes, opcRes] = await Promise.all([
-    fetch(`${base}/data/geo/${props.departamento}/${geoNivel}.topo.json`),
-    fetch(`${base}/data/${props.eleccion}/${props.departamento}/votes.json`),
-    fetch(`${base}/data/${props.eleccion}/${props.departamento}/opciones.json`),
+    fetch(`${base}/data/geo/${departamento}/${nivel}.topo.json`),
+    fetch(`${base}/data/${eleccion}/${departamento}/votes.json`),
+    fetch(`${base}/data/${eleccion}/${departamento}/opciones.json`),
   ]);
   if (!topoRes.ok || !votesRes.ok || !opcRes.ok) throw new Error('No se pudieron cargar los datos del mapa');
   const topo = (await topoRes.json()) as Topology;
@@ -100,7 +110,7 @@ async function loadData(): Promise<{ fc: FeatureCollection; bounds: LngLatBounds
 
   const nombrePorOpcion = new Map(opcDoc.opciones.map((o) => [o.opcionId, o.nombre]));
   const zonaPorGeo = new Map(votes.zonas.map((z) => [norm(z.geoId), z]));
-  const barriosGanados = new Map<string, number>(); // ganadorOpcionId → nº de barrios ganados
+  const barriosGanados = new Map<string, number>();
 
   let sin = 0;
   for (const f of geo.features) {
@@ -126,9 +136,6 @@ async function loadData(): Promise<{ fc: FeatureCollection; bounds: LngLatBounds
   }
   sinDatos.value = sin;
 
-  // Leyenda: SOLO los partidos ganadores (los colores que realmente aparecen en el
-  // mapa), ordenados por barrios ganados desc. No listar las ~18 opciones que nunca
-  // ganan ningún barrio (el mapa colorea por ganador, no por todas las opciones).
   legend.value = [...barriosGanados.entries()]
     .map(([opcionId, barrios]) => {
       const nombre = nombrePorOpcion.get(opcionId) ?? opcionId;
@@ -138,6 +145,58 @@ async function loadData(): Promise<{ fc: FeatureCollection; bounds: LngLatBounds
     .sort((a, b) => b.votos - a.votos);
 
   return { fc: geo, bounds: boundsOf(geo) };
+}
+
+/** Reconstruye los markers de sigla. Limpia los anteriores antes. */
+function rebuildMarkers(fc: FeatureCollection): void {
+  if (!mlLib || !map.value) return;
+  markers.forEach((mk) => mk.remove());
+  markers.length = 0;
+  for (const f of fc.features) {
+    const p = f.properties as Record<string, unknown>;
+    if (!p.hasData) continue;
+    const [lng, lat] = centroid(f.geometry as Polygon | MultiPolygon);
+    const el = document.createElement('span');
+    el.className = 'zona-sigla';
+    el.textContent = String(p.sigla);
+    el.setAttribute('aria-hidden', 'true');
+    markers.push(new mlLib!.Marker({ element: el }).setLngLat([lng, lat]).addTo(map.value!));
+  }
+}
+
+/**
+ * Recarga datos en el mapa ya inicializado (sin re-init de MapLibre — NFR1).
+ * Llamado desde el handler astro:after-swap cuando cambia el departamento/elección.
+ */
+async function reloadData(eleccion: string, departamento: string, nivel: string): Promise<void> {
+  const m = map.value;
+  if (!m) return;
+  status.value = 'cargando';
+  try {
+    const { fc, bounds } = await loadData(eleccion, departamento, nivel);
+    // Esperar a que la fuente esté lista (puede que el mapa aún esté cargando).
+    if (m.getSource('zonas')) {
+      (m.getSource('zonas') as GeoJSONSource).setData(fc);
+    }
+    m.fitBounds(bounds, { padding: 24 });
+    rebuildMarkers(fc);
+    fcRef.value = fc;
+
+    // Limpiar zona si no existe en el nuevo departamento (AC Story 2.1).
+    const selZona = $selection.get().zona;
+    const zonaExiste = selZona && fc.features.some(
+      (f) => norm(String((f.properties as { name: string }).name)) === norm(selZona),
+    );
+    if (selZona && !zonaExiste) {
+      commit({ zona: null });
+    } else {
+      applySelection($selection.get().zona);
+    }
+    status.value = 'listo';
+  } catch (err) {
+    status.value = 'error';
+    errorMsg.value = err instanceof Error ? err.message : String(err);
+  }
 }
 
 function selectByName(name: string, fc: FeatureCollection): void {
@@ -156,14 +215,32 @@ function selectByName(name: string, fc: FeatureCollection): void {
   }
 }
 
+let prevSelId: string | null = null;
+function applySelection(zona: string | null): void {
+  const m = map.value;
+  if (!m || !m.getSource('zonas')) return;
+  if (prevSelId !== null) m.setFeatureState({ source: 'zonas', id: prevSelId }, { sel: false });
+  if (zona) {
+    m.setFeatureState({ source: 'zonas', id: zona }, { sel: true });
+    if (fcRef.value) selectByName(zona, fcRef.value);
+  } else {
+    selected.value = null;
+  }
+  prevSelId = zona;
+}
+$selection.subscribe((s) => applySelection(s.zona));
+
+let afterSwapHandler: (() => void) | null = null;
+
 onMounted(async () => {
   bindToLocation();
   try {
-    const maplibre = await import('maplibre-gl');
-    const { fc, bounds } = await loadData();
+    mlLib = await import('maplibre-gl');
+    const geoNivel = DEPT_NIVEL[props.departamento] ?? props.nivel ?? 'zona';
+    const { fc, bounds } = await loadData(props.eleccion, props.departamento, geoNivel);
     if (!mapEl.value) return;
 
-    const m: MlMap = new maplibre.Map({
+    const m: MlMap = new mlLib.Map({
       container: mapEl.value,
       style: { version: 8, sources: {}, layers: [] },
       bounds,
@@ -182,28 +259,15 @@ onMounted(async () => {
         id: 'zonas-sel',
         type: 'line',
         source: 'zonas',
-        // Realce por feature-state (solo repinta, sin re-teselar) → INP bajo.
         paint: {
           'line-color': '#111827',
           'line-width': ['case', ['boolean', ['feature-state', 'sel'], false], 2.5, 0],
         },
       });
 
-      // Siglas como markers HTML en centroides (texto real, sin glyphs).
-      for (const f of fc.features) {
-        const p = f.properties as Record<string, unknown>;
-        if (!p.hasData) continue;
-        const [lng, lat] = centroid(f.geometry as Polygon | MultiPolygon);
-        const el = document.createElement('span');
-        el.className = 'zona-sigla';
-        el.textContent = String(p.sigla);
-        el.setAttribute('aria-hidden', 'true');
-        markers.push(new maplibre.Marker({ element: el }).setLngLat([lng, lat]).addTo(m));
-      }
-
+      rebuildMarkers(fc);
       fcRef.value = fc;
-      // El tap SOLO escribe la URL; la suscripción a $selection aplica realce + readout
-      // (un único setFilter por interacción → INP bajo). No duplicar el repaint acá.
+
       m.on('click', 'zonas-fill', (e) => {
         const f = e.features?.[0];
         if (!f) return;
@@ -212,7 +276,6 @@ onMounted(async () => {
       m.on('mouseenter', 'zonas-fill', () => { m.getCanvas().style.cursor = 'pointer'; });
       m.on('mouseleave', 'zonas-fill', () => { m.getCanvas().style.cursor = ''; });
 
-      // Reconstruir selección desde la URL (deep-link / recarga).
       applySelection($selection.get().zona);
       status.value = 'listo';
     });
@@ -220,33 +283,32 @@ onMounted(async () => {
     status.value = 'error';
     errorMsg.value = err instanceof Error ? err.message : String(err);
   }
+
+  // Escuchar astro:after-swap (ClientRouter) para recargar datos sin re-init del mapa.
+  const handler = () => {
+    const view = parseUrl(window.location.pathname, window.location.search);
+    hydrateStores(view);
+    if (view.eleccion !== activeEleccion || view.departamento !== activeDepartamento) {
+      activeEleccion = view.eleccion;
+      activeDepartamento = view.departamento;
+      const newNivel = DEPT_NIVEL[view.departamento] ?? 'zona';
+      void reloadData(view.eleccion, view.departamento, newNivel);
+    }
+  };
+  afterSwapHandler = handler;
+  // astro:after-swap se despacha en document (no en window) — Astro View Transitions.
+  document.addEventListener('astro:after-swap', handler);
 });
 
 onUnmounted(() => {
   markers.forEach((mk) => mk.remove());
   map.value?.remove();
+  if (afterSwapHandler) document.removeEventListener('astro:after-swap', afterSwapHandler);
 });
-
-// Única vía de aplicar selección al mapa (realce + readout). La disparan tanto el tap
-// (vía commit→$selection) como popstate/deep-link. Realce vía feature-state (repaint barato).
-let prevSelId: string | null = null;
-function applySelection(zona: string | null): void {
-  const m = map.value;
-  if (!m || !m.getSource('zonas')) return;
-  if (prevSelId !== null) m.setFeatureState({ source: 'zonas', id: prevSelId }, { sel: false });
-  if (zona) {
-    m.setFeatureState({ source: 'zonas', id: zona }, { sel: true });
-    if (fcRef.value) selectByName(zona, fcRef.value);
-  } else {
-    selected.value = null;
-  }
-  prevSelId = zona;
-}
-$selection.subscribe((s) => applySelection(s.zona));
 </script>
 
 <template>
-  <section class="map-wrap" aria-label="Mapa electoral por barrio">
+  <section class="map-wrap" aria-label="Mapa electoral por zona">
     <div ref="mapEl" class="map" role="img" :aria-label="`Mapa de ${departamento}, ${eleccion}, coloreado por partido ganador`"></div>
 
     <p v-if="status === 'cargando'" class="map-status">Cargando mapa…</p>

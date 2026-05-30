@@ -26,10 +26,17 @@ const titulo = `${departamento} — ${eleccion}`;
   <main class="mx-auto max-w-3xl">
     <header class="px-4 pt-4">
       <h1 class="text-xl font-bold capitalize">{departamento}</h1>
-      <p class="text-sm text-gray-600">{eleccion} · ganador por barrio</p>
+      <p class="text-sm text-gray-600">{eleccion}</p>
     </header>
-    <!-- Isla MapLibre client:load (NO client:only) — patrón validado por spike R7 -->
-    <ChoroplethMap client:load eleccion={eleccion} departamento={departamento} nivel={nivel} />
+    <!-- Selector de departamento — links Astro (ClientRouter navega sin reinicializar el mapa) -->
+    <nav class="px-4 py-2 flex gap-3 text-sm border-b border-gray-200">
+      <a href="/internas-2024/montevideo" class={`underline ${departamento === 'montevideo' ? 'font-bold' : 'text-gray-500'}`}>Montevideo</a>
+      <a href="/internas-2024/rivera" class={`underline ${departamento === 'rivera' ? 'font-bold' : 'text-gray-500'}`}>Rivera</a>
+    </nav>
+    <!-- transition:persist: el island MapLibre sobrevive la navegación entre departamentos (NFR1) -->
+    <div id="map-persist" transition:persist>
+      <ChoroplethMap client:load eleccion={eleccion} departamento={departamento} nivel={nivel} />
+    </div>
     <DataTable eleccion={eleccion} departamento={departamento} />
   </main>
 </Base>
