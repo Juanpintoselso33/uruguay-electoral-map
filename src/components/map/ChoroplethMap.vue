@@ -58,6 +58,9 @@ let mlLib: typeof import('maplibre-gl') | null = null;
 // Contexto en curso (para detectar cambio en astro:after-swap).
 let activeEleccion = props.eleccion;
 let activeDepartamento = props.departamento;
+// Catálogo opcionId→nombre y snapshot de leyenda en modo ganador (Story 2.2).
+let opcNombreMap = new Map<string, string>();
+let origLegend: LegendEntry[] = [];
 
 function norm(s: string): string {
   return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[.,]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -109,6 +112,7 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
   const geo = topoFeature(topo, topo.objects[objName] as GeometryCollection) as FeatureCollection;
 
   const nombrePorOpcion = new Map(opcDoc.opciones.map((o) => [o.opcionId, o.nombre]));
+  opcNombreMap = nombrePorOpcion;
   const zonaPorGeo = new Map(votes.zonas.map((z) => [norm(z.geoId), z]));
   const barriosGanados = new Map<string, number>();
 
@@ -126,6 +130,7 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
       p.nombre = nombre;
       p.validos = zona.validos;
       p.hasData = true;
+      p.ganadorOpcionId = zona.ganadorOpcionId;
       barriosGanados.set(zona.ganadorOpcionId, (barriosGanados.get(zona.ganadorOpcionId) ?? 0) + 1);
     } else {
       p.color = COLOR_SIN_DATOS;
@@ -143,24 +148,54 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
       return { sigla: meta.sigla, nombre, color: meta.color, votos: barrios };
     })
     .sort((a, b) => b.votos - a.votos);
+  origLegend = legend.value;
 
   return { fc: geo, bounds: boundsOf(geo) };
 }
 
-/** Reconstruye los markers de sigla. Limpia los anteriores antes. */
-function rebuildMarkers(fc: FeatureCollection): void {
+/** Reconstruye los markers de sigla. Limpia los anteriores antes.
+ *  Si `filterOpcionId` está definido, sólo pinta markers en zonas donde esa opción ganó. */
+function rebuildMarkers(fc: FeatureCollection, filterOpcionId?: string | null): void {
   if (!mlLib || !map.value) return;
   markers.forEach((mk) => mk.remove());
   markers.length = 0;
   for (const f of fc.features) {
     const p = f.properties as Record<string, unknown>;
     if (!p.hasData) continue;
+    if (filterOpcionId && p.ganadorOpcionId !== filterOpcionId) continue;
     const [lng, lat] = centroid(f.geometry as Polygon | MultiPolygon);
     const el = document.createElement('span');
     el.className = 'zona-sigla';
     el.textContent = String(p.sigla);
     el.setAttribute('aria-hidden', 'true');
     markers.push(new mlLib!.Marker({ element: el }).setLngLat([lng, lat]).addTo(map.value!));
+  }
+}
+
+/** Aplica o limpia el filtro de opción en el mapa (Story 2.2).
+ *  No modifica fcRef — usa setPaintProperty para mayor velocidad. */
+function applyOpcionFilter(opcionId: string | null): void {
+  const m = map.value;
+  const fc = fcRef.value;
+  if (!m || !fc || !m.getSource('zonas')) return;
+  if (opcionId) {
+    m.setPaintProperty('zonas-fill', 'fill-color', [
+      'case',
+      ['==', ['get', 'ganadorOpcionId'], opcionId],
+      ['get', 'color'],
+      COLOR_SIN_DATOS,
+    ]);
+    rebuildMarkers(fc, opcionId);
+    const nombre = opcNombreMap.get(opcionId) ?? opcionId;
+    const meta = resolveParty(nombre);
+    const count = fc.features.filter(
+      (f) => (f.properties as { ganadorOpcionId?: string }).ganadorOpcionId === opcionId,
+    ).length;
+    legend.value = [{ sigla: meta.sigla, nombre, color: meta.color, votos: count }];
+  } else {
+    m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
+    rebuildMarkers(fc);
+    legend.value = origLegend;
   }
 }
 
@@ -181,17 +216,21 @@ async function reloadData(eleccion: string, departamento: string, nivel: string)
     m.fitBounds(bounds, { padding: 24 });
     rebuildMarkers(fc);
     fcRef.value = fc;
+    origLegend = legend.value;
 
     // Limpiar zona si no existe en el nuevo departamento (AC Story 2.1).
-    const selZona = $selection.get().zona;
+    const sel = $selection.get();
+    const selZona = sel.zona;
     const zonaExiste = selZona && fc.features.some(
       (f) => norm(String((f.properties as { name: string }).name)) === norm(selZona),
     );
     if (selZona && !zonaExiste) {
       commit({ zona: null });
     } else {
-      applySelection($selection.get().zona);
+      applySelection(selZona);
     }
+    // Reaplicar filtro de opción si había uno activo al cambiar de departamento (Story 2.2).
+    applyOpcionFilter(sel.opcion);
     status.value = 'listo';
   } catch (err) {
     status.value = 'error';
@@ -228,7 +267,10 @@ function applySelection(zona: string | null): void {
   }
   prevSelId = zona;
 }
-$selection.subscribe((s) => applySelection(s.zona));
+$selection.subscribe((s) => {
+  applySelection(s.zona);
+  applyOpcionFilter(s.opcion);
+});
 
 let afterSwapHandler: (() => void) | null = null;
 
@@ -277,6 +319,7 @@ onMounted(async () => {
       m.on('mouseleave', 'zonas-fill', () => { m.getCanvas().style.cursor = ''; });
 
       applySelection($selection.get().zona);
+      applyOpcionFilter($selection.get().opcion);
       status.value = 'listo';
     });
   } catch (err) {

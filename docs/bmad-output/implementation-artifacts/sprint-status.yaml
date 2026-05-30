@@ -53,9 +53,9 @@ development_status:
   epic-1-retrospective: optional
 
   # ---- Epic 2: Explorar una elección a fondo ----
-  epic-2: backlog
-  2-1-selector-eleccion-departamento: backlog
-  2-2-selector-opcion-adaptativo: backlog
+  epic-2: in-progress
+  2-1-selector-eleccion-departamento: done
+  2-2-selector-opcion-adaptativo: in-progress
   2-3-toggle-vista-mapa: backlog
   2-4-ficha-zona-bottom-sheet: backlog
   2-5-control-nivel-geografico: backlog
