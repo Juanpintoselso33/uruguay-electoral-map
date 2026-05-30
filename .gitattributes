@@ -8,4 +8,5 @@ public/*_series_map.json filter=lfs diff=lfs merge=lfs -text
 public/montevideo_series_electorales.json filter=lfs diff=lfs merge=lfs -text
 public/uruguay_series_electorales.json filter=lfs diff=lfs merge=lfs -text
 public/uruguay_series_electorales_map.json filter=lfs diff=lfs merge=lfs -text
+public/v_sig_barrios.json filter=lfs diff=lfs merge=lfs -text
 data/raw/** filter=lfs diff=lfs merge=lfs -text
