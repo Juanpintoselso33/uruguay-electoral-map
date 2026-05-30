@@ -29,6 +29,7 @@ const BUDGET_GZ = 500 * 1024;
 const CSV = 'public/montevideo_odn.csv';
 const MAPPING = 'data/mappings/montevideo-crv-barrio.json';
 const SHARD_OUT = 'public/data/internas-2024/montevideo/votes.json';
+const OPCIONES_OUT = 'public/data/internas-2024/montevideo/opciones.json';
 const ESC_CANONICO = 'Departamental';
 
 function geometryStep(): { names: string[] } {
@@ -84,6 +85,10 @@ function votesStep(): { shard: ReturnType<typeof buildShard>; totalCanonico: num
   });
   writeShard(shard, SHARD_OUT);
   console.log(`Shard escrito (validado por assertVotosShard): ${SHARD_OUT}`);
+
+  mkdirSync(dirname(OPCIONES_OUT), { recursive: true });
+  writeFileSync(OPCIONES_OUT, JSON.stringify({ opciones: agg.opciones }), 'utf8');
+  console.log(`Catálogo de opciones: ${OPCIONES_OUT} (${agg.opciones.length} opciones)`);
   return { shard, totalCanonico: agg.totalCanonico, unmappedVotos: agg.unmappedVotos };
 }
 

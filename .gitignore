@@ -4,3 +4,7 @@ dist/
 .vercel/
 *.log
 .DS_Store
+
+.playwright-mcp/
+_preview.log
+_*.cjs

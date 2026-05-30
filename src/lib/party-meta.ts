@@ -1,0 +1,64 @@
+/**
+ * Metadata de presentación de partidos: sigla + color (Story 1.8).
+ * El color reusa `party-colors.ts` (fuente de verdad de colores oficiales). La sigla
+ * es conocimiento de presentación: mapa explícito para los partidos principales,
+ * acrónimo determinístico como fallback. NUNCA solo color → la sigla va como texto.
+ */
+import { getPartyColor } from './party-colors';
+
+function norm(s: string): string {
+  return s
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9 ]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** Siglas canónicas (nombre normalizado → sigla). Cubre los partidos relevantes de Uruguay. */
+const SIGLAS: Record<string, string> = {
+  'FRENTE AMPLIO': 'FA',
+  NACIONAL: 'PN',
+  'PARTIDO NACIONAL': 'PN',
+  COLORADO: 'PC',
+  'PARTIDO COLORADO': 'PC',
+  'CABILDO ABIERTO': 'CA',
+  'PARTIDO INDEPENDIENTE': 'PI',
+  INDEPENDIENTE: 'PI',
+  'ASAMBLEA POPULAR': 'AP',
+  'AVANZAR REPUBLICANO': 'AR',
+  'COALICION REPUBLICANA': 'CR',
+  'IDENTIDAD SOBERANA': 'IS',
+  LIBERTARIO: 'LIB',
+  'VERDE ANIMALISTA': 'PVA',
+  'CONSTITUCIONAL AMBIENTALISTA': 'PCA',
+  'BASTA YA': 'BY',
+  DEVOLUCION: 'DEV',
+  'PATRIA ALTERNATIVA': 'PA',
+  'PARTIDO DE LA ARMONIA': 'PAR',
+  'POR LOS CAMBIOS NECESARIOS': 'PCN',
+  PERI: 'PERI',
+};
+
+const PALABRAS_IGNORADAS = new Set(['DE', 'LA', 'LOS', 'LAS', 'EL', 'Y', 'DEL']);
+
+/** Acrónimo determinístico: iniciales de palabras significativas (máx 4). */
+function acronimo(nombre: string): string {
+  const limpio = norm(nombre).replace(/[^A-Z0-9 ]/g, '');
+  const palabras = limpio.split(' ').filter((w) => w && !PALABRAS_IGNORADAS.has(w));
+  if (palabras.length === 0) return limpio.slice(0, 4) || '?';
+  if (palabras.length === 1) return palabras[0].slice(0, 3);
+  return palabras.map((w) => w[0]).join('').slice(0, 4);
+}
+
+export interface PartyMeta {
+  readonly sigla: string;
+  readonly color: string;
+}
+
+/** Resuelve sigla + color para un nombre de partido (nombre original del ETL). */
+export function resolveParty(nombre: string): PartyMeta {
+  const key = norm(nombre);
+  return { sigla: SIGLAS[key] ?? acronimo(nombre), color: getPartyColor(nombre) };
+}

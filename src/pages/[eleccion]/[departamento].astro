@@ -1,0 +1,24 @@
+---
+import Base from '../../layouts/Base.astro';
+import ChoroplethMap from '../../components/map/ChoroplethMap.vue';
+
+// Static output: enumeramos las combinaciones disponibles. Por ahora Montevideo
+// internas-2024 (único depto con datos emitidos por el ETL). Se amplía al agregar deptos.
+export function getStaticPaths() {
+  return [{ params: { eleccion: 'internas-2024', departamento: 'montevideo' } }];
+}
+
+const { eleccion, departamento } = Astro.params;
+const titulo = `${departamento} — ${eleccion}`;
+---
+
+<Base title={`Uruguay Electoral Map — ${titulo}`}>
+  <main class="mx-auto max-w-3xl">
+    <header class="px-4 pt-4">
+      <h1 class="text-xl font-bold capitalize">{departamento}</h1>
+      <p class="text-sm text-gray-600">{eleccion} · ganador por barrio</p>
+    </header>
+    <!-- Isla MapLibre client:load (NO client:only) — patrón validado por spike R7 -->
+    <ChoroplethMap client:load eleccion={eleccion} departamento={departamento} />
+  </main>
+</Base>

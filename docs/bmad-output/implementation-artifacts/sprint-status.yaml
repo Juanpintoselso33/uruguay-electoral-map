@@ -47,7 +47,7 @@ development_status:
   1-5-etl-geometria-topojson-lazy-load: done
   1-6-etl-gates-integridad: done
   1-7-estado-vive-en-url: done
-  1-8-isla-mapa-choropleth-leyenda: backlog
+  1-8-isla-mapa-choropleth-leyenda: done
   1-9-tabla-datos-accesible: backlog
   1-10-gate-perf-budget-a11y-base: backlog
   epic-1-retrospective: optional

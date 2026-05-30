@@ -31,6 +31,12 @@ export interface AggregateByCircuitoOptions {
   crvToBarrio: Record<string, string>;
 }
 
+/** Catálogo de opciones (opcionId → nombre original del PARTIDO). Lo consume la UI (sigla/color). */
+export interface OpcionCatalogo {
+  readonly opcionId: string;
+  readonly nombre: string;
+}
+
 export interface AggregateByCircuitoResult {
   zonas: AgregadoZona[];
   /** Suma de TODOS los votos canónicos del CSV (partidarios + no partidarios). Para reconciliación. */
@@ -40,6 +46,8 @@ export interface AggregateByCircuitoResult {
   /** Circuitos distintos sin barrio (diagnóstico). */
   circuitosSinBarrio: string[];
   partidosVistos: string[];
+  /** Catálogo opcionId→nombre (para la leyenda/sigla de la UI). */
+  opciones: OpcionCatalogo[];
 }
 
 /** Resuelve el barrio de un circuito (tolera ceros a la izquierda / numérico). */
@@ -57,6 +65,7 @@ export function aggregateByCircuito(
   // barrio (display) -> { partido -> votos } + categorías
   const porBarrio = new Map<string, { display: string; partidos: Map<string, number>; cat: CatAcc }>();
   const partidosVistos = new Set<string>();
+  const opcionesPorId = new Map<string, string>(); // opcionId(slug) → nombre original
   const circuitosSinBarrio = new Set<string>();
   let totalCanonico = 0;
   let unmappedVotos = 0;
@@ -89,6 +98,7 @@ export function aggregateByCircuito(
     } else {
       entry.partidos.set(partido, (entry.partidos.get(partido) ?? 0) + votos);
       partidosVistos.add(partido);
+      opcionesPorId.set(slug(partido), partido);
     }
   }
 
@@ -112,5 +122,6 @@ export function aggregateByCircuito(
     unmappedVotos,
     circuitosSinBarrio: [...circuitosSinBarrio],
     partidosVistos: [...partidosVistos],
+    opciones: [...opcionesPorId.entries()].map(([opcionId, nombre]) => ({ opcionId, nombre })),
   };
 }
