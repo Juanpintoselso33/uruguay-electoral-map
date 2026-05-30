@@ -21,6 +21,7 @@
     "d3-geo": "^3.1.1",
     "maplibre-gl": "^5.24.0",
     "nanostores": "^0.11.4",
+    "polygon-clipping": "^0.15.7",
     "topojson-client": "^3.1.0",
     "vue": "^3.5.35"
   },

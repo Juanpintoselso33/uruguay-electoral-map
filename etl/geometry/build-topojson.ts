@@ -21,31 +21,40 @@ export interface BuildOptions {
   nameProp: string;
 }
 
-/** Construye un TopoJSON simplificado a partir de un GeoJSON FeatureCollection. */
-export function buildTopojson(
-  geojsonPath: string,
-  objectName: string,
-  opts: BuildOptions,
-): { topo: Topology; features: number } {
+/** Lee un GeoJSON y canonicaliza la prop de nombre → `name`, descartando el resto. */
+export function cleanFeatureCollection(geojsonPath: string, nameProp: string): FeatureCollection {
   const fc = JSON.parse(readFileSync(geojsonPath, 'utf8')) as FeatureCollection;
-
-  // Canonicalizar nombre → `name` y descartar el resto de props (payload mínimo).
   const cleaned: Feature[] = fc.features.map((f) => {
-    const name = (f.properties as Record<string, unknown> | null)?.[opts.nameProp];
+    const name = (f.properties as Record<string, unknown> | null)?.[nameProp];
     if (typeof name !== 'string' || name.length === 0) {
-      throw new Error(`[build-topojson] feature sin propiedad "${opts.nameProp}" válida`);
+      throw new Error(`[build-topojson] feature sin propiedad "${nameProp}" válida`);
     }
     return { type: 'Feature', properties: { name }, geometry: f.geometry } as Feature;
   });
-  const fcClean: FeatureCollection = { type: 'FeatureCollection', features: cleaned };
-  const features = cleaned.length;
+  return { type: 'FeatureCollection', features: cleaned };
+}
 
+/** Construye un TopoJSON simplificado a partir de un FeatureCollection ya canonicalizado (`properties.name`). */
+export function topojsonFromFC(
+  fcClean: FeatureCollection,
+  objectName: string,
+  opts: Pick<BuildOptions, 'simplifyQuantile'>,
+): { topo: Topology; features: number } {
+  const features = fcClean.features.length;
   // Los genéricos de topojson (GeoJsonProperties vs {}) son over-strict; casteamos
   // al tipo exacto que cada función espera en su firma.
   let topo = topology({ [objectName]: fcClean } as Parameters<typeof topology>[0]);
   topo = presimplify(topo as Parameters<typeof presimplify>[0]);
   const minWeight = quantile(topo as Parameters<typeof quantile>[0], opts.simplifyQuantile);
   topo = simplify(topo as Parameters<typeof simplify>[0], minWeight);
-
   return { topo: topo as Topology, features };
+}
+
+/** Construye un TopoJSON simplificado a partir de un GeoJSON FeatureCollection (por path). */
+export function buildTopojson(
+  geojsonPath: string,
+  objectName: string,
+  opts: BuildOptions,
+): { topo: Topology; features: number } {
+  return topojsonFromFC(cleanFeatureCollection(geojsonPath, opts.nameProp), objectName, opts);
 }

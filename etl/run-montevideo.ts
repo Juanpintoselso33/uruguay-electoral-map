@@ -12,7 +12,8 @@ import { dirname } from 'node:path';
 import { feature } from 'topojson-client';
 import type { GeometryCollection } from 'topojson-specification';
 import type { FeatureCollection } from 'geojson';
-import { buildTopojson } from './geometry/build-topojson';
+import { cleanFeatureCollection, topojsonFromFC } from './geometry/build-topojson';
+import { dissolveEmpty } from './geometry/dissolve-empty';
 import { buildCircuitoBarrio } from './geometry/build-circuito-barrio';
 import { assertGeometryBudget } from './gates/geometry-size';
 import { parseCsv } from './extract/parse-csv';
@@ -37,14 +38,22 @@ const SHARD_OUT = 'public/data/internas-2024/montevideo/votes.json';
 const OPCIONES_OUT = 'public/data/internas-2024/montevideo/opciones.json';
 const ESC_CANONICO = 'Departamental';
 
-function geometryStep(): { names: string[] } {
-  console.log('--- 1) Geometría (v_sig_barrios → TopoJSON) ---');
+/** Normalizador de nombre de barrio (mismo criterio que el join: NFD+upper+`.,`→espacio). */
+const normBarrio = (s: string): string =>
+  s.normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[.,]/g, ' ').replace(/\s+/g, ' ').trim();
+
+function geometryStep(hasVotes: Set<string>): { names: string[] } {
+  console.log('\n--- 2) Geometría (v_sig_barrios → fusión de vacíos → TopoJSON) ---');
   const srcKb = (statSync(GEO_SRC).size / 1024).toFixed(0);
-  const { topo, features } = buildTopojson(GEO_SRC, GEO_OBJ, {
-    // 0.15: v_sig es alta resolución (fuente 2MB); para choropleth de barrios un
-    // simplify moderado conserva la forma y baja el payload ~4× (≈70KB gz). Ver sweep en story.
+  const clean = cleanFeatureCollection(GEO_SRC, GEO_NAME_PROP);
+  // Fusión dinámica: barrios sin votos se disuelven en su vecino con votos (sin parches grises).
+  const { fc: dissolved, merges } = dissolveEmpty(clean, hasVotes, normBarrio);
+  for (const m of merges) {
+    console.log(`  fusión: "${m.vacio}" (sin urna esta elección) → "${m.absorbido_por}" (${m.vertices} vértices de borde)`);
+  }
+  const { topo, features } = topojsonFromFC(dissolved, GEO_OBJ, {
+    // 0.15: v_sig es alta resolución (fuente 2MB); simplify moderado conserva forma y baja ~4× el payload.
     simplifyQuantile: 0.15,
-    nameProp: GEO_NAME_PROP,
   });
   const serialized = JSON.stringify(topo);
   const size = assertGeometryBudget(serialized, BUDGET_GZ);
@@ -71,7 +80,7 @@ function geometryStep(): { names: string[] } {
 }
 
 function votesStep(): { shard: ReturnType<typeof buildShard>; totalCanonico: number; unmappedVotos: number } {
-  console.log('\n--- 2) Votos (CIRCUITO → BARRIO por geolocalización oficial) ---');
+  console.log('--- 1) Votos (CIRCUITO → BARRIO por geolocalización oficial) ---');
   const rows = parseCsv(CSV);
   const { circuitoToBarrio, stats } = buildCircuitoBarrio({
     georefPath: GEOREF,
@@ -106,9 +115,10 @@ function votesStep(): { shard: ReturnType<typeof buildShard>; totalCanonico: num
 }
 
 function main(): void {
-  console.log('=== ETL Montevideo internas-2024 (Story 1.6) ===');
-  const { names } = geometryStep();
+  console.log('=== ETL Montevideo internas-2024 ===');
   const { shard, totalCanonico, unmappedVotos } = votesStep();
+  const hasVotes = new Set(shard.zonas.map((z) => normBarrio(z.geoId)));
+  const { names } = geometryStep(hasVotes);
 
   console.log('\n--- 3) Gate: reconciliación (losslessness) ---');
   const rec = reconcile(shard, totalCanonico, unmappedVotos);
