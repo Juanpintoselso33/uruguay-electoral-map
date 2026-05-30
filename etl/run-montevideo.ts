@@ -7,12 +7,13 @@
  * geometría ahora viene de v_sig_barrios.json (limpio, nombres = mapping) y los votos
  * se agregan por circuito, no por la columna ZONA. Ejecutar: esbuild bundle + node.
  */
-import { mkdirSync, writeFileSync, readFileSync, statSync } from 'node:fs';
+import { mkdirSync, writeFileSync, statSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { feature } from 'topojson-client';
 import type { GeometryCollection } from 'topojson-specification';
 import type { FeatureCollection } from 'geojson';
 import { buildTopojson } from './geometry/build-topojson';
+import { buildCircuitoBarrio } from './geometry/build-circuito-barrio';
 import { assertGeometryBudget } from './gates/geometry-size';
 import { parseCsv } from './extract/parse-csv';
 import { aggregateByCircuito } from './transform/aggregate-by-circuito';
@@ -27,7 +28,11 @@ const GEO_NAME_PROP = 'BARRIO';
 const BUDGET_GZ = 500 * 1024;
 
 const CSV = 'public/montevideo_odn.csv';
-const MAPPING = 'data/mappings/montevideo-crv-barrio.json';
+// Geolocalización oficial: circuito → dirección → coords (georef Corte) → PIP → barrio.
+// Reemplaza el serie-dominante de montevideo-crv-barrio.json (rescata los barrios grises).
+const GEOREF = 'data/raw/geographic/plan-circuital-georreferencia-nacional-2024.csv';
+const PLAN_INTERNAS = 'data/raw/electoral/plan-circuital.csv';
+const MAPPING_OUT = 'data/mappings/montevideo-circuito-barrio.json';
 const SHARD_OUT = 'public/data/internas-2024/montevideo/votes.json';
 const OPCIONES_OUT = 'public/data/internas-2024/montevideo/opciones.json';
 const ESC_CANONICO = 'Departamental';
@@ -66,11 +71,19 @@ function geometryStep(): { names: string[] } {
 }
 
 function votesStep(): { shard: ReturnType<typeof buildShard>; totalCanonico: number; unmappedVotos: number } {
-  console.log('\n--- 2) Votos (CIRCUITO → BARRIO) ---');
+  console.log('\n--- 2) Votos (CIRCUITO → BARRIO por geolocalización oficial) ---');
   const rows = parseCsv(CSV);
-  const crvToBarrio = (JSON.parse(readFileSync(MAPPING, 'utf8')) as { crvToBarrio: Record<string, string> })
-    .crvToBarrio;
-  const agg = aggregateByCircuito(rows, { escrutinioCanonico: ESC_CANONICO, crvToBarrio });
+  const { circuitoToBarrio, stats } = buildCircuitoBarrio({
+    georefPath: GEOREF,
+    planInternasPath: PLAN_INTERNAS,
+    barriosGeojsonPath: GEO_SRC,
+  });
+  console.log(
+    `circuito→barrio: ${stats.viaDireccion} via dirección + ${stats.viaSerie} via serie (fallback) = ${stats.barrios} barrios cubiertos`,
+  );
+  mkdirSync(dirname(MAPPING_OUT), { recursive: true });
+  writeFileSync(MAPPING_OUT, JSON.stringify({ crvToBarrio: circuitoToBarrio }, null, 0), 'utf8');
+  const agg = aggregateByCircuito(rows, { escrutinioCanonico: ESC_CANONICO, crvToBarrio: circuitoToBarrio });
   console.log(
     `CSV ${rows.length} filas → barrios ${agg.zonas.length} · total canónico ${agg.totalCanonico.toLocaleString('es-UY')} · ` +
       `unmapped ${agg.unmappedVotos.toLocaleString('es-UY')} (${agg.circuitosSinBarrio.length} circuitos)`,
