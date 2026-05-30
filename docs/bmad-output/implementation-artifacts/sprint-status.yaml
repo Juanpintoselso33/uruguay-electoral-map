@@ -56,8 +56,8 @@ development_status:
   epic-2: in-progress
   2-1-selector-eleccion-departamento: done
   2-2-selector-opcion-adaptativo: done
-  2-3-toggle-vista-mapa: in-progress
-  2-4-ficha-zona-bottom-sheet: backlog
+  2-3-toggle-vista-mapa: done
+  2-4-ficha-zona-bottom-sheet: done
   2-5-control-nivel-geografico: backlog
   2-6-entrada-en-frio-progressive-disclosure: backlog
   2-7-sello-origen-etapa-dato: backlog

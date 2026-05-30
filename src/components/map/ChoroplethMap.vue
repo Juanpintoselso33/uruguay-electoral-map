@@ -19,6 +19,7 @@ import type { VotosShard } from '../../lib/contracts';
 import { $selection, bindToLocation, commit, hydrateStores } from '../../stores/map-state';
 import { parseUrl } from '../../lib/url-state';
 import MapLegend from './MapLegend.vue';
+import ZoneSheet from '../sheet/ZoneSheet.vue';
 
 const props = defineProps<{ eleccion: string; departamento: string; nivel?: string }>();
 
@@ -32,8 +33,14 @@ interface SelInfo {
   geoId: string;
   sigla: string;
   nombre: string;
+  color: string;
+  votoGanador: number;
   validos: number;
   pct: number;
+  enBlanco: number;
+  anulados: number;
+  observados: number;
+  pctOpcionActiva: number | null;
 }
 interface LegendEntry {
   sigla: string;
@@ -69,6 +76,8 @@ let origLegend: LegendEntry[] = [];
 // Votos por zona por opción (Story 2.3 — intensidad).
 let zonasVotos = new Map<string, Map<string, number>>();
 let zonasValidos = new Map<string, number>();
+// Categorías no partidarias por zona (Story 2.4 — ficha).
+let zonasNoPartidarios = new Map<string, { enBlanco: number; anulados: number; observados: number }>();
 // Flag: indica si se hizo setData con FC de intensidad (para saber cuándo restaurar).
 let intensidadActive = false;
 
@@ -124,15 +133,21 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
   const nombrePorOpcion = new Map(opcDoc.opciones.map((o) => [o.opcionId, o.nombre]));
   opcNombreMap = nombrePorOpcion;
 
-  // Poblar índices para modo intensidad (Story 2.3).
+  // Poblar índices para modo intensidad (Story 2.3) y ficha (Story 2.4).
   zonasVotos = new Map();
   zonasValidos = new Map();
+  zonasNoPartidarios = new Map();
   for (const z of votes.zonas) {
     const key = norm(z.geoId);
     const m = new Map<string, number>();
     for (const { opcionId, votos } of z.porOpcion) m.set(opcionId, votos);
     zonasVotos.set(key, m);
     zonasValidos.set(key, z.validos);
+    zonasNoPartidarios.set(key, {
+      enBlanco: z.noPartidarios.enBlanco,
+      anulados: z.noPartidarios.anulados,
+      observados: z.noPartidarios.observados,
+    });
   }
 
   const zonaPorGeo = new Map(votes.zonas.map((z) => [norm(z.geoId), z]));
@@ -344,15 +359,34 @@ function selectByName(name: string, fc: FeatureCollection): void {
   const f = fc.features.find((ft) => norm(String((ft.properties as { name: string }).name)) === norm(name));
   const p = f?.properties as Record<string, unknown> | undefined;
   if (p && p.hasData) {
+    const key = norm(name);
+    const ganadorId = String(p.ganadorOpcionId);
+    const votoGanador = zonasVotos.get(key)?.get(ganadorId) ?? 0;
+    const validos = Number(p.validos);
+    const noP = zonasNoPartidarios.get(key) ?? { enBlanco: 0, anulados: 0, observados: 0 };
+    const opcionId = $selection.get().opcion;
+    const pctOpcionActiva = opcionId && validos > 0
+      ? ((zonasVotos.get(key)?.get(opcionId) ?? 0) / validos) * 100
+      : null;
     selected.value = {
       geoId: String(p.name),
       sigla: String(p.sigla),
       nombre: String(p.nombre),
-      validos: Number(p.validos),
-      pct: 0,
+      color: String(p.color),
+      votoGanador,
+      validos,
+      pct: validos > 0 ? (votoGanador / validos) * 100 : 0,
+      enBlanco: noP.enBlanco,
+      anulados: noP.anulados,
+      observados: noP.observados,
+      pctOpcionActiva,
     };
   } else if (p) {
-    selected.value = { geoId: String(p.name), sigla: '', nombre: 'Sin datos', validos: 0, pct: 0 };
+    selected.value = {
+      geoId: String(p.name), sigla: '', nombre: 'Sin datos', color: '#e5e7eb',
+      votoGanador: 0, validos: 0, pct: 0, enBlanco: 0, anulados: 0, observados: 0,
+      pctOpcionActiva: null,
+    };
   }
 }
 
@@ -460,14 +494,11 @@ onUnmounted(() => {
     <p v-if="status === 'cargando'" class="map-status">Cargando mapa…</p>
     <p v-else-if="status === 'error'" class="map-status map-status--error">Error: {{ errorMsg }}</p>
 
-    <div v-if="selected" class="readout" aria-live="polite">
-      <strong>{{ selected.geoId }}</strong>
-      <template v-if="selected.sigla">
-        — ganó <span class="readout__sigla">{{ selected.sigla }}</span> ({{ selected.nombre }}) ·
-        {{ selected.validos.toLocaleString('es-UY') }} votos válidos
-      </template>
-      <template v-else> — sin datos</template>
-    </div>
+    <ZoneSheet
+      :sel="selected"
+      :opcion-sigla="opcionActiva ? (opcNombreMap.get(opcionActiva) ? resolveParty(opcNombreMap.get(opcionActiva)!).sigla : opcionActiva) : null"
+      @close="commit({ zona: null })"
+    />
 
     <!-- Toggle Ganador / Intensidad — sólo visible cuando hay opción activa (Story 2.3) -->
     <div v-if="opcionActiva" class="vista-toggle" role="group" aria-label="Tipo de vista del mapa">
@@ -513,14 +544,6 @@ onUnmounted(() => {
 }
 .map-status--error {
   color: #b91c1c;
-}
-.readout {
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
-  border-top: 1px solid #e5e7eb;
-}
-.readout__sigla {
-  font-weight: 700;
 }
 .vista-toggle {
   display: flex;
