@@ -42,7 +42,7 @@ development_status:
   epic-1: in-progress
   1-1-inicializar-proyecto-astro-vue-vercel: done
   1-2-data-contract-v1-polimorfico: done
-  1-3-spike-geo-join: backlog
+  1-3-spike-geo-join: done
   1-4-etl-extraer-normalizar-votos: backlog
   1-5-etl-geometria-topojson-lazy-load: backlog
   1-6-etl-gates-integridad: backlog
