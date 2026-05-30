@@ -1,0 +1,87 @@
+/**
+ * Contrato de URL — fuente de verdad del estado del mapa (Story 1.7).
+ *
+ *   /{election}/{department}?zona=&opcion=&level=zona|serie|circuito&vs={election}
+ *
+ * Funciones PURAS (sin `window`/DOM) para que importen en SSR/build. El bridge al
+ * `location`/`history` vive en `src/stores/map-state.ts`. Los nanostores ESPEJAN la
+ * URL: no hay estado de sesión paralelo.
+ */
+import type { NivelGeografico } from './contracts';
+
+export const NIVELES: readonly NivelGeografico[] = ['zona', 'serie', 'circuito'];
+export const NIVEL_DEFAULT: NivelGeografico = 'zona';
+
+/** Vista del mapa derivada de la URL. `eleccion`/`departamento` son el contexto (path). */
+export interface MapView {
+  readonly eleccion: string;
+  readonly departamento: string;
+  readonly zona: string | null;
+  readonly opcion: string | null;
+  readonly level: NivelGeografico;
+  /** Comparación contra otra elección (`?vs=`). */
+  readonly vs: string | null;
+  /** Forward-compat comparación dual (`?a=&b=`). */
+  readonly a: string | null;
+  readonly b: string | null;
+}
+
+function isNivel(v: string | null): v is NivelGeografico {
+  return v !== null && (NIVELES as readonly string[]).includes(v);
+}
+
+/** Quita `/` de los bordes y separa segmentos no vacíos. */
+function pathSegments(pathname: string): string[] {
+  return pathname.split('/').filter((s) => s.length > 0).map(decodeURIComponent);
+}
+
+/**
+ * Parsea pathname + search a una `MapView`. Tolera:
+ * - elección en el path (`/{election}/{department}`) o en `?eleccion=` (override).
+ * - params desconocidos: se ignoran.
+ * - `level` inválido → default `zona`.
+ */
+export function parseUrl(pathname: string, search: string): MapView {
+  const seg = pathSegments(pathname);
+  const params = new URLSearchParams(search);
+
+  const eleccionPath = seg[0] ?? '';
+  const eleccion = params.get('eleccion') ?? eleccionPath;
+  const departamento = seg[1] ?? '';
+
+  const levelRaw = params.get('level');
+  const level: NivelGeografico = isNivel(levelRaw) ? levelRaw : NIVEL_DEFAULT;
+
+  const orNull = (v: string | null): string | null => (v && v.length > 0 ? v : null);
+
+  return {
+    eleccion,
+    departamento,
+    zona: orNull(params.get('zona')),
+    opcion: orNull(params.get('opcion')),
+    level,
+    vs: orNull(params.get('vs')),
+    a: orNull(params.get('a')),
+    b: orNull(params.get('b')),
+  };
+}
+
+/** Serializa una `MapView` a pathname + search. No emite params vacíos; `level=zona` se omite. */
+export function toUrl(view: MapView): { pathname: string; search: string } {
+  const pathname = `/${encodeURIComponent(view.eleccion)}/${encodeURIComponent(view.departamento)}`;
+  const params = new URLSearchParams();
+  if (view.zona) params.set('zona', view.zona);
+  if (view.opcion) params.set('opcion', view.opcion);
+  if (view.level !== NIVEL_DEFAULT) params.set('level', view.level);
+  if (view.vs) params.set('vs', view.vs);
+  if (view.a) params.set('a', view.a);
+  if (view.b) params.set('b', view.b);
+  const search = params.toString();
+  return { pathname, search: search ? `?${search}` : '' };
+}
+
+/** Href completo (pathname + search) para `pushState`/links. */
+export function toHref(view: MapView): string {
+  const { pathname, search } = toUrl(view);
+  return pathname + search;
+}
