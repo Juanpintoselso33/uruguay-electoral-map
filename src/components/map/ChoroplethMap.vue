@@ -99,7 +99,7 @@ async function loadData(): Promise<{ fc: FeatureCollection; bounds: LngLatBounds
 
   const nombrePorOpcion = new Map(opcDoc.opciones.map((o) => [o.opcionId, o.nombre]));
   const zonaPorGeo = new Map(votes.zonas.map((z) => [norm(z.geoId), z]));
-  const votosPorOpcion = new Map<string, number>();
+  const barriosGanados = new Map<string, number>(); // ganadorOpcionId → nº de barrios ganados
 
   let sin = 0;
   for (const f of geo.features) {
@@ -115,7 +115,7 @@ async function loadData(): Promise<{ fc: FeatureCollection; bounds: LngLatBounds
       p.nombre = nombre;
       p.validos = zona.validos;
       p.hasData = true;
-      for (const o of zona.porOpcion) votosPorOpcion.set(o.opcionId, (votosPorOpcion.get(o.opcionId) ?? 0) + o.votos);
+      barriosGanados.set(zona.ganadorOpcionId, (barriosGanados.get(zona.ganadorOpcionId) ?? 0) + 1);
     } else {
       p.color = COLOR_SIN_DATOS;
       p.sigla = '';
@@ -125,12 +125,14 @@ async function loadData(): Promise<{ fc: FeatureCollection; bounds: LngLatBounds
   }
   sinDatos.value = sin;
 
-  // Leyenda: opciones presentes, ordenadas por votos totales desc.
-  legend.value = [...votosPorOpcion.entries()]
-    .map(([opcionId, votos]) => {
+  // Leyenda: SOLO los partidos ganadores (los colores que realmente aparecen en el
+  // mapa), ordenados por barrios ganados desc. No listar las ~18 opciones que nunca
+  // ganan ningún barrio (el mapa colorea por ganador, no por todas las opciones).
+  legend.value = [...barriosGanados.entries()]
+    .map(([opcionId, barrios]) => {
       const nombre = nombrePorOpcion.get(opcionId) ?? opcionId;
       const meta = resolveParty(nombre);
-      return { sigla: meta.sigla, nombre, color: meta.color, votos };
+      return { sigla: meta.sigla, nombre, color: meta.color, votos: barrios };
     })
     .sort((a, b) => b.votos - a.votos);
 
