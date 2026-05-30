@@ -43,6 +43,7 @@ interface LegendEntry {
 }
 
 const COLOR_SIN_DATOS = '#e5e7eb';
+const INTENSIDAD_LIGHT = '#f0f4f8';
 const mapEl = ref<HTMLDivElement | null>(null);
 const status = ref<'cargando' | 'listo' | 'error'>('cargando');
 const errorMsg = ref('');
@@ -52,6 +53,10 @@ const selected = ref<SelInfo | null>(null);
 const map = shallowRef<MlMap | null>(null);
 const fcRef = shallowRef<FeatureCollection | null>(null);
 const markers: MlMarker[] = [];
+// Toggle de vista (Story 2.3): 'ganador' (default) o 'intensidad'.
+const vistaMode = ref<'ganador' | 'intensidad'>('ganador');
+// Ref reactivo de la opción activa para el toggle UI.
+const opcionActiva = ref<string | null>(null);
 
 // MapLibre module guardado para crear Markers en reloadData sin re-importar.
 let mlLib: typeof import('maplibre-gl') | null = null;
@@ -61,6 +66,11 @@ let activeDepartamento = props.departamento;
 // Catálogo opcionId→nombre y snapshot de leyenda en modo ganador (Story 2.2).
 let opcNombreMap = new Map<string, string>();
 let origLegend: LegendEntry[] = [];
+// Votos por zona por opción (Story 2.3 — intensidad).
+let zonasVotos = new Map<string, Map<string, number>>();
+let zonasValidos = new Map<string, number>();
+// Flag: indica si se hizo setData con FC de intensidad (para saber cuándo restaurar).
+let intensidadActive = false;
 
 function norm(s: string): string {
   return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[.,]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -113,6 +123,18 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
 
   const nombrePorOpcion = new Map(opcDoc.opciones.map((o) => [o.opcionId, o.nombre]));
   opcNombreMap = nombrePorOpcion;
+
+  // Poblar índices para modo intensidad (Story 2.3).
+  zonasVotos = new Map();
+  zonasValidos = new Map();
+  for (const z of votes.zonas) {
+    const key = norm(z.geoId);
+    const m = new Map<string, number>();
+    for (const { opcionId, votos } of z.porOpcion) m.set(opcionId, votos);
+    zonasVotos.set(key, m);
+    zonasValidos.set(key, z.validos);
+  }
+
   const zonaPorGeo = new Map(votes.zonas.map((z) => [norm(z.geoId), z]));
   const barriosGanados = new Map<string, number>();
 
@@ -172,31 +194,108 @@ function rebuildMarkers(fc: FeatureCollection, filterOpcionId?: string | null): 
   }
 }
 
-/** Aplica o limpia el filtro de opción en el mapa (Story 2.2).
- *  No modifica fcRef — usa setPaintProperty para mayor velocidad. */
+/** Interpolación lineal entre dos colores #rrggbb (Story 2.3). */
+function interpolateHex(c1: string, c2: string, t: number): string {
+  const p = (s: string) => [parseInt(s.slice(1, 3), 16), parseInt(s.slice(3, 5), 16), parseInt(s.slice(5, 7), 16)];
+  const [r1, g1, b1] = p(c1);
+  const [r2, g2, b2] = p(c2);
+  const h = (n: number) => Math.round(n).toString(16).padStart(2, '0');
+  return `#${h(r1 + (r2 - r1) * t)}${h(g1 + (g2 - g1) * t)}${h(b1 + (b2 - b1) * t)}`;
+}
+
+/** Construye un FC con colores de gradiente según % de voto para la opcion dada (Story 2.3). */
+function buildIntensidadFC(fc: FeatureCollection, opcionId: string, partyColor: string): FeatureCollection {
+  let maxPct = 0;
+  for (const f of fc.features) {
+    const key = norm(String((f.properties as { name: string }).name));
+    const votos = zonasVotos.get(key)?.get(opcionId) ?? 0;
+    const validos = zonasValidos.get(key) ?? 0;
+    if (validos > 0 && votos / validos > maxPct) maxPct = votos / validos;
+  }
+  return {
+    ...fc,
+    features: fc.features.map((f) => {
+      const key = norm(String((f.properties as { name: string }).name));
+      const votos = zonasVotos.get(key)?.get(opcionId) ?? 0;
+      const validos = zonasValidos.get(key) ?? 0;
+      const t = validos > 0 && maxPct > 0 ? (votos / validos) / maxPct : 0;
+      return { ...f, properties: { ...f.properties, color: t > 0.01 ? interpolateHex(INTENSIDAD_LIGHT, partyColor, t) : COLOR_SIN_DATOS } };
+    }),
+  } as FeatureCollection;
+}
+
+/** Construye la leyenda para modo intensidad (3 swatches: alto/medio/bajo) (Story 2.3). */
+function buildIntensidadLegend(nombre: string, meta: { sigla: string; color: string }): LegendEntry[] {
+  return [
+    { sigla: meta.sigla, nombre: `${nombre} — intensidad alta`, color: meta.color, votos: 0 },
+    { sigla: '', nombre: 'Intensidad media', color: interpolateHex(INTENSIDAD_LIGHT, meta.color, 0.4), votos: 0 },
+    { sigla: '', nombre: 'Intensidad baja', color: interpolateHex(INTENSIDAD_LIGHT, meta.color, 0.15), votos: 0 },
+  ];
+}
+
+/** Aplica modo ganador (Story 2.2): zonas donde gana opcion en color, resto gris. */
+function applyGanadorMode(opcionId: string, m: MlMap, fc: FeatureCollection): void {
+  if (intensidadActive) {
+    (m.getSource('zonas') as GeoJSONSource).setData(fc);
+    m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
+    intensidadActive = false;
+  }
+  m.setPaintProperty('zonas-fill', 'fill-color', [
+    'case',
+    ['==', ['get', 'ganadorOpcionId'], opcionId],
+    ['get', 'color'],
+    COLOR_SIN_DATOS,
+  ]);
+  rebuildMarkers(fc, opcionId);
+  const nombre = opcNombreMap.get(opcionId) ?? opcionId;
+  const meta = resolveParty(nombre);
+  const count = fc.features.filter(
+    (f) => (f.properties as { ganadorOpcionId?: string }).ganadorOpcionId === opcionId,
+  ).length;
+  legend.value = [{ sigla: meta.sigla, nombre, color: meta.color, votos: count }];
+}
+
+/** Aplica modo intensidad (Story 2.3): gradiente de % de voto para opcion dada. */
+function applyIntensidadMode(opcionId: string, m: MlMap, fc: FeatureCollection): void {
+  const nombre = opcNombreMap.get(opcionId) ?? opcionId;
+  const meta = resolveParty(nombre);
+  const gradientFC = buildIntensidadFC(fc, opcionId, meta.color);
+  (m.getSource('zonas') as GeoJSONSource).setData(gradientFC);
+  m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
+  intensidadActive = true;
+  // Sin markers en modo intensidad (todos los colores son del mismo partido).
+  markers.forEach((mk) => mk.remove());
+  markers.length = 0;
+  legend.value = buildIntensidadLegend(nombre, meta);
+}
+
+/** Aplica o limpia el filtro de opción, respetando el vistaMode actual (Stories 2.2 / 2.3). */
 function applyOpcionFilter(opcionId: string | null): void {
   const m = map.value;
   const fc = fcRef.value;
   if (!m || !fc || !m.getSource('zonas')) return;
-  if (opcionId) {
-    m.setPaintProperty('zonas-fill', 'fill-color', [
-      'case',
-      ['==', ['get', 'ganadorOpcionId'], opcionId],
-      ['get', 'color'],
-      COLOR_SIN_DATOS,
-    ]);
-    rebuildMarkers(fc, opcionId);
-    const nombre = opcNombreMap.get(opcionId) ?? opcionId;
-    const meta = resolveParty(nombre);
-    const count = fc.features.filter(
-      (f) => (f.properties as { ganadorOpcionId?: string }).ganadorOpcionId === opcionId,
-    ).length;
-    legend.value = [{ sigla: meta.sigla, nombre, color: meta.color, votos: count }];
-  } else {
+  if (!opcionId) {
+    if (intensidadActive) {
+      (m.getSource('zonas') as GeoJSONSource).setData(fc);
+      intensidadActive = false;
+    }
     m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
     rebuildMarkers(fc);
     legend.value = origLegend;
+    vistaMode.value = 'ganador';
+    return;
   }
+  if (vistaMode.value === 'intensidad') {
+    applyIntensidadMode(opcionId, m, fc);
+  } else {
+    applyGanadorMode(opcionId, m, fc);
+  }
+}
+
+/** Cambia el modo de vista y re-aplica con la opción activa (Story 2.3). */
+function setVista(mode: 'ganador' | 'intensidad'): void {
+  vistaMode.value = mode;
+  applyOpcionFilter($selection.get().opcion);
 }
 
 /**
@@ -207,6 +306,9 @@ async function reloadData(eleccion: string, departamento: string, nivel: string)
   const m = map.value;
   if (!m) return;
   status.value = 'cargando';
+  // Resetear modo intensidad al cambiar de departamento (AC Story 2.3).
+  intensidadActive = false;
+  vistaMode.value = 'ganador';
   try {
     const { fc, bounds } = await loadData(eleccion, departamento, nivel);
     // Esperar a que la fuente esté lista (puede que el mapa aún esté cargando).
@@ -268,6 +370,7 @@ function applySelection(zona: string | null): void {
   prevSelId = zona;
 }
 $selection.subscribe((s) => {
+  opcionActiva.value = s.opcion;
   applySelection(s.zona);
   applyOpcionFilter(s.opcion);
 });
@@ -366,6 +469,24 @@ onUnmounted(() => {
       <template v-else> — sin datos</template>
     </div>
 
+    <!-- Toggle Ganador / Intensidad — sólo visible cuando hay opción activa (Story 2.3) -->
+    <div v-if="opcionActiva" class="vista-toggle" role="group" aria-label="Tipo de vista del mapa">
+      <button
+        class="vista-toggle__btn"
+        :class="{ 'vista-toggle__btn--activo': vistaMode === 'ganador' }"
+        :aria-pressed="vistaMode === 'ganador'"
+        type="button"
+        @click="setVista('ganador')"
+      >Ganador</button>
+      <button
+        class="vista-toggle__btn"
+        :class="{ 'vista-toggle__btn--activo': vistaMode === 'intensidad' }"
+        :aria-pressed="vistaMode === 'intensidad'"
+        type="button"
+        @click="setVista('intensidad')"
+      >Intensidad</button>
+    </div>
+
     <MapLegend :entradas="legend" :sin-datos="sinDatos" />
   </section>
 </template>
@@ -400,6 +521,35 @@ onUnmounted(() => {
 }
 .readout__sigla {
   font-weight: 700;
+}
+.vista-toggle {
+  display: flex;
+  gap: 0;
+  padding: 0.5rem 0.75rem;
+  border-top: 1px solid #e5e7eb;
+}
+.vista-toggle__btn {
+  flex: 1;
+  padding: 0.375rem 0.5rem;
+  font-size: 0.8125rem;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  cursor: pointer;
+  color: #374151;
+  min-height: 44px;
+}
+.vista-toggle__btn:first-child {
+  border-radius: 0.25rem 0 0 0.25rem;
+}
+.vista-toggle__btn:last-child {
+  border-radius: 0 0.25rem 0.25rem 0;
+  border-left: none;
+}
+.vista-toggle__btn--activo {
+  background: #1d4ed8;
+  color: #fff;
+  font-weight: 700;
+  border-color: #1d4ed8;
 }
 :global(.zona-sigla) {
   font:
