@@ -1,3 +1,171 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:040cdd4ae55a95f1cf376aad46f25efae3287a2c293c09afde6c2293e1518812
-size 5081
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Claude PR Review v1",
+  "description": "JSON Schema for structured Claude PR review output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "repo",
+    "pr",
+    "summary",
+    "review_notes",
+    "merge_recommendation"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "claude_pr_review_v1",
+      "description": "Schema version identifier"
+    },
+    "repo": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Repository name in owner/repo format"
+    },
+    "pr": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["number", "url", "title", "base", "head"],
+      "properties": {
+        "number": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Pull request number"
+        },
+        "url": {
+          "type": "string",
+          "minLength": 1,
+          "description": "URL to the pull request"
+        },
+        "title": {
+          "type": "string",
+          "description": "Pull request title"
+        },
+        "base": {
+          "type": "string",
+          "description": "Base branch name"
+        },
+        "head": {
+          "type": "string",
+          "description": "Head branch name"
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verdict", "risk_level", "high_level"],
+      "properties": {
+        "verdict": {
+          "type": "string",
+          "enum": ["approve", "request_changes", "comment_only"],
+          "description": "Overall review verdict"
+        },
+        "risk_level": {
+          "type": "string",
+          "enum": ["low", "medium", "high"],
+          "description": "Risk assessment of the changes"
+        },
+        "high_level": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "High-level summary points"
+        }
+      }
+    },
+    "review_notes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bugs", "security", "performance", "tests", "style"],
+      "properties": {
+        "bugs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Potential bugs identified"
+        },
+        "security": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Security concerns"
+        },
+        "performance": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Performance considerations"
+        },
+        "tests": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Testing observations"
+        },
+        "style": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Code style suggestions"
+        }
+      }
+    },
+    "merge_recommendation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["recommendation", "strategy", "rationale", "blocking_items"],
+      "properties": {
+        "recommendation": {
+          "type": "string",
+          "enum": ["merge_now", "block_merge"],
+          "description": "Whether the PR is ready to merge"
+        },
+        "strategy": {
+          "type": "string",
+          "enum": ["squash", "merge_commit", "rebase"],
+          "description": "Recommended merge strategy"
+        },
+        "rationale": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Reasons for the recommendation"
+        },
+        "blocking_items": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Items that must be addressed before merge"
+        }
+      }
+    },
+    "next_steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "priority", "type", "title"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the action"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["p0", "p1", "p2"],
+            "description": "Priority level"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["merge", "new_issue", "new_pr", "task", "tests"],
+            "description": "Type of follow-up action"
+          },
+          "title": {
+            "type": "string",
+            "description": "Description of the action"
+          },
+          "commands": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Commands to execute this action"
+          }
+        }
+      },
+      "description": "Recommended next steps"
+    }
+  }
+}

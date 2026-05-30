@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7908cab6f0cd66f1f3427b4cc659975b4737bdc44f789b23c6a895fcd084c4bc
-size 469
+{
+  "module-code": "bmm",
+  "capabilities": [
+    {
+      "name": "working-backwards",
+      "menu-code": "WB",
+      "description": "Produces battle-tested PRFAQ document and optional LLM distillate for PRD input.",
+      "supports-headless": true,
+      "phase-name": "1-analysis",
+      "preceded-by": ["brainstorming", "perform-research"],
+      "followed-by": ["create-prd"],
+      "is-required": false,
+      "output-location": "{planning_artifacts}"
+    }
+  ]
+}

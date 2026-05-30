@@ -1,3 +1,17 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7da27c259241db85daf9a8bc5ae7c2f550be57702e9cccb5b5c1c793867f37ed
-size 325
+{
+  "name": "persist-map-spike",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^5.0.0",
+    "@astrojs/vue": "^5.0.0",
+    "vue": "^3.5.0",
+    "maplibre-gl": "^5.0.0"
+  }
+}

@@ -1,3 +1,32 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7b45e493ffa8c694866315f35038462d3dcb8e592a8ce92d6392ac95ebfdeb95
-size 760
+{
+  "name": "uruguay-electoral-map",
+  "type": "module",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@nanostores/vue": "^0.11.0",
+    "astro": "^5.18.2",
+    "d3-geo": "^3.1.1",
+    "maplibre-gl": "^5.24.0",
+    "nanostores": "^0.11.4",
+    "topojson-client": "^3.1.0",
+    "vue": "^3.5.35"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@astrojs/vercel": "^8.2.10",
+    "@astrojs/vue": "^5.1.4",
+    "@tailwindcss/vite": "^4.1.13",
+    "@types/d3-geo": "^3.1.0",
+    "@types/topojson-client": "^3.1.5",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5.7.0"
+  }
+}

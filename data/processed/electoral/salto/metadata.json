@@ -1,9 +1,3 @@
-{
-  "department": "salto",
-  "displayName": "Salto",
-  "processedAt": "2026-01-31T01:13:34.985Z",
-  "files": {
-    "odn": "odn.json",
-    "odd": "odd.json"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:8c77f13dc7113df0e852a776d6826233cc1a8830b53fc9eedeff09c0a50927bc
+size 161

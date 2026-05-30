@@ -1,1 +1,5 @@
-*.json filter=lfs diff=lfs merge=lfs -text
+# Git LFS SOLO para datos geográficos/electorales grandes, acotado por PATH.
+# NO usar `*.json` global: convertía package.json / tsconfig.json en punteros LFS
+# y rompía el deploy (npm install recibía un puntero). Ver code review Story 1.1.
+public/**/*.json filter=lfs diff=lfs merge=lfs -text
+data/**/*.json filter=lfs diff=lfs merge=lfs -text

@@ -1,9 +1,3 @@
-{
-  "department": "maldonado",
-  "displayName": "Maldonado",
-  "processedAt": "2026-01-31T00:35:31.167Z",
-  "files": {
-    "odn": "odn.json",
-    "odd": "odd.json"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:2637a2ec17d59281e70944a0144adc578e590c607f44d50c57888a1814382ebe
+size 169

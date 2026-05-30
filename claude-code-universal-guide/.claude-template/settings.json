@@ -1,3 +1,7 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:cf880eced2b2e7387bd48610e79d01a2cb4bc9dc84adeeceefc82ad1da98a7db
-size 1008
+{
+  "enabledPlugins": {},
+  "statusLine": {
+    "type": "command",
+    "command": "input=$(cat); cwd=$(echo \"$input\" | jq -r '.workspace.current_dir // .cwd'); model=$(echo \"$input\" | jq -r '.model.display_name'); style=$(echo \"$input\" | jq -r '.output_style.name // \"default\"'); total_input=$(echo \"$input\" | jq -r '.context_window.total_input_tokens // 0'); total_output=$(echo \"$input\" | jq -r '.context_window.total_output_tokens // 0'); window_size=$(echo \"$input\" | jq -r '.context_window.context_window_size // 0'); used_pct=$(echo \"$input\" | jq -r '.context_window.used_percentage // empty'); if [ -n \"$used_pct\" ] && [ \"$window_size\" -gt 0 ]; then total_used=$((total_input + total_output)); printf '%s | %s | Style: %s | Context: %dK/%dK (%.0f%% used)' \"$(basename \"$cwd\")\" \"$model\" \"$style\" $((total_used / 1000)) $((window_size / 1000)) \"$used_pct\"; else printf '%s | %s | Style: %s | Context: Ready' \"$(basename \"$cwd\")\" \"$model\" \"$style\"; fi"
+  }
+}

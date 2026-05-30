@@ -1,9 +1,3 @@
-{
-  "department": "flores",
-  "displayName": "Flores",
-  "processedAt": "2026-01-31T01:13:32.575Z",
-  "files": {
-    "odn": "odn.json",
-    "odd": "odd.json"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:b447ab13272da89f5066e067adcadf2452689b19cd0f93d7d1244b6e7439cae5
+size 163

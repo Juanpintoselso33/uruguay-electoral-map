@@ -1,9 +1,3 @@
-{
-  "department": "montevideo",
-  "displayName": "Montevideo",
-  "processedAt": "2026-01-31T00:35:31.487Z",
-  "files": {
-    "odn": "odn.json",
-    "odd": "odd.json"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a1ebff9b263b7c396a5af70cd808dc8258f5eb87110b0104c624bdb6bb39b9a2
+size 179
