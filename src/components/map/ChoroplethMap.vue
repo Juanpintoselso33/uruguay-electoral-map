@@ -16,15 +16,19 @@ import type { Topology, GeometryCollection } from 'topojson-specification';
 import { feature as topoFeature } from 'topojson-client';
 import { resolveParty } from '../../lib/party-meta';
 import type { VotosShard } from '../../lib/contracts';
-import { $selection, bindToLocation, commit, hydrateStores } from '../../stores/map-state';
+import { $selection, $level, bindToLocation, commit, hydrateStores } from '../../stores/map-state';
 import { parseUrl } from '../../lib/url-state';
+import type { NivelGeografico } from '../../lib/contracts';
 import MapLegend from './MapLegend.vue';
 import ZoneSheet from '../sheet/ZoneSheet.vue';
 
-const props = defineProps<{ eleccion: string; departamento: string; nivel?: string }>();
+const props = defineProps<{ eleccion: string; departamento: string }>();
 
-// Catálogo de nivel nativo por dept (espeja [departamento].astro). Actualizar al añadir deptos.
-const DEPT_NIVEL: Record<string, string> = { montevideo: 'zona', rivera: 'serie' };
+// Niveles geo disponibles por depto. Actualizar al agregar deptos o nuevos niveles de datos.
+const DEPT_AVAIL: Record<string, NivelGeografico[]> = {
+  montevideo: ['zona'],
+  rivera:     ['serie'],
+};
 
 interface OpcionesDoc {
   opciones: { opcionId: string; nombre: string }[];
@@ -70,6 +74,10 @@ let mlLib: typeof import('maplibre-gl') | null = null;
 // Contexto en curso (para detectar cambio en astro:after-swap).
 let activeEleccion = props.eleccion;
 let activeDepartamento = props.departamento;
+// Nivel activo en curso (sincronizado con URL/$level tras resolución de DEPT_AVAIL).
+let activeNivel: NivelGeografico = 'zona';
+// Unsub de $level para limpiar en onUnmounted.
+let unsubLevel: (() => void) | null = null;
 // Catálogo opcionId→nombre y snapshot de leyenda en modo ganador (Story 2.2).
 let opcNombreMap = new Map<string, string>();
 let origLegend: LegendEntry[] = [];
@@ -409,13 +417,35 @@ $selection.subscribe((s) => {
   applyOpcionFilter(s.opcion);
 });
 
+/** Resuelve el nivel efectivo: si el pedido por URL no está disponible para el depto, usa el primero disponible. */
+function resolveNivel(departamento: string, urlLevel: NivelGeografico): NivelGeografico {
+  const avail = DEPT_AVAIL[departamento] ?? (['zona'] as NivelGeografico[]);
+  return avail.includes(urlLevel) ? urlLevel : avail[0];
+}
+
 let afterSwapHandler: (() => void) | null = null;
 
 onMounted(async () => {
   bindToLocation();
+
+  // Suscribir $level para reaccionar a cambios de nivel (clic en LevelSelector).
+  // Solo recargar si el nivel es distinto al activo y está disponible para este depto.
+  unsubLevel = $level.subscribe((newLevel) => {
+    const resolved = resolveNivel(activeDepartamento, newLevel);
+    if (resolved !== activeNivel && map.value) {
+      activeNivel = resolved;
+      void reloadData(activeEleccion, activeDepartamento, resolved);
+    }
+  });
+
   try {
     mlLib = await import('maplibre-gl');
-    const geoNivel = DEPT_NIVEL[props.departamento] ?? props.nivel ?? 'zona';
+    // Resolver nivel desde URL ($level) respetando disponibilidad del depto.
+    const urlLevel = $level.get();
+    const geoNivel = resolveNivel(props.departamento, urlLevel);
+    activeNivel = geoNivel;
+    // Si el nivel efectivo difiere del de la URL, corregir la URL silenciosamente (AC4: Rivera).
+    if (geoNivel !== urlLevel) commit({ level: geoNivel });
     const { fc, bounds } = await loadData(props.eleccion, props.departamento, geoNivel);
     if (!mapEl.value) return;
 
@@ -471,7 +501,9 @@ onMounted(async () => {
     if (view.eleccion !== activeEleccion || view.departamento !== activeDepartamento) {
       activeEleccion = view.eleccion;
       activeDepartamento = view.departamento;
-      const newNivel = DEPT_NIVEL[view.departamento] ?? 'zona';
+      const newNivel = resolveNivel(view.departamento, view.level);
+      activeNivel = newNivel;
+      if (newNivel !== view.level) commit({ level: newNivel });
       void reloadData(view.eleccion, view.departamento, newNivel);
     }
   };
@@ -484,6 +516,7 @@ onUnmounted(() => {
   markers.forEach((mk) => mk.remove());
   map.value?.remove();
   if (afterSwapHandler) document.removeEventListener('astro:after-swap', afterSwapHandler);
+  unsubLevel?.();
 });
 </script>
 

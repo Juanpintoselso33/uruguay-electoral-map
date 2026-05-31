@@ -37,19 +37,23 @@ const filas = votes.zonas
   .sort((a, b) => a.zona.localeCompare(b.zona, 'es'));
 
 const fmt = (n: number): string => n.toLocaleString('es-UY');
+
+const nivelSingular = votes.nivel === 'zona' ? 'barrio' : votes.nivel === 'serie' ? 'serie' : votes.nivel;
+const nivelPlural = votes.nivel === 'zona' ? 'barrios' : votes.nivel === 'serie' ? 'series' : `${votes.nivel}s`;
+const nivelCol = nivelSingular.charAt(0).toUpperCase() + nivelSingular.slice(1);
 ---
 
 <details class="datatable">
-  <summary>Tabla de datos (accesible){' '}— {filas.length} barrios</summary>
+  <summary>Tabla de datos (accesible){' '}— {filas.length} {nivelPlural}</summary>
   <div class="datatable__scroll">
     <table>
       <caption>
-        Resultados por barrio — {departamento}, {eleccion}. Partido ganador, votos del
+        Resultados por {nivelSingular} — {departamento}, {eleccion}. Partido ganador, votos del
         ganador y porcentaje sobre votos válidos. Equivalente textual del mapa.
       </caption>
       <thead>
         <tr>
-          <th scope="col">Barrio</th>
+          <th scope="col">{nivelCol}</th>
           <th scope="col">Ganador</th>
           <th scope="col" class="num">Votos del ganador</th>
           <th scope="col" class="num">% válidos</th>

@@ -1,14 +1,15 @@
 ---
+import type { NivelGeografico } from '../../lib/contracts';
 import Base from '../../layouts/Base.astro';
 import ChoroplethMap from '../../components/map/ChoroplethMap.vue';
 import DataTable from '../../components/a11y/DataTable.astro';
 import OpcionSelector from '../../components/selectors/OpcionSelector.vue';
+import LevelSelector from '../../components/selectors/LevelSelector.vue';
 
-// Nivel geográfico nativo por departamento (zona=barrios, serie=series electorales).
-// Se actualiza al agregar cada departamento nuevo.
-const DEPT_NIVEL: Record<string, 'zona' | 'serie'> = {
-  montevideo: 'zona',
-  rivera: 'serie',
+// Niveles disponibles por departamento (espeja DEPT_AVAIL en ChoroplethMap.vue).
+const DEPT_AVAIL: Record<string, NivelGeografico[]> = {
+  montevideo: ['zona'],
+  rivera:     ['serie'],
 };
 
 export function getStaticPaths() {
@@ -19,7 +20,7 @@ export function getStaticPaths() {
 }
 
 const { eleccion, departamento } = Astro.params;
-const nivel = DEPT_NIVEL[departamento] ?? 'zona';
+const availableLevels: NivelGeografico[] = DEPT_AVAIL[departamento] ?? ['zona'];
 const titulo = `${departamento} — ${eleccion}`;
 ---
 
@@ -36,9 +37,11 @@ const titulo = `${departamento} — ${eleccion}`;
     </nav>
     <!-- Selector de opción — isla fuera de transition:persist, se re-monta en navegación (Story 2.2) -->
     <OpcionSelector client:idle eleccion={eleccion} departamento={departamento} />
+    <!-- Selector de nivel geográfico (Story 2.5) -->
+    <LevelSelector client:idle availableLevels={availableLevels} />
     <!-- transition:persist: el island MapLibre sobrevive la navegación entre departamentos (NFR1) -->
     <div id="map-persist" transition:persist>
-      <ChoroplethMap client:load eleccion={eleccion} departamento={departamento} nivel={nivel} />
+      <ChoroplethMap client:load eleccion={eleccion} departamento={departamento} />
     </div>
     <DataTable eleccion={eleccion} departamento={departamento} />
   </main>
