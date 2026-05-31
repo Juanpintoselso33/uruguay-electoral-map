@@ -16,7 +16,7 @@ import type { Topology, GeometryCollection } from 'topojson-specification';
 import { feature as topoFeature } from 'topojson-client';
 import { resolveParty } from '../../lib/party-meta';
 import type { VotosShard } from '../../lib/contracts';
-import { $selection, $level, bindToLocation, commit, hydrateStores } from '../../stores/map-state';
+import { $selection, $level, $comparison, bindToLocation, commit, hydrateStores } from '../../stores/map-state';
 import { parseUrl } from '../../lib/url-state';
 import type { NivelGeografico } from '../../lib/contracts';
 import MapLegend from './MapLegend.vue';
@@ -88,6 +88,9 @@ let zonasValidos = new Map<string, number>();
 let zonasNoPartidarios = new Map<string, { enBlanco: number; anulados: number; observados: number }>();
 // Flag: indica si se hizo setData con FC de intensidad (para saber cuándo restaurar).
 let intensidadActive = false;
+// Comparación dual (Story 4.3): ganador por zona de la elección de comparación.
+let vsWinnersMap = new Map<string, string>(); // normalizedGeoId → nombre del ganador en elección vs
+let unsubComparison: (() => void) | null = null;
 
 function norm(s: string): string {
   return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[.,]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -322,6 +325,63 @@ function setVista(mode: 'ganador' | 'intensidad'): void {
 }
 
 /**
+ * Carga datos de la elección de comparación y aplica el overlay de cambio (Story 4.3).
+ * Zonas donde el ganador difiere de la elección base reciben feature-state vsChanged=true,
+ * activando el borde naranja en la capa zonas-vs-changed.
+ */
+async function applyComparisonOverlay(vs: string, baseEleccion: string, departamento: string, nivel: string): Promise<void> {
+  const m = map.value;
+  const fc = fcRef.value;
+  if (!m || !fc || status.value !== 'listo') return;
+  try {
+    const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+    const [votesRes, opcRes] = await Promise.all([
+      fetch(`${base}/data/${vs}/${departamento}/votes.json`),
+      fetch(`${base}/data/${vs}/${departamento}/opciones.json`),
+    ]);
+    if (!votesRes.ok || !opcRes.ok) return;
+    const votes = (await votesRes.json()) as VotosShard;
+    const opcDoc = (await opcRes.json()) as OpcionesDoc;
+    const vsNombrePorOpcion = new Map(opcDoc.opciones.map((o) => [o.opcionId, o.nombre]));
+    vsWinnersMap = new Map();
+    for (const z of votes.zonas) {
+      if (z.porOpcion.length > 0) {
+        vsWinnersMap.set(norm(z.geoId), vsNombrePorOpcion.get(z.ganadorOpcionId) ?? z.ganadorOpcionId);
+      }
+    }
+    // Activar feature-state vsChanged para zonas con ganador distinto.
+    for (const f of fc.features) {
+      const name = String((f.properties as { name: string }).name);
+      const baseNombre = String((f.properties as { nombre?: string }).nombre ?? '');
+      const vsNombre = vsWinnersMap.get(norm(name)) ?? null;
+      const changed = vsNombre !== null && baseNombre !== '' && baseNombre !== vsNombre;
+      m.setFeatureState({ source: 'zonas', id: name }, { vsChanged: changed });
+    }
+    // Marcar continuidad en leyenda: partidos sin presencia en la elección de comparación.
+    const vsNombres = new Set([...vsWinnersMap.values()]);
+    const year = baseEleccion.match(/\d{4}/)?.[0] ?? baseEleccion;
+    legend.value = origLegend.map((entry) =>
+      vsNombres.has(entry.nombre) ? entry : { ...entry, nombre: `${entry.nombre} (solo ${year})` },
+    );
+  } catch {
+    // Degradación silenciosa: si no hay datos de comparación, el mapa sigue normal.
+  }
+}
+
+/** Limpia el overlay de comparación: restaura feature-states y leyenda original (Story 4.3). */
+function clearComparisonOverlay(): void {
+  const m = map.value;
+  const fc = fcRef.value;
+  if (!m || !fc) return;
+  for (const f of fc.features) {
+    const name = String((f.properties as { name: string }).name);
+    m.setFeatureState({ source: 'zonas', id: name }, { vsChanged: false });
+  }
+  vsWinnersMap = new Map();
+  legend.value = origLegend;
+}
+
+/**
  * Recarga datos en el mapa ya inicializado (sin re-init de MapLibre — NFR1).
  * Llamado desde el handler astro:after-swap cuando cambia el departamento/elección.
  */
@@ -357,6 +417,11 @@ async function reloadData(eleccion: string, departamento: string, nivel: string)
     // Reaplicar filtro de opción si había uno activo al cambiar de departamento (Story 2.2).
     applyOpcionFilter(sel.opcion);
     status.value = 'listo';
+    // Reaplicar overlay de comparación si sigue activo (Story 4.3).
+    const vs = $comparison.get().vs;
+    if (vs && vs !== eleccion) {
+      void applyComparisonOverlay(vs, eleccion, departamento, nivel);
+    }
   } catch (err) {
     status.value = 'error';
     errorMsg.value = err instanceof Error ? err.message : String(err);
@@ -438,6 +503,17 @@ onMounted(async () => {
     }
   });
 
+  // Suscribir $comparison para entrar/salir del modo comparación (Story 4.3).
+  // hydrateStores (llamado en after-swap y bindToLocation) ya actualiza este store.
+  unsubComparison = $comparison.subscribe((cmp) => {
+    if (!map.value || status.value !== 'listo') return;
+    if (cmp.vs && cmp.vs !== activeEleccion) {
+      void applyComparisonOverlay(cmp.vs, activeEleccion, activeDepartamento, activeNivel);
+    } else {
+      clearComparisonOverlay();
+    }
+  });
+
   try {
     mlLib = await import('maplibre-gl');
     // Resolver nivel desde URL ($level) respetando disponibilidad del depto.
@@ -464,6 +540,16 @@ onMounted(async () => {
       m.addSource('zonas', { type: 'geojson', data: fc, promoteId: 'name' });
       m.addLayer({ id: 'zonas-fill', type: 'fill', source: 'zonas', paint: { 'fill-color': ['get', 'color'], 'fill-opacity': 0.85 } });
       m.addLayer({ id: 'zonas-line', type: 'line', source: 'zonas', paint: { 'line-color': '#ffffff', 'line-width': 0.6 } });
+      // Overlay de comparación (Story 4.3): borde naranja en zonas que cambiaron ganador.
+      m.addLayer({
+        id: 'zonas-vs-changed',
+        type: 'line',
+        source: 'zonas',
+        paint: {
+          'line-color': '#f97316',
+          'line-width': ['case', ['boolean', ['feature-state', 'vsChanged'], false], 3, 0],
+        },
+      });
       m.addLayer({
         id: 'zonas-sel',
         type: 'line',
@@ -488,6 +574,11 @@ onMounted(async () => {
       applySelection($selection.get().zona);
       applyOpcionFilter($selection.get().opcion);
       status.value = 'listo';
+      // Aplicar overlay de comparación si la URL ya traía ?vs= (Story 4.3).
+      const initVs = $comparison.get().vs;
+      if (initVs && initVs !== props.eleccion) {
+        void applyComparisonOverlay(initVs, props.eleccion, props.departamento, activeNivel);
+      }
     });
   } catch (err) {
     status.value = 'error';
@@ -517,6 +608,7 @@ onUnmounted(() => {
   map.value?.remove();
   if (afterSwapHandler) document.removeEventListener('astro:after-swap', afterSwapHandler);
   unsubLevel?.();
+  unsubComparison?.();
 });
 </script>
 

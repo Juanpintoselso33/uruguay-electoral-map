@@ -8,6 +8,7 @@ import LevelSelector from '../../components/selectors/LevelSelector.vue';
 import EleccionSelector from '../../components/selectors/EleccionSelector.vue';
 import Sello from '../../components/ui/Sello.astro';
 import ShareButton from '../../components/share/ShareButton.vue';
+import CompareControls from '../../components/map/CompareControls.vue';
 
 // Niveles disponibles por departamento (espeja DEPT_AVAIL en ChoroplethMap.vue).
 const DEPT_AVAIL: Record<string, NivelGeografico[]> = {
@@ -80,6 +81,14 @@ const canonicalPath = `/${eleccion}/${departamento}`;
         elecciones={availableElecciones}
         eleccionActual={eleccion}
         departamento={departamento}
+      />
+    )}
+    <!-- Controles de comparación dual (Story 4.3) -->
+    {availableElecciones.length > 1 && (
+      <CompareControls
+        client:idle
+        availableElecciones={availableElecciones}
+        eleccionActual={eleccion}
       />
     )}
     <!-- Selector de opción — isla fuera de transition:persist, se re-monta en navegación (Story 2.2) -->
