@@ -61,8 +61,8 @@ async function handleShare(): Promise<void> {
   min-height: 44px;
   min-width: 44px;
   font-size: 0.8rem;
-  color: #374151;
-  border: 1px solid #d1d5db;
+  color: var(--color-ink-soft);
+  border: 1px solid var(--color-border-strong);
   border-radius: 0.375rem;
   background: transparent;
   cursor: pointer;
@@ -70,10 +70,10 @@ async function handleShare(): Promise<void> {
   white-space: nowrap;
 }
 .share-btn:hover {
-  background: #f3f4f6;
+  background: var(--color-surface-2);
 }
 .share-btn:focus-visible {
-  outline: 2px solid #6366f1;
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
 .share-icon {

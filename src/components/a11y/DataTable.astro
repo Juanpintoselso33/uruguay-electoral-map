@@ -99,7 +99,7 @@ const nivelCol = nivelSingular.charAt(0).toUpperCase() + nivelSingular.slice(1);
   }
   caption {
     text-align: left;
-    color: #4b5563;
+    color: var(--color-ink-muted);
     font-size: 0.75rem;
     padding-bottom: 0.5rem;
   }
@@ -107,13 +107,13 @@ const nivelCol = nivelSingular.charAt(0).toUpperCase() + nivelSingular.slice(1);
   td {
     text-align: left;
     padding: 0.375rem 0.5rem;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--color-border);
   }
   thead th {
-    border-bottom: 2px solid #d1d5db;
+    border-bottom: 2px solid var(--color-border-strong);
     position: sticky;
     top: 0;
-    background: #fff;
+    background: var(--color-paper);
   }
   .num {
     text-align: right;

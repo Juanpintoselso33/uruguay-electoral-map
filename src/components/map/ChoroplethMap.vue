@@ -53,8 +53,9 @@ interface LegendEntry {
   votos: number;
 }
 
-const COLOR_SIN_DATOS = '#e5e7eb';
+let COLOR_SIN_DATOS = '#e5e7eb';
 const INTENSIDAD_LIGHT = '#f0f4f8';
+let isDark = false;
 const mapEl = ref<HTMLDivElement | null>(null);
 const status = ref<'cargando' | 'listo' | 'error'>('cargando');
 const errorMsg = ref('');
@@ -602,6 +603,8 @@ onMounted(async () => {
     activeNivel = geoNivel;
     // Si el nivel efectivo difiere del de la URL, corregir la URL silenciosamente (AC4: Rivera).
     if (geoNivel !== urlLevel) commit({ level: geoNivel });
+    isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (isDark) COLOR_SIN_DATOS = '#313C56';
     const { fc, bounds } = await loadData(props.eleccion, props.departamento, geoNivel);
     if (!mapEl.value) return;
 
@@ -635,7 +638,7 @@ onMounted(async () => {
         type: 'line',
         source: 'zonas',
         paint: {
-          'line-color': '#111827',
+          'line-color': isDark ? '#E8ECF6' : '#111827',
           'line-width': ['case', ['boolean', ['feature-state', 'sel'], false], 2.5, 0],
         },
       });
@@ -742,12 +745,12 @@ onUnmounted(() => {
   width: 100%;
   height: 60vh;
   min-height: 320px;
-  background: #f8fafc;
+  background: var(--color-map-bg);
 }
 .map-status {
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--color-ink-muted);
 }
 .map-status--error {
   color: #b91c1c;
@@ -756,16 +759,16 @@ onUnmounted(() => {
   display: flex;
   gap: 0;
   padding: 0.5rem 0.75rem;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--color-border);
 }
 .vista-toggle__btn {
   flex: 1;
   padding: 0.375rem 0.5rem;
   font-size: 0.8125rem;
-  background: #f9fafb;
-  border: 1px solid #d1d5db;
+  background: var(--color-surface-1);
+  border: 1px solid var(--color-border-strong);
   cursor: pointer;
-  color: #374151;
+  color: var(--color-ink-soft);
   min-height: 44px;
 }
 .vista-toggle__btn:first-child {
@@ -785,11 +788,11 @@ onUnmounted(() => {
   font:
     700 0.6875rem/1 system-ui,
     sans-serif;
-  color: #111827;
+  color: var(--color-ink);
   text-shadow:
-    0 0 2px #fff,
-    0 0 2px #fff,
-    0 0 2px #fff;
+    0 0 2px var(--color-card),
+    0 0 2px var(--color-card),
+    0 0 2px var(--color-card);
   pointer-events: none;
   user-select: none;
 }

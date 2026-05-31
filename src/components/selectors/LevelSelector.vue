@@ -65,42 +65,42 @@ const NIVELES: { key: NivelGeografico; label: string }[] = [
   font-size: 0.8125rem;
 }
 .level-sel__titulo {
-  color: #6b7280;
+  color: var(--color-ink-muted);
   font-size: 0.75rem;
   margin-right: 0.25rem;
 }
 .level-sel__btn {
   padding: 0.375rem 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-border-strong);
   border-radius: 0.375rem;
-  background: #ffffff;
+  background: var(--color-card);
   font-size: 0.8125rem;
   cursor: pointer;
-  color: #374151;
+  color: var(--color-ink-soft);
   min-height: 44px;
   min-width: 44px;
   transition: background 0.1s, border-color 0.1s;
 }
 .level-sel__btn--activo {
-  background: #111827;
-  color: #ffffff;
-  border-color: #111827;
+  background: var(--color-btn-active-bg);
+  color: var(--color-btn-active-fg);
+  border-color: var(--color-btn-active-bg);
   font-weight: 700;
 }
 .level-sel__btn--disponible:not(.level-sel__btn--activo):hover {
-  background: #f3f4f6;
-  border-color: #9ca3af;
+  background: var(--color-surface-2);
+  border-color: var(--color-ink-faint);
 }
 .level-sel__btn[aria-disabled="true"]:not(.level-sel__btn--prox) {
-  color: #d1d5db;
+  color: var(--color-border-strong);
   cursor: not-allowed;
-  border-color: #e5e7eb;
-  background: #f9fafb;
+  border-color: var(--color-border);
+  background: var(--color-surface-1);
 }
 .level-sel__btn--prox {
-  color: #d1d5db;
+  color: var(--color-border-strong);
   cursor: not-allowed;
-  border-color: #e5e7eb;
-  background: #f9fafb;
+  border-color: var(--color-border);
+  background: var(--color-surface-1);
 }
 </style>

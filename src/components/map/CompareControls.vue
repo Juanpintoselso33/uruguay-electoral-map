@@ -45,19 +45,19 @@ function exitCompare(): void {
 <template>
   <div
     v-if="availableElecciones.length > 1"
-    class="px-4 py-1 flex gap-2 items-center text-sm border-b border-gray-100 bg-gray-50"
+    class="px-4 py-1 flex gap-2 items-center text-sm border-b border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-800"
   >
     <template v-if="comparisonVs">
-      <span class="text-gray-500 text-xs">Comparando con: <strong class="text-gray-700">{{ label(comparisonVs) }}</strong></span>
+      <span class="text-gray-500 dark:text-slate-400 text-xs">Comparando con: <strong class="text-gray-700 dark:text-slate-300">{{ label(comparisonVs) }}</strong></span>
       <button
-        class="text-xs text-blue-600 underline ml-2"
+        class="text-xs text-blue-600 dark:text-blue-400 underline ml-2"
         type="button"
         @click="exitCompare"
       >Salir</button>
     </template>
     <template v-else-if="otherEleccion()">
       <button
-        class="text-xs text-blue-600 underline"
+        class="text-xs text-blue-600 dark:text-blue-400 underline"
         type="button"
         @click="enterCompare"
       >Comparar con {{ label(otherEleccion()!) }}</button>

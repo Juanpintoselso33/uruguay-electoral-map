@@ -56,12 +56,12 @@ defineProps<{ entradas: Entrada[]; sinDatos: number }>();
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
 }
 .legend__swatch--empty {
-  background: #e5e7eb;
+  background: var(--color-sin-datos);
 }
 .legend__sigla {
   font-weight: 700;
 }
 .legend__nombre {
-  color: #4b5563;
+  color: var(--color-ink-muted);
 }
 </style>

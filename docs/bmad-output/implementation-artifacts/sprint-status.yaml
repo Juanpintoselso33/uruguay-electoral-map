@@ -80,8 +80,8 @@ development_status:
   epic-4-retrospective: optional
 
   # ---- Epic 5: Pulido y robustez ----
-  epic-5: backlog
-  5-1-dark-mode: backlog
+  epic-5: in-progress
+  5-1-dark-mode: done
   5-2-pmtiles-geometria-pesada: backlog
   5-3-sumar-mas-departamentos: backlog
   5-4-auditoria-accesibilidad-wcag: backlog

@@ -62,16 +62,16 @@ const canonicalPath = `/${eleccion}/${departamento}`;
     <header class="px-4 pt-4 flex items-start justify-between gap-2">
       <div>
         <h1 class="text-xl font-bold capitalize">{departamento}</h1>
-        <p class="text-sm text-gray-600">{eleccion}</p>
+        <p class="text-sm text-gray-600 dark:text-slate-400">{eleccion}</p>
       </div>
       <ShareButton client:idle />
     </header>
     <!-- Selector de departamento — links Astro (ClientRouter navega sin reinicializar el mapa) -->
-    <nav class="px-4 py-2 flex gap-3 text-sm border-b border-gray-200">
+    <nav class="px-4 py-2 flex gap-3 text-sm border-b border-gray-200 dark:border-slate-700">
       {ALL_DEPTOS.map((dept) => (
         <a
           href={`/${eleccionParaDepto(dept)}/${dept}`}
-          class={`underline ${departamento === dept ? 'font-bold' : 'text-gray-500'}`}
+          class={`underline ${departamento === dept ? 'font-bold' : 'text-gray-500 dark:text-slate-400'}`}
         >{dept.charAt(0).toUpperCase() + dept.slice(1)}</a>
       ))}
     </nav>

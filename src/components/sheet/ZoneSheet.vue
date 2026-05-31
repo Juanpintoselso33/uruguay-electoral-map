@@ -111,8 +111,8 @@ function fmt(n: number): string {
 
 <style scoped>
 .zone-sheet {
-  background: #ffffff;
-  border-top: 1px solid #e5e7eb;
+  background: var(--color-card);
+  border-top: 1px solid var(--color-border);
   overflow: hidden;
   max-height: 0;
   transition: max-height 0.25s ease;
@@ -146,7 +146,7 @@ function fmt(n: number): string {
 .zone-sheet__handle {
   width: 2.5rem;
   height: 0.25rem;
-  background: #d1d5db;
+  background: var(--color-border-strong);
   border-radius: 9999px;
   margin: 0.625rem auto 0;
 }
@@ -156,13 +156,13 @@ function fmt(n: number): string {
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 1rem 0.5rem;
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid var(--color-surface-2);
 }
 
 .zone-sheet__titulo {
   font-size: 1rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--color-ink);
   margin: 0;
 }
 
@@ -171,7 +171,7 @@ function fmt(n: number): string {
   border: none;
   font-size: 1rem;
   cursor: pointer;
-  color: #6b7280;
+  color: var(--color-ink-muted);
   padding: 0.25rem 0.5rem;
   min-height: 44px;
   min-width: 44px;
@@ -181,7 +181,7 @@ function fmt(n: number): string {
   border-radius: 0.25rem;
 }
 .zone-sheet__cerrar:hover {
-  background: #f3f4f6;
+  background: var(--color-surface-2);
 }
 
 .zone-sheet__body {
@@ -193,7 +193,7 @@ function fmt(n: number): string {
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem;
-  background: #f9fafb;
+  background: var(--color-surface-1);
   border-radius: 0.5rem;
   margin-bottom: 0.75rem;
 }
@@ -215,13 +215,13 @@ function fmt(n: number): string {
 .zone-sheet__ganador-sigla {
   font-size: 1.125rem;
   font-weight: 800;
-  color: #111827;
+  color: var(--color-ink);
   line-height: 1.2;
 }
 
 .zone-sheet__ganador-nombre {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--color-ink-muted);
 }
 
 .zone-sheet__ganador-votos {
@@ -234,19 +234,19 @@ function fmt(n: number): string {
 .zone-sheet__num-grande {
   font-size: 1.375rem;
   font-weight: 800;
-  color: #111827;
+  color: var(--color-ink);
   line-height: 1;
 }
 
 .zone-sheet__num-chico {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--color-ink-muted);
 }
 
 .zone-sheet__opcion-activa {
   font-size: 0.8125rem;
   padding: 0.375rem 0.5rem;
-  background: #eff6ff;
+  background: var(--color-highlight);
   border-radius: 0.25rem;
   margin-bottom: 0.75rem;
   display: flex;
@@ -270,28 +270,28 @@ function fmt(n: number): string {
   display: flex;
   justify-content: space-between;
   padding: 0.25rem 0;
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid var(--color-surface-2);
 }
 
 .zone-sheet__dl-row dt {
-  color: #374151;
+  color: var(--color-ink-soft);
 }
 
 .zone-sheet__dl-row dd {
   font-weight: 600;
-  color: #111827;
+  color: var(--color-ink);
   margin: 0;
 }
 
 .zone-sheet__dl-row--muted dt,
 .zone-sheet__dl-row--muted dd {
-  color: #9ca3af;
+  color: var(--color-ink-faint);
   font-weight: 400;
 }
 
 .zone-sheet__fuente {
   font-size: 0.6875rem;
-  color: #9ca3af;
+  color: var(--color-ink-faint);
   margin: 0;
 }
 </style>
