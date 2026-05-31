@@ -1,0 +1,207 @@
+[
+  {
+    "serie": "JAA",
+    "localidad": "Salto",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "JAB",
+    "localidad": "Salto",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "JAC",
+    "localidad": "Salto",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "JAD",
+    "localidad": "Salto",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "JAE",
+    "localidad": "Salto",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "JBA",
+    "localidad": "Salto",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "JBB",
+    "localidad": "Salto",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "JBC",
+    "localidad": "Salto",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "JBD",
+    "localidad": "Salto",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "JBE",
+    "localidad": "Salto",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "JCA",
+    "localidad": "San Antonio",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JCB",
+    "localidad": "Salto",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "JCC",
+    "localidad": "Salto",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "JCD",
+    "localidad": "Salto",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "JCE",
+    "localidad": "Colonia Osimani Llerena",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JCF",
+    "localidad": "Termas Del DaymáN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JCG",
+    "localidad": "Salto",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "JCH",
+    "localidad": "Salto",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "JCI",
+    "localidad": "Salto",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "JCJ",
+    "localidad": "Salto",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "JCK",
+    "localidad": "Colonia 18 De Julio",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JCL",
+    "localidad": "Salto",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "JDA",
+    "localidad": "Colonia Itapebí",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JDB",
+    "localidad": "Pueblo Saucedo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JDC",
+    "localidad": "Pueblo Palomas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JDD",
+    "localidad": "Villa ConstitucióN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JDE",
+    "localidad": "Pueblo BeléN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JDF",
+    "localidad": "Termas Del Arapey",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JEA",
+    "localidad": "Cuchilla De Giaviyú",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JEB",
+    "localidad": "Pueblo Lavalleja",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JEC",
+    "localidad": "RincóN De ValentíN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JED",
+    "localidad": "Puntas De ValentíN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JEE",
+    "localidad": "Paso Del Parque Del DaymáN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JEF",
+    "localidad": "Pueblo Laureles",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JFA",
+    "localidad": "Cerros De Vera",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JFB",
+    "localidad": "Paso Cementerio",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JFC",
+    "localidad": "Pueblo Cayetano",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JFD",
+    "localidad": "Pueblo Quintana",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JFE",
+    "localidad": "Pueblo FernáNdez",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JFF",
+    "localidad": "Cambará De Arapey",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "JFG",
+    "localidad": "Sarandí De Arapey",
+    "tipo": "1:1"
+  }
+]

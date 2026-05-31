@@ -1,0 +1,232 @@
+[
+  {
+    "serie": "OAA",
+    "localidad": "San José De Mayo",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "OAB",
+    "localidad": "San José De Mayo",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "OAC",
+    "localidad": "San José De Mayo",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "OAD",
+    "localidad": "San José De Mayo",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "OBA",
+    "localidad": "San José De Mayo",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "OBB",
+    "localidad": "San José De Mayo",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "OBC",
+    "localidad": "San José De Mayo",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "OBD",
+    "localidad": "San José De Mayo",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "OCA",
+    "localidad": "Juan Soler",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OCB",
+    "localidad": "Fagina",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OCC",
+    "localidad": "Mahoma",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OCD",
+    "localidad": "Cruz De Los Caminos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OCE",
+    "localidad": "Chamizo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OCF",
+    "localidad": "San Gregorio",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OCG",
+    "localidad": "Chamizo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OCH",
+    "localidad": "Carreta Quemada",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ODA",
+    "localidad": "RodríGuez",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ODB",
+    "localidad": "RincóN De Albano",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ODC",
+    "localidad": "RincóN De La Torre",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ODD",
+    "localidad": "RaigóN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ODE",
+    "localidad": "RincóN De Arias",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ODF",
+    "localidad": "Paso De Came",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ODG",
+    "localidad": "Arroyo La Virgen",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ODH",
+    "localidad": "Pueblo Nuevo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ODI",
+    "localidad": "Villa Ituzaingó",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OEA",
+    "localidad": "Libertad",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OEB",
+    "localidad": "Colonia Italia",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OEC",
+    "localidad": "Puntas De Valdez",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OED",
+    "localidad": "Villa MaríA",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OEE",
+    "localidad": "Rafael Perazza",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OEF",
+    "localidad": "RincóN Del Pino",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OEG",
+    "localidad": "Mangrullo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OEH",
+    "localidad": "Kiyú",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OEI",
+    "localidad": "Colonia Wilson",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OFA",
+    "localidad": "CañAda Grande",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OFB",
+    "localidad": "Puntas De CañAda Grande",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OFC",
+    "localidad": "EstacióN GonzáLez",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OFD",
+    "localidad": "Cap. Manuel Artigas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OFE",
+    "localidad": "PavóN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OFF",
+    "localidad": "Ecilda Paullier",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OFG",
+    "localidad": "Costas Del Pereira",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OGA",
+    "localidad": "Playa Pascual",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OGB",
+    "localidad": "Penino",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OGC",
+    "localidad": "Parque Postel",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OGD",
+    "localidad": "Villa Rives",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "OGE",
+    "localidad": "Delta El Tigre",
+    "tipo": "1:1"
+  }
+]

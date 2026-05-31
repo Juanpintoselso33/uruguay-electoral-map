@@ -1,13 +1,25 @@
-/** Data Contract v1 — punto de entrada. Ver README.md. */
+/** Data Contract v3 — punto de entrada. Ver README.md. */
 export type {
   EleccionTipo,
+  Contienda,
+  GranularidadNivel,
   Partido,
   Opcion,
   OpcionHoja,
   OpcionCandidato,
+  OpcionBinaria,
+  NodoOpcion,
   EntidadCanonica,
   Eleccion,
 } from './election';
+
+export type {
+  EscaleraGranularidad,
+  ContiendaCatalogo,
+  CatalogoOpciones,
+} from './granularidad';
+
+export { ESCALERAS, escaleraDe, opcionIdHoja, slugContrato } from './granularidad';
 
 export type {
   Escrutinio,
@@ -28,6 +40,9 @@ export type {
 export {
   isOpcionHoja,
   isOpcionCandidato,
+  isOpcionBinaria,
   isEscrutinioDefinitivo,
   assertVotosShard,
+  assertCatalogoConsistente,
+  assertHojasEnCatalogo,
 } from './guards';

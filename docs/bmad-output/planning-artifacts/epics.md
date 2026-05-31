@@ -1,6 +1,7 @@
 ---
 stepsCompleted: [1, 2, 3, 4]
 status: complete
+lastUpdated: 2026-05-31
 inputDocuments:
   - docs/bmad-output/planning-artifacts/prds/prd-uruguay-electoral-map-2026-05-30/prd.md
   - docs/bmad-output/planning-artifacts/architecture.md
@@ -49,7 +50,26 @@ Desglose de épicas e historias para el rebuild de Uruguay Electoral Map, decomp
 - **FR29** Generar índice de búsqueda estático.
 - **FR30** Generar OG-images por ruta canónica en build-time.
 - **FR31** Validar cobertura de zonas (reporte + gate de cobertura mínima).
-- **FR32** (Fase 2) Tabla de normalización de HOJA entre elecciones.
+- **FR32** Tabla de normalización de HOJA entre elecciones (JSON declarativo, editable sin código).
+- **FR33** ETL + modelo para balotaje: 2 opciones fijas (candidatos), sin HOJA, opcion_id = candidato.
+- **FR34** ETL + modelo para plebiscito: opción binaria (Sí/No), texto de pregunta como metadata.
+- **FR35** ETL + modelo para nacionales de años adicionales (2024, 2014, etc.) con HOJA y lemas.
+- **FR36** ETL + modelo para elecciones departamentales (intendentes, ediles, alcaldes).
+- **FR37** UI: selector de opción adaptado al tipo de elección (balotaje ≠ internas ≠ plebiscito).
+- **FR38** Sello/etiqueta en la UI que identifica el tipo de elección y sus reglas de visualización.
+- **FR39** Tabla SERIE→localidad derivada del plan circuital de la Corte Electoral; mapeo 1:1 automático para el interior.
+- **FR40** Geometría de localidades del interior (IDE Uruguay — polígonos de localidades) como TopoJSON.
+- **FR41** ETL join SERIE→localidad→geometría; visualización del mapa por localidad en departamentos del interior.
+- **FR42** Detección de ciudades "grandes" del interior (serie repite nombre de ciudad) → degradar a ciudad como unidad con rótulo explicativo.
+- **FR43** Research + tabla de equivalencia manual SERIE→barrio para ciudades grandes del interior (Salto, Paysandú, Melo, Rivera ciudad, Artigas ciudad, etc.).
+- **FR44** Datos electorales + geometría + ETL para los 15 departamentos pendientes (Canelones, San José, Rocha, Florida, Lavalleja, Durazno, Flores, Soriano, Río Negro, Paysandú, Salto, Artigas, Rivera, Tacuarembó, Cerro Largo).
+- **FR45** ETL: emitir catálogo de opciones JERÁRQUICO y shards de votos a nivel HOJA (lista individual), no solo agregado por lema. La escalera de granularidad (contienda → lema → precandidato/sublema → hoja) la declara cada tipo de elección; el `opcion_id` de HOJA es compuesto (contienda+lema+hoja) porque los números de lista se reusan entre departamentos.
+- **FR46** UI: selector de opción como ACORDEÓN jerárquico **multi-selección** que se adapta a la escalera del tipo de elección y contienda activos; marcar uno o varios nodos (en cualquier nivel) colorea el mapa por la SUMA de la selección. Seleccionar un nodo padre = agregado de sus hojas.
+- **FR47** UI: filtro de partido/lema (visibilidad, no selección), búsqueda de lista por número, "seleccionar todas" que respeta el filtro, y chips de filtros/selección activos. La selección se limpia al cambiar departamento, elección o contienda.
+- **FR48** Mapa: modos de coloreo conmutables para la selección — Ganador (default sin selección) · Share % sobre válidos · Votos absolutos (escala recalculada por selección) · Heatmap. Una variable por pantalla; la leyenda nombra modo, unidad y rango.
+- **FR49** Selector de CONTIENDA dentro de una elección (internas: Convención Nacional/Departamental = ODN/ODD; departamentales: Intendente/Junta/Municipio); cambia el dataset/escalera activos y se refleja en la URL.
+- **FR50** Ficha de zona: desglose detallado por HOJA agrupado por partido (top-N por partido + "y N más"), totales de la selección, y tooltip pinable. Series combinadas suman sus componentes.
+- **FR51** Sourcing de datos faltantes de granularidad: sublema y distinción de lista nacional (Senado) / departamental (Diputados) en nacionales — investigar y obtener de la Corte Electoral (el archivo de integración de hojas está vacío en el repo).
 
 ### NonFunctional Requirements
 - **NFR1** Performance mobile: LCP<2.5s, INP<200ms, CLS<0.1 (Android gama media/4G); mapa on-demand, sin re-init entre rutas; shards geo eager ≤500 KB.
@@ -99,8 +119,16 @@ Desglose de épicas e historias para el rebuild de Uruguay Electoral Map, decomp
 - FR15 → Epic 4 · FR16 → Epic 4 · FR17 → Epic 4 · **FR18 → Fase 2**
 - FR19 → Epic 3 · FR20 → Epic 1 (átomo) + Epic 3 (deep-link UX) · FR21 → Epic 3 · FR22 → Epic 3
 - **FR23 → Fase 2** · **FR24 → Fase 2** · FR25 → Epic 2 · FR26 → Epic 2
-- FR27 → Epic 1 · FR28 → Epic 1 · FR29 → Epic 3 · FR30 → Epic 3 · FR31 → Epic 1 · **FR32 → Fase 2**
-- NFRs: NFR1 gate desde E1 (audit E5) · NFR2 base E1 (audit E5) · NFR3 E3 · NFR4 E1 · NFR5 E1 · NFR6/7 E5 · NFR8 transversal
+- FR27 → Epic 1 · FR28 → Epic 1 · FR29 → Epic 3 · FR30 → Epic 3 · FR31 → Epic 1 · FR32 → Epic 6
+- FR23 → Epic 6 · FR24 → Epic 6 · FR18 → Epic 6
+- FR33 → Epic 7 (balotaje ETL+contrato) · FR34 → Epic 7 (plebiscito ETL+contrato) · FR35 → Epic 7 (nacionales adicionales) · FR36 → Epic 7 (departamentales)
+- FR37 → Epic 7 (UI selector adaptado) · FR38 → Epic 7 (sello tipo elección)
+- FR39 → Epic 8 (SERIE→localidad plan circuital) · FR40 → Epic 8 (geo localidades interior) · FR41 → Epic 8 (ETL join) · FR42 → Epic 8 (ciudades grandes degradación)
+- FR43 → Epic 8 (mapeo manual barrios ciudades grandes)
+- FR44 → Epic 9 (15 departamentos pendientes)
+- FR45 → Epic 10 (ETL HOJA + catálogo jerárquico) · FR46 → Epic 10 (acordeón multi-select) · FR47 → Epic 10 (filtro/búsqueda/chips) · FR48 → Epic 10 (modos de coloreo) · FR49 → Epic 10 (selector de contienda) · FR50 → Epic 10 (ficha desglose HOJA) · FR51 → Epic 10 (sourcing sublema + split nacional/deptal)
+- _Nota: FR7 (selector adaptativo) y FR18/FR32 (HOJA cross-elección, Epic 6) se completan recién con Epic 10 — el core de granularidad de HOJA, omitido en el slice MVP._
+- NFRs: NFR1 gate desde E1 (audit E5) · NFR2 base E1 (audit E5) · NFR3 E3 · NFR4 E1+E7 · NFR5 E1 · NFR6/7 E5 · NFR8 transversal
 
 ## Epic List
 
@@ -122,7 +150,27 @@ Cargar nacionales-2019 (instancia del contrato) + comparación dual partido/lema
 
 ### Epic 5: Pulido y robustez (audita, no rescata)
 Dark mode, PMTiles geometría pesada, más deptos, auditoría a11y formal.
-**FRs:** NFR6,7 · UX-DR3,16 · AR5(PMTiles) · NFR1/NFR2 (audit) · _(FR23/FR24 = Fase 2)_
+**FRs:** NFR6,7 · UX-DR3,16 · AR5(PMTiles) · NFR1/NFR2 (audit)
+
+### Epic 6: Fase 2 — Exportar, Circuito, HOJA
+Exportar CSV/imagen, nivel circuito en ETL+UI, tabla de normalización de HOJA cross-elección, comparación a nivel HOJA donde existe equivalencia validada.
+**FRs:** FR18, FR23, FR24, FR32
+
+### Epic 7: Catálogo de elecciones ampliado
+Incorporar balotaje, plebiscito, nacionales adicionales y departamentales. El data contract polimórfico ya soporta estos tipos; se trata de instanciarlos con datos reales y adaptar la UI al tipo de elección.
+**FRs:** FR33, FR34, FR35, FR36, FR37, FR38 · NFR4, NFR7
+
+### Epic 8: Mapa del interior con granularidad de localidad
+Mapear las series electorales del interior a sus localidades reales vía el plan circuital (automático para ~95% del territorio) y con tablas manuales para ciudades grandes donde la serie repite el nombre de la ciudad.
+**FRs:** FR39, FR40, FR41, FR42, FR43
+
+### Epic 9: Completar los 19 departamentos
+Agregar datos electorales y geometría para los 15 departamentos pendientes hasta cubrir el mapa completo del Uruguay.
+**FRs:** FR44
+
+### Epic 10: Granularidad de opción — del lema a la HOJA individual (CORE)
+El núcleo del producto legacy, omitido del spec del rebuild: ver cómo le fue a **cada lista de votación** (HOJA), seleccionando una o varias, y verlas colorear cada zona del mapa. Reincorpora la escalera completa de granularidad — contienda (ODN/ODD, Intendente/Junta/Municipio) → lema → precandidato/sublema → HOJA — con multi-selección combinable, modos de coloreo (Ganador/Share/Votos/Heatmap), y ficha con desglose por HOJA. UX rediseñado desde el legacy (branch `master`, camino AppModern). Secuenciado como vertical slice (internas Montevideo end-to-end) y luego variantes por tipo, cada una gated por disponibilidad de datos.
+**FRs:** FR45, FR46, FR47, FR48, FR49, FR50, FR51 · (completa FR7, FR18, FR32) · UX-DR7(reescrito)
 
 ---
 
@@ -325,3 +373,230 @@ As a ciudadano con un teléfono modesto, I want que cargue rápido igual, So tha
 
 **Acceptance Criteria:**
 **Given** un Android de gama baja en 4G **When** abro una vista de departamento **Then** se cumplen LCP<2.5s / INP<200ms / CLS<0.1 **And** el mapa no re-inicializa al navegar entre rutas.
+
+## Epic 6: Fase 2 — Exportar, Circuito, HOJA
+
+Features prometidas en Fase 2: exportar datos, nivel circuito operativo, y comparación a nivel HOJA donde exista tabla de equivalencias validada.
+
+### Story 6.1: Exportar datos de la vista actual como CSV
+As a analista, I want descargar los datos que veo en la vista actual como un CSV, So that pueda trabajarlos en mi herramienta de análisis favorita.
+
+**Acceptance Criteria:**
+**Given** cualquier vista activa (elección × depto × opción × nivel) **When** pulso "Exportar CSV" **Then** se descarga un archivo con las columnas zona, opción, votos, % para la selección actual **And** el nombre del archivo refleja la elección y el departamento **And** el CSV está en UTF-8.
+
+### Story 6.2: Exportar imagen del mapa
+As a periodista o analista, I want exportar el mapa actual como imagen PNG, So that pueda incluirlo en notas o presentaciones.
+
+**Acceptance Criteria:**
+**Given** el mapa renderizado con una elección y un departamento activos **When** pulso "Exportar imagen" **Then** se descarga un PNG del mapa con leyenda incluida **And** la resolución es suficiente para uso editorial (≥1200px de ancho) **And** el nombre del archivo refleja la selección actual.
+
+### Story 6.3: Nivel circuito — ETL + UI
+As a analista avanzado, I want ver resultados al nivel de circuito electoral, So that tenga la granularidad más fina disponible.
+
+**Acceptance Criteria:**
+**Given** un departamento con datos a nivel circuito en el ETL **When** selecciono el nivel "Circuito" en el selector de nivel **Then** el mapa colorea por circuito en lugar de zona/serie **And** la ficha muestra los datos del circuito tocado **And** el nivel se persiste en la URL (`?level=circuito`) **And** si el nivel no está disponible para esa elección/depto, el selector lo muestra deshabilitado con etiqueta "No disponible".
+
+### Story 6.4: Tabla de normalización de HOJA cross-elección
+As a desarrollador, I want una tabla de equivalencias que mapee HOJA entre elecciones distintas, So that el sistema pueda mostrar comparaciones a nivel lista validadas editorialmente.
+
+**Acceptance Criteria:**
+**Given** dos elecciones con HOJAs comparables (ej. internas-2024 y nacionales-2024 del mismo partido) **When** se registra la equivalencia en la tabla de normalización (`hoja-equivalencias.json`) **Then** el ETL la consume y genera los agregados cross-elección correctamente **And** las HOJAs sin equivalencia se marcan explícitamente como "sin match" (no se inventan) **And** la tabla es editable sin tocar código (JSON declarativo).
+
+### Story 6.5: Comparación a nivel HOJA cross-elección
+As a analista, I want comparar el desempeño de una lista específica entre dos elecciones, So that vea si una HOJA creció, cayó o desapareció entre comicios.
+
+**Acceptance Criteria:**
+**Given** dos elecciones con equivalencias HOJA validadas en la tabla del 6.4 **When** entro al modo comparación y selecciono nivel HOJA **Then** el mapa muestra el delta de votos/% de esa HOJA por zona **And** las HOJAs sin equivalencia se excluyen del mapa con rótulo explicativo **And** el modo HOJA solo aparece habilitado cuando existen equivalencias; si no, el selector permanece en partido/lema.
+
+## Epic 7: Catálogo de elecciones ampliado
+
+El data contract polimórfico ya está listo desde Epic 1. Este epic instancia los tipos de elección que faltan (balotaje, plebiscito, departamentales, nacionales adicionales) y adapta la UI a sus particularidades.
+
+### Story 7.1: Data contract v2 — discriminadores formales para tipos de elección
+As a desarrollador, I want que el contrato de datos tenga discriminadores explícitos para cada tipo de elección, So that el ETL y la UI sepan cómo manejar balotajes y plebiscitos sin lógica ad-hoc.
+
+**Acceptance Criteria:**
+**Given** el contrato v1 (opcion_id polimórfico, eleccion.tipo string) **When** agrego los tipos `balotaje` y `plebiscito` al discriminador **Then** el esquema TypeScript genera error en compile-time si se omite un campo requerido para ese tipo **And** un fixture seco de balotaje-2024 y plebiscito-2024 validan contra el esquema sin modificarlo **And** el manifest.json versiona el tipo de elección.
+
+### Story 7.2: ETL + ingesta para balotaje 2024
+As a usuario, I want explorar el balotaje presidencial 2024 (Orsi vs Delgado) en el mapa, So that vea cómo votó cada zona del país en la segunda vuelta.
+
+**Acceptance Criteria:**
+**Given** los datos de la Corte Electoral para el balotaje 2024 **When** corro el ETL con `tipo=balotaje` **Then** produce shards válidos sin HOJA (opcion_id = candidato) con exactamente 2 opciones por zona **And** blanco/anulado/observado quedan como categorías separadas **And** los gates de integridad pasan (reconciliación de válidos) **And** las rutas SSG `/balotaje-2024/{depto}` se generan correctamente.
+
+### Story 7.3: ETL + ingesta para plebiscitos 2024
+As a usuario, I want explorar los plebiscitos de 2024 (seguridad pública, reforma previsional) en el mapa, So that vea la distribución territorial del Sí/No.
+
+**Acceptance Criteria:**
+**Given** los datos de la Corte Electoral para los plebiscitos 2024 **When** corro el ETL con `tipo=plebiscito` **Then** produce shards con exactamente 2 opciones (Sí / No) más categorías blanco/anulado/observado **And** el manifest incluye el texto de la pregunta del plebiscito como metadata **And** los gates de integridad pasan **And** las rutas SSG `/plebiscito-seguridad-2024/{depto}` y `/plebiscito-previsional-2024/{depto}` se generan.
+
+### Story 7.4: ETL + ingesta para nacionales 2024 (1ª vuelta)
+As a usuario, I want explorar los resultados de la primera vuelta de las elecciones nacionales 2024 en el mapa, So that vea cómo votó cada zona antes del balotaje.
+
+**Acceptance Criteria:**
+**Given** los datos de la Corte Electoral para nacionales-2024 (con HOJA, lemas y candidatos presidenciales) **When** corro el ETL **Then** produce shards con opcion_id = HOJA, agrupables por partido/lema **And** el tipo discrimina como `nacionales` **And** los gates pasan **And** las rutas SSG `/nacionales-2024/{depto}` se generan **And** la comparación con internas-2024 es posible a nivel partido/lema.
+
+### Story 7.5: UI — selector y ficha adaptados al tipo de elección
+As a usuario, I want que el selector de opciones y la ficha de resultados se adapten automáticamente al tipo de elección, So that no vea opciones sin sentido (ej. selector de HOJA en un balotaje).
+
+**Acceptance Criteria:**
+**Given** una elección de tipo `balotaje` **When** la cargo en la UI **Then** el selector de opción muestra solo los 2 candidatos (no el combo de HOJA) **And** la ficha muestra nombre del candidato y partido, no número de lista **And** dado un `plebiscito`, el selector muestra Sí/No y el texto de la pregunta aparece en la ficha como contexto **And** dado `internas` o `nacionales`, el comportamiento actual se preserva sin regresión.
+
+### Story 7.6: ETL + ingesta para elecciones departamentales
+As a usuario, I want explorar los resultados de las elecciones departamentales (intendentes, ediles, alcaldes) en el mapa, So that vea cómo votó cada zona a nivel local.
+
+**Acceptance Criteria:**
+**Given** los datos de la Corte Electoral para una elección departamental (con HOJA, lemas, candidatos a intendente) **When** corro el ETL con `tipo=departamentales` **Then** produce shards válidos con opcion_id polimórfico (HOJA o candidato a intendente según disponibilidad) **And** el nivel geográfico disponible (zona/serie/circuito) se detecta automáticamente y se rotula en la UI **And** los gates pasan **And** las rutas SSG `/departamentales-{año}/{depto}` se generan.
+
+### Story 7.7: Ingesta histórica multi-año + referéndum (todas las elecciones del catálogo)
+As a usuario, I want explorar las elecciones históricas (2014–2025) y el referéndum, So that compare el voto a través del tiempo, no solo la última elección.
+*(Todos los datasets ya descargados — ver `data/raw/electoral/` y la referencia de fuentes. Cada año es una re-corrida del ETL del tipo correspondiente.)*
+
+**Acceptance Criteria:**
+**Given** los datasets descargados de la Corte Electoral **When** corro el ETL para cada instancia **Then** se ingieren con su `eleccionId` propio y su tipo: internas 2019/2024; nacionales 2014/2019/2024; balotaje 2014/2019/2024; **referéndum 2022 (LUC, tipo plebiscito Sí/No)**; plebiscitos 2024 (allanamientos + reforma previsional); departamentales 2020/2025 **And** cada instancia pasa sus gates **And** aparece en el selector de elección **And** los datos 2019 (latin-1) se normalizan a UTF-8 en la ingesta (NFR4) **And** ninguna elección del catálogo queda sin ingerir (gate de completitud opcional contra la lista de datasets).
+
+## Epic 8: Mapa del interior con granularidad de localidad
+
+Las series electorales del interior mapean 1:1 con localidades según el plan circuital de la Corte Electoral. Este epic automatiza ese mapeo para el 95% del territorio y provee la infraestructura para el 5% restante (ciudades grandes donde la serie repite el nombre de la ciudad).
+
+### Story 8.1: Research + tabla SERIE→localidad del plan circuital
+As a desarrollador, I want una tabla explícita que mapee cada SERIE electoral del interior a su localidad correspondiente, So that el ETL pueda asignar geometría de localidad a los votos sin fuzzy-match.
+
+**Acceptance Criteria:**
+**Given** el plan circuital publicado por la Corte Electoral **When** proceso cada departamento del interior **Then** existe un archivo `public/data/mappings/{depto}/serie-localidad.json` con entradas `{serie: string, localidad: string, tipo: "1:1" | "ciudad-grande"}` **And** la cobertura es ≥95% de las series del CSV por departamento **And** las series de ciudades grandes se marcan como `tipo: "ciudad-grande"` para tratamiento especial en 8.4.
+
+### Story 8.2: Geometría de localidades del interior (IDE Uruguay)
+As a desarrollador, I want polígonos de las localidades del interior disponibles como TopoJSON, So that el mapa pueda colorear por localidad en lugar de mostrar series abstractas.
+
+**Acceptance Criteria:**
+**Given** las capas de localidades de IDE Uruguay **When** proceso cada departamento del interior **Then** existe un `public/data/geo/{depto}/localidades.topo.json` con los polígonos de localidades del departamento **And** cada polígono tiene una propiedad `localidad` que coincide con los valores en la tabla de 8.1 **And** el tamaño del archivo (gzip) está dentro del budget de 500 KB por departamento **And** si excede, se aplica simplificación con mapshaper.
+
+### Story 8.3: ETL join SERIE→localidad→geometría + visualización
+As a usuario del interior, I want ver los resultados de mi localidad coloreados en el mapa, So that entienda cómo votó mi pueblo o ciudad pequeña.
+
+**Acceptance Criteria:**
+**Given** la tabla de 8.1 y la geometría de 8.2 para un departamento **When** corro el ETL **Then** los shards de votos incluyen `localidad` como clave geográfica adicional (junto a serie/zona/circuito) **And** el mapa puede colorear por localidad cuando el nivel "Localidad" está seleccionado **And** el nivel "Localidad" aparece en el selector de nivel para departamentos del interior **And** las zonas sin match en la tabla (si las hay) se reportan en el gate de cobertura sin bloquear el build (umbral ≥95%).
+
+### Story 8.4: Detección y degradación de ciudades "grandes" del interior
+As a usuario de una ciudad grande del interior (ej. Salto, Paysandú), I want que el mapa me muestre la ciudad como unidad aunque no tenga granularidad de barrio todavía, So que no vea un error ni datos incorrectos.
+
+**Acceptance Criteria:**
+**Given** series del CSV donde `tipo = "ciudad-grande"` en la tabla de 8.1 **When** el mapa carga el nivel Localidad **Then** la ciudad aparece como un polígono único coloreado con el resultado agregado de todas sus series **And** la ficha de esa zona muestra un rótulo "Vista de barrio no disponible aún — mostrando resultado agregado de la ciudad" **And** el selector de nivel "Localidad" permanece disponible (no se deshabilita por las ciudades grandes) **And** el gate de cobertura cuenta las ciudades grandes como cubiertas (son intencionales, no huecos).
+
+### Story 8.5: Mapeo manual SERIE→barrio para ciudades grandes del interior
+As a usuario de Salto ciudad, Paysandú ciudad, Melo, Rivera ciudad u otras ciudades grandes del interior, I want ver los resultados a nivel de barrio en el mapa, So que tenga la misma granularidad que tienen los usuarios de Montevideo.
+
+**Acceptance Criteria:**
+**Given** el research de barrios para una ciudad grande del interior (usando plano circuital de la Corte + IDE Uruguay) **When** se completa la tabla manual `public/data/mappings/{depto}/serie-barrio-{ciudad}.json` **Then** el ETL la consume y genera shards con `barrio` como clave para esa ciudad **And** el mapa muestra los barrios de esa ciudad en el nivel "Localidad/Barrio" **And** la degradación de 8.4 ya no aplica para esa ciudad **And** el proceso está documentado en una guía de mapeo manual replicable para otras ciudades grandes.
+
+## Epic 9: Completar los 19 departamentos
+
+Incorporar los 15 departamentos pendientes aplicando el proceso ETL establecido. Las historias están agrupadas por prioridad/disponibilidad de datos; cada grupo puede ejecutarse en paralelo entre sí.
+
+### Story 9.1: Departamentos de alta prioridad — Canelones, San José, Rocha
+As a usuario de Canelones, San José o Rocha, I want ver el mapa electoral de mi departamento, So que explore los resultados de mi zona.
+
+**Acceptance Criteria:**
+**Given** los CSVs electorales y GeoJSON de Canelones, San José y Rocha **When** corro el ETL para cada uno **Then** los gates de integridad pasan (reconciliación de válidos + cobertura de zonas ≥95%) **And** las rutas SSG y OG-images se generan para cada elección×depto **And** el departamento aparece disponible en el selector de departamento de la UI **And** el mapa colorea correctamente por zona/serie según corresponda a cada departamento.
+
+### Story 9.2: Departamentos de media prioridad A — Florida, Lavalleja, Durazno, Flores, Soriano
+As a usuario de Florida, Lavalleja, Durazno, Flores o Soriano, I want ver el mapa electoral de mi departamento, So que explore los resultados de mi zona.
+
+**Acceptance Criteria:**
+**Given** los CSVs electorales y GeoJSON de Florida, Lavalleja, Durazno, Flores y Soriano **When** corro el ETL para cada uno **Then** los gates de integridad pasan para cada departamento **And** las rutas SSG y OG-images se generan **And** cada departamento aparece en el selector de departamento **And** el mapa colorea correctamente.
+
+### Story 9.3: Departamentos de media prioridad B — Río Negro, Paysandú, Salto
+As a usuario de Río Negro, Paysandú o Salto, I want ver el mapa electoral de mi departamento, So que explore los resultados de mi zona.
+
+**Acceptance Criteria:**
+**Given** los CSVs electorales y GeoJSON de Río Negro, Paysandú y Salto **When** corro el ETL para cada uno **Then** los gates de integridad pasan para cada departamento **And** las rutas SSG y OG-images se generan **And** cada departamento aparece en el selector **And** nota: Paysandú y Salto tienen ciudades capitales grandes — el mapeo de barrios finos se delega al Epic 8.5; este story los incorpora con la degradación de 8.4.
+
+### Story 9.4: Departamentos de baja prioridad — Artigas, Rivera, Tacuarembó, Cerro Largo
+As a usuario de Artigas, Rivera, Tacuarembó o Cerro Largo, I want ver el mapa electoral de mi departamento, So que explore los resultados de mi zona.
+
+**Acceptance Criteria:**
+**Given** los CSVs electorales y GeoJSON de Artigas, Rivera, Tacuarembó y Cerro Largo **When** corro el ETL para cada uno **Then** los gates de integridad pasan para cada departamento **And** las rutas SSG y OG-images se generan **And** cada departamento aparece en el selector **And** nota: Rivera ciudad y Artigas ciudad son ciudades capitales grandes — igual que 9.3, el mapeo de barrios finos va al Epic 8.5.
+
+---
+
+## Epic 10: Granularidad de opción — del lema a la HOJA individual (CORE)
+
+El núcleo del producto legacy que se omitió del spec del rebuild. La versión vieja (branch `master`, camino vivo AppModern: `ListSelectorContainer.vue` + `MapLibreView.vue` + store `electoral.ts` + `useMapColors.ts`) dejaba **seleccionar una o varias listas de votación (HOJAs)** y ver su desempeño coloreado por zona. Este epic lo reincorpora con la escalera completa de granularidad, rediseñado en UX (EXPERIENCE.md/DESIGN.md, update 2026-05-31) desde la lógica del legacy.
+
+**Modelo de granularidad por tipo (cada tipo declara su escalera; el acordeón se construye desde el dato, no hardcodea):**
+
+| Tipo | Contiendas (raíz del árbol) | Escalera dentro de cada contienda | Dato |
+|---|---|---|---|
+| Internas | Convención Nacional (ODN) · Departamental (ODD) | ODN: lema → precandidato → lista · ODD: lema → lista | ✅ construible |
+| Nacionales | una (legislativa) | lema → sublema → lista (nacional/Senado · departamental/Diputados) | ⚠️ hoja ✅; sublema+split faltan |
+| Balotaje | una | candidato (plano) | ❌ bloqueado Epic 7 |
+| Plebiscito | una por pregunta | Sí / No (plano) | ❌ bloqueado Epic 7 |
+| Departamentales | Intendente · Junta · Municipio | Int: lema→candidato · Junta: lema→sublema→lista · Mun: lema→alcalde→lista | ❌ bloqueado Epic 7 |
+
+**Principios heredados del legacy (no perder):** multi-selección combinable (mapa = suma de la selección); seleccionar un nodo padre = agregado de sus hojas; partido como filtro (no selección); color = votos absolutos con escala recalculada por selección (+ modos share/heatmap/ganador agregados); la selección se limpia al cambiar contexto; búsqueda por número; "seleccionar todas" respeta el filtro; series combinadas suman. `opcion_id` de HOJA compuesto (contienda+lema+hoja).
+
+**Secuencia:** vertical slice (internas Montevideo end-to-end: 10.1→10.5) antes que las variantes; cada variante gated por disponibilidad de datos.
+
+### Story 10.1: Data Contract v3 — escalera de granularidad + contienda
+As a desarrollador, I want que el contrato modele la jerarquía de opción (contienda → lema → precandidato/sublema → hoja) con un `opcion_id` compuesto y un descriptor de escalera por tipo, So that el ETL y la UI construyan el árbol desde el dato sin lógica ad-hoc por tipo.
+
+**Acceptance Criteria:**
+**Given** el contrato v2 **When** agrego el tipo `Contienda`, la escalera `GranularidadNivel` y el linaje padre en `Opcion` (lema/precandidato/sublema/hoja) **Then** un `opcion_id` de HOJA es compuesto y único entre departamentos **And** existe un descriptor `EscaleraGranularidad` por `(tipo, contienda)` que enumera los niveles disponibles **And** fixtures secos de internas ODN (3 niveles) y ODD (2 niveles) validan contra el esquema **And** `astro check` compila sin romper el ETL/contrato existentes.
+
+### Story 10.2: ETL internas HOJA — catálogo jerárquico + shard por lista (slice Montevideo)
+As a usuario, I want explorar cómo le fue a cada lista de las internas 2024 en Montevideo, So that vea el voto a nivel de lista, no solo de partido.
+*(Vertical slice: el dato crudo `desglose-de-votos.csv` ya tiene LEMA + DESCRIPCIÓN_1=precandidato + DESCRIPCIÓN_2=nº de hoja + ODN/ODD.)*
+
+**Acceptance Criteria:**
+**Given** `desglose-de-votos.csv` (MO, HOJA_ODN y HOJA_ODD) **When** corro el ETL de granularidad **Then** emite un **catálogo de opciones jerárquico** (contienda → lema → precandidato → hoja con sus `opcion_id` compuestos) **And** un **shard de votos a nivel HOJA por zona**, shardeado por lema para lazy-load (eager = agregado por lema; lazy = hojas de cada lema) **And** los gates de reconciliación y cobertura pasan (la suma de hojas = el agregado por lema existente) **And** el roll-up hoja→precandidato→lema→depto es consistente.
+
+### Story 10.3: UI — acordeón de opción multi-selección
+As a usuario, I want un selector jerárquico donde marco una o varias listas/precandidatos/lemas, So that compare su desempeño combinado en el mapa.
+
+**Acceptance Criteria:**
+**Given** el catálogo jerárquico de 10.2 **When** abro el selector **Then** veo un **acordeón** contienda → lema → precandidato → hoja con **checkbox tri-estado** y chevron separados (≥44px) **And** marcar uno o varios nodos (cualquier nivel) selecciona la suma de sus hojas **And** hay filtro de partido (visibilidad), búsqueda por número, "seleccionar todas" que respeta el filtro, y chips de selección/filtros activos **And** la selección se limpia al cambiar departamento/elección/contienda **And** la selección vive en la URL (FR20) **And** el comportamiento respeta el acordeón especificado en EXPERIENCE.md.
+
+### Story 10.4: Mapa — modos de coloreo por selección + leyenda
+As a usuario, I want elegir cómo se colorea el mapa según mi selección, So that lea el dato como me sirva: ganador, share, votos o heatmap.
+
+**Acceptance Criteria:**
+**Given** una selección activa **When** elijo el modo de coloreo **Then** el mapa colorea por **Share %** (sobre válidos por zona), **Votos absolutos** (escala recalculada sobre el subconjunto seleccionado), o **Heatmap**; sin selección el default es **Ganador por lema** **And** una sola variable por pantalla (FR3) **And** la leyenda nombra modo, unidad y rango vigente **And** el texto por zona muestra el valor del modo activo (cumple "nunca solo por color") **And** el modo vive en la URL **And** "0 votos" se distingue de "sin datos".
+
+### Story 10.5: Ficha de zona — desglose por HOJA
+As a usuario, I want tocar una zona y ver el desglose por lista de mi selección ahí, So that entienda la composición del voto en ese barrio/serie.
+
+**Acceptance Criteria:**
+**Given** una selección activa y una zona tocada **When** se abre la ficha **Then** encabeza con el desempeño de la selección en esa zona (votos sumados, %, ranking) **And** muestra un **desglose agrupado por partido** con las hojas (o candidatos) y sus votos, ordenadas desc, truncado a top-N por partido ("y N más…"), con Total **And** el tooltip se puede fijar (pin) **And** las series combinadas suman sus componentes **And** el roll-up de la zona es consistente.
+
+### Story 10.6: Rollout internas HOJA a todos los departamentos ingeridos
+As a usuario del interior, I want ver el voto por lista de las internas en mi departamento, So that tenga la misma granularidad que Montevideo.
+
+**Acceptance Criteria:**
+**Given** el ETL de granularidad de 10.2 **When** lo corro para los 18 deptos del interior (nivel serie/localidad) y el ODD de Montevideo **Then** cada depto emite su catálogo jerárquico + shard de hojas **And** los gates pasan por depto **And** el selector y el mapa funcionan en todos **And** los deptos sin algún nivel degradan con rótulo (no rompen).
+
+### Story 10.7: Variante nacionales — HOJA legislativa
+As a usuario, I want ver el voto por lista en las nacionales, So that explore las listas al parlamento por zona.
+
+**Acceptance Criteria:**
+**Given** los datos de nacionales (2019 disponible; 2024 cuando Epic 7 lo ingiera) **When** corro el ETL de granularidad con la escalera de nacionales **Then** emite catálogo lema → (sublema cuando exista dato) → lista **And** el acordeón y los modos de mapa funcionan **And** **donde el dato de sublema/split nacional-deptal no exista, la escalera degrada a lema → lista y lo rotula** (no inventa niveles).
+
+### Story 10.8: Sourcing — sublema + split lista nacional/departamental
+As a desarrollador, I want obtener de la Corte Electoral los datos de sublema y de la distinción lista nacional (Senado) / departamental (Diputados), So that la escalera de nacionales y departamentales sea completa.
+*(Bloqueada por dato: `integracion-hojas-de-votacion.csv` está vacío en el repo.)*
+
+**Acceptance Criteria:**
+**Given** que el archivo de integración de hojas está vacío **When** investigo las fuentes de la Corte Electoral **Then** documento dónde vive el dato de sublema y el de senado/diputados por hoja **And** lo ingiero a `data/raw/` en UTF-8 **And** extiendo el ETL para poblar el nivel sublema y la marca nacional/departamental en el catálogo **And** si una fuente no existe públicamente, queda documentado como límite explícito (no se inventa).
+
+### Story 10.9: Variante departamentales — contiendas paralelas
+As a usuario, I want explorar intendente, junta y municipio por separado en las departamentales, So that vea cada contienda con su propia escalera.
+*(Bloqueada por ingesta de datos departamentales — Epic 7.6.)*
+
+**Acceptance Criteria:**
+**Given** datos departamentales ingeridos (Epic 7.6) **When** corro el ETL de granularidad **Then** emite las tres contiendas (Intendente: lema→candidato · Junta: lema→sublema→lista · Municipio: lema→alcalde→lista) **And** el selector de contienda (FR49) cambia el árbol activo **And** el acordeón se adapta a cada escalera **And** los gates pasan por contienda.
+
+### Story 10.10: Variante balotaje/plebiscito — escalera plana + gate de escalera
+As a usuario, I want que en balotaje y plebiscito el selector se simplifique a las opciones reales, So that no vea un árbol de HOJAs que no aplica.
+*(Bloqueada por ingesta — Epic 7.2/7.3.)*
+
+**Acceptance Criteria:**
+**Given** una elección de tipo balotaje o plebiscito **When** abro el selector **Then** el acordeón degrada a **lista plana de opciones con checkbox** (candidatos / Sí-No), sin chevrons **And** los modos de mapa aplican (share/votos/heatmap/ganador) **And** existe un **gate** que valida que todo `(tipo, contienda)` declara su escalera de granularidad en el contrato (ningún tipo queda sin escalera) **And** la UI nunca ofrece un nivel que la escalera del tipo no declara.

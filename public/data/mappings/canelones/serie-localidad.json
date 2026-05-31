@@ -1,0 +1,222 @@
+[
+  {
+    "serie": "CAA",
+    "localidad": "Canelones",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CBA",
+    "localidad": "Santa LucíA",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CBB",
+    "localidad": "Paso De Pache",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CBC",
+    "localidad": "Paso Franquez",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CCA",
+    "localidad": "Los Cerrillos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CCB",
+    "localidad": "Aguas Corrientes",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CDA",
+    "localidad": "Las Piedras Este",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CDB",
+    "localidad": "Progreso",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CDC",
+    "localidad": "El Dorado",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CDD",
+    "localidad": "El Obelisco",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CDE",
+    "localidad": "Las Piedras Oeste",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CEA",
+    "localidad": "La Paz",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CEB",
+    "localidad": "El Colorado",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CFA",
+    "localidad": "Sauce",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CGA",
+    "localidad": "Santa Rosa",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CHA",
+    "localidad": "San Jacinto",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CIA",
+    "localidad": "San RamóN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CJA",
+    "localidad": "Tala",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CJB",
+    "localidad": "BolíVar",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CKA",
+    "localidad": "Migues",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CKB",
+    "localidad": "Montes",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CLA",
+    "localidad": "Soca",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CLB",
+    "localidad": "La Floresta",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CLC",
+    "localidad": "Piedras De Afilar",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CLD",
+    "localidad": "Lorenzo Cella - Perera GóMez",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CLE",
+    "localidad": "Lorenzo Cella - Perera GóMez",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CMA",
+    "localidad": "Pando",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CMB",
+    "localidad": "Empalme Olmos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CMC",
+    "localidad": "AtláNtida",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CMD",
+    "localidad": "Paso Carrasco",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CME",
+    "localidad": "Barros Blancos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CMF",
+    "localidad": "Solymar",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CMG",
+    "localidad": "Salinas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CMH",
+    "localidad": "Parque Del Plata",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CMI",
+    "localidad": "San José De Carrasco",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CMJ",
+    "localidad": "El Pinar",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CMK",
+    "localidad": "Colonia Nicolich",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CNA",
+    "localidad": "Juanicó",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "COA",
+    "localidad": "San Antonio",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CPA",
+    "localidad": "San Bautista",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CPB",
+    "localidad": "Castellanos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CQA",
+    "localidad": "SuáRez",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CQB",
+    "localidad": "Toledo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "CQC",
+    "localidad": "Paso Del Andaluz",
+    "tipo": "1:1"
+  }
+]

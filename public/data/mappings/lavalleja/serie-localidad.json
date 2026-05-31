@@ -1,0 +1,147 @@
+[
+  {
+    "serie": "SAA",
+    "localidad": "Minas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SBA",
+    "localidad": "Minas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SCA",
+    "localidad": "Aguas Blancas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SCB",
+    "localidad": "Paraje Ruta 8 Km 96.500",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SCC",
+    "localidad": "SolíS De Mataojo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SDA",
+    "localidad": "Barrancas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SDB",
+    "localidad": "Villa Del Rosario",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SDC",
+    "localidad": "EstacióN Solis",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SEA",
+    "localidad": "Alto De Santa LucíA",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SEB",
+    "localidad": "Soldado",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SEC",
+    "localidad": "Casupá",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SED",
+    "localidad": "Chamamé",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SEE",
+    "localidad": "Casupá Chico",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SFA",
+    "localidad": "Polanco",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "SFB",
+    "localidad": "Polanco",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "SFC",
+    "localidad": "Polanco",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "SFD",
+    "localidad": "Barriga Negra",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SGA",
+    "localidad": "Marmarajá",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SGB",
+    "localidad": "Paso De Los Troncos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SGC",
+    "localidad": "Mariscala",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SGD",
+    "localidad": "Poblado ColóN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SHA",
+    "localidad": "Pirarajá",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SHB",
+    "localidad": "Aramendia",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SHC",
+    "localidad": "Averias",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SHD",
+    "localidad": "José Pedro Varela",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SIA",
+    "localidad": "ZapicáN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SIB",
+    "localidad": "ZapicáN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SID",
+    "localidad": "Illescas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "SIE",
+    "localidad": "José Batlle Y OrdóñEz",
+    "tipo": "1:1"
+  }
+]

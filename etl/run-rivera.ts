@@ -11,6 +11,7 @@
  * Geometría: rivera_series_map.json (36 polígonos, prop `name` = código serie
  *   en minúsculas) → TopoJSON simplificado (quantile agresivo por fuente 12.7 MB).
  */
+import { runLocalidadStep, runBarrioStep } from './interior-dept';
 import { mkdirSync, writeFileSync, statSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { feature } from 'topojson-client';
@@ -128,3 +129,7 @@ function main(): void {
 }
 
 main();
+
+const riveraCfg = { deptCode: 'RV', deptName: 'rivera', exteriorSerie: 'HZZ', simplifyQuantile: 0.05 };
+runLocalidadStep(riveraCfg);
+runBarrioStep({ ...riveraCfg, ciudad: 'rivera', placementMin: 0.70 });

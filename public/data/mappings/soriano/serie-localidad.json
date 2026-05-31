@@ -1,0 +1,192 @@
+[
+  {
+    "serie": "MAA",
+    "localidad": "Mercedes",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MBA",
+    "localidad": "Villa Soriano",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MBB",
+    "localidad": "Bizcocho",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MBC",
+    "localidad": "Bizcocho",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MBD",
+    "localidad": "Ejido De Mercedes",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MBE",
+    "localidad": "Pamer",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MCA",
+    "localidad": "Dolores",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MCB",
+    "localidad": "La Concordia",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MDA",
+    "localidad": "Agraciada",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MDB",
+    "localidad": "Agraciada",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MDC",
+    "localidad": "CañAda Nieto",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MDD",
+    "localidad": "Palo Solo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MDE",
+    "localidad": "Cda Paraguaya",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MDF",
+    "localidad": "Cda Magallanes",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MDG",
+    "localidad": "Palmitas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MEA",
+    "localidad": "San Salvador",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MEB",
+    "localidad": "Perseverano-Castillo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MEC",
+    "localidad": "Corralito",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MED",
+    "localidad": "San MartíN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MEE",
+    "localidad": "Jose Enrique Rodó",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "MEF",
+    "localidad": "Colonia LarrañAga",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MFA",
+    "localidad": "Cardona",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MFB",
+    "localidad": "Santa Catalina",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MFC",
+    "localidad": "Jose Enrique Rodó",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "MFD",
+    "localidad": "Jose Enrique Rodó",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "MFE",
+    "localidad": "Perdido",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MGA",
+    "localidad": "Arroyo Corto-La Tabla",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MGB",
+    "localidad": "RincóN De Cololó",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MGC",
+    "localidad": "San Dios",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MGD",
+    "localidad": "Sacachispas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MGE",
+    "localidad": "Sacachispas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MGF",
+    "localidad": "Palmar",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MGG",
+    "localidad": "La Laguna",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MGH",
+    "localidad": "La Laguna",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MGI",
+    "localidad": "Sarandí- Coquimbo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MGJ",
+    "localidad": "Palmitas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MGK",
+    "localidad": "EgañA",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "MGL",
+    "localidad": "Risso",
+    "tipo": "1:1"
+  }
+]

@@ -1,0 +1,177 @@
+[
+  {
+    "serie": "TAA",
+    "localidad": "Tacuarembó",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TAB",
+    "localidad": "Bº Ferrocarril",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TAC",
+    "localidad": "Bº Artigas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TAD",
+    "localidad": "Bº Centenario",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TBA",
+    "localidad": "CañAs",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TBB",
+    "localidad": "Paso Del Cerro",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TBC",
+    "localidad": "BañAdo De Rocha",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TBD",
+    "localidad": "Cuchilla Del Ombú",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TBE",
+    "localidad": "Villa Ansina",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TCA",
+    "localidad": "Bº Montevideo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TCB",
+    "localidad": "La Aldea",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TCC",
+    "localidad": "Zapará",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TCD",
+    "localidad": "Tacuarembó Chico",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TCE",
+    "localidad": "Tacuarembó Chico",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TCF",
+    "localidad": "Paso De Ceferino",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TCG",
+    "localidad": "Bº J. D. LóPez",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TCH",
+    "localidad": "Bº San Gabriel",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TDA",
+    "localidad": "Villa Tambores",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TDB",
+    "localidad": "Batoví",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TDC",
+    "localidad": "Curtina",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TDD",
+    "localidad": "Paso De Los Novillos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TDE",
+    "localidad": "Clara",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TEA",
+    "localidad": "Paso Hondo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TEB",
+    "localidad": "Los Cuadrados",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TEC",
+    "localidad": "CañAda Del Estado",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TED",
+    "localidad": "San Gregorio De Polanco",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TFA",
+    "localidad": "Achar",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TFB",
+    "localidad": "Peralta",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TFC",
+    "localidad": "Cardozo Grande",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TFD",
+    "localidad": "Paso De Los Toros",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TGA",
+    "localidad": "Punta De Carretera",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TGB",
+    "localidad": "Punta De Cinco Sauces",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TGC",
+    "localidad": "Las Toscas De Caraguatá",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TGD",
+    "localidad": "Caraguatá Al Norte",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "TGE",
+    "localidad": "RincóN De Pereira",
+    "tipo": "1:1"
+  }
+]

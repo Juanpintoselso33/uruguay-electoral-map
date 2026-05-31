@@ -11,3 +11,10 @@ _*.cjs
 
 # OG images — artefactos de build, generados por `npm run generate:og`
 public/og/
+
+# Descargas crudas del ETL (282MB, reproducibles desde la API CKAN de Corte Electoral) —
+# la data procesada vive en public/data/. No bloquear el repo ni el build de Vercel con esto.
+data/raw/
+
+# Screenshots de verificación sueltos en la raíz (artefactos de debugging, no del producto).
+/*.png

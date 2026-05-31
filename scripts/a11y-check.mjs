@@ -70,11 +70,50 @@ if (!css.includes('zona-sigla') || !/text-shadow/.test(zonaSiglaBlock))
   fails.push('sigla del mapa sin text-shadow (halo) → ilegible sobre rellenos oscuros');
 else ok.push('sigla del mapa con halo blanco (text-shadow) ✅');
 
-console.log('=== a11y base (color+texto, contraste) ===');
+// 4) Skip link presente en el HTML (WCAG 2.4.1 Bypass Blocks).
+if (!html.includes('skip-link') || !html.includes('id="main-content"'))
+  fails.push('skip link o id="main-content" ausente (WCAG 2.4.1)');
+else ok.push('skip link presente: .skip-link → #main-content (WCAG 2.4.1) ✅');
+
+// 5) Listbox con tabindex (WCAG 2.1.1 Keyboard).
+// Verificamos que el CSS de la build incluya el foco del listbox (indicador visual).
+if (!css.includes('opcion-selector__lista') || !css.includes('opcion-selector__item--focused'))
+  fails.push('listbox: falta estilo focused (WCAG 2.1.1) — verificar tabindex y keyboard nav');
+else ok.push('listbox: estilos focused presentes (WCAG 2.1.1) ✅');
+
+// 6) Contraste dark mode: ink sobre paper, ink-soft sobre card (WCAG 1.4.3).
+// Tokens dark: ink=#E8ECF6, paper=#151B2B, ink-soft=#C1CAE0, card=#28324A, ink-muted=#93A0BC
+const darkPares = [
+  ['dark: ink sobre bg',       '#E8ECF6', '#0E1320'],
+  ['dark: ink sobre paper',    '#E8ECF6', '#151B2B'],
+  ['dark: ink-soft sobre card','#C1CAE0', '#28324A'],
+  ['dark: ink-muted sobre card','#93A0BC','#28324A'],
+];
+for (const [label, fg, bg] of darkPares) {
+  const r = contrast(fg, bg);
+  if (r < 4.5) fails.push(`contraste ${label}: ${r.toFixed(2)}:1 < 4.5:1`);
+  else ok.push(`contraste ${label}: ${r.toFixed(2)}:1 ≥ 4.5 ✅`);
+}
+
+// 7) Contraste non-text dark: WCAG 1.4.11 ≥3:1. Testeamos cada borde contra el fondo
+// que realmente le es adyacente en la UI.
+//   border (listbox, separadores) → aparece sobre --color-bg (la página)
+//   border-strong (botones, chips) → aparece sobre --color-card (interior del botón)
+const darkNonText = [
+  ['dark: border sobre bg',        '#5F6E92', '#0E1320'],
+  ['dark: border-strong sobre card','#6E7FA5', '#28324A'],
+];
+for (const [label, fg, bg] of darkNonText) {
+  const r = contrast(fg, bg);
+  if (r < 3.0) fails.push(`contraste no-texto ${label}: ${r.toFixed(2)}:1 < 3:1 (WCAG 1.4.11)`);
+  else ok.push(`contraste no-texto ${label}: ${r.toFixed(2)}:1 ≥ 3 ✅`);
+}
+
+console.log('=== a11y WCAG 2.2 AA ===');
 ok.forEach((l) => console.log('  ' + l));
 if (fails.length) {
   console.error('\n[a11y] FALLA:');
   fails.forEach((l) => console.error('  - ' + l));
   process.exit(1);
 }
-console.log('\n=== a11y base PASA ✅ ===');
+console.log('\n=== a11y WCAG 2.2 AA PASA ✅ ===');

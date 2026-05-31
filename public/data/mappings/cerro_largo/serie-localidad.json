@@ -1,0 +1,207 @@
+[
+  {
+    "serie": "GAA",
+    "localidad": "Melo",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "GAB",
+    "localidad": "Melo",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "GAC",
+    "localidad": "Melo",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "GAD",
+    "localidad": "Melo",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "GBA",
+    "localidad": "Melo",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "GBB",
+    "localidad": "Melo",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "GBC",
+    "localidad": "Melo",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "GBD",
+    "localidad": "Melo",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "GCA",
+    "localidad": "PláCido Rosas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GCB",
+    "localidad": "La Micaela",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GCC",
+    "localidad": "Arbolito",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GCD",
+    "localidad": "RincóN De Pi",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GCE",
+    "localidad": "BañAdo De Morales",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GCF",
+    "localidad": "Sarandí De Barcelo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GDA",
+    "localidad": "RíO Branco",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GDB",
+    "localidad": "CañAda De Santos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GDC",
+    "localidad": "CañAda De Santos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GDD",
+    "localidad": "Poblado Uruguay",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GDE",
+    "localidad": "SaldañA",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GDF",
+    "localidad": "Sierra De RíOs",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GDG",
+    "localidad": "Las CañAs",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GDH",
+    "localidad": "Lago MeríN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GEA",
+    "localidad": "CenturióN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GEB",
+    "localidad": "Mangrullo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GEC",
+    "localidad": "Cruz De Piedra",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GED",
+    "localidad": "Isidoro NoblíA",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GEE",
+    "localidad": "Aceguá",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GEF",
+    "localidad": "Cruz De Piedra",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GFA",
+    "localidad": "Tres Islas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GFB",
+    "localidad": "Fraile Muerto",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GFC",
+    "localidad": "Cerro De Las Cuentas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GFD",
+    "localidad": "RamóN Trigo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GFE",
+    "localidad": "BañAdo De Medina",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GGA",
+    "localidad": "Tupambaé",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GGB",
+    "localidad": "Quebracho",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GGC",
+    "localidad": "Tupambaé",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GGD",
+    "localidad": "Pueblo Arevalo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GGE",
+    "localidad": "Barrio La Esperanza",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GGF",
+    "localidad": "Barrio La Esperanza",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GGG",
+    "localidad": "El CordobéS",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "GGH",
+    "localidad": "Paso De Pereira",
+    "tipo": "1:1"
+  }
+]

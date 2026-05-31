@@ -21,38 +21,30 @@ function select(nivel: NivelGeografico): void {
 }
 
 const NIVELES: { key: NivelGeografico; label: string }[] = [
-  { key: 'zona',     label: 'Zona' },
-  { key: 'serie',    label: 'Serie' },
-  { key: 'circuito', label: 'Circuito' },
+  { key: 'zona',      label: 'Zona' },
+  { key: 'serie',     label: 'Serie' },
+  { key: 'localidad', label: 'Localidad' },
+  { key: 'barrio',    label: 'Barrio' },
+  { key: 'circuito',  label: 'Circuito' },
 ];
 </script>
 
 <template>
   <div class="level-sel" role="group" aria-label="Nivel geográfico">
     <span class="level-sel__titulo">Nivel</span>
-    <template v-for="n in NIVELES" :key="n.key">
-      <button
-        v-if="n.key !== 'circuito'"
-        class="level-sel__btn"
-        :class="{
-          'level-sel__btn--activo':     activeLevel === n.key,
-          'level-sel__btn--disponible': availableLevels.includes(n.key),
-        }"
-        type="button"
-        :aria-pressed="activeLevel === n.key"
-        :aria-disabled="!availableLevels.includes(n.key)"
-        @click="select(n.key)"
-      >{{ n.label }}</button>
-      <!-- Circuito: siempre nativo disabled -->
-      <button
-        v-else
-        class="level-sel__btn level-sel__btn--prox"
-        type="button"
-        disabled
-        title="Próximamente"
-        aria-disabled="true"
-      >{{ n.label }}</button>
-    </template>
+    <button
+      v-for="n in NIVELES"
+      :key="n.key"
+      class="level-sel__btn"
+      :class="{
+        'level-sel__btn--activo':     activeLevel === n.key,
+        'level-sel__btn--disponible': availableLevels.includes(n.key),
+      }"
+      type="button"
+      :aria-pressed="activeLevel === n.key"
+      :aria-disabled="!availableLevels.includes(n.key)"
+      @click="select(n.key)"
+    >{{ n.label }}</button>
   </div>
 </template>
 
@@ -91,13 +83,7 @@ const NIVELES: { key: NivelGeografico; label: string }[] = [
   background: var(--color-surface-2);
   border-color: var(--color-ink-faint);
 }
-.level-sel__btn[aria-disabled="true"]:not(.level-sel__btn--prox) {
-  color: var(--color-border-strong);
-  cursor: not-allowed;
-  border-color: var(--color-border);
-  background: var(--color-surface-1);
-}
-.level-sel__btn--prox {
+.level-sel__btn[aria-disabled="true"] {
   color: var(--color-border-strong);
   cursor: not-allowed;
   border-color: var(--color-border);

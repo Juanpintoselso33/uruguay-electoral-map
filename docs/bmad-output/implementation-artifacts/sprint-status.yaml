@@ -1,5 +1,5 @@
 # generated: 2026-05-30
-# last_updated: 2026-05-30
+# last_updated: 2026-05-31
 # project: Uruguay Electoral Map
 # project_key: NOKEY
 # tracking_system: file-system
@@ -30,7 +30,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context recommended)
 
 generated: 2026-05-30
-last_updated: 2026-05-30
+last_updated: 2026-05-31
 project: Uruguay Electoral Map
 # NOTE: epic-1 in-progress, story 1.1 ready-for-dev
 project_key: NOKEY
@@ -80,10 +80,66 @@ development_status:
   epic-4-retrospective: optional
 
   # ---- Epic 5: Pulido y robustez ----
-  epic-5: in-progress
+  epic-5: done
   5-1-dark-mode: done
-  5-2-pmtiles-geometria-pesada: backlog
-  5-3-sumar-mas-departamentos: backlog
-  5-4-auditoria-accesibilidad-wcag: backlog
-  5-5-hardening-performance: backlog
+  5-2-pmtiles-geometria-pesada: done
+  5-3-sumar-mas-departamentos: done
+  5-4-auditoria-accesibilidad-wcag: done
+  5-5-hardening-performance: done
   epic-5-retrospective: optional
+
+  # ---- Epic 6: Fase 2 — Exportar, Circuito, HOJA ----
+  epic-6: done
+  6-1-export-csv: done
+  6-2-export-imagen-mapa: done
+  6-3-nivel-circuito-etl-ui: done
+  6-4-tabla-normalizacion-hoja: done
+  6-5-comparacion-nivel-hoja: done
+  epic-6-retrospective: optional
+
+  # ---- Epic 7: Catálogo de elecciones ampliado ----
+  epic-7: done
+  7-1-data-contract-v2-tipos-eleccion: done
+  7-2-etl-balotaje-2024: done
+  7-3-etl-plebiscitos-2024: done    # MO: allanamientos + seguridad social, Sí/No
+  7-4-etl-nacionales-2024: done
+  7-5-ui-selector-ficha-por-tipo: done
+  7-6-etl-departamentales: done                 # 18/18 depts, 64 catálogos, gates ✅ 2026-05-31
+  7-7-ingesta-historica-multianio-referendum: done  # 2014→2025 completo en MO (incl. referendum LUC 2022 + deptal-2020 con las 3 contiendas HOJA, como 2025)
+  7-8-hoja-granularidad-localidad-barrio: done  # drill-down por HOJA coloreaba solo en serie; consolidado hoja-{nivel}.json re-agrega para localidad (108) + barrio (48), cliente level-aware. Gates: ancla cross-file (hard) + no-drop. ✅ 2026-05-31
+  epic-7-retrospective: optional
+
+  # ---- Epic 8: Mapa del interior — granularidad localidad ----
+  epic-8: done
+  8-1-research-tabla-serie-localidad: done
+  8-2-geometria-localidades-interior: done
+  8-3-etl-join-serie-localidad-geometria: done
+  8-4-deteccion-degradacion-ciudades-grandes: done
+  8-5-mapeo-manual-barrios-ciudades-grandes: done
+  epic-8-retrospective: optional
+
+  # ---- Epic 9: Completar los 19 departamentos ----
+  # Cubierto por los rollouts cross-epic: 10.6 (internas-2024 los 19), 7.6 (departamentales 18
+  # interior), nacionales-2024 interior + el histórico de 7.7. Los 19 deptos están en el selector
+  # con data + geometría serie + catálogos (verificado 2026-05-31: 122 elección×depto, 83 catálogos).
+  epic-9: done
+  9-1-deptos-alta-prioridad-canelones-sanjose-rocha: done
+  9-2-deptos-media-a-florida-lavalleja-durazno-flores-soriano: done
+  9-3-deptos-media-b-rionegro-paysandu-salto: done
+  9-4-deptos-baja-artigas-rivera-tacuarembo-cerrolargo: done
+  epic-9-retrospective: optional
+
+  # ---- Epic 10: Granularidad de opción — del lema a la HOJA (CORE) ----
+  # 2026-05-31: datos de Corte Electoral descargados (nacionales/balotaje/plebiscitos 2024, departamentales 2025, integración con sublema) → NADA bloqueado
+  epic-10: done
+  10-1-data-contract-v3-escalera-granularidad: done
+  10-2-etl-internas-hoja-slice-montevideo: done
+  10-3-ui-acordeon-opcion-multiselect: done
+  10-4-mapa-modos-coloreo-seleccion: done
+  10-5-ficha-zona-desglose-hoja: done
+  10-6-rollout-internas-hoja-todos-deptos: done
+  10-7-variante-nacionales-hoja: done
+  10-8-sourcing-sublema-split-nacional-deptal: done
+  10-9-variante-departamentales-contiendas-paralelas: done
+  10-10-variante-balotaje-plebiscito-plano-gate: done
+  epic-10-retrospective: optional

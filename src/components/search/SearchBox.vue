@@ -60,7 +60,7 @@ function navigate(href: string) {
 
 <template>
   <div class="search-wrap" role="search">
-    <label class="search-label" for="search-input">Buscar departamento o partido</label>
+    <label class="search-label" for="search-input">Buscar departamento, partido o plebiscito</label>
     <div class="search-combobox">
       <input
         id="search-input"

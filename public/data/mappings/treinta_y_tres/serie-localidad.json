@@ -1,0 +1,147 @@
+[
+  {
+    "serie": "FAA",
+    "localidad": "Treinta Y Tres",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "FAB",
+    "localidad": "Treinta Y Tres",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "FAC",
+    "localidad": "Treinta Y Tres",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "FAD",
+    "localidad": "Treinta Y Tres",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "FAE",
+    "localidad": "Treinta Y Tres",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "FAF",
+    "localidad": "Treinta Y Tres",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "FBA",
+    "localidad": "Vergara",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FBB",
+    "localidad": "El Oro",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FBC",
+    "localidad": "Charqueada",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FBD",
+    "localidad": "Arrozal 33",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FBE",
+    "localidad": "RincóN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FBF",
+    "localidad": "La Calavera",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FCA",
+    "localidad": "BañAdo De Olivera",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FCB",
+    "localidad": "La Calera",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FCC",
+    "localidad": "Puntas Del Parao",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FCD",
+    "localidad": "Yerbalito",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FCE",
+    "localidad": "Isla Patrulla",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FCF",
+    "localidad": "Avestruz Chico",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FDA",
+    "localidad": "Santa Clara Del Olimar",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FDB",
+    "localidad": "Cerro Chato",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FDC",
+    "localidad": "La Tahona",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FDD",
+    "localidad": "RincóN De Urtubey",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FDE",
+    "localidad": "Valentines",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FEA",
+    "localidad": "Villa Sara",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FEB",
+    "localidad": "MaríA Albina",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FEC",
+    "localidad": "Corrales De Cebollatí",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FED",
+    "localidad": "Passano",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FEE",
+    "localidad": "Los Membrillos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "FEF",
+    "localidad": "Treinta Y Tres",
+    "tipo": "ciudad-grande"
+  }
+]

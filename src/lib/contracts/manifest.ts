@@ -1,5 +1,5 @@
 /**
- * Data Contract v1 — Manifest de artefactos.
+ * Data Contract v3 — Manifest de artefactos.
  *
  * El ETL produce artefactos versionados con hash. El manifest es el índice
  * que el cliente lee para descubrir elecciones/departamentos disponibles y
@@ -35,6 +35,10 @@ export interface ManifestEleccion {
   readonly tipo: import('./election').EleccionTipo;
   readonly anio: number;
   readonly nombre: string;
+  /** Texto de la pregunta (solo para tipo plebiscito). */
+  readonly pregunta?: string;
+  /** Contiendas disponibles en esta elección (v3, Epic 10): odn/odd, intendente/junta/municipio, unica. */
+  readonly contiendas?: readonly import('./election').Contienda[];
   /** Departamentos disponibles para esta elección. */
   readonly departamentos: readonly string[];
 }
@@ -42,7 +46,7 @@ export interface ManifestEleccion {
 /** Índice raíz de todos los artefactos del sitio. */
 export interface Manifest {
   /** Versión del esquema del contrato. */
-  readonly contractVersion: 'v1';
+  readonly contractVersion: 'v3';
   /** Hash global del set de artefactos (para invalidación). */
   readonly hash: string;
   /** Fecha de generación (ISO). */

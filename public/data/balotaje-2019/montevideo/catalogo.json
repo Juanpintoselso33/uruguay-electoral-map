@@ -1,0 +1,29 @@
+{
+  "eleccionId": "balotaje-2019",
+  "departamento": "montevideo",
+  "contiendas": [
+    {
+      "contienda": "unica",
+      "niveles": [
+        "candidato"
+      ],
+      "nodos": [],
+      "opciones": [
+        {
+          "clase": "candidato",
+          "id": "frente-amplio",
+          "candidato": "Frente Amplio",
+          "partidoId": "frente-amplio",
+          "contienda": "unica"
+        },
+        {
+          "clase": "candidato",
+          "id": "partido-nacional",
+          "candidato": "Partido Nacional",
+          "partidoId": "partido-nacional",
+          "contienda": "unica"
+        }
+      ]
+    }
+  ]
+}

@@ -57,8 +57,11 @@ export interface PartyMeta {
   readonly color: string;
 }
 
-/** Resuelve sigla + color para un nombre de partido (nombre original del ETL). */
+/** Resuelve sigla + color para un nombre de partido/opción (nombre original del ETL). */
 export function resolveParty(nombre: string): PartyMeta {
   const key = norm(nombre);
+  // Opción binaria de plebiscito/referéndum (Sí/No): Sí verde, No gris neutro (status quo).
+  if (key === 'SI') return { sigla: 'Sí', color: '#16a34a' };
+  if (key === 'NO') return { sigla: 'No', color: '#94a3b8' };
   return { sigla: SIGLAS[key] ?? acronimo(nombre), color: getPartyColor(nombre) };
 }

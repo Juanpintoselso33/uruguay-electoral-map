@@ -1,0 +1,87 @@
+[
+  {
+    "serie": "LAA",
+    "localidad": "Fray Bentos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "LAB",
+    "localidad": "Nuevo BerlíN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "LAC",
+    "localidad": "Bellaco",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "LAD",
+    "localidad": "Fray Bentos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "LBA",
+    "localidad": "San Javier",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "LBB",
+    "localidad": "Sauce Chico",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "LBC",
+    "localidad": "Young",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "LBD",
+    "localidad": "Young",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "LBE",
+    "localidad": "Algorta",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "LBF",
+    "localidad": "Paso De La Cruz",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "LBG",
+    "localidad": "Colonia El Ombú",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "LBH",
+    "localidad": "Colonia El Ombú",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "LCA",
+    "localidad": "Grecco",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "LCB",
+    "localidad": "Paso De Los Mellizos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "LCC",
+    "localidad": "Sarandí De Navarro",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "LCD",
+    "localidad": "Sarandí De Navarro",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "LCE",
+    "localidad": "Grecco",
+    "tipo": "1:1"
+  }
+]

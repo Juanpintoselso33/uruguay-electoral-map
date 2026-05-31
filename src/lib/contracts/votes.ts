@@ -1,5 +1,5 @@
 /**
- * Data Contract v1 — Votos y agregados por zona.
+ * Data Contract v3 — Votos y agregados por zona.
  *
  * Unidad canónica: (opción × geografía × etapa de escrutinio). La etapa
  * DEFINITIVA es la canónica; nunca se suman etapas. Blanco/anulado/observado
@@ -11,8 +11,8 @@ import type { EleccionTipo } from './election';
 /** Etapa de escrutinio. La canónica del producto es 'definitivo'. */
 export type Escrutinio = 'definitivo' | 'primario' | 'total';
 
-/** Nivel geográfico (jerarquía CIRCUITO ⊃ SERIE ⊃ ZONA). */
-export type NivelGeografico = 'zona' | 'serie' | 'circuito';
+/** Nivel geográfico (jerarquía CIRCUITO ⊃ SERIE ⊃ ZONA; LOCALIDAD agrega series por localidad del interior; BARRIO subdivide ciudades grandes). */
+export type NivelGeografico = 'zona' | 'serie' | 'circuito' | 'localidad' | 'barrio';
 
 /** Categorías no partidarias presentes en los totales oficiales. */
 export interface CategoriasNoPartidarias {

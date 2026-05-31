@@ -1,0 +1,182 @@
+[
+  {
+    "serie": "HAA",
+    "localidad": "Rivera",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "HAB",
+    "localidad": "Rivera",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "HBA",
+    "localidad": "Rivera",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "HBB",
+    "localidad": "Rivera",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "HBC",
+    "localidad": "Rivera",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "HBD",
+    "localidad": "Rivera",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "HBE",
+    "localidad": "Rivera",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "HBF",
+    "localidad": "Rivera",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "HBG",
+    "localidad": "Rivera",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "HCA",
+    "localidad": "EstacióN Ataques",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HCB",
+    "localidad": "Cerro Solito",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HCC",
+    "localidad": "Tranqueras",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HCD",
+    "localidad": "Rubio Chico",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HCE",
+    "localidad": "Cerro Alegre",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HCF",
+    "localidad": "Curticeiras",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HCG",
+    "localidad": "Masoller",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HDA",
+    "localidad": "Paso Manuel DíAz",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HDB",
+    "localidad": "Minas De Corrales",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HDC",
+    "localidad": "Cerros De La Calera",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HDD",
+    "localidad": "Paso De Ataques",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HDE",
+    "localidad": "Villa Indart",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HEA",
+    "localidad": "Cerro Pelado",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HEB",
+    "localidad": "Amarillo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HEC",
+    "localidad": "Pueblo De Las Flores",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HED",
+    "localidad": "CarpinteríA De Yaguarí",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HEE",
+    "localidad": "Blanquillos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HEF",
+    "localidad": "Laureles Al Sur",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HFA",
+    "localidad": "Paso De La Puente",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HFB",
+    "localidad": "Moirones",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HFC",
+    "localidad": "Abrojal",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HFD",
+    "localidad": "Arroyo Blanco",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HFE",
+    "localidad": "Alborada",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HFF",
+    "localidad": "Pueblo De Los Santos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HFG",
+    "localidad": "Vichadero",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HFH",
+    "localidad": "Paso Hospital",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "HFI",
+    "localidad": "Cerrillada",
+    "tipo": "1:1"
+  }
+]

@@ -1,0 +1,167 @@
+[
+  {
+    "serie": "NAA",
+    "localidad": "Paso De La Horqueta",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NAB",
+    "localidad": "Colonia",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NAC",
+    "localidad": "El General",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NAD",
+    "localidad": "Real De San Carlos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NBA",
+    "localidad": "Paso AntolíN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NBB",
+    "localidad": "El Cuadro",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NBC",
+    "localidad": "Colonia Miguelete",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NBD",
+    "localidad": "Tarariras",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NCA",
+    "localidad": "Media Agua",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NCB",
+    "localidad": "Rosario",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NDA",
+    "localidad": "La Paz",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NDB",
+    "localidad": "Colonia Valdense",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NEA",
+    "localidad": "Cufré",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NEB",
+    "localidad": "Nueva Helvecia",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NFA",
+    "localidad": "Costa De Rosario",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NFB",
+    "localidad": "Paraje ZuníN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NFC",
+    "localidad": "Florencio SáNchez",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NFD",
+    "localidad": "Puntas De San Juan",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NGA",
+    "localidad": "Campana",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NGB",
+    "localidad": "OmbúEs De Lavalle",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NGC",
+    "localidad": "Conchillas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NHA",
+    "localidad": "Colonia Arrue",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NHB",
+    "localidad": "Carmelo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NIA",
+    "localidad": "Polancos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NIB",
+    "localidad": "Nueva Palmira",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NJA",
+    "localidad": "Cerro De Carmelo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NKA",
+    "localidad": "Riachuelo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NKB",
+    "localidad": "Santa Ana",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NKC",
+    "localidad": "Colonia",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NKD",
+    "localidad": "Semillero",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NLA",
+    "localidad": "Barker",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NLB",
+    "localidad": "Juan Lacaze",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "NLC",
+    "localidad": "Villa Pancha",
+    "tipo": "1:1"
+  }
+]

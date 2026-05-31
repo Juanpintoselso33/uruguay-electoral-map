@@ -1,0 +1,192 @@
+[
+  {
+    "serie": "RAA",
+    "localidad": "Durazno",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "RAB",
+    "localidad": "Durazno",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "RAC",
+    "localidad": "Durazno",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "RAD",
+    "localidad": "Durazno",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "RBA",
+    "localidad": "Santa Bernardina",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RBB",
+    "localidad": "Puntas De Tejera",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RBC",
+    "localidad": "OmbúEs De Oribe",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RBD",
+    "localidad": "Durazno",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "RCA",
+    "localidad": "Colonia Rosell Y Rius",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RCB",
+    "localidad": "Paso Castro",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RCC",
+    "localidad": "Pueblo Gral. Laguna",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RCD",
+    "localidad": "Ciudad Del Carmen",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RCE",
+    "localidad": "TomáS Cuadra",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RCF",
+    "localidad": "Salinas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RCG",
+    "localidad": "Sauce Del Yi -Esc.53",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RCH",
+    "localidad": "Sauce Del Yi -Esc.53",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RDA",
+    "localidad": "Cerro Chato",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RDB",
+    "localidad": "Puntas De Malbajar",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RDC",
+    "localidad": "Chacras Sdi. Del Yi",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RDD",
+    "localidad": "Sarandí Del Yi",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RDE",
+    "localidad": "Sarandí Del Yi",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "REA",
+    "localidad": "Blanquillo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "REB",
+    "localidad": "Capilla Farruco",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "REC",
+    "localidad": "Cerrezuelo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RED",
+    "localidad": "Cuchilla De RamíRez",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "REE",
+    "localidad": "La Paloma",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "REF",
+    "localidad": "San J.De Las CañAs",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RFA",
+    "localidad": "H. De Carpinteria",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RFB",
+    "localidad": "Aguas Buenas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RFC",
+    "localidad": "San Jorge",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RFD",
+    "localidad": "Cuchilla Del RincóN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RFE",
+    "localidad": "Blanquillo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RFF",
+    "localidad": "Chileno",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RGA",
+    "localidad": "Carlos Reyles",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RGB",
+    "localidad": "Pueblo Centenario",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RGC",
+    "localidad": "Baygorria",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RGD",
+    "localidad": "Los Tapes",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "RGE",
+    "localidad": "Los Tapes",
+    "tipo": "1:1"
+  }
+]

@@ -16,6 +16,12 @@ export interface Contexto {
 export interface Seleccion {
   readonly zona: string | null;
   readonly opcion: string | null;
+  /** Contienda activa del acordeón de granularidad (Epic 10). */
+  readonly contienda: string | null;
+  /** Selección múltiple de opciones (conjunto de opcionIds, Epic 10). */
+  readonly seleccion: readonly string[];
+  /** Modo de coloreo del mapa para la selección (Epic 10). */
+  readonly modo: string | null;
 }
 export interface Comparacion {
   readonly vs: string | null;
@@ -24,14 +30,14 @@ export interface Comparacion {
 }
 
 export const $context = atom<Contexto>({ eleccion: '', departamento: '' });
-export const $selection = atom<Seleccion>({ zona: null, opcion: null });
+export const $selection = atom<Seleccion>({ zona: null, opcion: null, contienda: null, seleccion: [], modo: null });
 export const $level = atom<NivelGeografico>('zona');
 export const $comparison = atom<Comparacion>({ vs: null, a: null, b: null });
 
 /** Vuelca una `MapView` (parseada de la URL) a los stores. Puro respecto al DOM. */
 export function hydrateStores(view: MapView): void {
   $context.set({ eleccion: view.eleccion, departamento: view.departamento });
-  $selection.set({ zona: view.zona, opcion: view.opcion });
+  $selection.set({ zona: view.zona, opcion: view.opcion, contienda: view.contienda, seleccion: view.seleccion, modo: view.modo });
   $level.set(view.level);
   $comparison.set({ vs: view.vs, a: view.a, b: view.b });
 }
@@ -50,6 +56,9 @@ export function currentView(): MapView {
     vs: cmp.vs,
     a: cmp.a,
     b: cmp.b,
+    contienda: sel.contienda,
+    seleccion: sel.seleccion,
+    modo: sel.modo,
   };
 }
 

@@ -1,0 +1,122 @@
+[
+  {
+    "serie": "IAA",
+    "localidad": "Colonia Pintado",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "IAB",
+    "localidad": "Javier De Viana",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "IAC",
+    "localidad": "Artigas",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "IAD",
+    "localidad": "Artigas",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "IAE",
+    "localidad": "Artigas",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "IAF",
+    "localidad": "Artigas",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "IAG",
+    "localidad": "Artigas",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "IAH",
+    "localidad": "Pintadito",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "IBA",
+    "localidad": "CataláN Grande",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "IBB",
+    "localidad": "RincóN De Pacheco",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "IBC",
+    "localidad": "Sequeira",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "IBD",
+    "localidad": "Paso Campamento",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "IBE",
+    "localidad": "Diego Lamas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "IBF",
+    "localidad": "Colonia Artigas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "IBG",
+    "localidad": "Paso FaríAs",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ICA",
+    "localidad": "Baltasar Brum",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ICB",
+    "localidad": "Colonia Palma",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ICC",
+    "localidad": "TomáS Gomensoro",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ICD",
+    "localidad": "Bella UnióN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ICE",
+    "localidad": "Cuareim",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ICF",
+    "localidad": "Coronado",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "IDA",
+    "localidad": "Cerro Amarillo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "IDB",
+    "localidad": "EstacióN Cuaro",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "IDC",
+    "localidad": "Topador",
+    "tipo": "1:1"
+  }
+]

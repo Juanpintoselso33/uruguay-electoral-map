@@ -35,10 +35,16 @@ export interface CoverageInput {
   /** Nombres de barrio de la geometría (properties.name del TopoJSON, canonicalizado). */
   geoBarrioNames: string[];
   totalCanonico: number;
+  /** Override de umbral de placement (default: PLACEMENT_MIN = 0.95). */
+  placementMin?: number;
+  /** Override de umbral de barrio-fill (default: BARRIO_FILL_MIN = 0.75). */
+  barrioFillMin?: number;
 }
 
 export function checkCoverage(input: CoverageInput): CoverageResult {
   const { shard, geoBarrioNames, totalCanonico } = input;
+  const thresholdPlacement = input.placementMin ?? PLACEMENT_MIN;
+  const thresholdBarrioFill = input.barrioFillMin ?? BARRIO_FILL_MIN;
   const geoSet = new Set(geoBarrioNames.map(normName));
 
   let votosColocados = 0;
@@ -72,15 +78,15 @@ export function checkCoverage(input: CoverageInput): CoverageResult {
   };
 
   const fallos: string[] = [];
-  if (placement < PLACEMENT_MIN) {
+  if (placement < thresholdPlacement) {
     fallos.push(
-      `placement ${(placement * 100).toFixed(1)}% < ${(PLACEMENT_MIN * 100).toFixed(0)}% ` +
+      `placement ${(placement * 100).toFixed(1)}% < ${(thresholdPlacement * 100).toFixed(0)}% ` +
         `(${shardSinMatch.length} geoIds del shard sin match: ${shardSinMatch.slice(0, 10).join(', ')})`,
     );
   }
-  if (barrioFill < BARRIO_FILL_MIN) {
+  if (barrioFill < thresholdBarrioFill) {
     fallos.push(
-      `barrio-fill ${(barrioFill * 100).toFixed(1)}% < ${(BARRIO_FILL_MIN * 100).toFixed(0)}% ` +
+      `barrio-fill ${(barrioFill * 100).toFixed(1)}% < ${(thresholdBarrioFill * 100).toFixed(0)}% ` +
         `(${geoSinVotos.length} barrios sin votos: ${geoSinVotos.slice(0, 15).join(', ')})`,
     );
   }

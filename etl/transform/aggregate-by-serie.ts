@@ -38,14 +38,25 @@ export function aggregateBySerie(rows: Record<string, string>[]): AggregateBySer
     totalCanonico += votos;
     if (votos === 0) continue;
 
-    const geoId = serieRaw.toLowerCase(); // e.g. "haa", "hab" — match properties.name del geo
-    let lemas = porSerie.get(geoId);
-    if (!lemas) {
-      lemas = new Map();
-      porSerie.set(geoId, lemas);
-    }
-    lemas.set(lema, (lemas.get(lema) ?? 0) + votos);
+    // Algunos circuitos consolidan múltiples series en un solo registro (e.g. "PBB PBC").
+    // Expandir: distribuir los votos entre cada código de serie de forma pro-rata.
+    const seriesCodes = serieRaw.split(/\s+/).map((s) => s.toLowerCase());
+    const n = seriesCodes.length;
+    const base = Math.floor(votos / n);
+    const rem = votos - base * n;
+
     opcionesPorId.set(slug(lema), lema);
+    for (let i = 0; i < seriesCodes.length; i++) {
+      const geoId = seriesCodes[i];
+      const share = base + (i === 0 ? rem : 0);
+      if (share === 0) continue;
+      let lemas = porSerie.get(geoId);
+      if (!lemas) {
+        lemas = new Map();
+        porSerie.set(geoId, lemas);
+      }
+      lemas.set(lema, (lemas.get(lema) ?? 0) + share);
+    }
   }
 
   const zonas: AgregadoZona[] = [];

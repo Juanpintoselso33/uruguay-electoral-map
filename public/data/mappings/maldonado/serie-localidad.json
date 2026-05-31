@@ -1,0 +1,197 @@
+[
+  {
+    "serie": "DAA",
+    "localidad": "Maldonado",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DAB",
+    "localidad": "Punta Del Este",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DAC",
+    "localidad": "Los Ceibos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DAD",
+    "localidad": "Punta Ballena",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DAE",
+    "localidad": "Pinares",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DAF",
+    "localidad": "Cerro Pelado",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DAG",
+    "localidad": "HipóDromo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DAH",
+    "localidad": "Maldonado Nuevo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DAI",
+    "localidad": "El Jaguel",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DAJ",
+    "localidad": "Las Delicias",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DAK",
+    "localidad": "Cantegril",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DBA",
+    "localidad": "San Carlos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DBB",
+    "localidad": "Partido Norte",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DBC",
+    "localidad": "Carapé",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DBD",
+    "localidad": "Lavagna",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DBE",
+    "localidad": "La Cuchilla",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DBF",
+    "localidad": "RodríGuez Barrios",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DBG",
+    "localidad": "Asturias",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DCA",
+    "localidad": "Pan De AzúCar",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DCB",
+    "localidad": "PiriáPolis",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DCC",
+    "localidad": "Sierras De P. De AzúCar",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DCD",
+    "localidad": "Gregorio AznáRez",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DCE",
+    "localidad": "Solis Arriba",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DCF",
+    "localidad": "Las Flores",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DCG",
+    "localidad": "La Capuera",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DDA",
+    "localidad": "Mataojo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DDB",
+    "localidad": "Guardia Vieja",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DDC",
+    "localidad": "Carapé",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DDD",
+    "localidad": "Coronilla",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DEA",
+    "localidad": "GarzóN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DEB",
+    "localidad": "GarzóN Arriba",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DEC",
+    "localidad": "GarzóN Abajo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DED",
+    "localidad": "La Barra",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DEE",
+    "localidad": "RincóN De José Ignacio",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DEF",
+    "localidad": "Las CañAs",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DEG",
+    "localidad": "Faro José Ignacio",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DEH",
+    "localidad": "Balneario Buenos Aires",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DFA",
+    "localidad": "Aiguá",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "DFB",
+    "localidad": "Los Talas",
+    "tipo": "1:1"
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {"serie": "JAA", "barrio": "Centro"},
+  {"serie": "JAB", "barrio": "Centro"},
+  {"serie": "JAC", "barrio": "Centro"},
+  {"serie": "JAD", "barrio": "Centro"},
+  {"serie": "JAE", "barrio": "Batlle"},
+  {"serie": "JBA", "barrio": "Centro"},
+  {"serie": "JBB", "barrio": "Brasil"},
+  {"serie": "JBC", "barrio": "Brasil"},
+  {"serie": "JBD", "barrio": "Harriague"},
+  {"serie": "JBE", "barrio": "Este"},
+  {"serie": "JCB", "barrio": "Norte"},
+  {"serie": "JCC", "barrio": "San Martín"},
+  {"serie": "JCD", "barrio": "Dos Naciones"},
+  {"serie": "JCG", "barrio": "Beltrán"},
+  {"serie": "JCH", "barrio": "Don Atilio"},
+  {"serie": "JCI", "barrio": "Sur"},
+  {"serie": "JCJ", "barrio": "Nueva Hespérides"},
+  {"serie": "JCL", "barrio": "Caballero"}
+]

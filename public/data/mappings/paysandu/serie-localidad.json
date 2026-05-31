@@ -1,0 +1,187 @@
+[
+  {
+    "serie": "KAA",
+    "localidad": "Paysandú",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "KBA",
+    "localidad": "Paysandú",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "KBB",
+    "localidad": "Paysandú",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "KBC",
+    "localidad": "Paysandú",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "KCA",
+    "localidad": "Paysandú",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "KCB",
+    "localidad": "Paysandú",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "KCC",
+    "localidad": "Paysandú",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "KCD",
+    "localidad": "Pueblo Esperanza",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KCE",
+    "localidad": "EstacióN Porvenir",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KDA",
+    "localidad": "Paysandú",
+    "tipo": "ciudad-grande"
+  },
+  {
+    "serie": "KDB",
+    "localidad": "Pueblo Porvenir",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KDC",
+    "localidad": "San FéLix",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KDD",
+    "localidad": "RabóN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KDE",
+    "localidad": "LatentacióN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KEA",
+    "localidad": "GuichóN",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KEB",
+    "localidad": "Pinera",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KEC",
+    "localidad": "Merinos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KED",
+    "localidad": "Morató",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KEE",
+    "localidad": "Piedra Sola",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KEF",
+    "localidad": "Tambores",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KFA",
+    "localidad": "Arroyo Malo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KFB",
+    "localidad": "Lorenzo Geyres",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KFC",
+    "localidad": "Quebracho",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KFD",
+    "localidad": "Sauce Del Queguay",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KFE",
+    "localidad": "Sauce De Buricayupí",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KFF",
+    "localidad": "El Eucalipto",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KGA",
+    "localidad": "Arroyo Negro",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KGB",
+    "localidad": "Piedras Coloradas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KGC",
+    "localidad": "Constancia",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KHA",
+    "localidad": "Paso Castel De Corrales",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KHB",
+    "localidad": "Paso Castel De Corrales",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KHC",
+    "localidad": "Colonia Juan GutiéRrez",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KIA",
+    "localidad": "Guarapirú",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KIB",
+    "localidad": "Pueblo Gallinal",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KIC",
+    "localidad": "Cerro Chato",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KID",
+    "localidad": "Chapicuy",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "KIE",
+    "localidad": "Bella Vista",
+    "tipo": "1:1"
+  }
+]

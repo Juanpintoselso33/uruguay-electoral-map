@@ -1,0 +1,127 @@
+[
+  {
+    "serie": "EAA",
+    "localidad": "Rocha",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "EBA",
+    "localidad": "La Sierra",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "EBB",
+    "localidad": "GarzóN Arriba",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "EBC",
+    "localidad": "GarzóN Abajo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ECA",
+    "localidad": "Arbolito",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ECB",
+    "localidad": "Barra De Valizas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ECC",
+    "localidad": "19 De Abril",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ECD",
+    "localidad": "Atahona",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ECE",
+    "localidad": "Velazquez",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ECF",
+    "localidad": "Parallé",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "ECG",
+    "localidad": "La Paloma",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "EDA",
+    "localidad": "India Muerta",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "EDB",
+    "localidad": "19 De Abril",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "EDC",
+    "localidad": "Castillos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "EEA",
+    "localidad": "Lascano",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "EEB",
+    "localidad": "AlféRez",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "EFA",
+    "localidad": "18 De Julio",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "EFB",
+    "localidad": "Chuy",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "EFC",
+    "localidad": "La Coronilla",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "EFD",
+    "localidad": "Cebollatí",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "EFE",
+    "localidad": "Coronilla De Cebollatí",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "EFF",
+    "localidad": "Quebracho",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "EFG",
+    "localidad": "San Luis",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "EFH",
+    "localidad": "Barra Del Chuy",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "EFI",
+    "localidad": "Punta Del Diablo",
+    "tipo": "1:1"
+  }
+]

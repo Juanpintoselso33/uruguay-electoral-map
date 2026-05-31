@@ -1,0 +1,340 @@
+[
+  {
+    "id": "montevideo",
+    "label": "Montevideo",
+    "levels": [
+      "zona",
+      "circuito"
+    ],
+    "elecciones": [
+      "internas-2019",
+      "internas-2024",
+      "nacionales-2014",
+      "nacionales-2019",
+      "nacionales-2024",
+      "balotaje-2014",
+      "balotaje-2019",
+      "balotaje-2024",
+      "plebiscito-allanamientos-2024",
+      "plebiscito-seguridad-social-2024",
+      "departamentales-2020",
+      "departamentales-2025",
+      "referendum-luc-2022"
+    ]
+  },
+  {
+    "id": "canelones",
+    "label": "Canelones",
+    "levels": [
+      "serie",
+      "localidad",
+      "circuito"
+    ],
+    "elecciones": [
+      "internas-2019",
+      "internas-2024",
+      "nacionales-2014",
+      "nacionales-2024",
+      "departamentales-2020",
+      "departamentales-2025"
+    ]
+  },
+  {
+    "id": "maldonado",
+    "label": "Maldonado",
+    "levels": [
+      "serie",
+      "localidad",
+      "circuito"
+    ],
+    "elecciones": [
+      "internas-2019",
+      "internas-2024",
+      "nacionales-2014",
+      "nacionales-2024",
+      "departamentales-2020",
+      "departamentales-2025"
+    ]
+  },
+  {
+    "id": "colonia",
+    "label": "Colonia",
+    "levels": [
+      "serie",
+      "localidad",
+      "circuito"
+    ],
+    "elecciones": [
+      "internas-2019",
+      "internas-2024",
+      "nacionales-2014",
+      "nacionales-2024",
+      "balotaje-2024",
+      "departamentales-2020",
+      "departamentales-2025"
+    ]
+  },
+  {
+    "id": "salto",
+    "label": "Salto",
+    "levels": [
+      "serie",
+      "localidad",
+      "barrio",
+      "circuito"
+    ],
+    "elecciones": [
+      "internas-2019",
+      "internas-2024",
+      "nacionales-2014",
+      "nacionales-2024",
+      "departamentales-2020",
+      "departamentales-2025"
+    ]
+  },
+  {
+    "id": "paysandu",
+    "label": "Paysandú",
+    "levels": [
+      "serie",
+      "localidad",
+      "barrio",
+      "circuito"
+    ],
+    "elecciones": [
+      "internas-2019",
+      "internas-2024",
+      "nacionales-2014",
+      "nacionales-2024",
+      "departamentales-2020",
+      "departamentales-2025"
+    ]
+  },
+  {
+    "id": "rivera",
+    "label": "Rivera",
+    "levels": [
+      "serie",
+      "localidad",
+      "barrio",
+      "circuito"
+    ],
+    "elecciones": [
+      "internas-2019",
+      "internas-2024",
+      "nacionales-2014",
+      "nacionales-2024",
+      "departamentales-2020",
+      "departamentales-2025"
+    ]
+  },
+  {
+    "id": "cerro_largo",
+    "label": "Cerro Largo",
+    "levels": [
+      "serie",
+      "localidad",
+      "barrio",
+      "circuito"
+    ],
+    "elecciones": [
+      "internas-2019",
+      "internas-2024",
+      "nacionales-2014",
+      "nacionales-2024",
+      "departamentales-2020",
+      "departamentales-2025"
+    ]
+  },
+  {
+    "id": "tacuarembo",
+    "label": "Tacuarembó",
+    "levels": [
+      "serie",
+      "localidad",
+      "circuito"
+    ],
+    "elecciones": [
+      "internas-2019",
+      "internas-2024",
+      "nacionales-2014",
+      "nacionales-2024",
+      "departamentales-2020",
+      "departamentales-2025"
+    ]
+  },
+  {
+    "id": "san_jose",
+    "label": "San José",
+    "levels": [
+      "serie",
+      "localidad",
+      "barrio",
+      "circuito"
+    ],
+    "elecciones": [
+      "internas-2019",
+      "internas-2024",
+      "nacionales-2014",
+      "nacionales-2024",
+      "departamentales-2020",
+      "departamentales-2025"
+    ]
+  },
+  {
+    "id": "soriano",
+    "label": "Soriano",
+    "levels": [
+      "serie",
+      "localidad",
+      "circuito"
+    ],
+    "elecciones": [
+      "internas-2019",
+      "internas-2024",
+      "nacionales-2014",
+      "nacionales-2024",
+      "departamentales-2020",
+      "departamentales-2025"
+    ]
+  },
+  {
+    "id": "rocha",
+    "label": "Rocha",
+    "levels": [
+      "serie",
+      "localidad",
+      "circuito"
+    ],
+    "elecciones": [
+      "internas-2019",
+      "internas-2024",
+      "nacionales-2014",
+      "nacionales-2024",
+      "departamentales-2020",
+      "departamentales-2025"
+    ]
+  },
+  {
+    "id": "florida",
+    "label": "Florida",
+    "levels": [
+      "serie",
+      "localidad",
+      "circuito"
+    ],
+    "elecciones": [
+      "internas-2019",
+      "internas-2024",
+      "nacionales-2014",
+      "nacionales-2024",
+      "departamentales-2020",
+      "departamentales-2025"
+    ]
+  },
+  {
+    "id": "artigas",
+    "label": "Artigas",
+    "levels": [
+      "serie",
+      "localidad",
+      "barrio",
+      "circuito"
+    ],
+    "elecciones": [
+      "internas-2019",
+      "internas-2024",
+      "nacionales-2014",
+      "nacionales-2024",
+      "departamentales-2020",
+      "departamentales-2025"
+    ]
+  },
+  {
+    "id": "durazno",
+    "label": "Durazno",
+    "levels": [
+      "serie",
+      "localidad",
+      "barrio",
+      "circuito"
+    ],
+    "elecciones": [
+      "internas-2019",
+      "internas-2024",
+      "nacionales-2014",
+      "nacionales-2024",
+      "departamentales-2020",
+      "departamentales-2025"
+    ]
+  },
+  {
+    "id": "treinta_y_tres",
+    "label": "Treinta y Tres",
+    "levels": [
+      "serie",
+      "localidad",
+      "barrio",
+      "circuito"
+    ],
+    "elecciones": [
+      "internas-2019",
+      "internas-2024",
+      "nacionales-2014",
+      "nacionales-2024",
+      "departamentales-2020",
+      "departamentales-2025"
+    ]
+  },
+  {
+    "id": "lavalleja",
+    "label": "Lavalleja",
+    "levels": [
+      "serie",
+      "localidad",
+      "circuito"
+    ],
+    "elecciones": [
+      "internas-2019",
+      "internas-2024",
+      "nacionales-2014",
+      "nacionales-2024",
+      "departamentales-2020",
+      "departamentales-2025"
+    ]
+  },
+  {
+    "id": "rio_negro",
+    "label": "Río Negro",
+    "levels": [
+      "serie",
+      "localidad",
+      "circuito"
+    ],
+    "elecciones": [
+      "internas-2019",
+      "internas-2024",
+      "nacionales-2014",
+      "nacionales-2024",
+      "departamentales-2020",
+      "departamentales-2025"
+    ]
+  },
+  {
+    "id": "flores",
+    "label": "Flores",
+    "levels": [
+      "serie",
+      "localidad",
+      "circuito"
+    ],
+    "elecciones": [
+      "internas-2019",
+      "internas-2024",
+      "nacionales-2014",
+      "nacionales-2024",
+      "departamentales-2020",
+      "departamentales-2025"
+    ]
+  }
+]

@@ -1,7 +1,8 @@
 {
   "availableElections": [
     "internas-2024",
-    "nacionales-2019"
+    "nacionales-2019",
+    "balotaje-2024"
   ],
   "departmentsByElection": {
     "internas-2024": [
@@ -45,7 +46,11 @@
       "soriano",
       "tacuarembo",
       "treinta_y_tres"
+    ],
+    "balotaje-2024": [
+      "colonia",
+      "montevideo"
     ]
   },
-  "generatedAt": "2026-01-31T18:26:48.800Z"
+  "generatedAt": "2026-05-31T00:00:00.000Z"
 }

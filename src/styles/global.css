@@ -36,8 +36,8 @@
     --color-card:      #28324A;
     --color-surface-1: #1E2638;
     --color-surface-2: #252F45;
-    --color-border:        #313C56;
-    --color-border-strong: #3A4660;
+    --color-border:        #5F6E92;
+    --color-border-strong: #6E7FA5;
     --color-ink:       #E8ECF6;
     --color-ink-soft:  #C1CAE0;
     --color-ink-muted: #93A0BC;
@@ -57,4 +57,31 @@ html {
   background: var(--color-bg);
   color: var(--color-ink);
   font-family: system-ui, sans-serif;
+}
+
+/* ── Skip navigation link (WCAG 2.4.1 Bypass Blocks) ────────────────────── */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.skip-link:focus {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  padding: 0.5rem 1rem;
+  background: var(--color-btn-active-bg);
+  color: var(--color-btn-active-fg);
+  border-radius: 0.375rem;
+  z-index: 9999;
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
 }

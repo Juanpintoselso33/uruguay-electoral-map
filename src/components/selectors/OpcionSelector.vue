@@ -7,7 +7,7 @@
  * Etiqueta adaptativa: "Partido / Lema" para internas/legislativas;
  * "Candidato / Lema" para balotaje/presidencial.
  */
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, onUnmounted } from 'vue';
 import { resolveParty } from '../../lib/party-meta';
 import { $selection, $comparison, commit } from '../../stores/map-state';
 
@@ -88,6 +88,51 @@ function salirDual(): void {
 function opcionPorId(id: string | null): OpcionUI | undefined {
   return id ? opciones.value.find((o) => o.opcionId === id) : undefined;
 }
+
+// ── Listbox keyboard navigation (WCAG 2.1.1 / WAI-ARIA listbox pattern) ──────
+const focusedIdx = ref(-1);
+let unsubs: (() => void)[] = [];
+
+onUnmounted(() => unsubs.forEach((u) => u()));
+
+function handleListboxKeydown(e: KeyboardEvent): void {
+  const n = opciones.value.length;
+  if (n === 0) return;
+  switch (e.key) {
+    case 'ArrowDown':
+      e.preventDefault();
+      focusedIdx.value = (focusedIdx.value + 1) % n;
+      break;
+    case 'ArrowUp':
+      e.preventDefault();
+      focusedIdx.value = (focusedIdx.value - 1 + n) % n;
+      break;
+    case 'Home':
+      e.preventDefault();
+      focusedIdx.value = 0;
+      break;
+    case 'End':
+      e.preventDefault();
+      focusedIdx.value = n - 1;
+      break;
+    case 'Enter':
+    case ' ':
+      e.preventDefault();
+      if (focusedIdx.value >= 0) seleccionar(opciones.value[focusedIdx.value].opcionId);
+      break;
+  }
+}
+
+function handleListboxFocus(): void {
+  if (focusedIdx.value === -1) {
+    const sel = opciones.value.findIndex((o) => o.opcionId === opcionActiva.value);
+    focusedIdx.value = sel >= 0 ? sel : 0;
+  }
+}
+
+function handleListboxBlur(): void {
+  focusedIdx.value = -1;
+}
 </script>
 
 <template>
@@ -143,14 +188,28 @@ function opcionPorId(id: string | null): OpcionUI | undefined {
         </button>
       </div>
 
-      <ul v-if="opciones.length > 0" class="opcion-selector__lista" role="listbox" :aria-label="labelSelector">
+      <ul
+        v-if="opciones.length > 0"
+        class="opcion-selector__lista"
+        role="listbox"
+        :aria-label="labelSelector"
+        tabindex="0"
+        :aria-activedescendant="focusedIdx >= 0 ? `opt-${opciones[focusedIdx]?.opcionId}` : undefined"
+        @keydown="handleListboxKeydown"
+        @focus="handleListboxFocus"
+        @blur="handleListboxBlur"
+      >
         <li
-          v-for="op in opciones"
+          v-for="(op, i) in opciones"
           :key="op.opcionId"
+          :id="`opt-${op.opcionId}`"
           role="option"
           :aria-selected="opcionActiva === op.opcionId"
           class="opcion-selector__item"
-          :class="{ 'opcion-selector__item--activa': opcionActiva === op.opcionId }"
+          :class="{
+            'opcion-selector__item--activa':   opcionActiva === op.opcionId,
+            'opcion-selector__item--focused':  i === focusedIdx,
+          }"
           @click="seleccionar(op.opcionId)"
         >
           <span class="opcion-selector__swatch" :style="{ background: op.color }" aria-hidden="true"></span>
@@ -169,6 +228,8 @@ function opcionPorId(id: string | null): OpcionUI | undefined {
   padding: 0.5rem 1rem;
   border-bottom: 1px solid var(--color-border);
   font-size: 0.875rem;
+  /* Reserva el espacio del listbox cargado para evitar CLS durante la hidratación (Story 5.5). */
+  min-height: 15rem;
 }
 
 .opcion-selector__header {
@@ -196,6 +257,10 @@ function opcionPorId(id: string | null): OpcionUI | undefined {
 .opcion-selector__clear:hover {
   background: var(--color-surface-2);
 }
+.opcion-selector__clear:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
 
 .opcion-selector__activa {
   margin-bottom: 0.25rem;
@@ -211,6 +276,10 @@ function opcionPorId(id: string | null): OpcionUI | undefined {
   overflow-y: auto;
   border: 1px solid var(--color-border);
   border-radius: 0.375rem;
+}
+.opcion-selector__lista:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
 }
 
 .opcion-selector__item {
@@ -231,6 +300,11 @@ function opcionPorId(id: string | null): OpcionUI | undefined {
 .opcion-selector__item--activa {
   background: var(--color-highlight);
   font-weight: 600;
+}
+.opcion-selector__item--focused {
+  background: var(--color-highlight);
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
 }
 
 .opcion-selector__swatch {
@@ -311,6 +385,10 @@ function opcionPorId(id: string | null): OpcionUI | undefined {
 .opcion-selector__vs-chip:hover {
   background: var(--color-highlight);
   border-color: var(--color-highlight-border);
+}
+.opcion-selector__vs-chip:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
 }
 .opcion-selector__swatch--chip {
   width: 0.625rem;

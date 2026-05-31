@@ -22,9 +22,9 @@ function parseLine(line: string): string[] {
   return out;
 }
 
-/** Lee un CSV (UTF-8) y devuelve filas como objetos keyed por header. */
-export function parseCsv(path: string): Record<string, string>[] {
-  const text = readFileSync(path, 'utf8');
+/** Lee un CSV y devuelve filas como objetos keyed por header. `encoding` por si la fuente es Latin-1. */
+export function parseCsv(path: string, encoding: BufferEncoding = 'utf8'): Record<string, string>[] {
+  const text = readFileSync(path, encoding);
   const lines = text.split(/\r?\n/);
   if (lines.length === 0) return [];
   const header = parseLine(lines[0]);

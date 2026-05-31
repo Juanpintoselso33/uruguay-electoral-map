@@ -1,0 +1,27 @@
+{
+  "eleccionId": "referendum-luc-2022",
+  "departamento": "montevideo",
+  "contiendas": [
+    {
+      "contienda": "unica",
+      "niveles": [
+        "binaria"
+      ],
+      "nodos": [],
+      "opciones": [
+        {
+          "clase": "binaria",
+          "id": "si",
+          "etiqueta": "si",
+          "nombre": "Sí"
+        },
+        {
+          "clase": "binaria",
+          "id": "no",
+          "etiqueta": "no",
+          "nombre": "No"
+        }
+      ]
+    }
+  ]
+}

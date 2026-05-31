@@ -1,0 +1,81 @@
+{
+  "eleccionA": "internas-2024",
+  "eleccionB": "nacionales-2019",
+  "departamento": "montevideo",
+  "mappings": [
+    {
+      "aId": "asamblea-popular",
+      "bId": "asamblea-popular",
+      "sigla": "AP",
+      "nombreA": "Asamblea Popular",
+      "nombreB": "Asamblea Popular"
+    },
+    {
+      "aId": "cabildo-abierto",
+      "bId": "cabildo-abierto",
+      "sigla": "CA",
+      "nombreA": "Cabildo Abierto",
+      "nombreB": "Cabildo Abierto"
+    },
+    {
+      "aId": "frente-amplio",
+      "bId": "frente-amplio",
+      "sigla": "FA",
+      "nombreA": "Frente Amplio",
+      "nombreB": "Frente Amplio"
+    },
+    {
+      "aId": "independiente",
+      "bId": "independiente",
+      "sigla": "PI",
+      "nombreA": "Independiente",
+      "nombreB": "Independiente"
+    },
+    {
+      "aId": "p-e-r-i",
+      "bId": "ecologista-radical-intransigente",
+      "sigla": "PERI",
+      "nombreA": "P.E.R.I.",
+      "nombreB": "Ecologista Radical Intransigente"
+    },
+    {
+      "aId": "colorado",
+      "bId": "colorado",
+      "sigla": "PC",
+      "nombreA": "Colorado",
+      "nombreB": "Colorado"
+    },
+    {
+      "aId": "nacional",
+      "bId": "nacional",
+      "sigla": "PN",
+      "nombreA": "Nacional",
+      "nombreB": "Nacional"
+    },
+    {
+      "aId": "verde-animalista",
+      "bId": "verde-animalista",
+      "sigla": "PVA",
+      "nombreA": "Verde Animalista",
+      "nombreB": "Verde Animalista"
+    }
+  ],
+  "soloA": [
+    "avanzar-republicano",
+    "basta-ya",
+    "coalicion-republicana",
+    "constitucional-ambientalista",
+    "devolucion",
+    "identidad-soberana",
+    "libertario",
+    "partido-de-la-armonia",
+    "patria-alternativa",
+    "por-los-cambios-necesarios",
+    "por-los-cambios-necesarios-pcn"
+  ],
+  "soloB": [
+    "de-los-trabajadores",
+    "de-la-gente",
+    "digital"
+  ]
+}

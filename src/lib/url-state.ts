@@ -24,6 +24,12 @@ export interface MapView {
   /** Forward-compat comparación dual (`?a=&b=`). */
   readonly a: string | null;
   readonly b: string | null;
+  /** Contienda activa del selector de granularidad (`?cont=`, Epic 10): odn/odd/intendente/… */
+  readonly contienda: string | null;
+  /** Selección MÚLTIPLE de opciones (`?sel=` separado por coma, Epic 10): conjunto de opcionIds. */
+  readonly seleccion: readonly string[];
+  /** Modo de coloreo del mapa para la selección (`?modo=`, Epic 10): share/votos/heatmap (default ganador). */
+  readonly modo: string | null;
 }
 
 function isNivel(v: string | null): v is NivelGeografico {
@@ -54,6 +60,9 @@ export function parseUrl(pathname: string, search: string): MapView {
 
   const orNull = (v: string | null): string | null => (v && v.length > 0 ? v : null);
 
+  const selRaw = params.get('sel');
+  const seleccion = selRaw ? selRaw.split(',').map((s) => s.trim()).filter((s) => s.length > 0) : [];
+
   return {
     eleccion,
     departamento,
@@ -63,6 +72,9 @@ export function parseUrl(pathname: string, search: string): MapView {
     vs: orNull(params.get('vs')),
     a: orNull(params.get('a')),
     b: orNull(params.get('b')),
+    contienda: orNull(params.get('cont')),
+    seleccion,
+    modo: orNull(params.get('modo')),
   };
 }
 
@@ -76,6 +88,9 @@ export function toUrl(view: MapView): { pathname: string; search: string } {
   if (view.vs) params.set('vs', view.vs);
   if (view.a) params.set('a', view.a);
   if (view.b) params.set('b', view.b);
+  if (view.contienda) params.set('cont', view.contienda);
+  if (view.seleccion.length > 0) params.set('sel', view.seleccion.join(','));
+  if (view.modo) params.set('modo', view.modo);
   const search = params.toString();
   return { pathname, search: search ? `?${search}` : '' };
 }

@@ -22,13 +22,11 @@ import type { NivelGeografico } from '../../lib/contracts';
 import MapLegend from './MapLegend.vue';
 import ZoneSheet from '../sheet/ZoneSheet.vue';
 
-const props = defineProps<{ eleccion: string; departamento: string }>();
-
-// Niveles geo disponibles por depto. Actualizar al agregar deptos o nuevos niveles de datos.
-const DEPT_AVAIL: Record<string, NivelGeografico[]> = {
-  montevideo: ['zona'],
-  rivera:     ['serie'],
-};
+const props = defineProps<{
+  eleccion: string;
+  departamento: string;
+  availableLevels?: NivelGeografico[];
+}>();
 
 interface OpcionesDoc {
   opciones: { opcionId: string; nombre: string }[];
@@ -45,6 +43,19 @@ interface SelInfo {
   anulados: number;
   observados: number;
   pctOpcionActiva: number | null;
+  // Epic 10 (Story 10.5): desglose por hoja de la selección en esta zona.
+  seleccionTotal?: number;
+  seleccionPct?: number;
+  desglose?: DesgloseGrupo[];
+  esCiudadGrande?: boolean;
+}
+interface DesgloseGrupo {
+  lemaNombre: string;
+  sigla: string;
+  color: string;
+  total: number;
+  hojas: { id: string; label: string; votos: number }[];
+  masN: number;
 }
 interface LegendEntry {
   sigla: string;
@@ -87,11 +98,32 @@ let zonasVotos = new Map<string, Map<string, number>>();
 let zonasValidos = new Map<string, number>();
 // Categorías no partidarias por zona (Story 2.4 — ficha).
 let zonasNoPartidarios = new Map<string, { enBlanco: number; anulados: number; observados: number }>();
+// Ciudades grandes para nivel localidad (Story 8.4 — rótulo degradación).
+let ciudadesGrandesSet = new Set<string>();
 // Flag: indica si se hizo setData con FC de intensidad (para saber cuándo restaurar).
 let intensidadActive = false;
 // Comparación dual (Story 4.3): ganador por zona de la elección de comparación.
 let vsWinnersMap = new Map<string, string>(); // normalizedGeoId → nombre del ganador en elección vs
 let unsubComparison: (() => void) | null = null;
+// True cuando el nivel activo usa geometría Point (circuito) en lugar de Polygon (Story 6.3).
+let isPointNivel = false;
+
+// ── Epic 10: coloreo por selección múltiple de HOJAS (Story 10.4) ──────────────
+const SEL_BASE = '#1d4ed8'; // azul secuencial para la escala de selección
+const seleccionActiva = ref<string[]>([]);
+const coloreoMode = ref<'share' | 'votos' | 'heatmap'>('share');
+// hojaId → {contienda, lemaId, hoja, lemaNombre} (del catalogo.json). Null = aún no cargado.
+let catalogoOpcMeta: Map<string, { contienda: string; lemaId: string; hoja: string; lemaNombre: string }> | null = null;
+// zonaNorm → hojaId → votos (acumulado de los shards de hoja cargados).
+let hojaVotos = new Map<string, Map<string, number>>();
+let lemasCargados = new Set<string>(); // `${contienda}/${lemaId}` ya fetcheados
+// Story 7.8: a nivel localidad/barrio los shards de hoja están keyed por serie y no joinean por
+// nombre de localidad/barrio. Cargamos UN consolidado `hoja-{nivel}.json` (re-agregado en ETL) que
+// ya viene keyed por la zona geográfica. Guardamos la promise (no un bool) para que llamadas
+// concurrentes esperen al MISMO fetch y vean `hojaVotos` ya poblado (cf. catalogoPromise).
+let hojaGeoPromise: Promise<boolean> | null = null;
+let seleccionFCActive = false; // true cuando setData usó un FC de selección
+let catalogoPromise: Promise<void> | null = null; // dedup de la carga del catálogo (evita race)
 
 function norm(s: string): string {
   return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[.,]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -123,16 +155,27 @@ function boundsOf(fc: FeatureCollection): LngLatBoundsLike {
     if (Array.isArray(coords) && typeof coords[0] === 'number') visit(coords as Position);
     else if (Array.isArray(coords)) coords.forEach(walk);
   };
-  for (const f of fc.features) walk((f.geometry as Polygon | MultiPolygon).coordinates);
+  for (const f of fc.features) {
+    if (f.geometry.type === 'Point') visit(f.geometry.coordinates as Position);
+    else walk((f.geometry as Polygon | MultiPolygon).coordinates);
+  }
   return [[minX, minY], [maxX, maxY]];
 }
 
 async function loadData(eleccion: string, departamento: string, nivel: string): Promise<{ fc: FeatureCollection; bounds: LngLatBoundsLike }> {
+  isPointNivel = nivel === 'circuito';
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-  const [topoRes, votesRes, opcRes] = await Promise.all([
+  const votesFile = nivel === 'circuito' ? 'votes-circuito.json'
+                  : nivel === 'localidad' ? 'votes-localidad.json'
+                  : nivel === 'barrio'    ? 'votes-barrio.json'
+                  : 'votes.json';
+  const [topoRes, votesRes, opcRes, metaRes] = await Promise.all([
     fetch(`${base}/data/geo/${departamento}/${nivel}.topo.json`),
-    fetch(`${base}/data/${eleccion}/${departamento}/votes.json`),
+    fetch(`${base}/data/${eleccion}/${departamento}/${votesFile}`),
     fetch(`${base}/data/${eleccion}/${departamento}/opciones.json`),
+    nivel === 'localidad'
+      ? fetch(`${base}/data/${eleccion}/${departamento}/localidad-meta.json`).catch(() => null)
+      : Promise.resolve(null),
   ]);
   if (!topoRes.ok || !votesRes.ok || !opcRes.ok) throw new Error('No se pudieron cargar los datos del mapa');
   const topo = (await topoRes.json()) as Topology;
@@ -199,13 +242,22 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
     .sort((a, b) => b.votos - a.votos);
   origLegend = legend.value;
 
+  ciudadesGrandesSet = new Set<string>();
+  if (metaRes?.ok) {
+    try {
+      const metaDoc = (await metaRes.json()) as { ciudadesGrandes: string[] };
+      ciudadesGrandesSet = new Set(metaDoc.ciudadesGrandes.map(norm));
+    } catch { /* malformed — empty set */ }
+  }
+
   return { fc: geo, bounds: boundsOf(geo) };
 }
 
 /** Reconstruye los markers de sigla. Limpia los anteriores antes.
- *  Si `filterOpcionId` está definido, sólo pinta markers en zonas donde esa opción ganó. */
+ *  Si `filterOpcionId` está definido, sólo pinta markers en zonas donde esa opción ganó.
+ *  No-op cuando el nivel activo usa geometría Point (circuito). */
 function rebuildMarkers(fc: FeatureCollection, filterOpcionId?: string | null): void {
-  if (!mlLib || !map.value) return;
+  if (!mlLib || !map.value || isPointNivel) return;
   markers.forEach((mk) => mk.remove());
   markers.length = 0;
   for (const f of fc.features) {
@@ -258,6 +310,260 @@ function buildIntensidadLegend(nombre: string, meta: { sigla: string; color: str
     { sigla: '', nombre: 'Intensidad media', color: interpolateHex(INTENSIDAD_LIGHT, meta.color, 0.4), votos: 0 },
     { sigla: '', nombre: 'Intensidad baja', color: interpolateHex(INTENSIDAD_LIGHT, meta.color, 0.15), votos: 0 },
   ];
+}
+
+// ── Epic 10 (Story 10.4): coloreo por selección múltiple de hojas ──────────────
+
+/** Carga el catálogo jerárquico una vez (dedupeada): hojaId → {contienda, lemaId, hoja, lemaNombre}. */
+function ensureCatalogo(eleccion: string, departamento: string): Promise<void> {
+  if (catalogoOpcMeta) return Promise.resolve();
+  if (catalogoPromise) return catalogoPromise;
+  catalogoPromise = (async () => {
+    const built = new Map<string, { contienda: string; lemaId: string; hoja: string; lemaNombre: string }>();
+    try {
+      const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+      const res = await fetch(`${base}/data/${eleccion}/${departamento}/catalogo.json`);
+      if (res.ok) {
+        const doc = (await res.json()) as {
+          contiendas: {
+            contienda: string;
+            nodos: { id: string; nivel: string; etiqueta: string }[];
+            opciones: { id: string; hoja?: string; lemaId?: string }[];
+          }[];
+        };
+        for (const c of doc.contiendas) {
+          const lemaNombre = new Map(c.nodos.filter((n) => n.nivel === 'lema').map((n) => [n.id, n.etiqueta]));
+          for (const o of c.opciones) {
+            const lemaId = o.lemaId ?? '';
+            built.set(o.id, { contienda: c.contienda, lemaId, hoja: o.hoja ?? '', lemaNombre: lemaNombre.get(lemaId) ?? lemaId });
+          }
+        }
+      }
+    } catch {
+      /* sin catálogo → la selección no colorea (se queda en ganador) */
+    }
+    catalogoOpcMeta = built; // asignar SOLO tras poblar (evita que un caller concurrente vea un Map vacío)
+  })();
+  return catalogoPromise;
+}
+
+/**
+ * Carga el consolidado `hoja-{nivel}.json` (localidad/barrio) UNA vez por nivel y puebla `hojaVotos`
+ * keyed por nombre de zona geográfica — el mismo índice de join que las series. Devuelve true si el
+ * nivel usa este modo consolidado (localidad/barrio), independientemente de si el fetch encontró
+ * datos (los tipos planos no tienen archivo → hojaVotos queda vacío → fallback por lema). */
+async function ensureHojaGeoConsolidado(eleccion: string, departamento: string): Promise<boolean> {
+  const nivel = activeNivel;
+  if (nivel !== 'localidad' && nivel !== 'barrio') return false;
+  if (hojaGeoPromise) return hojaGeoPromise; // un caller concurrente espera el MISMO fetch poblado
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  hojaGeoPromise = (async () => {
+    try {
+      const res = await fetch(`${base}/data/${eleccion}/${departamento}/hoja-${nivel}.json`);
+      if (!res.ok) return true; // sin consolidado (tipo plano) → hojaVotos vacío, fallback por lema
+      const shard = (await res.json()) as VotosShard;
+      for (const z of shard.zonas) {
+        const key = norm(z.geoId);
+        let mm = hojaVotos.get(key);
+        if (!mm) { mm = new Map(); hojaVotos.set(key, mm); }
+        for (const { opcionId, votos } of z.porOpcion) mm.set(opcionId, votos);
+      }
+    } catch { /* red caída → hojaVotos vacío, el coloreo degrada por lema */ }
+    return true;
+  })();
+  return hojaGeoPromise;
+}
+
+/** Lazy-load de los shards de hoja por (contienda, lema) que toca la selección. */
+async function ensureHojaShards(eleccion: string, departamento: string, sel: string[]): Promise<void> {
+  await ensureCatalogo(eleccion, departamento);
+  // Localidad/barrio: un solo consolidado re-agregado (los shards por serie no joinean aquí).
+  if (await ensureHojaGeoConsolidado(eleccion, departamento)) return;
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  const need = new Set<string>();
+  for (const id of sel) {
+    const meta = catalogoOpcMeta?.get(id);
+    // Tipos planos (balotaje/plebiscito): la opción no tiene lema → vive en el votes.json
+    // base (zonasVotos), no en un shard de hoja. Saltear para no pedir `hoja/unica/.json` (404).
+    if (meta && meta.lemaId) {
+      const k = `${meta.contienda}/${meta.lemaId}`;
+      if (!lemasCargados.has(k)) need.add(k);
+    }
+  }
+  for (const k of need) {
+    try {
+      const res = await fetch(`${base}/data/${eleccion}/${departamento}/hoja/${k}.json`);
+      lemasCargados.add(k);
+      if (!res.ok) continue;
+      const shard = (await res.json()) as VotosShard;
+      for (const z of shard.zonas) {
+        const key = norm(z.geoId);
+        let mm = hojaVotos.get(key);
+        if (!mm) { mm = new Map(); hojaVotos.set(key, mm); }
+        for (const { opcionId, votos } of z.porOpcion) mm.set(opcionId, votos);
+      }
+    } catch {
+      lemasCargados.add(k);
+    }
+  }
+}
+
+/**
+ * Suma de votos de las opciones seleccionadas en una zona. Lee del shard de hoja
+ * (`hojaVotos`) y, si la opción no está ahí (tipos planos sin shard), del votes.json
+ * base (`zonasVotos`). El mismo `opcionId` es la clave de join en ambos.
+ */
+function selSumZona(key: string, sel: string[]): number {
+  const mm = hojaVotos.get(key);
+  const base = zonasVotos.get(key);
+  let s = 0;
+  for (const id of sel) s += mm?.get(id) ?? base?.get(id) ?? 0;
+  return s;
+}
+
+/** Desglose por hoja de la selección en una zona, agrupado por lema (Story 10.5). */
+function buildDesglose(key: string, sel: string[]): { grupos: DesgloseGrupo[]; total: number } {
+  const TOP = 10;
+  // Agrupar por (contienda, lema): aunque hoy la selección es de una sola contienda
+  // (el acordeón la limpia al cambiar), esto evita conflar odn+odd del mismo lema (AC6).
+  const byLema = new Map<string, { nombre: string; hojas: { id: string; label: string; votos: number }[]; total: number }>();
+  let total = 0;
+  for (const id of sel) {
+    const meta = catalogoOpcMeta?.get(id);
+    const votos = hojaVotos.get(key)?.get(id) ?? zonasVotos.get(key)?.get(id) ?? 0;
+    total += votos; // el total cuenta SIEMPRE (incluye opciones planas sin lema)
+    // Tipos planos (balotaje/plebiscito): sin lema → suman al total pero no arman grupo
+    // por-lema (la ficha ya muestra la opción por la vía base). Solo agrupamos hojas.
+    if (!meta || !meta.lemaId) continue;
+    const gk = `${meta.contienda}/${meta.lemaId}`;
+    let e = byLema.get(gk);
+    if (!e) { e = { nombre: meta.lemaNombre, hojas: [], total: 0 }; byLema.set(gk, e); }
+    e.hojas.push({ id, label: meta.hoja === 'vl' ? 'Voto al lema' : `Lista ${meta.hoja}`, votos });
+    e.total += votos;
+  }
+  const grupos: DesgloseGrupo[] = [...byLema.values()]
+    .filter((g) => g.total > 0)
+    .sort((a, b) => b.total - a.total)
+    .map((g) => {
+      const hojasOrd = g.hojas.filter((h) => h.votos > 0).sort((a, b) => b.votos - a.votos);
+      const meta = resolveParty(g.nombre);
+      return {
+        lemaNombre: g.nombre, sigla: meta.sigla, color: meta.color, total: g.total,
+        hojas: hojasOrd.slice(0, TOP), masN: Math.max(0, hojasOrd.length - TOP),
+      };
+    });
+  return { grupos, total };
+}
+
+/** Construye un FC coloreado por la selección según el modo (share/votos/heatmap). */
+function buildSeleccionFC(fc: FeatureCollection, sel: string[], modo: 'share' | 'votos' | 'heatmap'): FeatureCollection {
+  const perFeat = fc.features.map((f) => {
+    const key = norm(String((f.properties as { name: string }).name));
+    const sum = selSumZona(key, sel);
+    const validos = zonasValidos.get(key) ?? 0;
+    return { f, sum, validos };
+  });
+  const sums = perFeat.map((x) => x.sum);
+  const maxSum = Math.max(1, ...sums);
+  const nonZero = sums.filter((v) => v > 0).sort((a, b) => a - b); // para escala por cuantiles (votos)
+  return {
+    ...fc,
+    features: perFeat.map(({ f, sum, validos }) => {
+      let t = 0;
+      if (sum > 0) {
+        if (modo === 'share') t = validos > 0 ? Math.min(1, sum / validos) : 0;
+        else if (modo === 'heatmap') t = sum / maxSum;
+        else {
+          // votos: rango por cuantil sobre el subconjunto seleccionado (legacy: escala recalculada).
+          const r = nonZero.findIndex((v) => v >= sum);
+          t = nonZero.length ? (r + 1) / nonZero.length : 0;
+        }
+      }
+      // AC5: 0 votos de la selección pero CON urna → nivel más bajo de la escala (≠ gris-sin-dato).
+      const color = sum > 0
+        ? interpolateHex(INTENSIDAD_LIGHT, SEL_BASE, Math.max(0.1, t))
+        : validos > 0
+          ? interpolateHex(INTENSIDAD_LIGHT, SEL_BASE, 0.12)
+          : COLOR_SIN_DATOS;
+      return { ...f, properties: { ...f.properties, color, selVal: sum, selPct: validos > 0 ? sum / validos : 0 } };
+    }),
+  } as FeatureCollection;
+}
+
+/** Markers de valor (votos o %) por zona en modo selección — cumple "nunca solo por color". */
+function rebuildSelMarkers(fc: FeatureCollection, modo: 'share' | 'votos' | 'heatmap'): void {
+  if (!mlLib || !map.value || isPointNivel) return;
+  markers.forEach((mk) => mk.remove());
+  markers.length = 0;
+  for (const f of fc.features) {
+    const p = f.properties as { selVal?: number; selPct?: number };
+    if (!p.selVal || p.selVal <= 0) continue;
+    const [lng, lat] = centroid(f.geometry as Polygon | MultiPolygon);
+    const el = document.createElement('span');
+    el.className = 'zona-sigla';
+    el.setAttribute('aria-hidden', 'true');
+    el.textContent = modo === 'share' ? `${Math.round((p.selPct ?? 0) * 100)}%` : String(p.selVal);
+    markers.push(new mlLib!.Marker({ element: el }).setLngLat([lng, lat]).addTo(map.value!));
+  }
+}
+
+function buildSeleccionLegend(modo: 'share' | 'votos' | 'heatmap', n: number): LegendEntry[] {
+  const titulo =
+    modo === 'share' ? `% sobre válidos · ${n} lista${n === 1 ? '' : 's'}`
+    : modo === 'heatmap' ? `Votos (densidad) · ${n} lista${n === 1 ? '' : 's'}`
+    : `Votos (escala por selección) · ${n} lista${n === 1 ? '' : 's'}`;
+  return [
+    { sigla: '', nombre: `${titulo} — alto`, color: interpolateHex(INTENSIDAD_LIGHT, SEL_BASE, 1), votos: 0 },
+    { sigla: '', nombre: 'medio', color: interpolateHex(INTENSIDAD_LIGHT, SEL_BASE, 0.5), votos: 0 },
+    { sigla: '', nombre: 'bajo', color: interpolateHex(INTENSIDAD_LIGHT, SEL_BASE, 0.15), votos: 0 },
+  ];
+}
+
+/** Restaura el modo ganador desde un FC de selección (síncrono). */
+function restoreGanadorDesdeSeleccion(): void {
+  const m = map.value;
+  const fc = fcRef.value;
+  if (!m || !fc || !m.getSource('zonas')) return;
+  if (seleccionFCActive) {
+    (m.getSource('zonas') as GeoJSONSource).setData(fc);
+    seleccionFCActive = false;
+  }
+  m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
+  rebuildMarkers(fc);
+  legend.value = origLegend;
+}
+
+let seleccionGen = 0; // token de generación para cancelar applySeleccion obsoletos
+
+/** Entrada principal: colorea el mapa por la selección activa (asume no vacía). */
+async function applySeleccion(): Promise<void> {
+  const m = map.value;
+  const fc = fcRef.value;
+  if (!m || !fc || !m.getSource('zonas')) return;
+  const sel = seleccionActiva.value;
+  if (sel.length === 0) { restoreGanadorDesdeSeleccion(); return; }
+  const myGen = ++seleccionGen;
+  await ensureHojaShards(activeEleccion, activeDepartamento, sel);
+  if (myGen !== seleccionGen) return; // una llamada más nueva la dejó obsoleta
+  const modo = coloreoMode.value;
+  const selFC = buildSeleccionFC(fc, sel, modo);
+  (m.getSource('zonas') as GeoJSONSource).setData(selFC);
+  m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
+  seleccionFCActive = true;
+  // setData resetea los feature-state: re-aplicar el resaltado de la zona seleccionada.
+  const zonaSel = $selection.get().zona;
+  if (zonaSel) {
+    m.setFeatureState({ source: 'zonas', id: zonaSel }, { sel: true });
+    selectByName(zonaSel, fc); // refresca la ficha con el desglose ya que los shards están cargados
+  }
+  rebuildSelMarkers(selFC, modo);
+  legend.value = buildSeleccionLegend(modo, sel.length);
+}
+
+/** Cambia el modo de coloreo (escribe la URL; el subscribe re-aplica). */
+function setColoreo(modo: 'share' | 'votos' | 'heatmap'): void {
+  coloreoMode.value = modo;
+  commit({ modo });
 }
 
 /** Aplica modo ganador (Story 2.2): zonas donde gana opcion en color, resto gris. */
@@ -332,6 +638,9 @@ function setVista(mode: 'ganador' | 'intensidad'): void {
  * Carga datos de la elección de comparación y aplica el overlay de cambio (Story 4.3).
  * Zonas donde el ganador difiere de la elección base reciben feature-state vsChanged=true,
  * activando el borde naranja en la capa zonas-vs-changed.
+ *
+ * Story 6.5 (FR18): si existe tabla de equivalencias, usa sigla canónica para comparar
+ * (resuelve "Partido Colorado" ↔ "Colorado" = mismo partido, sigla PC).
  */
 async function applyComparisonOverlay(vs: string, baseEleccion: string, departamento: string, nivel: string): Promise<void> {
   const m = map.value;
@@ -339,34 +648,86 @@ async function applyComparisonOverlay(vs: string, baseEleccion: string, departam
   if (!m || !fc || status.value !== 'listo') return;
   try {
     const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+    // Intentar cargar tabla de equivalencias (Story 6.5 — FR18/FR32).
+    // Si no existe, la comparación cae a nombre literal (comportamiento Story 4.3).
+    interface EquivDoc {
+      mappings: { aId: string; bId: string; sigla: string; nombreA: string; nombreB: string }[];
+      soloA: string[];
+      soloB: string[];
+    }
+    let equivDoc: EquivDoc | null = null;
+    try {
+      const equivRes = await fetch(`${base}/data/hoja-equivalencias/${departamento}/${baseEleccion}-${vs}.json`);
+      if (equivRes.ok) equivDoc = (await equivRes.json()) as EquivDoc;
+    } catch { /* tabla no disponible — modo degradado */ }
+
+    // Mapa sigla → bId (opcionId en la elección de comparación) para normalizar.
+    // Ambas direcciones: aId→sigla y bId→sigla.
+    const siglaFromAId = new Map<string, string>(); // opcionId_base → sigla canónica
+    const siglaFromBId = new Map<string, string>(); // opcionId_vs → sigla canónica
+    if (equivDoc) {
+      for (const m of equivDoc.mappings) {
+        siglaFromAId.set(m.aId, m.sigla);
+        siglaFromBId.set(m.bId, m.sigla);
+      }
+    }
+
+    const vsVotesFile = nivel === 'circuito' ? 'votes-circuito.json'
+                      : nivel === 'localidad' ? 'votes-localidad.json'
+                      : nivel === 'barrio'    ? 'votes-barrio.json'
+                      : 'votes.json';
     const [votesRes, opcRes] = await Promise.all([
-      fetch(`${base}/data/${vs}/${departamento}/votes.json`),
+      fetch(`${base}/data/${vs}/${departamento}/${vsVotesFile}`),
       fetch(`${base}/data/${vs}/${departamento}/opciones.json`),
     ]);
     if (!votesRes.ok || !opcRes.ok) return;
     const votes = (await votesRes.json()) as VotosShard;
     const opcDoc = (await opcRes.json()) as OpcionesDoc;
     const vsNombrePorOpcion = new Map(opcDoc.opciones.map((o) => [o.opcionId, o.nombre]));
+
+    // vsWinnersMap: geoId normalizado → nombre del ganador en la elección vs
     vsWinnersMap = new Map();
+    // vsSiglaMap: geoId normalizado → sigla canónica del ganador en la elección vs
+    const vsSiglaMap = new Map<string, string>();
     for (const z of votes.zonas) {
       if (z.porOpcion.length > 0) {
-        vsWinnersMap.set(norm(z.geoId), vsNombrePorOpcion.get(z.ganadorOpcionId) ?? z.ganadorOpcionId);
+        const vsNombre = vsNombrePorOpcion.get(z.ganadorOpcionId) ?? z.ganadorOpcionId;
+        vsWinnersMap.set(norm(z.geoId), vsNombre);
+        // Sigla: desde la tabla de equiv si existe, sino desde resolveParty
+        const sigla = siglaFromBId.get(z.ganadorOpcionId) ?? resolveParty(vsNombre).sigla;
+        vsSiglaMap.set(norm(z.geoId), sigla);
       }
     }
+
     // Activar feature-state vsChanged para zonas con ganador distinto.
+    // Con tabla: compara por sigla canónica. Sin tabla: compara por resolveParty sigla (fallback seguro).
     for (const f of fc.features) {
       const name = String((f.properties as { name: string }).name);
       const baseNombre = String((f.properties as { nombre?: string }).nombre ?? '');
-      const vsNombre = vsWinnersMap.get(norm(name)) ?? null;
-      const changed = vsNombre !== null && baseNombre !== '' && baseNombre !== vsNombre;
+      const baseOpcionId = String((f.properties as { ganadorOpcionId?: string }).ganadorOpcionId ?? '');
+      const vsGeoNorm = norm(name);
+      if (!vsWinnersMap.has(vsGeoNorm) || !baseNombre) {
+        m.setFeatureState({ source: 'zonas', id: name }, { vsChanged: false });
+        continue;
+      }
+      // Sigla del ganador en la elección base
+      const baseSigla = siglaFromAId.get(baseOpcionId) ?? resolveParty(baseNombre).sigla;
+      // Sigla del ganador en la elección vs
+      const vsSigla = vsSiglaMap.get(vsGeoNorm) ?? '';
+      const changed = baseSigla !== '' && vsSigla !== '' && baseSigla !== vsSigla;
       m.setFeatureState({ source: 'zonas', id: name }, { vsChanged: changed });
     }
-    // Marcar continuidad en leyenda: partidos sin presencia en la elección de comparación.
-    const vsNombres = new Set([...vsWinnersMap.values()]);
+
+    // Leyenda: marcar partidos sin presencia en la elección de comparación.
+    // Con tabla: usar sigla canónica para detectar continuidad.
+    // Sin tabla: comparar por resolveParty sigla.
+    const vsSiglas = new Set([...vsSiglaMap.values()]);
     const year = baseEleccion.match(/\d{4}/)?.[0] ?? baseEleccion;
-    legend.value = origLegend.map((entry) =>
-      vsNombres.has(entry.nombre) ? entry : { ...entry, nombre: `${entry.nombre} (solo ${year})` },
-    );
+    legend.value = origLegend.map((entry) => {
+      const entrySigla = resolveParty(entry.nombre).sigla;
+      return vsSiglas.has(entrySigla) ? entry : { ...entry, nombre: `${entry.nombre} (solo ${year})` };
+    });
   } catch {
     // Degradación silenciosa: si no hay datos de comparación, el mapa sigue normal.
   }
@@ -417,10 +778,10 @@ function applyDualOpcionView(aId: string, bId: string): void {
     (m.getSource('zonas') as GeoJSONSource).setData(fc);
     intensidadActive = false;
   }
-  // Markers: sigla del ganador local
+  // Markers: sigla del ganador local (omitido en nivel circuito — Points no tienen centroide de polígono)
   markers.forEach((mk) => mk.remove());
   markers.length = 0;
-  if (mlLib && m) {
+  if (mlLib && m && !isPointNivel) {
     for (const f of fc.features) {
       const name = String((f.properties as { name: string }).name);
       const key = norm(name);
@@ -468,11 +829,26 @@ async function reloadData(eleccion: string, departamento: string, nivel: string)
   // Resetear modo intensidad al cambiar de departamento (AC Story 2.3).
   intensidadActive = false;
   vistaMode.value = 'ganador';
+  // Epic 10: resetear caches de hojas (el catálogo/shards son por elección×depto).
+  catalogoOpcMeta = null;
+  catalogoPromise = null;
+  hojaVotos = new Map();
+  lemasCargados = new Set();
+  hojaGeoPromise = null; // Story 7.8: re-cargar el consolidado hoja-{nivel} al cambiar nivel/depto
+  seleccionFCActive = false;
   try {
     const { fc, bounds } = await loadData(eleccion, departamento, nivel);
     // Esperar a que la fuente esté lista (puede que el mapa aún esté cargando).
     if (m.getSource('zonas')) {
       (m.getSource('zonas') as GeoJSONSource).setData(fc);
+    }
+    // Alternar visibilidad entre capas fill/line (poligonos) y circle (puntos) según nivel.
+    if (m.getLayer('zonas-fill')) {
+      m.setLayoutProperty('zonas-fill', 'visibility', isPointNivel ? 'none' : 'visible');
+      m.setLayoutProperty('zonas-line', 'visibility', isPointNivel ? 'none' : 'visible');
+    }
+    if (m.getLayer('zonas-circle')) {
+      m.setLayoutProperty('zonas-circle', 'visibility', isPointNivel ? 'visible' : 'none');
     }
     m.fitBounds(bounds, { padding: 24 });
     rebuildMarkers(fc);
@@ -492,6 +868,9 @@ async function reloadData(eleccion: string, departamento: string, nivel: string)
     }
     // Reaplicar filtro de opción si había uno activo al cambiar de departamento (Story 2.2).
     applyOpcionFilter(sel.opcion);
+    // Epic 10: reaplicar coloreo por selección de hojas si sigue activo (Story 10.4).
+    seleccionActiva.value = [...sel.seleccion];
+    if (sel.seleccion.length > 0) await applySeleccion();
     status.value = 'listo';
     // Reaplicar modo comparación si sigue activo (Stories 4.3/4.4).
     const cmp = $comparison.get();
@@ -519,6 +898,9 @@ function selectByName(name: string, fc: FeatureCollection): void {
     const pctOpcionActiva = opcionId && validos > 0
       ? ((zonasVotos.get(key)?.get(opcionId) ?? 0) / validos) * 100
       : null;
+    // Epic 10 (Story 10.5): desglose por hoja de la selección en esta zona.
+    const sel = seleccionActiva.value;
+    const desg = sel.length > 0 ? buildDesglose(key, sel) : null;
     selected.value = {
       geoId: String(p.name),
       sigla: String(p.sigla),
@@ -531,12 +913,17 @@ function selectByName(name: string, fc: FeatureCollection): void {
       anulados: noP.anulados,
       observados: noP.observados,
       pctOpcionActiva,
+      seleccionTotal: desg?.total,
+      seleccionPct: desg && validos > 0 ? (desg.total / validos) * 100 : undefined,
+      desglose: desg?.grupos,
+      esCiudadGrande: ciudadesGrandesSet.size > 0 && ciudadesGrandesSet.has(norm(String(p.name))) && !(props.availableLevels ?? []).includes('barrio'),
     };
   } else if (p) {
     selected.value = {
       geoId: String(p.name), sigla: '', nombre: 'Sin datos', color: '#e5e7eb',
       votoGanador: 0, validos: 0, pct: 0, enBlanco: 0, anulados: 0, observados: 0,
       pctOpcionActiva: null,
+      esCiudadGrande: ciudadesGrandesSet.size > 0 && ciudadesGrandesSet.has(norm(String(p.name))) && !(props.availableLevels ?? []).includes('barrio'),
     };
   }
 }
@@ -556,13 +943,20 @@ function applySelection(zona: string | null): void {
 }
 $selection.subscribe((s) => {
   opcionActiva.value = s.opcion;
+  seleccionActiva.value = [...s.seleccion];
+  if (s.modo === 'share' || s.modo === 'votos' || s.modo === 'heatmap') coloreoMode.value = s.modo;
   applySelection(s.zona);
-  applyOpcionFilter(s.opcion);
+  if (s.seleccion.length > 0) {
+    void applySeleccion(); // Epic 10: coloreo por selección múltiple de hojas
+  } else {
+    if (seleccionFCActive) restoreGanadorDesdeSeleccion(); // restaurar desde el FC de selección
+    applyOpcionFilter(s.opcion);
+  }
 });
 
 /** Resuelve el nivel efectivo: si el pedido por URL no está disponible para el depto, usa el primero disponible. */
-function resolveNivel(departamento: string, urlLevel: NivelGeografico): NivelGeografico {
-  const avail = DEPT_AVAIL[departamento] ?? (['zona'] as NivelGeografico[]);
+function resolveNivel(urlLevel: NivelGeografico): NivelGeografico {
+  const avail = props.availableLevels ?? (['zona'] as NivelGeografico[]);
   return avail.includes(urlLevel) ? urlLevel : avail[0];
 }
 
@@ -574,7 +968,7 @@ onMounted(async () => {
   // Suscribir $level para reaccionar a cambios de nivel (clic en LevelSelector).
   // Solo recargar si el nivel es distinto al activo y está disponible para este depto.
   unsubLevel = $level.subscribe((newLevel) => {
-    const resolved = resolveNivel(activeDepartamento, newLevel);
+    const resolved = resolveNivel(newLevel);
     if (resolved !== activeNivel && map.value) {
       activeNivel = resolved;
       void reloadData(activeEleccion, activeDepartamento, resolved);
@@ -599,7 +993,7 @@ onMounted(async () => {
     mlLib = await import('maplibre-gl');
     // Resolver nivel desde URL ($level) respetando disponibilidad del depto.
     const urlLevel = $level.get();
-    const geoNivel = resolveNivel(props.departamento, urlLevel);
+    const geoNivel = resolveNivel(urlLevel);
     activeNivel = geoNivel;
     // Si el nivel efectivo difiere del de la URL, corregir la URL silenciosamente (AC4: Rivera).
     if (geoNivel !== urlLevel) commit({ level: geoNivel });
@@ -616,6 +1010,7 @@ onMounted(async () => {
       attributionControl: false,
       dragRotate: false,
       pitchWithRotate: false,
+      preserveDrawingBuffer: true, // permite canvas.toDataURL() para export PNG (Story 6.2)
     });
     map.value = m;
 
@@ -642,6 +1037,27 @@ onMounted(async () => {
           'line-width': ['case', ['boolean', ['feature-state', 'sel'], false], 2.5, 0],
         },
       });
+      // Nivel circuito (Story 6.3): burbujas de punto, visibles solo cuando nivel='circuito'.
+      m.addLayer({
+        id: 'zonas-circle',
+        type: 'circle',
+        source: 'zonas',
+        layout: { visibility: isPointNivel ? 'visible' : 'none' },
+        paint: {
+          'circle-color': ['get', 'color'],
+          'circle-radius': 5,
+          'circle-opacity': 0.85,
+          'circle-stroke-color': ['case', ['boolean', ['feature-state', 'sel'], false], (isDark ? '#E8ECF6' : '#111827'), '#ffffff'],
+          'circle-stroke-width': ['case', ['boolean', ['feature-state', 'sel'], false], 2.5, 1],
+        },
+      });
+
+      // En nivel circuito la capa fill no renderiza Points, pero ocultarla explícitamente
+      // evita que feature-states erróneos intenten aplicarse.
+      if (isPointNivel) {
+        m.setLayoutProperty('zonas-fill', 'visibility', 'none');
+        m.setLayoutProperty('zonas-line', 'visibility', 'none');
+      }
 
       rebuildMarkers(fc);
       fcRef.value = fc;
@@ -654,8 +1070,23 @@ onMounted(async () => {
       m.on('mouseenter', 'zonas-fill', () => { m.getCanvas().style.cursor = 'pointer'; });
       m.on('mouseleave', 'zonas-fill', () => { m.getCanvas().style.cursor = ''; });
 
+      m.on('click', 'zonas-circle', (e) => {
+        const f = e.features?.[0];
+        if (!f) return;
+        commit({ zona: String((f.properties as { name: string }).name) });
+      });
+      m.on('mouseenter', 'zonas-circle', () => { m.getCanvas().style.cursor = 'pointer'; });
+      m.on('mouseleave', 'zonas-circle', () => { m.getCanvas().style.cursor = ''; });
+
       applySelection($selection.get().zona);
       applyOpcionFilter($selection.get().opcion);
+      // Epic 10: si la URL ya traía ?sel=, colorear por la selección de hojas (Story 10.4).
+      {
+        const initSel = $selection.get();
+        seleccionActiva.value = [...initSel.seleccion];
+        if (initSel.modo === 'share' || initSel.modo === 'votos' || initSel.modo === 'heatmap') coloreoMode.value = initSel.modo;
+        if (initSel.seleccion.length > 0) void applySeleccion();
+      }
       status.value = 'listo';
       // Aplicar modo comparación si la URL ya traía ?vs= o ?a=&b= (Stories 4.3/4.4).
       const initCmp = $comparison.get();
@@ -677,7 +1108,7 @@ onMounted(async () => {
     if (view.eleccion !== activeEleccion || view.departamento !== activeDepartamento) {
       activeEleccion = view.eleccion;
       activeDepartamento = view.departamento;
-      const newNivel = resolveNivel(view.departamento, view.level);
+      const newNivel = resolveNivel(view.level);
       activeNivel = newNivel;
       if (newNivel !== view.level) commit({ level: newNivel });
       void reloadData(view.eleccion, view.departamento, newNivel);
@@ -726,6 +1157,19 @@ onUnmounted(() => {
         type="button"
         @click="setVista('intensidad')"
       >Intensidad</button>
+    </div>
+
+    <!-- Conmutador de modo para selección múltiple de hojas (Epic 10, Story 10.4) -->
+    <div v-if="seleccionActiva.length > 0" class="vista-toggle" role="group" aria-label="Modo de coloreo del mapa">
+      <button
+        v-for="mo in (['share', 'votos', 'heatmap'] as const)"
+        :key="mo"
+        class="vista-toggle__btn"
+        :class="{ 'vista-toggle__btn--activo': coloreoMode === mo }"
+        :aria-pressed="coloreoMode === mo"
+        type="button"
+        @click="setColoreo(mo)"
+      >{{ mo === 'share' ? 'Share %' : mo === 'votos' ? 'Votos' : 'Heatmap' }}</button>
     </div>
 
     <MapLegend :entradas="legend" :sin-datos="sinDatos" />

@@ -1,0 +1,72 @@
+[
+  {
+    "serie": "PAA",
+    "localidad": "Trinidad",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "PAB",
+    "localidad": "Arroyo Malo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "PAC",
+    "localidad": "Andresito",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "PAD",
+    "localidad": "Manantiales",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "PBA",
+    "localidad": "Trinidad",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "PBB",
+    "localidad": "La Casilla",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "PBC",
+    "localidad": "La Casilla",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "PBD",
+    "localidad": "Ismael Cortinas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "PCA",
+    "localidad": "Juan José Castro",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "PCB",
+    "localidad": "Juan José Castro",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "PCC",
+    "localidad": "Chamangá",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "PCD",
+    "localidad": "Chamangá",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "PCE",
+    "localidad": "Cerro Colorado",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "PCF",
+    "localidad": "Cerro Colorado",
+    "tipo": "1:1"
+  }
+]

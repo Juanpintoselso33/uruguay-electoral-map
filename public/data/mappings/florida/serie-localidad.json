@@ -1,0 +1,242 @@
+[
+  {
+    "serie": "QAA",
+    "localidad": "Florida",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QBA",
+    "localidad": "La Cruz",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QBB",
+    "localidad": "Mendoza Grande",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QBC",
+    "localidad": "Arias",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QBD",
+    "localidad": "San Gabriel",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QBE",
+    "localidad": "Juncal",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QBF",
+    "localidad": "Mendoza Chico",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QBG",
+    "localidad": "La Macana",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QBH",
+    "localidad": "Santa Teresa",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QBI",
+    "localidad": "Pintado",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QCA",
+    "localidad": "Sarandí Grande",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QCB",
+    "localidad": "Sauce De Maciel",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QCC",
+    "localidad": "Cuchilla Santo Domin",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QCD",
+    "localidad": "Puntas De Maciel",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QCE",
+    "localidad": "GoñI",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QCF",
+    "localidad": "Puntas De Maciel",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QDA",
+    "localidad": "Chamizo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QDB",
+    "localidad": "La Escobilla",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QDC",
+    "localidad": "Casupá",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QDD",
+    "localidad": "Fray Marcos",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QDE",
+    "localidad": "Reboledo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QEA",
+    "localidad": "Tornero",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QEB",
+    "localidad": "Tornero",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QEC",
+    "localidad": "Talita",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QED",
+    "localidad": "San GeróNimo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QEE",
+    "localidad": "Casupá",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QEF",
+    "localidad": "Cerro Colorado",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QEG",
+    "localidad": "Cerro Colorado",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QFA",
+    "localidad": "Sauce Del Yi",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QFB",
+    "localidad": "Montecoral",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QFC",
+    "localidad": "Polanco Del Yi",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QFD",
+    "localidad": "EstacióN Gallinal",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QFE",
+    "localidad": "Molles De Timote",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QFF",
+    "localidad": "Polanco Del Yi",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QGA",
+    "localidad": "Sauce Del Yi",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QGC",
+    "localidad": "Cerro Chato",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QGD",
+    "localidad": "Nico PéRez",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QGE",
+    "localidad": "Illescas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QGF",
+    "localidad": "Illescas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QGG",
+    "localidad": "Mansavillagra",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QGH",
+    "localidad": "Cerro Chato",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QGI",
+    "localidad": "Las Chilcas",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QHA",
+    "localidad": "25 De Mayo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QHB",
+    "localidad": "Berrondo",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QHC",
+    "localidad": "Villa Vieja",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QHE",
+    "localidad": "Cardal",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QHF",
+    "localidad": "25 De Agosto",
+    "tipo": "1:1"
+  },
+  {
+    "serie": "QHG",
+    "localidad": "Independencia",
+    "tipo": "1:1"
+  }
+]

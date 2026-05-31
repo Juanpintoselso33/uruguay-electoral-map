@@ -38,8 +38,8 @@ const filas = votes.zonas
 
 const fmt = (n: number): string => n.toLocaleString('es-UY');
 
-const nivelSingular = votes.nivel === 'zona' ? 'barrio' : votes.nivel === 'serie' ? 'serie' : votes.nivel;
-const nivelPlural = votes.nivel === 'zona' ? 'barrios' : votes.nivel === 'serie' ? 'series' : `${votes.nivel}s`;
+const nivelSingular = votes.nivel === 'zona' ? 'barrio' : votes.nivel === 'serie' ? 'serie' : votes.nivel === 'localidad' ? 'localidad' : votes.nivel;
+const nivelPlural = votes.nivel === 'zona' ? 'barrios' : votes.nivel === 'serie' ? 'series' : votes.nivel === 'localidad' ? 'localidades' : `${votes.nivel}s`;
 const nivelCol = nivelSingular.charAt(0).toUpperCase() + nivelSingular.slice(1);
 ---
 

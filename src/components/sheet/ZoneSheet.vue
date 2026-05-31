@@ -4,6 +4,14 @@
  * Muestra ganador, votos, %, blanco/anulados/observados para la zona seleccionada.
  */
 
+interface DesgloseGrupo {
+  lemaNombre: string;
+  sigla: string;
+  color: string;
+  total: number;
+  hojas: { id: string; label: string; votos: number }[];
+  masN: number;
+}
 interface SelInfo {
   geoId: string;
   sigla: string;
@@ -16,6 +24,11 @@ interface SelInfo {
   anulados: number;
   observados: number;
   pctOpcionActiva: number | null;
+  // Epic 10 (Story 10.5): desglose por hoja de la selección en esta zona.
+  seleccionTotal?: number;
+  seleccionPct?: number;
+  desglose?: DesgloseGrupo[];
+  esCiudadGrande?: boolean;
 }
 
 const props = defineProps<{
@@ -59,7 +72,38 @@ function fmt(n: number): string {
         >✕</button>
       </header>
 
+      <p v-if="sel.esCiudadGrande" class="zone-sheet__degradacion">
+        Vista por barrio no disponible aún — mostrando resultado agregado de la ciudad
+      </p>
+
       <div class="zone-sheet__body">
+        <!-- Desglose por hoja de la selección (Epic 10, Story 10.5) -->
+        <template v-if="sel.desglose && sel.desglose.length > 0">
+          <div class="zone-sheet__sel-resumen">
+            <span class="zone-sheet__sel-label">Tu selección en esta zona</span>
+            <span class="zone-sheet__sel-num">
+              <strong>{{ fmt(sel.seleccionTotal ?? 0) }}</strong> votos
+              <template v-if="sel.seleccionPct !== undefined">· {{ sel.seleccionPct.toFixed(1) }}%</template>
+            </span>
+          </div>
+          <div class="zone-sheet__desglose">
+            <div v-for="g in sel.desglose" :key="g.lemaNombre" class="zone-sheet__grupo">
+              <div class="zone-sheet__grupo-head">
+                <span class="zone-sheet__swatch zone-sheet__swatch--sm" :style="{ background: g.color }" aria-hidden="true"></span>
+                <span class="zone-sheet__grupo-sigla">{{ g.sigla }}</span>
+                <span class="zone-sheet__grupo-nombre">{{ g.lemaNombre }}</span>
+                <span class="zone-sheet__grupo-total">{{ fmt(g.total) }}</span>
+              </div>
+              <ul class="zone-sheet__hojas">
+                <li v-for="h in g.hojas" :key="h.id" class="zone-sheet__hoja">
+                  <span>{{ h.label }}</span><span>{{ fmt(h.votos) }}</span>
+                </li>
+                <li v-if="g.masN > 0" class="zone-sheet__hoja zone-sheet__hoja--mas">y {{ g.masN }} más…</li>
+              </ul>
+            </div>
+          </div>
+        </template>
+
         <!-- Ganador destacado -->
         <div class="zone-sheet__ganador">
           <span
@@ -258,6 +302,31 @@ function fmt(n: number): string {
   color: #3b82f6;
 }
 
+/* Desglose por hoja de la selección (Story 10.5) */
+.zone-sheet__sel-resumen {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0.5rem 0.625rem;
+  background: var(--color-highlight);
+  border-radius: 0.375rem;
+  margin-bottom: 0.5rem;
+}
+.zone-sheet__sel-label { font-size: 0.75rem; color: var(--color-ink-soft); }
+.zone-sheet__sel-num { font-size: 0.8125rem; color: var(--color-ink); }
+.zone-sheet__sel-num strong { font-size: 1rem; }
+.zone-sheet__desglose { margin-bottom: 0.75rem; }
+.zone-sheet__grupo { border-top: 1px solid var(--color-surface-2); padding: 0.375rem 0; }
+.zone-sheet__grupo-head {
+  display: flex; align-items: center; gap: 0.375rem; font-size: 0.8125rem; font-weight: 600; color: var(--color-ink);
+}
+.zone-sheet__grupo-nombre { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--color-ink-soft); font-weight: 400; }
+.zone-sheet__grupo-total { font-weight: 700; }
+.zone-sheet__swatch--sm { width: 0.75rem; height: 0.75rem; border-radius: 0.125rem; box-shadow: inset 0 0 0 1px rgba(0,0,0,.1); flex-shrink: 0; }
+.zone-sheet__hojas { list-style: none; margin: 0.125rem 0 0; padding: 0 0 0 1.125rem; }
+.zone-sheet__hoja { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--color-ink-soft); padding: 0.0625rem 0; }
+.zone-sheet__hoja--mas { color: var(--color-ink-faint); font-style: italic; }
+
 .zone-sheet__dl {
   display: flex;
   flex-direction: column;
@@ -292,6 +361,14 @@ function fmt(n: number): string {
 .zone-sheet__fuente {
   font-size: 0.6875rem;
   color: var(--color-ink-faint);
+  margin: 0;
+}
+
+.zone-sheet__degradacion {
+  font-size: 0.6875rem;
+  color: var(--color-ink-soft);
+  font-style: italic;
+  padding: 0.375rem 1rem 0;
   margin: 0;
 }
 </style>

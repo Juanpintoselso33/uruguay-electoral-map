@@ -1,51 +1,88 @@
 ---
+import { readFileSync } from 'node:fs';
 import type { NivelGeografico } from '../../lib/contracts';
 import Base from '../../layouts/Base.astro';
 import ChoroplethMap from '../../components/map/ChoroplethMap.vue';
 import DataTable from '../../components/a11y/DataTable.astro';
 import OpcionSelector from '../../components/selectors/OpcionSelector.vue';
+import OpcionAccordion from '../../components/selectors/OpcionAccordion.vue';
 import LevelSelector from '../../components/selectors/LevelSelector.vue';
 import EleccionSelector from '../../components/selectors/EleccionSelector.vue';
 import Sello from '../../components/ui/Sello.astro';
 import ShareButton from '../../components/share/ShareButton.vue';
+import ExportButton from '../../components/share/ExportButton.vue';
+import MapScreenshotButton from '../../components/share/MapScreenshotButton.vue';
 import CompareControls from '../../components/map/CompareControls.vue';
+import deptsConfig from '../../config/departments.json';
 
-// Niveles disponibles por departamento (espeja DEPT_AVAIL en ChoroplethMap.vue).
-const DEPT_AVAIL: Record<string, NivelGeografico[]> = {
-  montevideo: ['zona'],
-  rivera:     ['serie'],
-};
-
-// Elecciones disponibles por departamento (espeja getStaticPaths).
-const DEPT_ELECTIONS: Record<string, string[]> = {
-  montevideo: ['internas-2024', 'nacionales-2019'],
-  rivera:     ['internas-2024'],
-};
+type DeptEntry = { id: string; label: string; levels: NivelGeografico[]; elecciones: string[] };
+const DEPTS = deptsConfig as DeptEntry[];
+const DEPT_MAP = Object.fromEntries(DEPTS.map((d) => [d.id, d]));
 
 const ELECCION_LABELS: Record<string, string> = {
-  'internas-2024':  'Elecciones Internas 2024',
+  'internas-2019':   'Elecciones Internas 2019',
+  'internas-2024':   'Elecciones Internas 2024',
+  'nacionales-2014': 'Elecciones Nacionales 2014',
   'nacionales-2019': 'Elecciones Nacionales 2019',
+  'nacionales-2024': 'Elecciones Nacionales 2024',
+  'balotaje-2014':   'Balotaje 2014',
+  'balotaje-2019':   'Balotaje 2019',
+  'balotaje-2024':   'Balotaje 2024',
+  'plebiscito-allanamientos-2024':    'Plebiscito Allanamientos Nocturnos 2024',
+  'plebiscito-seguridad-social-2024': 'Plebiscito Seguridad Social 2024',
+  'departamentales-2020':             'Elecciones Departamentales y Municipales 2020',
+  'departamentales-2025':             'Elecciones Departamentales y Municipales 2025',
+  'referendum-luc-2022':             'Referéndum LUC 2022',
 };
 
 export function getStaticPaths() {
-  return [
-    { params: { eleccion: 'internas-2024',  departamento: 'montevideo' } },
-    { params: { eleccion: 'internas-2024',  departamento: 'rivera'     } },
-    { params: { eleccion: 'nacionales-2019', departamento: 'montevideo' } },
-  ];
+  const depts = deptsConfig as DeptEntry[];
+  return depts.flatMap((d) =>
+    d.elecciones.map((e) => ({ params: { eleccion: e, departamento: d.id } })),
+  );
 }
 
 const { eleccion, departamento } = Astro.params;
-const availableLevels: NivelGeografico[] = DEPT_AVAIL[departamento] ?? ['zona'];
-const availableElecciones: string[] = DEPT_ELECTIONS[departamento] ?? [eleccion];
-const deptLabel = departamento.charAt(0).toUpperCase() + departamento.slice(1);
+const deptMeta = DEPT_MAP[departamento] ?? { id: departamento, label: departamento, levels: ['zona'], elecciones: [eleccion] };
+const availableLevels: NivelGeografico[] = deptMeta.levels;
+const availableElecciones: string[] = deptMeta.elecciones;
+const deptLabel = deptMeta.label;
 
-// Para el nav de departamentos: preservar la elección actual si el destino la tiene, si no internas-2024.
-const ALL_DEPTOS = ['montevideo', 'rivera'] as const;
-function eleccionParaDepto(dept: string): string {
-  return (DEPT_ELECTIONS[dept] ?? []).includes(eleccion) ? eleccion : 'internas-2024';
+function eleccionParaDepto(dept: DeptEntry): string {
+  return dept.elecciones.includes(eleccion) ? eleccion : 'internas-2024';
 }
+
+// Elecciones con catálogo de opción (Epic 10) → acordeón. internas-2024 = los 19 deptos
+// (Montevideo por barrio, interior por serie); nacionales-2019/2024 = solo Montevideo (HOJA);
+// balotaje/plebiscito de Montevideo = escalera PLANA (Story 10.10): el acordeón degrada a
+// lista de opciones con checkbox (candidatos / Sí-No), sin árbol de HOJA.
+const esFlatMontevideo =
+  departamento === 'montevideo' &&
+  (eleccion.startsWith('balotaje-') || eleccion.startsWith('plebiscito-') || eleccion.startsWith('referendum-'));
+// departamentales-2025/2020 (todos los depts): 3 contiendas paralelas (intendente/junta/municipio) → acordeón.
+const esDepartamentales2025 = eleccion === 'departamentales-2025';
+const esDepartamentales2020 = eleccion === 'departamentales-2020';
+const tieneCatalogoHoja =
+  eleccion === 'internas-2024' ||
+  eleccion === 'internas-2019' ||         // HOJA (ODN degradada + ODD), los 19 deptos (Story 7.7)
+  eleccion === 'nacionales-2024' ||
+  eleccion === 'nacionales-2014' ||       // HOJA degradada lema→hoja, los 19 deptos (Story 7.7)
+  (eleccion === 'nacionales-2019' && departamento === 'montevideo') ||
+  esFlatMontevideo ||
+  esDepartamentales2025 ||
+  esDepartamentales2020;
+
 const eleccionLabel = ELECCION_LABELS[eleccion] ?? eleccion;
+
+// Story 7.5: pregunta del plebiscito como contexto (leída del opciones.json en build).
+let preguntaPlebiscito: string | null = null;
+if (eleccion.startsWith('plebiscito-') || eleccion.startsWith('referendum-')) {
+  try {
+    const opc = JSON.parse(readFileSync(`public/data/${eleccion}/${departamento}/opciones.json`, 'utf8'));
+    preguntaPlebiscito = typeof opc.pregunta === 'string' ? opc.pregunta : null;
+  } catch { /* sin opciones.json → sin banner */ }
+}
+
 const titulo = `${deptLabel} — ${eleccionLabel} | Uruguay Electoral Map`;
 const descripcion = `Resultados por zona del departamento ${deptLabel} en las ${eleccionLabel}.`;
 const ogImagePath = `/og/${eleccion}/${departamento}.png`;
@@ -58,21 +95,27 @@ const canonicalPath = `/${eleccion}/${departamento}`;
   ogImage={ogImagePath}
   canonical={canonicalPath}
 >
-  <main class="mx-auto max-w-3xl">
+  <main id="main-content" class="mx-auto max-w-3xl">
     <header class="px-4 pt-4 flex items-start justify-between gap-2">
       <div>
-        <h1 class="text-xl font-bold capitalize">{departamento}</h1>
-        <p class="text-sm text-gray-600 dark:text-slate-400">{eleccion}</p>
+        <h1 class="text-xl font-bold">{deptLabel}</h1>
+        <p class="text-sm text-gray-600 dark:text-slate-400">{eleccionLabel}</p>
       </div>
       <ShareButton client:idle />
     </header>
+    <!-- Pregunta del plebiscito/referéndum como contexto (Story 7.5) -->
+    {preguntaPlebiscito && (
+      <p class="mx-4 mt-2 rounded-md border-l-4 border-emerald-500 bg-emerald-50 px-3 py-2 text-sm text-gray-700 dark:bg-emerald-950/40 dark:text-slate-200">
+        <span class="font-semibold">Se vota Sí o No a:</span> {preguntaPlebiscito}
+      </p>
+    )}
     <!-- Selector de departamento — links Astro (ClientRouter navega sin reinicializar el mapa) -->
-    <nav class="px-4 py-2 flex gap-3 text-sm border-b border-gray-200 dark:border-slate-700">
-      {ALL_DEPTOS.map((dept) => (
+    <nav class="px-4 py-2 flex flex-wrap gap-x-3 gap-y-1 text-sm border-b border-gray-200 dark:border-slate-700">
+      {DEPTS.filter((d) => d.elecciones.includes(eleccion) || d.id === departamento).map((dept) => (
         <a
-          href={`/${eleccionParaDepto(dept)}/${dept}`}
-          class={`underline ${departamento === dept ? 'font-bold' : 'text-gray-500 dark:text-slate-400'}`}
-        >{dept.charAt(0).toUpperCase() + dept.slice(1)}</a>
+          href={`/${eleccionParaDepto(dept)}/${dept.id}`}
+          class={`underline ${departamento === dept.id ? 'font-bold' : 'text-gray-500 dark:text-slate-400'}`}
+        >{dept.label}</a>
       ))}
     </nav>
     <!-- Selector de elección (Story 4.2) -->
@@ -92,14 +135,31 @@ const canonicalPath = `/${eleccion}/${departamento}`;
       />
     )}
     <!-- Selector de opción — isla fuera de transition:persist, se re-monta en navegación (Story 2.2) -->
-    <OpcionSelector client:idle eleccion={eleccion} departamento={departamento} />
+    {tieneCatalogoHoja
+      ? <OpcionAccordion client:idle eleccion={eleccion} departamento={departamento} />
+      : <OpcionSelector client:idle eleccion={eleccion} departamento={departamento} />}
     <!-- Selector de nivel geográfico (Story 2.5) -->
     <LevelSelector client:idle availableLevels={availableLevels} />
     <!-- transition:persist: el island MapLibre sobrevive la navegación entre departamentos (NFR1) -->
     <div id="map-persist" transition:persist>
-      <ChoroplethMap client:load eleccion={eleccion} departamento={departamento} />
+      <ChoroplethMap
+        client:load
+        eleccion={eleccion}
+        departamento={departamento}
+        availableLevels={availableLevels}
+      />
     </div>
     <DataTable eleccion={eleccion} departamento={departamento} />
+    <div class="px-4 py-2 flex gap-2 flex-wrap">
+      <ExportButton client:idle eleccion={eleccion} departamento={departamento} />
+      <MapScreenshotButton
+        client:idle
+        eleccion={eleccion}
+        departamento={departamento}
+        deptLabel={deptLabel}
+        eleccionLabel={eleccionLabel}
+      />
+    </div>
     <Sello eleccion={eleccion} departamento={departamento} />
   </main>
 </Base>

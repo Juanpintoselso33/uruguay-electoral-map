@@ -24,12 +24,9 @@ const BANNER_H = 90;
 const MAP_W = W - MAP_PAD * 2; // 1080
 const MAP_H = H - BANNER_H - MAP_PAD * 2; // 420
 
-// Rutas a generar (espeja getStaticPaths de [departamento].astro).
-const ROUTES = [
-  { eleccion: 'internas-2024',   departamento: 'montevideo' },
-  { eleccion: 'internas-2024',   departamento: 'rivera'     },
-  { eleccion: 'nacionales-2019', departamento: 'montevideo' },
-];
+// Rutas a generar — leídas del registry (src/config/departments.json).
+const DEPTS = JSON.parse(readFileSync(join(__dirname, '..', 'src', 'config', 'departments.json'), 'utf8'));
+const ROUTES = DEPTS.flatMap((d) => d.elecciones.map((e) => ({ eleccion: e, departamento: d.id })));
 
 // Colores oficiales (fuente de verdad: src/lib/party-colors.ts — copia inline para script ESM puro).
 const COLORES = {
