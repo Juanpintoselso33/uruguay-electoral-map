@@ -301,6 +301,9 @@ function applyOpcionFilter(opcionId: string | null): void {
   const fc = fcRef.value;
   if (!m || !fc || !m.getSource('zonas')) return;
   if (!opcionId) {
+    // No restaurar si el modo dual opcion está activo (Story 4.4).
+    const cmp = $comparison.get();
+    if (cmp.a && cmp.b) return;
     if (intensidadActive) {
       (m.getSource('zonas') as GeoJSONSource).setData(fc);
       intensidadActive = false;
@@ -382,6 +385,78 @@ function clearComparisonOverlay(): void {
 }
 
 /**
+ * Vista de contraste entre dos opciones de la misma elección (Story 4.4).
+ * Colorea cada zona según cuál de las dos opciones obtuvo más votos allí.
+ * Usa zonasVotos (ya cargado) — sin fetch adicional.
+ */
+function applyDualOpcionView(aId: string, bId: string): void {
+  const m = map.value;
+  const fc = fcRef.value;
+  if (!m || !fc || !m.getSource('zonas')) return;
+  const aNombre = opcNombreMap.get(aId) ?? aId;
+  const bNombre = opcNombreMap.get(bId) ?? bId;
+  const aMeta = resolveParty(aNombre);
+  const bMeta = resolveParty(bNombre);
+  for (const f of fc.features) {
+    const name = String((f.properties as { name: string }).name);
+    const key = norm(name);
+    const aVotos = zonasVotos.get(key)?.get(aId) ?? 0;
+    const bVotos = zonasVotos.get(key)?.get(bId) ?? 0;
+    const dualA = aVotos > 0 && aVotos >= bVotos;
+    const dualB = bVotos > 0 && bVotos > aVotos;
+    m.setFeatureState({ source: 'zonas', id: name }, { dualA, dualB });
+  }
+  m.setPaintProperty('zonas-fill', 'fill-color', [
+    'case',
+    ['boolean', ['feature-state', 'dualA'], false], aMeta.color,
+    ['boolean', ['feature-state', 'dualB'], false], bMeta.color,
+    COLOR_SIN_DATOS,
+  ]);
+  if (intensidadActive) {
+    (m.getSource('zonas') as GeoJSONSource).setData(fc);
+    intensidadActive = false;
+  }
+  // Markers: sigla del ganador local
+  markers.forEach((mk) => mk.remove());
+  markers.length = 0;
+  if (mlLib && m) {
+    for (const f of fc.features) {
+      const name = String((f.properties as { name: string }).name);
+      const key = norm(name);
+      const aVotos = zonasVotos.get(key)?.get(aId) ?? 0;
+      const bVotos = zonasVotos.get(key)?.get(bId) ?? 0;
+      if (aVotos === 0 && bVotos === 0) continue;
+      const winner = aVotos >= bVotos ? aMeta : bMeta;
+      const [lng, lat] = centroid(f.geometry as Polygon | MultiPolygon);
+      const el = document.createElement('span');
+      el.className = 'zona-sigla';
+      el.textContent = winner.sigla;
+      el.setAttribute('aria-hidden', 'true');
+      markers.push(new mlLib.Marker({ element: el }).setLngLat([lng, lat]).addTo(m));
+    }
+  }
+  legend.value = [
+    { sigla: aMeta.sigla, nombre: aNombre, color: aMeta.color, votos: 0 },
+    { sigla: bMeta.sigla, nombre: bNombre, color: bMeta.color, votos: 0 },
+  ];
+  vistaMode.value = 'ganador';
+}
+
+/** Limpia la vista dual opcion: restaura fill-color y leyenda (Story 4.4). */
+function clearDualOpcionView(): void {
+  const m = map.value;
+  const fc = fcRef.value;
+  if (!m || !fc || !m.getSource('zonas')) return;
+  for (const f of fc.features) {
+    const name = String((f.properties as { name: string }).name);
+    m.setFeatureState({ source: 'zonas', id: name }, { dualA: false, dualB: false });
+  }
+  m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
+  rebuildMarkers(fc);
+  legend.value = origLegend;
+}
+
+/**
  * Recarga datos en el mapa ya inicializado (sin re-init de MapLibre — NFR1).
  * Llamado desde el handler astro:after-swap cuando cambia el departamento/elección.
  */
@@ -417,10 +492,12 @@ async function reloadData(eleccion: string, departamento: string, nivel: string)
     // Reaplicar filtro de opción si había uno activo al cambiar de departamento (Story 2.2).
     applyOpcionFilter(sel.opcion);
     status.value = 'listo';
-    // Reaplicar overlay de comparación si sigue activo (Story 4.3).
-    const vs = $comparison.get().vs;
-    if (vs && vs !== eleccion) {
-      void applyComparisonOverlay(vs, eleccion, departamento, nivel);
+    // Reaplicar modo comparación si sigue activo (Stories 4.3/4.4).
+    const cmp = $comparison.get();
+    if (cmp.a && cmp.b) {
+      applyDualOpcionView(cmp.a, cmp.b);
+    } else if (cmp.vs && cmp.vs !== eleccion) {
+      void applyComparisonOverlay(cmp.vs, eleccion, departamento, nivel);
     }
   } catch (err) {
     status.value = 'error';
@@ -503,14 +580,17 @@ onMounted(async () => {
     }
   });
 
-  // Suscribir $comparison para entrar/salir del modo comparación (Story 4.3).
+  // Suscribir $comparison para entrar/salir de modos comparación (Stories 4.3/4.4).
   // hydrateStores (llamado en after-swap y bindToLocation) ya actualiza este store.
   unsubComparison = $comparison.subscribe((cmp) => {
     if (!map.value || status.value !== 'listo') return;
-    if (cmp.vs && cmp.vs !== activeEleccion) {
+    if (cmp.a && cmp.b) {
+      applyDualOpcionView(cmp.a, cmp.b);
+    } else if (cmp.vs && cmp.vs !== activeEleccion) {
       void applyComparisonOverlay(cmp.vs, activeEleccion, activeDepartamento, activeNivel);
     } else {
       clearComparisonOverlay();
+      clearDualOpcionView();
     }
   });
 
@@ -574,10 +654,12 @@ onMounted(async () => {
       applySelection($selection.get().zona);
       applyOpcionFilter($selection.get().opcion);
       status.value = 'listo';
-      // Aplicar overlay de comparación si la URL ya traía ?vs= (Story 4.3).
-      const initVs = $comparison.get().vs;
-      if (initVs && initVs !== props.eleccion) {
-        void applyComparisonOverlay(initVs, props.eleccion, props.departamento, activeNivel);
+      // Aplicar modo comparación si la URL ya traía ?vs= o ?a=&b= (Stories 4.3/4.4).
+      const initCmp = $comparison.get();
+      if (initCmp.a && initCmp.b) {
+        applyDualOpcionView(initCmp.a, initCmp.b);
+      } else if (initCmp.vs && initCmp.vs !== props.eleccion) {
+        void applyComparisonOverlay(initCmp.vs, props.eleccion, props.departamento, activeNivel);
       }
     });
   } catch (err) {
