@@ -1,0 +1,43 @@
+---
+/**
+ * Sello de origen y etapa del dato (Story 2.7).
+ * HTML estático (SSG): lee votes.json en build-time y muestra escrutinio real.
+ * Complementa la ficha ZoneSheet; visible sin interacción.
+ */
+import { readFileSync } from 'node:fs';
+import type { VotosShard } from '../../lib/contracts';
+
+interface Props {
+  eleccion: string;
+  departamento: string;
+}
+const { eleccion, departamento } = Astro.props;
+
+const votes = JSON.parse(
+  readFileSync(`public/data/${eleccion}/${departamento}/votes.json`, 'utf8'),
+) as VotosShard;
+
+const escrutinioLabel = votes.escrutinio === 'definitivo' ? 'definitivo' : votes.escrutinio;
+---
+
+<p class="sello">
+  Fuente:&nbsp;<a
+    class="sello__link"
+    href="https://www.corteelectoral.gub.uy/"
+    target="_blank"
+    rel="noopener"
+  >Corte Electoral Uruguay</a>&nbsp;·&nbsp;Escrutinio&nbsp;<strong>{escrutinioLabel}</strong>
+</p>
+
+<style>
+.sello {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  padding: 0.5rem 0.75rem 1rem;
+  margin: 0;
+}
+.sello__link {
+  color: #6b7280;
+  text-underline-offset: 2px;
+}
+</style>

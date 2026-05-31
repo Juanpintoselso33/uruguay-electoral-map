@@ -53,14 +53,14 @@ development_status:
   epic-1-retrospective: optional
 
   # ---- Epic 2: Explorar una elección a fondo ----
-  epic-2: in-progress
+  epic-2: done
   2-1-selector-eleccion-departamento: done
   2-2-selector-opcion-adaptativo: done
   2-3-toggle-vista-mapa: done
   2-4-ficha-zona-bottom-sheet: done
   2-5-control-nivel-geografico: done
   2-6-entrada-en-frio-progressive-disclosure: done
-  2-7-sello-origen-etapa-dato: backlog
+  2-7-sello-origen-etapa-dato: done
   epic-2-retrospective: optional
 
   # ---- Epic 3: Compartir y ser encontrado ----

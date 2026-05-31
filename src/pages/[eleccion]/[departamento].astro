@@ -5,6 +5,7 @@ import ChoroplethMap from '../../components/map/ChoroplethMap.vue';
 import DataTable from '../../components/a11y/DataTable.astro';
 import OpcionSelector from '../../components/selectors/OpcionSelector.vue';
 import LevelSelector from '../../components/selectors/LevelSelector.vue';
+import Sello from '../../components/ui/Sello.astro';
 
 // Niveles disponibles por departamento (espeja DEPT_AVAIL en ChoroplethMap.vue).
 const DEPT_AVAIL: Record<string, NivelGeografico[]> = {
@@ -44,5 +45,6 @@ const titulo = `${departamento} — ${eleccion}`;
       <ChoroplethMap client:load eleccion={eleccion} departamento={departamento} />
     </div>
     <DataTable eleccion={eleccion} departamento={departamento} />
+    <Sello eleccion={eleccion} departamento={departamento} />
   </main>
 </Base>
