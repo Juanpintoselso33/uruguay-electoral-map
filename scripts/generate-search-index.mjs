@@ -6,8 +6,9 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 
 const ROUTES = [
-  { eleccion: 'internas-2024', departamento: 'montevideo' },
-  { eleccion: 'internas-2024', departamento: 'rivera' },
+  { eleccion: 'internas-2024',   departamento: 'montevideo' },
+  { eleccion: 'internas-2024',   departamento: 'rivera'     },
+  { eleccion: 'nacionales-2019', departamento: 'montevideo' },
 ];
 
 const entries = [];

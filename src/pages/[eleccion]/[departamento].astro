@@ -14,18 +14,25 @@ const DEPT_AVAIL: Record<string, NivelGeografico[]> = {
   rivera:     ['serie'],
 };
 
+const ELECCION_LABELS: Record<string, string> = {
+  'internas-2024':  'Elecciones Internas 2024',
+  'nacionales-2019': 'Elecciones Nacionales 2019',
+};
+
 export function getStaticPaths() {
   return [
-    { params: { eleccion: 'internas-2024', departamento: 'montevideo' } },
-    { params: { eleccion: 'internas-2024', departamento: 'rivera' } },
+    { params: { eleccion: 'internas-2024',  departamento: 'montevideo' } },
+    { params: { eleccion: 'internas-2024',  departamento: 'rivera'     } },
+    { params: { eleccion: 'nacionales-2019', departamento: 'montevideo' } },
   ];
 }
 
 const { eleccion, departamento } = Astro.params;
 const availableLevels: NivelGeografico[] = DEPT_AVAIL[departamento] ?? ['zona'];
 const deptLabel = departamento.charAt(0).toUpperCase() + departamento.slice(1);
-const titulo = `${deptLabel} — Elecciones Internas 2024 | Uruguay Electoral Map`;
-const descripcion = `Resultados por zona del departamento ${deptLabel} en las Elecciones Internas 2024.`;
+const eleccionLabel = ELECCION_LABELS[eleccion] ?? eleccion;
+const titulo = `${deptLabel} — ${eleccionLabel} | Uruguay Electoral Map`;
+const descripcion = `Resultados por zona del departamento ${deptLabel} en las ${eleccionLabel}.`;
 const ogImagePath = `/og/${eleccion}/${departamento}.png`;
 const canonicalPath = `/${eleccion}/${departamento}`;
 ---

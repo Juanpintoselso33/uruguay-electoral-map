@@ -26,8 +26,9 @@ const MAP_H = H - BANNER_H - MAP_PAD * 2; // 420
 
 // Rutas a generar (espeja getStaticPaths de [departamento].astro).
 const ROUTES = [
-  { eleccion: 'internas-2024', departamento: 'montevideo' },
-  { eleccion: 'internas-2024', departamento: 'rivera' },
+  { eleccion: 'internas-2024',   departamento: 'montevideo' },
+  { eleccion: 'internas-2024',   departamento: 'rivera'     },
+  { eleccion: 'nacionales-2019', departamento: 'montevideo' },
 ];
 
 // Colores oficiales (fuente de verdad: src/lib/party-colors.ts — copia inline para script ESM puro).
@@ -53,6 +54,11 @@ const COLORES = {
   'PATRIA ALTERNATIVA': '#16A085',
   'POR LOS CAMBIOS NECESARIOS': '#2980B9',
   'VERDE ANIMALISTA': '#2ECC71',
+  // Nombres normalizados para nacionales-2019 (sin prefijo "Partido ")
+  'NACIONAL': '#55B5E5',
+  'COLORADO': '#E52828',
+  'INDEPENDIENTE': '#7B2CBF',
+  'CABILDO ABIERTO': '#2D7D3E',
 };
 
 function getColor(opcionId, opciones) {
