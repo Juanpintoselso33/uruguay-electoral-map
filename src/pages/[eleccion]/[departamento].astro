@@ -6,6 +6,7 @@ import DataTable from '../../components/a11y/DataTable.astro';
 import OpcionSelector from '../../components/selectors/OpcionSelector.vue';
 import LevelSelector from '../../components/selectors/LevelSelector.vue';
 import Sello from '../../components/ui/Sello.astro';
+import ShareButton from '../../components/share/ShareButton.vue';
 
 // Niveles disponibles por departamento (espeja DEPT_AVAIL en ChoroplethMap.vue).
 const DEPT_AVAIL: Record<string, NivelGeografico[]> = {
@@ -27,9 +28,12 @@ const titulo = `${departamento} — ${eleccion}`;
 
 <Base title={`Uruguay Electoral Map — ${titulo}`}>
   <main class="mx-auto max-w-3xl">
-    <header class="px-4 pt-4">
-      <h1 class="text-xl font-bold capitalize">{departamento}</h1>
-      <p class="text-sm text-gray-600">{eleccion}</p>
+    <header class="px-4 pt-4 flex items-start justify-between gap-2">
+      <div>
+        <h1 class="text-xl font-bold capitalize">{departamento}</h1>
+        <p class="text-sm text-gray-600">{eleccion}</p>
+      </div>
+      <ShareButton client:idle />
     </header>
     <!-- Selector de departamento — links Astro (ClientRouter navega sin reinicializar el mapa) -->
     <nav class="px-4 py-2 flex gap-3 text-sm border-b border-gray-200">

@@ -64,8 +64,8 @@ development_status:
   epic-2-retrospective: optional
 
   # ---- Epic 3: Compartir y ser encontrado ----
-  epic-3: backlog
-  3-1-deep-link-boton-compartir: backlog
+  epic-3: in-progress
+  3-1-deep-link-boton-compartir: done
   3-2-og-image-por-ruta: backlog
   3-3-meta-tags-seo: backlog
   3-4-busqueda-estatica: backlog
