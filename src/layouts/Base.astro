@@ -5,9 +5,20 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  ogImage?: string;
+  canonical?: string;
 }
 
-const { title = 'Uruguay Electoral Map', description = 'Explorador electoral de Uruguay' } = Astro.props;
+const {
+  title = 'Uruguay Electoral Map',
+  description = 'Explorador electoral interactivo de Uruguay por departamento y zona.',
+  ogImage,
+  canonical,
+} = Astro.props;
+
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
+const ogImageAbs = ogImage ? `${siteUrl}${ogImage}` : undefined;
+const canonicalUrl = canonical ? `${siteUrl}${canonical}` : undefined;
 ---
 
 <!doctype html>
@@ -17,6 +28,21 @@ const { title = 'Uruguay Electoral Map', description = 'Explorador electoral de 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_UY" />
+    {ogImageAbs && <meta property="og:image" content={ogImageAbs} />}
+    {ogImageAbs && <meta property="og:image:width" content="1200" />}
+    {ogImageAbs && <meta property="og:image:height" content="630" />}
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {ogImageAbs && <meta name="twitter:image" content={ogImageAbs} />}
     <ClientRouter />
   </head>
   <body>

@@ -23,10 +23,19 @@ export function getStaticPaths() {
 
 const { eleccion, departamento } = Astro.params;
 const availableLevels: NivelGeografico[] = DEPT_AVAIL[departamento] ?? ['zona'];
-const titulo = `${departamento} — ${eleccion}`;
+const deptLabel = departamento.charAt(0).toUpperCase() + departamento.slice(1);
+const titulo = `${deptLabel} — Elecciones Internas 2024 | Uruguay Electoral Map`;
+const descripcion = `Resultados por zona del departamento ${deptLabel} en las Elecciones Internas 2024.`;
+const ogImagePath = `/og/${eleccion}/${departamento}.png`;
+const canonicalPath = `/${eleccion}/${departamento}`;
 ---
 
-<Base title={`Uruguay Electoral Map — ${titulo}`}>
+<Base
+  title={titulo}
+  description={descripcion}
+  ogImage={ogImagePath}
+  canonical={canonicalPath}
+>
   <main class="mx-auto max-w-3xl">
     <header class="px-4 pt-4 flex items-start justify-between gap-2">
       <div>
