@@ -8,3 +8,6 @@ dist/
 .playwright-mcp/
 _preview.log
 _*.cjs
+
+# OG images — artefactos de build, generados por `npm run generate:og`
+public/og/

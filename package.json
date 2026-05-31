@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "node scripts/gate-data.mjs && astro build",
+    "build": "node scripts/generate-og.mjs && node scripts/gate-data.mjs && astro build",
+    "generate:og": "node scripts/generate-og.mjs",
     "gate:data": "node scripts/gate-data.mjs",
     "preview": "astro preview",
     "check": "astro check",
@@ -31,6 +32,8 @@
     "@astrojs/check": "^0.9.9",
     "@astrojs/vercel": "^8.2.10",
     "@astrojs/vue": "^5.1.4",
+    "@fontsource/inter": "^5.2.8",
+    "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/vite": "^4.1.13",
     "@types/d3-geo": "^3.1.0",
     "@types/node": "^25.9.1",
