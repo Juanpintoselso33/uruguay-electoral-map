@@ -5,6 +5,7 @@ import ChoroplethMap from '../../components/map/ChoroplethMap.vue';
 import DataTable from '../../components/a11y/DataTable.astro';
 import OpcionSelector from '../../components/selectors/OpcionSelector.vue';
 import LevelSelector from '../../components/selectors/LevelSelector.vue';
+import EleccionSelector from '../../components/selectors/EleccionSelector.vue';
 import Sello from '../../components/ui/Sello.astro';
 import ShareButton from '../../components/share/ShareButton.vue';
 
@@ -12,6 +13,12 @@ import ShareButton from '../../components/share/ShareButton.vue';
 const DEPT_AVAIL: Record<string, NivelGeografico[]> = {
   montevideo: ['zona'],
   rivera:     ['serie'],
+};
+
+// Elecciones disponibles por departamento (espeja getStaticPaths).
+const DEPT_ELECTIONS: Record<string, string[]> = {
+  montevideo: ['internas-2024', 'nacionales-2019'],
+  rivera:     ['internas-2024'],
 };
 
 const ELECCION_LABELS: Record<string, string> = {
@@ -29,7 +36,14 @@ export function getStaticPaths() {
 
 const { eleccion, departamento } = Astro.params;
 const availableLevels: NivelGeografico[] = DEPT_AVAIL[departamento] ?? ['zona'];
+const availableElecciones: string[] = DEPT_ELECTIONS[departamento] ?? [eleccion];
 const deptLabel = departamento.charAt(0).toUpperCase() + departamento.slice(1);
+
+// Para el nav de departamentos: preservar la elección actual si el destino la tiene, si no internas-2024.
+const ALL_DEPTOS = ['montevideo', 'rivera'] as const;
+function eleccionParaDepto(dept: string): string {
+  return (DEPT_ELECTIONS[dept] ?? []).includes(eleccion) ? eleccion : 'internas-2024';
+}
 const eleccionLabel = ELECCION_LABELS[eleccion] ?? eleccion;
 const titulo = `${deptLabel} — ${eleccionLabel} | Uruguay Electoral Map`;
 const descripcion = `Resultados por zona del departamento ${deptLabel} en las ${eleccionLabel}.`;
@@ -53,9 +67,21 @@ const canonicalPath = `/${eleccion}/${departamento}`;
     </header>
     <!-- Selector de departamento — links Astro (ClientRouter navega sin reinicializar el mapa) -->
     <nav class="px-4 py-2 flex gap-3 text-sm border-b border-gray-200">
-      <a href="/internas-2024/montevideo" class={`underline ${departamento === 'montevideo' ? 'font-bold' : 'text-gray-500'}`}>Montevideo</a>
-      <a href="/internas-2024/rivera" class={`underline ${departamento === 'rivera' ? 'font-bold' : 'text-gray-500'}`}>Rivera</a>
+      {ALL_DEPTOS.map((dept) => (
+        <a
+          href={`/${eleccionParaDepto(dept)}/${dept}`}
+          class={`underline ${departamento === dept ? 'font-bold' : 'text-gray-500'}`}
+        >{dept.charAt(0).toUpperCase() + dept.slice(1)}</a>
+      ))}
     </nav>
+    <!-- Selector de elección (Story 4.2) -->
+    {availableElecciones.length > 1 && (
+      <EleccionSelector
+        elecciones={availableElecciones}
+        eleccionActual={eleccion}
+        departamento={departamento}
+      />
+    )}
     <!-- Selector de opción — isla fuera de transition:persist, se re-monta en navegación (Story 2.2) -->
     <OpcionSelector client:idle eleccion={eleccion} departamento={departamento} />
     <!-- Selector de nivel geográfico (Story 2.5) -->
