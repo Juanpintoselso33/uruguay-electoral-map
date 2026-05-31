@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import SearchBox from '../components/search/SearchBox.vue';
 
 const ELECCION = 'internas-2024';
 
@@ -44,6 +45,8 @@ const DEPARTAMENTOS: Depto[] = [
         Fuente: <a href="https://www.corteelectoral.gub.uy/" target="_blank" rel="noopener">Corte Electoral Uruguay</a>
       </p>
     </header>
+
+    <SearchBox client:idle />
 
     <section class="portada__seleccion" aria-labelledby="seleccion-titulo">
       <h2 id="seleccion-titulo" class="portada__seleccion-titulo">Elegí un departamento</h2>

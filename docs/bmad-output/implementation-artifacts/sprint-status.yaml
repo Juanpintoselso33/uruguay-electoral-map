@@ -64,11 +64,11 @@ development_status:
   epic-2-retrospective: optional
 
   # ---- Epic 3: Compartir y ser encontrado ----
-  epic-3: in-progress
+  epic-3: done
   3-1-deep-link-boton-compartir: done
   3-2-og-image-por-ruta: done
   3-3-meta-tags-seo: done
-  3-4-busqueda-estatica: backlog
+  3-4-busqueda-estatica: done
   epic-3-retrospective: optional
 
   # ---- Epic 4: Comparar elecciones (histórico) ----
