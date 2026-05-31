@@ -72,7 +72,7 @@ development_status:
   epic-3-retrospective: optional
 
   # ---- Epic 4: Comparar elecciones (histórico) ----
-  epic-4: in-progress
+  epic-4: done
   4-1-cargar-nacionales-2019: done
   4-2-navegacion-multi-eleccion: done
   4-3-comparacion-dual-partido-lema: done
