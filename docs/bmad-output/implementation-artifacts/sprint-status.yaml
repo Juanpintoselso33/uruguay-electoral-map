@@ -174,3 +174,22 @@ development_status:
   13-1-decomiso-comparacion-ab: done                                # A/B fuera de la UI
   13-2-toggle-coloreo-ganador-share-heatmap: done                   # {Ganador, Share %, Heatmap}; ganador-entre-seleccionado + banderas, browser ✅
   epic-13-retrospective: optional
+
+  # ---- Epic 14: Ingestar plebiscito "Vivir sin Miedo" (2019) ----
+  # Binaria Sí/No, mismo patrón que plebiscitos 2024 / referéndum LUC. Bloquea: sourcing del raw 2019.
+  epic-14: backlog
+  14-1-sourcing-dataset-vivir-sin-miedo-2019: backlog
+  14-2-etl-vivir-sin-miedo-mvd-interior: backlog
+  14-3-cableado-color-papeleta-verificacion: backlog
+  epic-14-retrospective: optional
+
+  # ---- Epic 15: Vista nacional con granularidad toggleable ----
+  # País entero: nivel departamental (19 deptos agregados) + nivel zona (combinar todos los
+  # polígonos por-depto existentes). Toggleable. Spike-first por arquitectura/performance.
+  epic-15: backlog
+  15-1-spike-arquitectura-vista-nacional: backlog
+  15-2-geometria-agregacion-nacional-etl: backlog
+  15-3-pagina-nacional-nivel-departamental: backlog
+  15-4-toggle-granularidad-departamental-zona: backlog
+  15-5-performance-nivel-zona-nacional: backlog
+  epic-15-retrospective: optional

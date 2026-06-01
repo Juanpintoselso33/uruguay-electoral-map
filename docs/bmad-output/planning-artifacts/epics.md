@@ -702,3 +702,47 @@ As a usuario, I want elegir entre ver el ganador de mi selección (con banderas)
 
 **Acceptance Criteria:**
 **Given** una selección múltiple activa **When** abro el conmutador de coloreo **Then** las opciones son `Ganador` / `Share %` / `Heatmap` (se elimina `Votos`) **And** en modo **Ganador** cada zona se colorea con la opción seleccionada que más votos tiene ahí (color de partido + bandera vía `drawFlagOverlay`), y la leyenda lista las opciones seleccionadas **And** `Share %` y `Heatmap` mantienen su comportamiento **And** una URL vieja con `modo=votos` degrada a un modo válido (no rompe) **And** `astro check` 0 errores y verificación en browser.
+
+---
+
+## Epic 14: Ingestar el plebiscito "Vivir sin Miedo" (2019)
+
+El plebiscito **"Vivir sin Miedo"** (reforma constitucional de seguridad impulsada por Jorge Larrañaga) se votó el 27/10/2019 junto a las nacionales 2019, pero **no está ingestado**. Es una iniciativa binaria Sí/No → mismo patrón que los plebiscitos 2024 y el referéndum LUC (Epics 7.3 / 11.2): agregación Sí/No por SERIE (interior) y por barrio/circuito (Montevideo), con su color de papeleta.
+
+**Sourcing:** a diferencia de los plebiscitos 2024 (`totales-generales-plebiscitos.csv`), el dato del 2019 hay que ubicarlo en la Corte Electoral (API CKAN — ver [[corte-electoral-datos-abiertos]]). Posible columna Sí/No en un dataset de totales del plebiscito 2019; verificar antes de asumir formato.
+
+### Story 14.1: Sourcing — dataset crudo del plebiscito 2019
+As a desarrollador, I want ubicar e ingerir a `data/raw/` el dato del plebiscito Vivir sin Miedo 2019, So that el ETL pueda agregarlo. **AC:** **Given** la API de la Corte Electoral **When** busco el resultado del plebiscito 2019 **Then** documento la fuente y descargo el CSV (UTF-8) con la columna Sí/No por CRV/serie **And** si no existe públicamente queda como límite explícito (no se inventa).
+
+### Story 14.2: ETL Vivir sin Miedo → MVD + 18 interior
+As a usuario, I want ver cómo votó cada zona el plebiscito Vivir sin Miedo, So that explore esa consulta de 2019. **AC:** **Given** el raw 14.1 **When** corro el ETL Sí/No (reusando `aggregate-binaria-by-serie`/`run-binaria-interior` + un runner MVD) **Then** los 19 deptos emiten `votes.json` + `opciones.json` (pregunta + Sí/No) para `plebiscito-vivir-sin-miedo-2019` **And** los gates de losslessness y cobertura pasan.
+
+### Story 14.3: Cableado + color de papeleta + verificación
+As a usuario, I want que la iniciativa aparezca en el selector con su color de papeleta, So that se identifique como las otras. **AC:** **Given** los shards 14.2 **When** agrego `plebiscito-vivir-sin-miedo-2019` a `departments.json` y su entrada en `PAPELETA_COLORS` (color oficial del Sí) **Then** aparece en el catálogo de elecciones con su color **And** `astro check` 0 errores y verificación en browser.
+
+---
+
+## Epic 15: Vista nacional con granularidad toggleable
+
+Hoy la exploración es **por departamento** (elegís un depto y ves sus polígonos). Este epic suma una **vista NACIONAL** del país entero, con dos granularidades **toggleables**:
+- **Departamental:** los 19 departamentos como polígonos, coloreados por el ganador agregado de cada depto (separación entre departamentos).
+- **Zona:** todos los polígonos de zona/serie que ya tenemos por-departamento, **combinados** en un solo mapa nacional (reuso de la geometría existente, sin regenerar).
+
+El usuario alterna la granularidad como hoy alterna nivel dentro de un depto. Reusa el contrato, el coloreo (ganador/share/heatmap), las banderas y la ficha.
+
+**Decisiones abiertas (a refinar en spike):** ruta (`/{eleccion}` nacional vs `/nacional/{eleccion}`); nivel default (departamental); performance del nivel zona nacional (todos los polígonos del país → posible lazy-load / PMTiles / budget, ver Story 5.2); cómo agrega el voto a nivel departamental (suma de shards por-depto).
+
+### Story 15.1: Spike — arquitectura de la vista nacional
+As a desarrollador, I want definir geometría, agregación y ruta de la vista nacional, So that la implementación sea sólida. **AC:** **Given** la geometría existente (`uruguayDepartamentos.geojson`, `{depto}_map.json`, los `serie.topo.json`/zona por depto) **When** evalúo opciones **Then** defino: (a) geometría departamental (fuente + budget), (b) cómo se combinan las zonas de los 19 deptos en un FC nacional y su peso, (c) la agregación de votos por depto, (d) ruta y default **And** queda documentado.
+
+### Story 15.2: Geometría + agregación nacional (ETL)
+As a usuario, I want el mapa del país por departamento, So that vea el resultado nacional de un vistazo. **AC:** **Given** el spike 15.1 **When** construyo la geometría departamental nacional + el shard de votos agregado por departamento (por elección) **Then** existe `votes.json` nivel `departamento` por elección **And** los gates pasan (la suma por depto reconcilia contra los shards por-depto).
+
+### Story 15.3: Página nacional + nivel departamental
+As a usuario, I want abrir el mapa nacional y ver el ganador por departamento, So that tenga la foto país. **AC:** **Given** 15.2 **When** abro la ruta nacional **Then** el mapa muestra los 19 deptos coloreados por ganador (con banderas), la leyenda y la ficha por depto **And** el coloreo (ganador/share/heatmap) y el selector de opción funcionan a nivel departamental.
+
+### Story 15.4: Toggle de granularidad departamental ↔ zona
+As a usuario, I want alternar entre ver el país por departamento o por zona, So that pase de la foto país al detalle fino. **AC:** **Given** la vista nacional **When** cambio la granularidad a `zona` **Then** el mapa combina todos los polígonos de zona/serie por-depto en un solo mapa nacional, coloreado por zona **And** el toggle es como el de nivel actual **And** el estado vive en la URL.
+
+### Story 15.5: Performance del nivel zona nacional
+As a usuario, I want que la vista nacional por zona cargue rápido, So that sea usable. **AC:** **Given** el nivel zona nacional (todos los polígonos del país) **When** mido el peso **Then** cumple el budget de geometría (NFR1) vía lazy-load por viewport / simplificación / PMTiles (Story 5.2) **And** los gates de performance pasan.
