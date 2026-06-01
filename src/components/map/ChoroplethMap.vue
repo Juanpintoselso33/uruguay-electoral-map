@@ -465,8 +465,10 @@ function drawFlagOverlay(m: MlMap): void {
         flagCtx.lineWidth = 2 * dpr;
         flagCtx.stroke();
       } else {
-        flagCtx.strokeStyle = isDark ? 'rgba(255,255,255,0.65)' : 'rgba(15,15,30,0.65)';
-        flagCtx.lineWidth = 1 * dpr;
+        // Borde entre polígonos: oscuro y marcado (antes 1px/0.65 se veía lavado en barrios
+        // chicos con relleno claro, p. ej. Sí blanco del plebiscito de seguridad social en MVD).
+        flagCtx.strokeStyle = isDark ? 'rgba(255,255,255,0.8)' : 'rgba(10,12,24,0.92)';
+        flagCtx.lineWidth = 1.5 * dpr;
         flagCtx.stroke();
       }
     }
