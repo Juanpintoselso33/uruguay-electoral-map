@@ -27,9 +27,11 @@ Estado de los 10 restantes:
 **Conclusión (corregida 2026-06-01 tras revisar la Story 8.5): Story 8.5 está `done` y entregó lo que scopeó — NO es deuda en progreso.** Detalle:
 - 8.5 completó barrio para **8 ciudades** (Salto MVP + Artigas, Melo, Durazno, Paysandú, San José de Mayo, Treinta y Tres, Rivera).
 - **Lavalleja (Polanco del Yi, 0.5%) y Soriano (José E. Rodó, 3.4%) se excluyeron a propósito** por cobertura insignificante → por diseño, no deuda. (Tienen mapping serie→barrio pero sin geometría.)
-- Las capitales grandes restantes (Maldonado/Punta del Este, Las Piedras-Ciudad de la Costa/Canelones, Tacuarembó, Rocha, Fray Bentos, Florida, Trinidad, Colonia del Sacramento, Minas, Mercedes) **no formaron parte del alcance entregado de 8.5** → completarlas sería una **nueva story** (mismo patrón 8.5: geocodificar locales del plan circuital + geometría), NO "8.5 sin terminar".
+- Las capitales grandes restantes (Maldonado, **Minas**, **Mercedes**, Colonia, Canelones, Tacuarembó, Rocha, Florida, Flores, Río Negro) **NO necesitan barrio**: mapean limpio a localidad 1:1 (no quedan lumpeadas como `ciudad-grande`), así que el plan circuital ya las resuelve automáticamente — mismo caso que Maldonado. Las únicas `ciudad-grande` sin barrio son Polanco (0.5%) y José E. Rodó (3.4%), pueblitos excluidos a propósito por 8.5.
 
-El nivel barrio es una mejora opcional sobre serie/localidad. El fix de niveles-por-elección de la Story 11.1 hace que toda elección×depto sin barrio **degrade limpio a serie**, así que no hay rutas rotas en ningún caso.
+**Conclusión final (verificado 2026-06-01): el etiquetado de capitales está EFECTIVAMENTE COMPLETO. No hay trabajo de barrio pendiente que valga la pena.** El nivel barrio es una mejora opcional sobre serie/localidad; el fix de niveles-por-elección de 11.1 degrada limpio a serie donde no hay barrio, así que nunca hay rutas rotas.
+
+(Anomalía separada a revisar si interesa, NO barrio: Mercedes aparece con 1 serie y Minas con 2 en el mapping de localidad — posible sub-atribución de las series de la capital; es calidad del mapping localidad, no barrio.)
 
 ## Dev Agent Record
 

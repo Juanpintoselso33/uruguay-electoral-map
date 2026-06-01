@@ -2,7 +2,7 @@
 
 ## Deferred from: Epic 11 / Story 11.5 — auditoría nivel barrio interior (2026-06-01)
 
-- **Barrio para capitales grandes restantes (NUEVA scope, no deuda de 8.5)** — Story 8.5 está `done` y entregó barrio para 8 ciudades (Salto, Artigas, Melo, Durazno, Paysandú, San José de Mayo, Treinta y Tres, Rivera); Lavalleja/Soriano se excluyeron a propósito (cobertura <4%). Las capitales grandes aún sin barrio (Maldonado/Punta del Este, Las Piedras-Ciudad de la Costa/Canelones, Tacuarembó, Rocha, Fray Bentos, Florida, Trinidad, Colonia, Minas, Mercedes) son **alcance futuro nuevo** (mismo patrón 8.5: geocodificar locales del plan circuital + geometría), NO 8.5 sin terminar. No bloqueante: el fix de niveles-por-elección (Story 11.1) degrada a serie sin romper.
+- **Nivel barrio de capitales — EFECTIVAMENTE COMPLETO (verificado 2026-06-01, no es deuda).** Por el criterio `ciudad-grande` (capital lumpeada en ≥3 series): 8 capitales tienen barrio manual (8.5); el resto de capitales (Maldonado, **Minas**, **Mercedes**, Colonia, Canelones, Tacuarembó, Rocha, Florida, Flores, Río Negro) mapean limpio a localidad 1:1 → auto-hechas vía plan circuital, no necesitan barrio. Las únicas `ciudad-grande` sin barrio son Polanco (0.5% del depto) y José Enrique Rodó (3.4%) — pueblitos, NO capitales — excluidos a propósito por 8.5. No hay trabajo de barrio pendiente que valga la pena. (Nota separada, NO barrio: Mercedes aparece con 1 serie y Minas con 2 en el mapping de localidad — posible sub-atribución de series de la capital; revisar si interesa la calidad del mapping localidad.)
 
 
 ## ✅ Resuelto (2026-06-01) — barrido de deuda diferida verificada
