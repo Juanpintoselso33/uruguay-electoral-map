@@ -60,6 +60,8 @@ const FLAGS: Record<string, string> = {
   CA:  '/flags/ca.svg',
   PI:  '/flags/pi.svg',
   CR:  '/flags/cr.svg',
+  IS:  '/flags/is.svg',
+  AP:  '/flags/ap.svg',
 };
 
 export interface PartyMeta {

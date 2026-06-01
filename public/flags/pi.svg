@@ -1,4 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 60">
-  <!-- Partido Independiente: violeta sólido -->
-  <rect x="0" y="0" width="90" height="60" fill="#6B21A8"/>
+  <!-- Partido Independiente: fondo violeta, círculo dorado centrado, "PI" violeta inclinado -->
+  <rect x="0" y="0" width="90" height="60" fill="#5E2480"/>
+  <circle cx="45" cy="30" r="20" fill="#F2B41E"/>
+  <text x="45" y="30" fill="#5E2480"
+        font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" font-style="italic"
+        text-anchor="middle" dominant-baseline="central"
+        transform="rotate(-12 45 30)">PI</text>
 </svg>

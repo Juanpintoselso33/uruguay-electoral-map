@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 60">
+  <!-- Identidad Soberana: sello azul con anillo dorado y "IS" blanco (simplificado del logo) -->
+  <rect x="0" y="0" width="90" height="60" fill="#0B53C8"/>
+  <circle cx="45" cy="30" r="22" fill="none" stroke="#F2B41E" stroke-width="2.5"/>
+  <text x="45" y="30" fill="#FFFFFF"
+        font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="700"
+        text-anchor="middle" dominant-baseline="central" letter-spacing="2">IS</text>
+</svg>
