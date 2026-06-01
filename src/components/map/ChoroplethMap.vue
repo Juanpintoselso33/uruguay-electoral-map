@@ -704,10 +704,17 @@ function buildDesglose(key: string, sel: string[]): { grupos: DesgloseGrupo[]; t
   for (const id of sel) {
     const meta = catalogoOpcMeta?.get(id);
     const votos = hojaVotos.get(key)?.get(id) ?? zonasVotos.get(key)?.get(id) ?? 0;
-    total += votos; // el total cuenta SIEMPRE (incluye opciones planas sin lema)
-    // Tipos planos (balotaje/plebiscito): sin lema → suman al total pero no arman grupo
-    // por-lema (la ficha ya muestra la opción por la vía base). Solo agrupamos hojas.
-    if (!meta || !meta.lemaId) continue;
+    total += votos; // el total cuenta SIEMPRE
+    if (!meta || !meta.lemaId) {
+      // Tipos planos (balotaje/plebiscito/referéndum) o selección por opción simple (Epic 12):
+      // la opción es su propio grupo, sin sub-hojas. Nombre desde opciones.json (opcNombreMap).
+      const nombre = opcNombreMap.get(id) ?? id;
+      const gk = `flat/${id}`;
+      let e = byLema.get(gk);
+      if (!e) { e = { nombre, hojas: [], total: 0 }; byLema.set(gk, e); }
+      e.total += votos;
+      continue;
+    }
     const gk = `${meta.contienda}/${meta.lemaId}`;
     let e = byLema.get(gk);
     if (!e) { e = { nombre: meta.lemaNombre, hojas: [], total: 0 }; byLema.set(gk, e); }
@@ -1240,12 +1247,20 @@ function selectByName(name: string, fc: FeatureCollection): void {
     const validos = Number(p.validos);
     const noP = zonasNoPartidarios.get(key) ?? { enBlanco: 0, anulados: 0, observados: 0 };
     const opcionId = $selection.get().opcion;
-    const pctOpcionActiva = opcionId && validos > 0
+    // Epic 12: desglose de la selección en esta zona para TODOS los caminos.
+    // Prioridad: acordeón HOJA (seleccion[]) > comparación dual A/B > opción simple.
+    const cmp = $comparison.get();
+    const selFicha = seleccionActiva.value.length > 0
+      ? seleccionActiva.value
+      : cmp.a && cmp.b ? [cmp.a, cmp.b]
+      : opcionId ? [opcionId]
+      : [];
+    const desgRaw = selFicha.length > 0 ? buildDesglose(key, selFicha) : null;
+    const desg = desgRaw && desgRaw.grupos.length > 0 ? desgRaw : null;
+    // pctOpcionActiva queda solo como fallback cuando el desglose no aplica (evita redundancia).
+    const pctOpcionActiva = !desg && opcionId && validos > 0
       ? ((zonasVotos.get(key)?.get(opcionId) ?? 0) / validos) * 100
       : null;
-    // Epic 10 (Story 10.5): desglose por hoja de la selección en esta zona.
-    const sel = seleccionActiva.value;
-    const desg = sel.length > 0 ? buildDesglose(key, sel) : null;
     const rawGeoId = String(p.name);
     const zonaNombre = serieBarrioMap.get(rawGeoId.toLowerCase()) ?? serieLocalidadMap.get(rawGeoId.toLowerCase());
     selected.value = {

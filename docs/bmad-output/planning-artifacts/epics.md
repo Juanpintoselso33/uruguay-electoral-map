@@ -652,3 +652,29 @@ As a desarrollador, I want saber por qué solo 8/18 deptos del interior tienen `
 
 **Acceptance Criteria:**
 **Given** que 8 de 18 deptos tienen nivel barrio **When** investigo el rollout serie→barrio y la geometría disponible **Then** documento si los 10 restantes carecen de barrio por falta de mapeo/geometría (deuda) o por diseño (capitales sin barrios finos) **And** queda registrado en `deferred-work.md` o como stories de completado si corresponde.
+
+---
+
+## Epic 12: Ficha de zona — desglose de la selección en todos los caminos (paridad con legacy)
+
+Al clickear un polígono, el **legacy** mostraba un tooltip con el desglose de las listas/candidatos **seleccionados** en esa zona, agrupado por partido (partido: total → cada lista/candidato: votos → Total) — ver `legacy/src/composables/useTooltipContent.ts` (`generateListTooltip`/`generateCandidateTooltip`). La Story 10.5 portó esto como el bloque `desglose` ("Tu selección en esta zona") de `ZoneSheet.vue`.
+
+**Gap detectado (2026-06-01).** El `desglose` de la ficha **solo se puebla desde `seleccionActiva`** (`ChoroplethMap.vue` → `buildDesglose(key, sel)` con `sel = seleccion[]` del acordeón de HOJA). Los caminos de selección que NO usan el acordeón no muestran desglose:
+- **Selector simple `OpcionSelector`** (elecciones planas: balotaje, plebiscito, referéndum) → setea `opcion` singular → la ficha muestra solo la línea `"{sigla} en esta zona: {pct}%"` (`pctOpcionActiva`), sin desglose por opción.
+- Comparación dual A/B (Story 4.4) → tampoco alimenta el desglose.
+
+**Sin selección, la ficha actual (ganador + válidos/blanco/anulados/observados) está bien y se mantiene.** Objetivo: cuando hay cualquier selección activa, la ficha incorpora el desglose de lo seleccionado en esa zona, como el legacy.
+
+**Secuencia:** spike de caracterización (confirmar en browser + definir UX) antes de implementar.
+
+### Story 12.1: Spike — caracterizar el comportamiento actual vs legacy y definir la UX
+As a desarrollador, I want confirmar exactamente en qué caminos de selección aparece (o no) el desglose por zona y cómo lo hacía el legacy, So that la implementación cubra todos los casos sin romper el caso "sin selección".
+
+**Acceptance Criteria:**
+**Given** el app corriendo **When** clickeo una zona en (a) internas/nacionales con HOJA seleccionada en el acordeón, (b) una elección plana (balotaje/plebiscito) con opción elegida en el selector simple, (c) sin selección **Then** documento qué muestra hoy cada caso **And** lo contrasto con el tooltip del legacy (`useTooltipContent`) **And** defino la UX objetivo del desglose unificado (qué agrupa, totales, top-N, orden) **And** queda claro si requiere cargar shards adicionales (en planos no hay shard de HOJA — la opción vive en `votes.json`).
+
+### Story 12.2: Desglose de la selección en la ficha para todos los caminos
+As a usuario, I want que al tocar una zona vea el desempeño de lo que tengo seleccionado ahí (cada lista/opción, agrupado por partido, con total), So that tenga la misma lectura por zona que daba el legacy, sin importar el tipo de elección.
+
+**Acceptance Criteria:**
+**Given** una selección activa (HOJA múltiple, opción simple, candidato de balotaje o Sí/No de plebiscito) y una zona tocada **When** se abre la ficha **Then** muestra el desglose de la selección en esa zona (agrupado por partido cuando aplica, con votos por ítem y total + % sobre válidos) **And** el caso "sin selección" mantiene la ficha actual **And** los tipos planos resuelven el desglose desde `votes.json` (no piden shards de HOJA inexistentes) **And** la comparación dual A/B también refleja su desglose **And** `astro check` 0 errores y verificación en browser.

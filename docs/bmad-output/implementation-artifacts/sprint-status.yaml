@@ -157,3 +157,12 @@ development_status:
   epic-11-retrospective: done                                       # epic-11-retro-2026-06-01.md
   # Resultado Epic 11: el interior alcanza PARIDAD con Montevideo (las 13 elecciones).
   # gate:data 247 shards, build 248 páginas, todo verde 2026-06-01.
+
+  # ---- Epic 12: Ficha de zona — desglose de la selección en todos los caminos ----
+  # Gap: el desglose por zona (10.5) solo se puebla desde la selección del acordeón HOJA;
+  # el selector simple (planas: balotaje/plebiscito/referéndum) muestra solo un % sin desglose.
+  # Legacy lo mostraba para toda selección (useTooltipContent). Spike-first.
+  epic-12: done
+  12-1-spike-ficha-desglose-actual-vs-legacy: done                  # caracterización del gap + UX objetivo
+  12-2-desglose-seleccion-todos-los-caminos: done                   # desglose en selector simple/dual/plano, verificado en browser ✅
+  epic-12-retrospective: optional
