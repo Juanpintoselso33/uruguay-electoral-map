@@ -2,7 +2,7 @@
 
 ## Deferred from: Epic 11 / Story 11.5 — auditoría nivel barrio interior (2026-06-01)
 
-- **Nivel barrio incompleto en el interior (10/18 deptos sin barrio)** — solo 8 deptos tienen `barrio.topo.json` (los que completó Epic 8.5: Artigas, Melo, Durazno, Paysandú, Rivera, Salto, San José de Mayo, Treinta y Tres). Lavalleja (Polanco) y Soriano (José E. Rodó) tienen mapping serie→barrio pero sin geometría; 8 deptos (incl. capitales grandes: Maldonado/Punta del Este, Colonia, Las Piedras/Canelones) sin trabajo de barrio. **Es deuda parcial de Epic 8.5, no de Epic 11.** No bloqueante: el fix de niveles-por-elección (Story 11.1) hace degradar a serie sin romper. Completar = trabajo futuro tipo 8.5 (mapeo manual + geometría IDE por capital).
+- **Barrio para capitales grandes restantes (NUEVA scope, no deuda de 8.5)** — Story 8.5 está `done` y entregó barrio para 8 ciudades (Salto, Artigas, Melo, Durazno, Paysandú, San José de Mayo, Treinta y Tres, Rivera); Lavalleja/Soriano se excluyeron a propósito (cobertura <4%). Las capitales grandes aún sin barrio (Maldonado/Punta del Este, Las Piedras-Ciudad de la Costa/Canelones, Tacuarembó, Rocha, Fray Bentos, Florida, Trinidad, Colonia, Minas, Mercedes) son **alcance futuro nuevo** (mismo patrón 8.5: geocodificar locales del plan circuital + geometría), NO 8.5 sin terminar. No bloqueante: el fix de niveles-por-elección (Story 11.1) degrada a serie sin romper.
 
 
 ## ✅ Resuelto (2026-06-01) — barrido de deuda diferida verificada

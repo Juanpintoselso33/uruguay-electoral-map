@@ -30,7 +30,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context recommended)
 
 generated: 2026-05-30
-last_updated: 2026-05-31
+last_updated: 2026-06-01
 project: Uruguay Electoral Map
 # NOTE: epic-1 in-progress, story 1.1 ready-for-dev
 project_key: NOKEY
@@ -153,7 +153,7 @@ development_status:
   11-2-plebiscitos-referendum-interior: done                        # 3 elecciones × 18 deptos, gates 18/18 ✅ + browser ✅
   11-3-balotajes-historicos-2014-2019-interior: done                # 2 años × 18 deptos, gates 18/18 + ancla nacional ✅
   11-4-nacionales-2019-interior: done                               # 18/18 reconcile delta=0 ✅
-  11-5-auditoria-nivel-barrio-interior: done                        # deuda parcial de Epic 8.5 documentada (no bloqueante)
-  epic-11-retrospective: optional
+  11-5-auditoria-nivel-barrio-interior: done                        # 8.5 confirmada done; barrio capitales restantes = scope nuevo
+  epic-11-retrospective: done                                       # epic-11-retro-2026-06-01.md
   # Resultado Epic 11: el interior alcanza PARIDAD con Montevideo (las 13 elecciones).
   # gate:data 247 shards, build 248 páginas, todo verde 2026-06-01.

@@ -24,7 +24,12 @@ Estado de los 10 restantes:
 - **Con mapping serie→barrio pero SIN geometría** (parcial): lavalleja (Polanco), soriano (José Enrique Rodó) — mappings de localidades chicas, sin `barrio.topo.json` generado.
 - **Sin trabajo de barrio**: canelones, maldonado, colonia, florida, flores, rio_negro, rocha, tacuarembo — incluye capitales grandes (Maldonado/Punta del Este, Colonia, Las Piedras) que serían candidatas naturales.
 
-**Conclusión: deuda parcial de Epic 8.5 (rollout en progreso), NO regresión de Epic 11.** El nivel barrio es una mejora opcional sobre serie/localidad para capitales con división barrial. El fix de niveles-por-elección de la Story 11.1 hace que toda elección×depto sin barrio **degrade limpio a serie** (el selector solo ofrece niveles con dato), así que no hay rutas rotas. Completar barrio para más capitales es trabajo futuro de tipo Epic 8.5, no de este épico.
+**Conclusión (corregida 2026-06-01 tras revisar la Story 8.5): Story 8.5 está `done` y entregó lo que scopeó — NO es deuda en progreso.** Detalle:
+- 8.5 completó barrio para **8 ciudades** (Salto MVP + Artigas, Melo, Durazno, Paysandú, San José de Mayo, Treinta y Tres, Rivera).
+- **Lavalleja (Polanco del Yi, 0.5%) y Soriano (José E. Rodó, 3.4%) se excluyeron a propósito** por cobertura insignificante → por diseño, no deuda. (Tienen mapping serie→barrio pero sin geometría.)
+- Las capitales grandes restantes (Maldonado/Punta del Este, Las Piedras-Ciudad de la Costa/Canelones, Tacuarembó, Rocha, Fray Bentos, Florida, Trinidad, Colonia del Sacramento, Minas, Mercedes) **no formaron parte del alcance entregado de 8.5** → completarlas sería una **nueva story** (mismo patrón 8.5: geocodificar locales del plan circuital + geometría), NO "8.5 sin terminar".
+
+El nivel barrio es una mejora opcional sobre serie/localidad. El fix de niveles-por-elección de la Story 11.1 hace que toda elección×depto sin barrio **degrade limpio a serie**, así que no hay rutas rotas en ningún caso.
 
 ## Dev Agent Record
 
