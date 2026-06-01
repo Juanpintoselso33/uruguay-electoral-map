@@ -38,7 +38,15 @@ const SIGLAS: Record<string, string> = {
   'PATRIA ALTERNATIVA': 'PA',
   'PARTIDO DE LA ARMONIA': 'PAR',
   'POR LOS CAMBIOS NECESARIOS': 'PCN',
+  'POR LOS CAMBIOS NECESARIOS PCN': 'PCN', // el nombre a veces trae "(PCN)" al final
   PERI: 'PERI',
+  'ECOLOGISTA RADICAL INTRANSIGENTE': 'PERI', // PERI aparece así en varias elecciones
+  'PARTIDO DE LA GENTE': 'PG',
+  'DE LA GENTE': 'PG', // nacionales-2019 trae "de la Gente" sin "Partido"
+  'PARTIDO DIGITAL': 'PD',
+  DIGITAL: 'PD',
+  'PARTIDO DE LOS TRABAJADORES': 'PT',
+  'DE LOS TRABAJADORES': 'PT',
 };
 
 const PALABRAS_IGNORADAS = new Set(['DE', 'LA', 'LOS', 'LAS', 'EL', 'Y', 'DEL']);
@@ -67,6 +75,9 @@ const FLAGS: Record<string, string> = {
   AR:  '/flags/ar.svg',
   PCN: '/flags/pcn.svg',
   PVA: '/flags/pva.svg',
+  PG:  '/flags/pg.svg',
+  PD:  '/flags/pd.svg',
+  PT:  '/flags/pt.svg',
 };
 
 export interface PartyMeta {
@@ -76,12 +87,18 @@ export interface PartyMeta {
   readonly flagUrl: string | null;
 }
 
+/** Resuelve la sigla tolerando el prefijo "PARTIDO " que varía entre elecciones
+ *  (p. ej. "Partido Avanzar Republicano" vs "Avanzar Republicano"). */
+function siglaDe(key: string): string | undefined {
+  return SIGLAS[key] ?? (key.startsWith('PARTIDO ') ? SIGLAS[key.slice(8)] : undefined);
+}
+
 /** Resuelve sigla + color + flagUrl para un nombre de partido/opción (nombre original del ETL). */
 export function resolveParty(nombre: string): PartyMeta {
   const key = norm(nombre);
   // Opción binaria de plebiscito/referéndum (Sí/No): Sí verde, No gris neutro (status quo).
   if (key === 'SI') return { sigla: 'Sí', color: '#16a34a', flagUrl: null };
   if (key === 'NO') return { sigla: 'No', color: '#94a3b8', flagUrl: null };
-  const sigla = SIGLAS[key] ?? acronimo(nombre);
+  const sigla = siglaDe(key) ?? acronimo(nombre);
   return { sigla, color: getPartyColor(nombre), flagUrl: FLAGS[sigla] ?? null };
 }

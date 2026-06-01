@@ -341,6 +341,9 @@ async function loadFlagImages(): Promise<void> {
     ['flag-ar', `${base}/flags/ar.svg`],
     ['flag-pcn', `${base}/flags/pcn.svg`],
     ['flag-pva', `${base}/flags/pva.svg`],
+    ['flag-pg', `${base}/flags/pg.svg`],
+    ['flag-pd', `${base}/flags/pd.svg`],
+    ['flag-pt', `${base}/flags/pt.svg`],
   ];
   await Promise.all(ENTRIES.map(([id, src]) =>
     new Promise<void>((resolve) => {

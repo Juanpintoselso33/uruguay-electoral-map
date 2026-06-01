@@ -94,6 +94,20 @@ export const PARTY_COLORS = {
   'pal': '#16A085',
   'pcn': '#2980B9',
   'pva': '#2ECC71',
+
+  // Partidos históricos (2014/2019)
+  'PARTIDO DE LA GENTE': '#6FAE45',        // Verde
+  'PARTIDO DIGITAL': '#EE7D2B',            // Naranja
+  'PARTIDO DE LOS TRABAJADORES': '#E20000', // Rojo
+  'PG': '#6FAE45',
+  'PD': '#EE7D2B',
+  'PT': '#E20000',
+  'partido de la gente': '#6FAE45',
+  'partido digital': '#EE7D2B',
+  'partido de los trabajadores': '#E20000',
+  'pg': '#6FAE45',
+  'pd': '#EE7D2B',
+  'pt': '#E20000',
 } as const;
 
 // Generate a deterministic "random" color for unknown parties based on party name
@@ -184,6 +198,18 @@ export function getPartyColor(partyName: string): string {
   }
   if (normalized.includes('verde') || normalized.includes('animalista')) {
     return PARTY_COLORS.PVA;
+  }
+  if (normalized.includes('ecologista') || normalized.includes('intransigente')) {
+    return PARTY_COLORS.PERI; // "Ecologista Radical Intransigente" = PERI
+  }
+  if (normalized.includes('gente')) {
+    return PARTY_COLORS.PG;
+  }
+  if (normalized.includes('digital')) {
+    return PARTY_COLORS.PD;
+  }
+  if (normalized.includes('trabajadores')) {
+    return PARTY_COLORS.PT;
   }
 
   // Generate deterministic color for unknown parties
