@@ -51,6 +51,7 @@ defineProps<{ entradas: Entrada[]; sinDatos: number }>();
 .legend {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 0.5rem 0.75rem;
   padding: 0.75rem;
   font-size: 0.8125rem;

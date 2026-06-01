@@ -1,96 +1,281 @@
 <script setup lang="ts">
+import { onMounted, onUnmounted, ref } from 'vue';
+
 interface Props {
-  elecciones: string[];
+  eleccionesDisponibles: string[];
   eleccionActual: string;
   departamento: string;
 }
 const props = defineProps<Props>();
 
-const LABELS: Record<string, string> = {
-  'nacionales-2014':                  'Nacionales 2014',
-  'balotaje-2014':                    'Balotaje 2014',
-  'internas-2019':                    'Internas 2019',
-  'nacionales-2019':                  'Nacionales 2019',
-  'balotaje-2019':                    'Balotaje 2019',
-  'departamentales-2020':             'Dptales. 2020',
-  'referendum-luc-2022':              'Referéndum LUC 2022',
-  'internas-2024':                    'Internas 2024',
-  'nacionales-2024':                  'Nacionales 2024',
-  'plebiscito-allanamientos-2024':    'Plebiscito Allanamientos 2024',
-  'plebiscito-seguridad-social-2024': 'Plebiscito Seg. Social 2024',
-  'balotaje-2024':                    'Balotaje 2024',
-  'departamentales-2025':             'Dptales. 2025',
+const META: Record<string, { short: string; type: 'internas' | 'nacionales' | 'balotaje' | 'dptales' | 'plebiscito'; año: number }> = {
+  'nacionales-2014':                  { short: 'Nacionales', type: 'nacionales',  año: 2014 },
+  'balotaje-2014':                    { short: 'Balotaje',   type: 'balotaje',    año: 2014 },
+  'internas-2019':                    { short: 'Internas',   type: 'internas',    año: 2019 },
+  'nacionales-2019':                  { short: 'Nacionales', type: 'nacionales',  año: 2019 },
+  'balotaje-2019':                    { short: 'Balotaje',   type: 'balotaje',    año: 2019 },
+  'departamentales-2020':             { short: 'Dptales.',   type: 'dptales',     año: 2020 },
+  'referendum-luc-2022':              { short: 'Ref. LUC',   type: 'plebiscito',  año: 2022 },
+  'internas-2024':                    { short: 'Internas',   type: 'internas',    año: 2024 },
+  'nacionales-2024':                  { short: 'Nacionales', type: 'nacionales',  año: 2024 },
+  'plebiscito-allanamientos-2024':    { short: 'Pleb. All.', type: 'plebiscito',  año: 2024 },
+  'plebiscito-seguridad-social-2024': { short: 'Pleb. SS',   type: 'plebiscito',  año: 2024 },
+  'balotaje-2024':                    { short: 'Balotaje',   type: 'balotaje',    año: 2024 },
+  'departamentales-2025':             { short: 'Dptales.',   type: 'dptales',     año: 2025 },
 };
 
-function label(e: string): string {
-  return LABELS[e] ?? e;
+const ALL_IDS = Object.keys(META);
+
+interface Item {
+  id: string;
+  short: string;
+  type: string;
+  año: number;
+  showYear: boolean;
+  disponible: boolean;
 }
+
+const items: Item[] = ALL_IDS.map((e, i) => {
+  const m = META[e];
+  const prev = i > 0 ? META[ALL_IDS[i - 1]] : null;
+  return {
+    id: e,
+    short: m.short,
+    type: m.type,
+    año: m.año,
+    showYear: !prev || prev.año !== m.año,
+    disponible: props.eleccionesDisponibles.includes(e),
+  };
+});
+
+const scrollRef = ref<HTMLElement | null>(null);
+
+let dragStartX = 0, dragStartScroll = 0, isDragging = false, hasMoved = false;
+
+function onDragStart(e: MouseEvent) {
+  isDragging = true;
+  hasMoved = false;
+  dragStartX = e.pageX;
+  dragStartScroll = scrollRef.value?.scrollLeft ?? 0;
+  scrollRef.value!.style.cursor = 'grabbing';
+}
+function onDragMove(e: MouseEvent) {
+  if (!isDragging || !scrollRef.value) return;
+  const dx = e.pageX - dragStartX;
+  if (Math.abs(dx) > 4) hasMoved = true;
+  scrollRef.value.scrollLeft = dragStartScroll - dx;
+}
+function onDragEnd() {
+  isDragging = false;
+  if (scrollRef.value) scrollRef.value.style.cursor = '';
+}
+function onClickCapture(e: MouseEvent) {
+  if (hasMoved) { e.preventDefault(); e.stopPropagation(); hasMoved = false; }
+}
+
+onMounted(() => {
+  window.addEventListener('mousemove', onDragMove);
+  window.addEventListener('mouseup', onDragEnd);
+
+  const el = scrollRef.value;
+  if (!el) return;
+  const active = el.querySelector<HTMLElement>('.esel__dot--activa');
+  if (!active) return;
+  const itemEl = active.closest<HTMLElement>('.esel__item');
+  if (!itemEl) return;
+  const elRect = el.getBoundingClientRect();
+  const itemRect = itemEl.getBoundingClientRect();
+  const relativeLeft = (itemRect.left - elRect.left) + el.scrollLeft;
+  const offset = relativeLeft - el.clientWidth / 2 + itemEl.offsetWidth / 2;
+  el.scrollLeft = Math.max(0, offset);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('mousemove', onDragMove);
+  window.removeEventListener('mouseup', onDragEnd);
+});
 </script>
 
 <template>
   <nav class="esel" aria-label="Seleccionar elección">
-    <span class="esel__label">Elección</span>
-    <div class="esel__pills">
-      <a
-        v-for="e in elecciones"
-        :key="e"
-        :href="`/${e}/${departamento}`"
-        class="esel__pill"
-        :class="{ 'esel__pill--activa': e === eleccionActual }"
-        :aria-current="e === eleccionActual ? 'page' : undefined"
-      >{{ label(e) }}</a>
+    <div ref="scrollRef" class="esel__scroll" @mousedown="onDragStart" @click.capture="onClickCapture">
+      <div class="esel__track">
+        <div class="esel__rail" aria-hidden="true" />
+        <div
+          v-for="item in items"
+          :key="item.id"
+          class="esel__item"
+          :class="[`esel__item--${item.type}`, { 'esel__item--bloqueado': !item.disponible }]"
+        >
+          <span class="esel__year" :class="{ 'esel__year--hidden': !item.showYear }">
+            {{ item.año }}
+          </span>
+          <a
+            v-if="item.disponible"
+            :href="`/${item.id}/${departamento}`"
+            class="esel__dot"
+            :class="{ 'esel__dot--activa': item.id === eleccionActual }"
+            :aria-current="item.id === eleccionActual ? 'page' : undefined"
+            :title="item.short + ' ' + item.año"
+          >
+            <span class="sr-only">{{ item.short }} {{ item.año }}</span>
+          </a>
+          <span
+            v-else
+            class="esel__dot esel__dot--bloqueado"
+            :title="`${item.short} ${item.año} — sin datos para este departamento`"
+            aria-disabled="true"
+          />
+          <span class="esel__label" :class="{ 'esel__label--activa': item.id === eleccionActual }">
+            {{ item.short }}
+          </span>
+        </div>
+      </div>
     </div>
   </nav>
 </template>
 
 <style scoped>
 .esel {
-  padding: 0.5rem 1rem 0.625rem;
   border-bottom: 1px solid var(--color-border);
   background: var(--color-paper);
 }
-.esel__label {
-  display: block;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-ink-muted);
-  margin-bottom: 0.375rem;
+
+.esel__scroll {
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0.625rem 1.25rem 0.875rem;
+  cursor: grab;
 }
-.esel__pills {
+.esel__scroll::-webkit-scrollbar { display: none; }
+
+.esel__track {
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.375rem;
+  align-items: flex-start;
+  min-width: max-content;
 }
-.esel__pill {
-  display: inline-block;
-  padding: 0.25rem 0.625rem;
-  border-radius: 999px;
-  border: 1px solid var(--color-border-strong);
-  background: var(--color-card);
-  color: var(--color-ink-soft);
-  font-size: 0.75rem;
-  font-weight: 500;
-  line-height: 1.4;
-  text-decoration: none;
+
+.esel__rail {
+  position: absolute;
+  top: 26px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-border-strong);
+  pointer-events: none;
+}
+
+.esel__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 60px;
+  padding: 0 6px;
+  text-align: center;
+  cursor: pointer;
+}
+.esel__item--bloqueado {
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+
+/* Year marker */
+.esel__year {
+  height: 16px;
+  margin-bottom: 4px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--color-ink-muted);
+  line-height: 16px;
   white-space: nowrap;
-  transition: background 0.1s, border-color 0.1s, color 0.1s;
+  user-select: none;
 }
-.esel__pill:hover {
-  background: var(--color-surface-2);
-  border-color: var(--color-ink-faint);
+.esel__year--hidden { visibility: hidden; }
+
+/* Dot — disponible */
+.esel__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border-strong);
+  background: var(--color-paper);
+  display: block;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.15s, border-color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+.esel__dot:not(.esel__dot--bloqueado):hover,
+.esel__dot:not(.esel__dot--bloqueado):focus-visible {
+  transform: scale(1.3);
+  border-color: var(--color-ink-muted);
+  outline: none;
+}
+
+/* Dot — bloqueado (no disponible) */
+.esel__dot--bloqueado {
+  border-style: dashed;
+  border-color: var(--color-border);
+  background: transparent;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Dot — activa */
+.esel__dot--activa {
+  width: 14px;
+  height: 14px;
+  border-color: var(--color-ink);
+  background: var(--color-ink);
+  box-shadow: 0 0 0 3px var(--color-paper), 0 0 0 5px var(--color-ink);
+}
+.esel__dot--activa:hover { transform: none; }
+
+/* Type variants — balotaje = rombo */
+.esel__item--balotaje .esel__dot {
+  border-radius: 3px;
+  transform: rotate(45deg);
+}
+.esel__item--balotaje .esel__dot:not(.esel__dot--bloqueado):hover { transform: rotate(45deg) scale(1.25); }
+.esel__item--balotaje .esel__dot--activa {
+  transform: rotate(45deg);
+  box-shadow: 0 0 0 3px var(--color-paper), 0 0 0 5px var(--color-ink);
+}
+.esel__item--balotaje .esel__dot--activa:hover { transform: rotate(45deg); }
+
+/* Type variants — plebiscito = cuadrado pequeño */
+.esel__item--plebiscito .esel__dot {
+  border-radius: 2px;
+  width: 10px;
+  height: 10px;
+}
+.esel__item--plebiscito .esel__dot--activa {
+  width: 12px;
+  height: 12px;
+}
+
+/* Label */
+.esel__label {
+  margin-top: 5px;
+  font-size: 0.625rem;
+  color: var(--color-ink-faint);
+  white-space: nowrap;
+  line-height: 1.3;
+  user-select: none;
+}
+.esel__label--activa {
   color: var(--color-ink);
-}
-.esel__pill--activa {
-  background: var(--color-btn-active-bg);
-  border-color: var(--color-btn-active-bg);
-  color: var(--color-btn-active-fg);
   font-weight: 600;
 }
-.esel__pill--activa:hover {
-  background: var(--color-btn-active-bg);
-  border-color: var(--color-btn-active-bg);
-  color: var(--color-btn-active-fg);
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 </style>

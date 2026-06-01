@@ -20,21 +20,30 @@ const votes = JSON.parse(
 const escrutinioLabel = votes.escrutinio === 'definitivo' ? 'definitivo' : votes.escrutinio;
 ---
 
-<p class="sello">
-  Fuente:&nbsp;<a
-    class="sello__link"
-    href="https://www.corteelectoral.gub.uy/"
-    target="_blank"
-    rel="noopener"
-  >Corte Electoral Uruguay</a>&nbsp;·&nbsp;Escrutinio&nbsp;<strong>{escrutinioLabel}</strong>
-</p>
+<footer class="sello">
+  <p class="sello__line">
+    Fuente:&nbsp;<a class="sello__link" href="https://www.corteelectoral.gub.uy/" target="_blank" rel="noopener">Corte Electoral Uruguay</a>&nbsp;·&nbsp;Escrutinio&nbsp;<strong>{escrutinioLabel}</strong>
+  </p>
+  <p class="sello__line sello__author">
+    by&nbsp;<a class="sello__link" href="https://github.com/Juanpintoselso33" target="_blank" rel="noopener">juanpintoselso33</a>
+    &nbsp;·&nbsp;
+    <a class="sello__link" href="https://www.linkedin.com/in/juanpintoselso33" target="_blank" rel="noopener">LinkedIn</a>
+  </p>
+</footer>
 
 <style>
 .sello {
   font-size: 0.75rem;
   color: var(--color-ink-faint);
-  padding: 0.5rem 0.75rem 1rem;
+  padding: 0.5rem 0.75rem 1.25rem;
   margin: 0;
+  text-align: center;
+}
+.sello__line {
+  margin: 0.15rem 0;
+}
+.sello__author {
+  margin-top: 0.25rem;
 }
 .sello__link {
   color: var(--color-ink-muted);

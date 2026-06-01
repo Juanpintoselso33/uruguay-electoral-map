@@ -33,6 +33,8 @@ export const $context = atom<Contexto>({ eleccion: '', departamento: '' });
 export const $selection = atom<Seleccion>({ zona: null, opcion: null, contienda: null, seleccion: [], modo: null });
 export const $level = atom<NivelGeografico>('zona');
 export const $comparison = atom<Comparacion>({ vs: null, a: null, b: null });
+/** Overlay de circuitos sobre el mapa base (Story 9.x). */
+export const $circuito = atom<boolean>(false);
 
 /** Vuelca una `MapView` (parseada de la URL) a los stores. Puro respecto al DOM. */
 export function hydrateStores(view: MapView): void {
@@ -40,6 +42,7 @@ export function hydrateStores(view: MapView): void {
   $selection.set({ zona: view.zona, opcion: view.opcion, contienda: view.contienda, seleccion: view.seleccion, modo: view.modo });
   $level.set(view.level);
   $comparison.set({ vs: view.vs, a: view.a, b: view.b });
+  $circuito.set(view.circ);
 }
 
 /** Reconstruye la `MapView` actual a partir de los stores. */
@@ -59,6 +62,7 @@ export function currentView(): MapView {
     contienda: sel.contienda,
     seleccion: sel.seleccion,
     modo: sel.modo,
+    circ: $circuito.get(),
   };
 }
 

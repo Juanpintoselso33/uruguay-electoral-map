@@ -1,10 +1,10 @@
 [
   {"serie":"GAA","barrio":"Estero Bellaco"},
   {"serie":"GAB","barrio":"Cuchilla de las Flores"},
-  {"serie":"GAC","barrio":"Jardines del Ferrocarril"},
-  {"serie":"GAD","barrio":"San Antonio"},
-  {"serie":"GBA","barrio":"Castagnet"},
-  {"serie":"GBB","barrio":"Souza"},
-  {"serie":"GBC","barrio":"Leandro Gómez"},
-  {"serie":"GBD","barrio":"Nuevo Paggiola"}
+  {"serie":"GAC","barrio":"Serrato"},
+  {"serie":"GAD","barrio":"Estero Bellaco"},
+  {"serie":"GBA","barrio":"El Fogón"},
+  {"serie":"GBB","barrio":"Serrato"},
+  {"serie":"GBC","barrio":"Leone"},
+  {"serie":"GBD","barrio":"Hipódromo"}
 ]

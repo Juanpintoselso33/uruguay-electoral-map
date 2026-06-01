@@ -2,7 +2,6 @@
  * Official party colors for Uruguay political parties
  *
  * IMPORTANT: Partido Nacional is CELESTE (light blue), NOT white!
- * IMPORTANT: Frente Amplio uses a lighter violet/purple color
  *
  * Source: tailwind.config.js (single source of truth)
  */

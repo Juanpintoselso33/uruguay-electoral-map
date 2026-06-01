@@ -11,6 +11,7 @@ import type { NivelGeografico } from './contracts';
 
 export const NIVELES: readonly NivelGeografico[] = ['zona', 'serie', 'circuito'];
 export const NIVEL_DEFAULT: NivelGeografico = 'zona';
+export const BASE_NIVELES: readonly NivelGeografico[] = ['zona', 'barrio', 'localidad', 'serie'];
 
 /** Vista del mapa derivada de la URL. `eleccion`/`departamento` son el contexto (path). */
 export interface MapView {
@@ -30,6 +31,8 @@ export interface MapView {
   readonly seleccion: readonly string[];
   /** Modo de coloreo del mapa para la selección (`?modo=`, Epic 10): share/votos/heatmap (default ganador). */
   readonly modo: string | null;
+  /** Overlay de circuitos sobre el mapa base (`?circ=1`). */
+  readonly circ: boolean;
 }
 
 function isNivel(v: string | null): v is NivelGeografico {
@@ -62,6 +65,7 @@ export function parseUrl(pathname: string, search: string): MapView {
 
   const selRaw = params.get('sel');
   const seleccion = selRaw ? selRaw.split(',').map((s) => s.trim()).filter((s) => s.length > 0) : [];
+  const circ = params.get('circ') === '1';
 
   return {
     eleccion,
@@ -75,6 +79,7 @@ export function parseUrl(pathname: string, search: string): MapView {
     contienda: orNull(params.get('cont')),
     seleccion,
     modo: orNull(params.get('modo')),
+    circ,
   };
 }
 
@@ -91,6 +96,7 @@ export function toUrl(view: MapView): { pathname: string; search: string } {
   if (view.contienda) params.set('cont', view.contienda);
   if (view.seleccion.length > 0) params.set('sel', view.seleccion.join(','));
   if (view.modo) params.set('modo', view.modo);
+  if (view.circ) params.set('circ', '1');
   const search = params.toString();
   return { pathname, search: search ? `?${search}` : '' };
 }

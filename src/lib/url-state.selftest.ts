@@ -16,13 +16,13 @@ export function runUrlStateSelfTest(): string[] {
 
   // Round-trip: parse(toHref(view)) == view  (identidad sobre el estado).
   const casos: MapView[] = [
-    { eleccion: 'internas-2024', departamento: 'montevideo', zona: null, opcion: null, level: 'zona', vs: null, a: null, b: null, contienda: null, seleccion: [], modo: null },
-    { eleccion: 'internas-2024', departamento: 'montevideo', zona: 'Ciudad Vieja', opcion: 'frente-amplio', level: 'zona', vs: null, a: null, b: null, contienda: null, seleccion: [], modo: null },
-    { eleccion: 'internas-2024', departamento: 'canelones', zona: null, opcion: null, level: 'serie', vs: null, a: null, b: null, contienda: null, seleccion: [], modo: null },
-    { eleccion: 'internas-2024', departamento: 'montevideo', zona: 'Centro', opcion: null, level: 'circuito', vs: 'nacionales-2024', a: null, b: null, contienda: null, seleccion: [], modo: null },
-    { eleccion: 'balotaje-2024', departamento: 'montevideo', zona: null, opcion: null, level: 'zona', vs: null, a: 'opcion-x', b: 'opcion-y', contienda: null, seleccion: [], modo: null },
+    { eleccion: 'internas-2024', departamento: 'montevideo', zona: null, opcion: null, level: 'zona', vs: null, a: null, b: null, contienda: null, seleccion: [], modo: null, circ: false },
+    { eleccion: 'internas-2024', departamento: 'montevideo', zona: 'Ciudad Vieja', opcion: 'frente-amplio', level: 'zona', vs: null, a: null, b: null, contienda: null, seleccion: [], modo: null, circ: false },
+    { eleccion: 'internas-2024', departamento: 'canelones', zona: null, opcion: null, level: 'serie', vs: null, a: null, b: null, contienda: null, seleccion: [], modo: null, circ: false },
+    { eleccion: 'internas-2024', departamento: 'montevideo', zona: 'Centro', opcion: null, level: 'circuito', vs: 'nacionales-2024', a: null, b: null, contienda: null, seleccion: [], modo: null, circ: false },
+    { eleccion: 'balotaje-2024', departamento: 'montevideo', zona: null, opcion: null, level: 'zona', vs: null, a: 'opcion-x', b: 'opcion-y', contienda: null, seleccion: [], modo: null, circ: false },
     // Epic 10: contienda + selección múltiple de hojas.
-    { eleccion: 'internas-2024', departamento: 'montevideo', zona: null, opcion: null, level: 'zona', vs: null, a: null, b: null, contienda: 'odn', seleccion: ['odn-frente-amplio-609', 'odn-frente-amplio-90'], modo: 'share' },
+    { eleccion: 'internas-2024', departamento: 'montevideo', zona: null, opcion: null, level: 'zona', vs: null, a: null, b: null, contienda: 'odn', seleccion: ['odn-frente-amplio-609', 'odn-frente-amplio-90'], modo: 'share', circ: false },
   ];
   for (const v of casos) {
     const href = toHref(v);

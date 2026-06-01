@@ -16,7 +16,7 @@ import type { Topology, GeometryCollection } from 'topojson-specification';
 import { feature as topoFeature } from 'topojson-client';
 import { resolveParty } from '../../lib/party-meta';
 import type { VotosShard } from '../../lib/contracts';
-import { $selection, $level, $comparison, bindToLocation, commit, hydrateStores } from '../../stores/map-state';
+import { $selection, $level, $comparison, $circuito, bindToLocation, commit, hydrateStores } from '../../stores/map-state';
 import { parseUrl } from '../../lib/url-state';
 import type { NivelGeografico } from '../../lib/contracts';
 import deptsConfig from '../../config/departments.json';
@@ -38,6 +38,8 @@ interface OpcionesDoc {
 }
 interface SelInfo {
   geoId: string;
+  /** Etiqueta de display: "Localidad · SERIE" en nivel serie, undefined en otros niveles. */
+  label?: string;
   sigla: string;
   nombre: string;
   color: string;
@@ -115,6 +117,25 @@ let vsWinnersMap = new Map<string, string>(); // normalizedGeoId → nombre del 
 let unsubComparison: (() => void) | null = null;
 // True cuando el nivel activo usa geometría Point (circuito) en lugar de Polygon (Story 6.3).
 let isPointNivel = false;
+// Unsub del overlay de circuitos.
+let unsubCircuito: (() => void) | null = null;
+// True mientras el mapa está en movimiento (pan/zoom): evita redibujar dots de circuito en cada frame.
+let isMapMoving = false;
+// Mapa serie-code → nombre de localidad (solo nivel serie, interior).
+let serieLocalidadMap: Map<string, string> = new Map();
+// Mapa serie-code → nombre de barrio dentro de la capital (prioridad sobre localidad).
+let serieBarrioMap: Map<string, string> = new Map();
+
+const SERIE_BARRIO_FILES: Record<string, string> = {
+  artigas:       'artigas-serie-barrio.json',
+  cerro_largo:   'melo-serie-barrio.json',
+  durazno:       'durazno-serie-barrio.json',
+  paysandu:      'paysandu-serie-barrio.json',
+  rivera:        'rivera-serie-barrio.json',
+  salto:         'salto-serie-barrio.json',
+  san_jose:      'san_jose_de_mayo-serie-barrio.json',
+  treinta_y_tres:'treinta_y_tres-serie-barrio.json',
+};
 
 // ── Epic 10: coloreo por selección múltiple de HOJAS (Story 10.4) ──────────────
 const SEL_BASE = '#1d4ed8'; // azul secuencial para la escala de selección
@@ -177,12 +198,18 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
                   : nivel === 'localidad' ? 'votes-localidad.json'
                   : nivel === 'barrio'    ? 'votes-barrio.json'
                   : 'votes.json';
-  const [topoRes, votesRes, opcRes, metaRes] = await Promise.all([
+  const [topoRes, votesRes, opcRes, metaRes, serieMapRes, serieBarrioRes] = await Promise.all([
     fetch(`${base}/data/geo/${departamento}/${nivel}.topo.json`),
     fetch(`${base}/data/${eleccion}/${departamento}/${votesFile}`),
     fetch(`${base}/data/${eleccion}/${departamento}/opciones.json`),
     nivel === 'localidad'
       ? fetch(`${base}/data/${eleccion}/${departamento}/localidad-meta.json`).catch(() => null)
+      : Promise.resolve(null),
+    nivel === 'serie'
+      ? fetch(`${base}/data/mappings/${departamento}/serie-localidad.json`).catch(() => null)
+      : Promise.resolve(null),
+    nivel === 'serie' && SERIE_BARRIO_FILES[departamento]
+      ? fetch(`${base}/data/mappings/${departamento}/${SERIE_BARRIO_FILES[departamento]}`).catch(() => null)
       : Promise.resolve(null),
   ]);
   if (!topoRes.ok || !votesRes.ok || !opcRes.ok) throw new Error('No se pudieron cargar los datos del mapa');
@@ -260,6 +287,26 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
     } catch { /* malformed — empty set */ }
   }
 
+  serieLocalidadMap = new Map();
+  if (serieMapRes?.ok) {
+    try {
+      const serieDoc = (await serieMapRes.json()) as { serie: string; localidad: string }[];
+      for (const { serie, localidad } of serieDoc) {
+        serieLocalidadMap.set(serie.toLowerCase(), localidad);
+      }
+    } catch { /* ignore */ }
+  }
+
+  serieBarrioMap = new Map();
+  if (serieBarrioRes?.ok) {
+    try {
+      const barrioDoc = (await serieBarrioRes.json()) as { serie: string; barrio: string }[];
+      for (const { serie, barrio } of barrioDoc) {
+        serieBarrioMap.set(serie.toLowerCase(), barrio);
+      }
+    } catch { /* ignore */ }
+  }
+
   return { fc: geo, bounds: boundsOf(geo) };
 }
 
@@ -274,6 +321,8 @@ const flagImgs: Record<string, HTMLImageElement> = {};
 let flagCanvas: HTMLCanvasElement | null = null;
 let flagCtx: CanvasRenderingContext2D | null = null;
 let flagsVisible = true;
+// FeatureCollection de circuitos con datos de partido, para dibujar en el canvas overlay.
+let circuitoFCForCanvas: FeatureCollection | null = null;
 
 /** Carga los SVGs de banderas como HTMLImageElement para el canvas overlay. */
 async function loadFlagImages(): Promise<void> {
@@ -317,73 +366,175 @@ function syncFlagCanvasSize(m: MlMap): void {
   flagCanvas.style.height = mc.style.height || `${mc.clientHeight}px`;
 }
 
-/** Dibuja una bandera escalada y recortada dentro de cada polígono visible. */
+/** Dibuja banderas de partido en zonas y dots de circuito sobre el canvas overlay. */
 function drawFlagOverlay(m: MlMap): void {
   if (!flagCtx || !flagCanvas) return;
   syncFlagCanvasSize(m);
   flagCtx.clearRect(0, 0, flagCanvas.width, flagCanvas.height);
-  if (!flagsVisible || isPointNivel) return;
 
   const dpr = window.devicePixelRatio || 1;
-  const features = m.queryRenderedFeatures(undefined, { layers: ['zonas-fill'] });
-  const seen = new Set<string | number>();
 
-  for (const feat of features) {
-    const props = feat.properties as Record<string, unknown>;
-    if (!props?.flagPattern || !props?.hasData) continue;
-    const fid = feat.id ?? props.name;
-    if (seen.has(fid as string | number)) continue;
-    seen.add(fid as string | number);
-
-    const img = flagImgs[props.flagPattern as string];
-    if (!img) continue;
-
-    const geom = feat.geometry as { type: string; coordinates: unknown };
+  // Banderas de partido recortadas a cada polígono de zona (solo niveles poligonales).
+  // Dos pasadas: primero todos los flags, luego todos los bordes encima.
+  if (flagsVisible && !isPointNivel) {
     type Ring = [number, number][];
-    const rings: Ring[] = geom.type === 'Polygon'
-      ? (geom.coordinates as Ring[])
-      : (geom.coordinates as Ring[][]).flat(1);
+    const features = m.queryRenderedFeatures(undefined, { layers: ['zonas-fill'] });
+    const seen = new Set<string | number>();
+    const visibleFeats: (typeof features)[0][] = [];
 
-    // Proyectar coords a pixels físicos del canvas
-    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-    flagCtx.beginPath();
-    for (const ring of rings) {
-      let first = true;
-      for (const coord of ring) {
-        const pt = m.project(coord as [number, number]);
-        const px = pt.x * dpr;
-        const py = pt.y * dpr;
-        if (first) { flagCtx.moveTo(px, py); first = false; }
-        else flagCtx.lineTo(px, py);
-        if (px < minX) minX = px; if (py < minY) minY = py;
-        if (px > maxX) maxX = px; if (py > maxY) maxY = py;
-      }
-      flagCtx.closePath();
+    for (const feat of features) {
+      const fid = feat.id ?? (feat.properties as Record<string, unknown>).name;
+      if (seen.has(fid as string | number)) continue;
+      seen.add(fid as string | number);
+      visibleFeats.push(feat);
     }
 
-    flagCtx.save();
-    flagCtx.clip('evenodd');
+    // Pasada 1: flags recortados a cada polígono
+    for (const feat of visibleFeats) {
+      const props = feat.properties as Record<string, unknown>;
+      if (!props.flagPattern || !props.hasData) continue;
+      const img = flagImgs[props.flagPattern as string];
+      if (!img) continue;
+      const geom = feat.geometry as { type: string; coordinates: unknown };
+      const rings: Ring[] = geom.type === 'Polygon'
+        ? (geom.coordinates as Ring[])
+        : (geom.coordinates as Ring[][]).flat(1);
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      flagCtx.beginPath();
+      for (const ring of rings) {
+        let first = true;
+        for (const coord of ring) {
+          const pt = m.project(coord as [number, number]);
+          const px = pt.x * dpr; const py = pt.y * dpr;
+          if (first) { flagCtx.moveTo(px, py); first = false; }
+          else flagCtx.lineTo(px, py);
+          if (px < minX) minX = px; if (py < minY) minY = py;
+          if (px > maxX) maxX = px; if (py > maxY) maxY = py;
+        }
+        flagCtx.closePath();
+      }
+      flagCtx.save();
+      flagCtx.clip('evenodd');
+      const bw = maxX - minX, bh = maxY - minY;
+      const flagAspect = img.naturalWidth / img.naturalHeight;
+      let dw = bw, dh = bw / flagAspect;
+      if (dh < bh) { dh = bh; dw = bh * flagAspect; }
+      flagCtx.globalAlpha = 1.0;
+      flagCtx.drawImage(img, minX + (bw - dw) / 2, minY + (bh - dh) / 2, dw, dh);
+      flagCtx.restore();
+    }
 
-    // Cover: la bandera cubre el bounding box completo, el clip del polígono la recorta.
-    const bw = maxX - minX;
-    const bh = maxY - minY;
-    const flagAspect = img.naturalWidth / img.naturalHeight;
-    let dw = bw;
-    let dh = bw / flagAspect;
-    if (dh < bh) { dh = bh; dw = bh * flagAspect; }
-    const dx = minX + (bw - dw) / 2;
-    const dy = minY + (bh - dh) / 2;
+    // Pasada 2: bordes encima de todos los flags + highlight de zona seleccionada
+    const selectedGeoId = selected.value?.geoId ?? null;
+    flagCtx.lineJoin = 'round';
+    for (const feat of visibleFeats) {
+      const props = feat.properties as Record<string, unknown>;
+      const fid = String(feat.id ?? props.name ?? '');
+      const geom = feat.geometry as { type: string; coordinates: unknown };
+      if (geom.type !== 'Polygon' && geom.type !== 'MultiPolygon') continue;
+      const rings: Ring[] = geom.type === 'Polygon'
+        ? (geom.coordinates as Ring[])
+        : (geom.coordinates as Ring[][]).flat(1);
+      flagCtx.beginPath();
+      for (const ring of rings) {
+        let first = true;
+        for (const coord of ring) {
+          const pt = m.project(coord as [number, number]);
+          const px = pt.x * dpr; const py = pt.y * dpr;
+          if (first) { flagCtx.moveTo(px, py); first = false; }
+          else flagCtx.lineTo(px, py);
+        }
+        flagCtx.closePath();
+      }
+      const isSelected = selectedGeoId !== null && fid === selectedGeoId;
+      if (isSelected) {
+        flagCtx.strokeStyle = '#f59e0b';
+        flagCtx.lineWidth = 5 * dpr;
+        flagCtx.stroke();
+        flagCtx.strokeStyle = '#fef9c3';
+        flagCtx.lineWidth = 2 * dpr;
+        flagCtx.stroke();
+      } else {
+        flagCtx.strokeStyle = isDark ? 'rgba(255,255,255,0.65)' : 'rgba(15,15,30,0.65)';
+        flagCtx.lineWidth = 1 * dpr;
+        flagCtx.stroke();
+      }
+    }
+  }
 
-    flagCtx.globalAlpha = 1.0;
-    flagCtx.drawImage(img, dx, dy, dw, dh);
-    flagCtx.restore();
+  // Overlay de circuitos: skip durante movimiento activo para evitar lag a 60fps.
+  if (circuitoFCForCanvas && !isMapMoving) {
+    type Ring = [number, number][];
+    for (const f of circuitoFCForCanvas.features) {
+      const fprops = f.properties as Record<string, unknown>;
+      if (!fprops.hasData) continue;
+      const geom = f.geometry as { type: string; coordinates: unknown };
+
+      // Calcular el centroide según tipo de geometría (Point, Polygon, MultiPolygon).
+      let sx = 0, sy = 0, cnt = 0;
+      if (geom.type === 'Point') {
+        const [lng, lat] = geom.coordinates as [number, number];
+        const pt = m.project([lng, lat]);
+        sx = pt.x; sy = pt.y; cnt = 1;
+      } else if (geom.type === 'Polygon' || geom.type === 'MultiPolygon') {
+        const rings: Ring[] = geom.type === 'Polygon'
+          ? (geom.coordinates as Ring[])
+          : (geom.coordinates as Ring[][]).flat(1);
+        for (const ring of rings) {
+          if (!Array.isArray(ring)) continue;
+          for (const coord of ring) {
+            const pt = m.project(coord as [number, number]);
+            sx += pt.x; sy += pt.y; cnt++;
+          }
+        }
+      }
+      if (cnt === 0) continue;
+
+      const cpx = (sx / cnt) * dpr;
+      const cpy = (sy / cnt) * dpr;
+      const r = 5 * dpr;
+      const dotImg = fprops.flagPattern ? flagImgs[fprops.flagPattern as string] : null;
+      flagCtx.save();
+      flagCtx.beginPath();
+      flagCtx.arc(cpx, cpy, r, 0, Math.PI * 2);
+      flagCtx.closePath();
+      if (dotImg) {
+        flagCtx.clip();
+        const aspect = dotImg.naturalWidth / dotImg.naturalHeight;
+        const iw = aspect >= 1 ? r * 2 * aspect : r * 2;
+        const ih = aspect >= 1 ? r * 2 : (r * 2) / aspect;
+        flagCtx.drawImage(dotImg, cpx - iw / 2, cpy - ih / 2, iw, ih);
+      } else {
+        flagCtx.fillStyle = String(fprops.color ?? '#999');
+        flagCtx.fill();
+      }
+      flagCtx.restore();
+      flagCtx.beginPath();
+      flagCtx.arc(cpx, cpy, r, 0, Math.PI * 2);
+      flagCtx.strokeStyle = 'rgba(255,255,255,0.8)';
+      flagCtx.lineWidth = 1 * dpr;
+      flagCtx.stroke();
+    }
   }
 }
 
 /** Muestra u oculta el overlay de banderas. */
 function setPatternVisible(visible: boolean): void {
   flagsVisible = visible;
-  if (map.value) drawFlagOverlay(map.value);
+  const m = map.value;
+  if (!m) return;
+  if (m.getLayer('zonas-fill')) {
+    m.setPaintProperty('zonas-fill', 'fill-opacity',
+      visible
+        ? ['case', ['!=', ['get', 'flagPattern'], null], 0, 0.85]
+        : 0.85
+    );
+  }
+  // Cuando el canvas dibuja los bordes, ocultar el layer MapLibre para evitar duplicados.
+  if (m.getLayer('zonas-line')) {
+    m.setLayoutProperty('zonas-line', 'visibility', visible ? 'none' : 'visible');
+  }
+  drawFlagOverlay(m);
 }
 
 /** Interpolación lineal entre dos colores #rrggbb (Story 2.3). */
@@ -998,9 +1149,84 @@ async function reloadData(eleccion: string, departamento: string, nivel: string)
     } else if (cmp.vs && cmp.vs !== eleccion) {
       void applyComparisonOverlay(cmp.vs, eleccion, departamento, nivel);
     }
+    // Recargar overlay de circuitos si sigue activo.
+    if ($circuito.get()) void loadCircuitoOverlay(eleccion, departamento);
   } catch (err) {
     status.value = 'error';
     errorMsg.value = err instanceof Error ? err.message : String(err);
+  }
+}
+
+/**
+ * Carga circuitos como overlay de puntos sobre el mapa base (no reemplaza el nivel activo).
+ * Agrega source 'circuitos' + layer 'circuitos-circle' si no existen, y los hace visibles.
+ */
+async function loadCircuitoOverlay(eleccion: string, departamento: string): Promise<void> {
+  const m = map.value;
+  if (!m) return;
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  try {
+    const [topoRes, votesRes] = await Promise.all([
+      fetch(`${base}/data/geo/${departamento}/circuito.topo.json`),
+      fetch(`${base}/data/${eleccion}/${departamento}/votes-circuito.json`),
+    ]);
+    if (!topoRes.ok || !votesRes.ok) return;
+    const topo = (await topoRes.json()) as Topology;
+    const votes = (await votesRes.json()) as VotosShard;
+    const objName = Object.keys(topo.objects)[0];
+    const geo = topoFeature(topo, topo.objects[objName] as GeometryCollection) as FeatureCollection;
+
+    const zonaPorGeo = new Map(votes.zonas.map((z) => [norm(z.geoId), z]));
+    for (const f of geo.features) {
+      const name = String((f.properties as { name: string }).name);
+      const zona = zonaPorGeo.get(norm(name));
+      const p = f.properties as Record<string, unknown>;
+      if (zona && zona.porOpcion.length > 0) {
+        const nombre = opcNombreMap.get(zona.ganadorOpcionId) ?? zona.ganadorOpcionId;
+        const meta = resolveParty(nombre);
+        p.color = meta.color;
+        p.flagPattern = meta.flagUrl ? `flag-${meta.sigla.toLowerCase()}` : null;
+        p.nombre = nombre;
+        p.hasData = true;
+      } else {
+        p.color = COLOR_SIN_DATOS;
+        p.flagPattern = null;
+        p.hasData = false;
+      }
+    }
+    // Guardar para que drawFlagOverlay dibuje los dots en el canvas overlay.
+    circuitoFCForCanvas = geo;
+
+    if (m.getSource('circuitos')) {
+      (m.getSource('circuitos') as GeoJSONSource).setData(geo);
+    } else {
+      m.addSource('circuitos', { type: 'geojson', data: geo, promoteId: 'name' });
+      // El layer es invisible (transparente) — solo existe para hit-testing de clicks.
+      // La visualización la maneja el flag canvas overlay (drawFlagOverlay).
+      m.addLayer({
+        id: 'circuitos-circle',
+        type: 'circle',
+        source: 'circuitos',
+        layout: { visibility: 'visible' },
+        paint: {
+          'circle-color': ['get', 'color'],
+          'circle-radius': 8,
+          'circle-opacity': 0,
+          'circle-stroke-color': 'transparent',
+          'circle-stroke-width': 0,
+        },
+      });
+      m.on('click', 'circuitos-circle', (e) => {
+        const f = e.features?.[0];
+        if (!f) return;
+        commit({ zona: String((f.properties as { name: string }).name) });
+      });
+      m.on('mouseenter', 'circuitos-circle', () => { m.getCanvas().style.cursor = 'pointer'; });
+      m.on('mouseleave', 'circuitos-circle', () => { m.getCanvas().style.cursor = ''; });
+    }
+    m.setLayoutProperty('circuitos-circle', 'visibility', 'visible');
+  } catch {
+    // Sin datos de circuito — silencioso
   }
 }
 
@@ -1020,8 +1246,11 @@ function selectByName(name: string, fc: FeatureCollection): void {
     // Epic 10 (Story 10.5): desglose por hoja de la selección en esta zona.
     const sel = seleccionActiva.value;
     const desg = sel.length > 0 ? buildDesglose(key, sel) : null;
+    const rawGeoId = String(p.name);
+    const zonaNombre = serieBarrioMap.get(rawGeoId.toLowerCase()) ?? serieLocalidadMap.get(rawGeoId.toLowerCase());
     selected.value = {
-      geoId: String(p.name),
+      geoId: rawGeoId,
+      label: zonaNombre ? `${zonaNombre} · ${rawGeoId.toUpperCase()}` : undefined,
       sigla: String(p.sigla),
       nombre: String(p.nombre),
       color: String(p.color),
@@ -1039,8 +1268,12 @@ function selectByName(name: string, fc: FeatureCollection): void {
       esCiudadGrande: ciudadesGrandesSet.size > 0 && ciudadesGrandesSet.has(norm(String(p.name))) && !(props.availableLevels ?? []).includes('barrio'),
     };
   } else if (p) {
+    const rawGeoId2 = String(p.name);
+    const zonaNombre2 = serieBarrioMap.get(rawGeoId2.toLowerCase()) ?? serieLocalidadMap.get(rawGeoId2.toLowerCase());
     selected.value = {
-      geoId: String(p.name), sigla: '', nombre: 'Sin datos', color: '#e5e7eb',
+      geoId: rawGeoId2,
+      label: zonaNombre2 ? `${zonaNombre2} · ${rawGeoId2.toUpperCase()}` : undefined,
+      sigla: '', nombre: 'Sin datos', color: '#e5e7eb',
       votoGanador: 0, validos: 0, pct: 0, enBlanco: 0, anulados: 0, observados: 0,
       pctOpcionActiva: null,
       esCiudadGrande: ciudadesGrandesSet.size > 0 && ciudadesGrandesSet.has(norm(String(p.name))) && !(props.availableLevels ?? []).includes('barrio'),
@@ -1061,7 +1294,7 @@ function applySelection(zona: string | null): void {
   }
   prevSelId = zona;
 }
-$selection.subscribe((s) => {
+const unsubSelection = $selection.subscribe((s) => {
   opcionActiva.value = s.opcion;
   seleccionActiva.value = [...s.seleccion];
   if (s.modo === 'share' || s.modo === 'votos' || s.modo === 'heatmap') coloreoMode.value = s.modo;
@@ -1074,10 +1307,12 @@ $selection.subscribe((s) => {
   }
 });
 
-/** Resuelve el nivel efectivo para un departamento dado: usa DEPT_LEVELS (runtime) para no depender de props congeladas. */
+/** Resuelve el nivel base efectivo: excluye 'circuito' (ahora es overlay, no nivel base). */
 function resolveNivel(urlLevel: NivelGeografico, dept?: string): NivelGeografico {
   const avail = (dept ? DEPT_LEVELS[dept] : null) ?? props.availableLevels ?? (['zona'] as NivelGeografico[]);
-  return avail.includes(urlLevel) ? urlLevel : (avail[0] ?? urlLevel);
+  const base = avail.filter(l => l !== 'circuito');
+  const valid = base.length > 0 ? base : avail;
+  return valid.includes(urlLevel) ? urlLevel : (valid[0] ?? urlLevel);
 }
 
 let afterSwapHandler: (() => void) | null = null;
@@ -1106,6 +1341,21 @@ onMounted(async () => {
     } else {
       clearComparisonOverlay();
       clearDualOpcionView();
+    }
+  });
+
+  // Suscribir $circuito: muestra/oculta el overlay de puntos sobre el mapa base.
+  unsubCircuito = $circuito.subscribe((on) => {
+    const m = map.value;
+    if (!m || status.value !== 'listo') return;
+    if (on) {
+      void loadCircuitoOverlay(activeEleccion, activeDepartamento);
+    } else {
+      if (m.getLayer('circuitos-circle')) {
+        m.setLayoutProperty('circuitos-circle', 'visibility', 'none');
+      }
+      circuitoFCForCanvas = null;
+      drawFlagOverlay(m);
     }
   });
 
@@ -1138,9 +1388,13 @@ onMounted(async () => {
       await loadFlagImages();
       setupFlagCanvas(m);
       m.addSource('zonas', { type: 'geojson', data: fc, promoteId: 'name' });
-      m.addLayer({ id: 'zonas-fill', type: 'fill', source: 'zonas', paint: { 'fill-color': ['get', 'color'], 'fill-opacity': 0.85 } });
-      m.addLayer({ id: 'zonas-line', type: 'line', source: 'zonas', paint: { 'line-color': isDark ? 'rgba(255,255,255,0.6)' : 'rgba(20,20,35,0.55)', 'line-width': 1.5 } });
+      m.addLayer({ id: 'zonas-fill', type: 'fill', source: 'zonas', paint: { 'fill-color': ['get', 'color'], 'fill-opacity': ['case', ['!=', ['get', 'flagPattern'], null], 0, 0.85] } });
+      m.addLayer({ id: 'zonas-line', type: 'line', source: 'zonas', paint: { 'line-color': isDark ? 'rgba(255,255,255,0.85)' : 'rgba(20,20,35,0.85)', 'line-width': 2.5 } });
       m.on('render', () => drawFlagOverlay(m));
+      m.on('movestart', () => { isMapMoving = true; });
+      m.on('moveend',   () => { isMapMoving = false; drawFlagOverlay(m); });
+      m.on('zoomstart', () => { isMapMoving = true; });
+      m.on('zoomend',   () => { isMapMoving = false; drawFlagOverlay(m); });
       // Overlay de comparación (Story 4.3): borde naranja en zonas que cambiaron ganador.
       m.addLayer({
         id: 'zonas-vs-changed',
@@ -1215,6 +1469,8 @@ onMounted(async () => {
       } else if (initCmp.vs && initCmp.vs !== props.eleccion) {
         void applyComparisonOverlay(initCmp.vs, props.eleccion, props.departamento, activeNivel);
       }
+      // Activar overlay de circuitos si la URL ya traía ?circ=1.
+      if ($circuito.get()) void loadCircuitoOverlay(props.eleccion, props.departamento);
     })(); });
   } catch (err) {
     status.value = 'error';
@@ -1242,9 +1498,13 @@ onMounted(async () => {
 onUnmounted(() => {
   markers.forEach((mk) => mk.remove());
   map.value?.remove();
+  map.value = null;
+  circuitoFCForCanvas = null;
   if (afterSwapHandler) document.removeEventListener('astro:after-swap', afterSwapHandler);
   unsubLevel?.();
   unsubComparison?.();
+  unsubCircuito?.();
+  unsubSelection();
 });
 </script>
 

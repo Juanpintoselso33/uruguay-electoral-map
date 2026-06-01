@@ -118,22 +118,13 @@ const canonicalPath = `/${eleccion}/${departamento}`;
         >{dept.label}</a>
       ))}
     </nav>
-    <!-- Selector de elección (Story 4.2) -->
-    {availableElecciones.length > 1 && (
-      <EleccionSelector
-        elecciones={availableElecciones}
-        eleccionActual={eleccion}
-        departamento={departamento}
-      />
-    )}
-    <!-- Controles de comparación dual (Story 4.3) -->
-    {availableElecciones.length > 1 && (
-      <CompareControls
-        client:idle
-        availableElecciones={availableElecciones}
-        eleccionActual={eleccion}
-      />
-    )}
+    <!-- Selector de elección (Story 4.2) — siempre visible; muestra todas las elecciones, bloqueando las sin datos -->
+    <EleccionSelector
+      client:idle
+      eleccionesDisponibles={availableElecciones}
+      eleccionActual={eleccion}
+      departamento={departamento}
+    />
     <!-- Selector de opción — isla fuera de transition:persist, se re-monta en navegación (Story 2.2) -->
     {tieneCatalogoHoja
       ? <OpcionAccordion client:idle eleccion={eleccion} departamento={departamento} />
@@ -150,7 +141,7 @@ const canonicalPath = `/${eleccion}/${departamento}`;
       />
     </div>
     <DataTable eleccion={eleccion} departamento={departamento} />
-    <div class="px-4 py-2 flex gap-2 flex-wrap">
+    <div class="share-actions">
       <ExportButton client:idle eleccion={eleccion} departamento={departamento} />
       <MapScreenshotButton
         client:idle
@@ -163,3 +154,24 @@ const canonicalPath = `/${eleccion}/${departamento}`;
     <Sello eleccion={eleccion} departamento={departamento} />
   </main>
 </Base>
+
+<script>
+// Scroll dept-nav to center the active department link
+document.addEventListener('astro:page-load', () => {
+  const nav = document.querySelector<HTMLElement>('.dept-nav');
+  if (!nav) return;
+
+  let startX = 0, startScroll = 0, dragging = false;
+  nav.addEventListener('mousedown', (e) => { dragging = true; startX = e.pageX; startScroll = nav.scrollLeft; nav.style.cursor = 'grabbing'; e.preventDefault(); });
+  window.addEventListener('mousemove', (e) => { if (!dragging) return; nav.scrollLeft = startScroll - (e.pageX - startX); });
+  window.addEventListener('mouseup', () => { dragging = false; nav.style.cursor = ''; });
+
+  const active = nav.querySelector<HTMLElement>('.dept-nav__link--activo');
+  if (!active) return;
+  const navRect = nav.getBoundingClientRect();
+  const activeRect = active.getBoundingClientRect();
+  const relativeLeft = (activeRect.left - navRect.left) + nav.scrollLeft;
+  const offset = relativeLeft - nav.clientWidth / 2 + active.offsetWidth / 2;
+  nav.scrollLeft = Math.max(0, offset);
+});
+</script>

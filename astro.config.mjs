@@ -16,5 +16,12 @@ export default defineConfig({
   integrations: [vue(), sitemap()],
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      watch: {
+        // public/data tiene ~2700 JSONs / 360 MB — excluirlos del watcher
+        // evita que chokidar los cargue en memoria durante `astro dev`.
+        ignored: ['**/public/data/**'],
+      },
+    },
   },
 });

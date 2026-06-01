@@ -1,50 +1,67 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import type { NivelGeografico } from '../../lib/contracts';
-import { $level, commit } from '../../stores/map-state';
+import { $circuito, commit } from '../../stores/map-state';
 
 const props = defineProps<{ availableLevels: NivelGeografico[] }>();
 
-// Nivel activo: si el nivel en URL no está disponible para este depto, usar el primero disponible.
-// Esto evita el flash incorrecto antes de que ChoroplethMap corrija la URL.
-function resolveActive(level: NivelGeografico): NivelGeografico {
-  return props.availableLevels.includes(level) ? level : (props.availableLevels[0] ?? level);
-}
-const activeLevel = ref<NivelGeografico>(resolveActive($level.get()));
-let unsub: (() => void) | undefined;
-onMounted(() => { unsub = $level.subscribe((v) => { activeLevel.value = resolveActive(v); }); });
-onUnmounted(() => { unsub?.(); });
+const BASE_PRIORITY: NivelGeografico[] = ['zona', 'serie', 'barrio', 'localidad'];
 
-function select(nivel: NivelGeografico): void {
-  if (!props.availableLevels.includes(nivel)) return;
-  commit({ level: nivel, zona: null });
+const defaultBase = computed<NivelGeografico>(() =>
+  BASE_PRIORITY.find(l => props.availableLevels.includes(l)) ?? props.availableLevels.find(l => l !== 'circuito') ?? 'zona'
+);
+
+const hasCircuito = computed(() => props.availableLevels.includes('circuito'));
+
+const isCircuito = ref<boolean>($circuito.get());
+let unsubCircuito: (() => void) | undefined;
+onMounted(() => { unsubCircuito = $circuito.subscribe((v) => { isCircuito.value = v; }); });
+onUnmounted(() => { unsubCircuito?.(); });
+
+const BASE_LABELS: Partial<Record<NivelGeografico, string>> = {
+  zona:      'Zonas',
+  barrio:    'Barrios',
+  localidad: 'Localidades',
+  serie:     'Series',
+};
+const baseLabel = computed(() => BASE_LABELS[defaultBase.value] ?? 'Zonas');
+
+function selectBase() {
+  commit({ level: defaultBase.value, zona: null });
 }
 
-const NIVELES: { key: NivelGeografico; label: string }[] = [
-  { key: 'zona',      label: 'Zona' },
-  { key: 'serie',     label: 'Serie' },
-  { key: 'localidad', label: 'Localidad' },
-  { key: 'barrio',    label: 'Barrio' },
-  { key: 'circuito',  label: 'Circuito' },
-];
+function toggleCircuito() {
+  if (!hasCircuito.value) return;
+  commit({ circ: !isCircuito.value, level: defaultBase.value });
+}
+
 </script>
 
 <template>
   <div class="level-sel" role="group" aria-label="Nivel geográfico">
-    <span class="level-sel__titulo">Nivel</span>
     <button
-      v-for="n in NIVELES"
-      :key="n.key"
-      class="level-sel__btn"
-      :class="{
-        'level-sel__btn--activo':     activeLevel === n.key,
-        'level-sel__btn--disponible': availableLevels.includes(n.key),
-      }"
+      class="level-sel__btn level-sel__btn--activo"
       type="button"
-      :aria-pressed="activeLevel === n.key"
-      :aria-disabled="!availableLevels.includes(n.key)"
-      @click="select(n.key)"
-    >{{ n.label }}</button>
+      aria-pressed="true"
+      @click="selectBase"
+    >{{ baseLabel }}</button>
+
+    <button
+      class="level-sel__btn level-sel__btn--circuito"
+      :class="{ 'level-sel__btn--activo': isCircuito, 'level-sel__btn--disabled': !hasCircuito }"
+      type="button"
+      :aria-pressed="isCircuito"
+      :aria-disabled="!hasCircuito"
+      @click="toggleCircuito"
+    >
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true" style="flex-shrink:0">
+        <rect x="0.5" y="0.5" width="5" height="5" rx="0.5" stroke="currentColor"/>
+        <rect x="7.5" y="0.5" width="5" height="5" rx="0.5" stroke="currentColor"/>
+        <rect x="0.5" y="7.5" width="5" height="5" rx="0.5" stroke="currentColor"/>
+        <rect x="7.5" y="7.5" width="5" height="5" rx="0.5" stroke="currentColor"/>
+      </svg>
+      Circuito
+    </button>
   </div>
 </template>
 
@@ -52,26 +69,30 @@ const NIVELES: { key: NivelGeografico; label: string }[] = [
 .level-sel {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.375rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem 1rem;
   font-size: 0.8125rem;
 }
-.level-sel__titulo {
-  color: var(--color-ink-muted);
-  font-size: 0.75rem;
-  margin-right: 0.25rem;
-}
+
 .level-sel__btn {
-  padding: 0.375rem 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3125rem 0.75rem;
   border: 1px solid var(--color-border-strong);
   border-radius: 0.375rem;
   background: var(--color-card);
   font-size: 0.8125rem;
   cursor: pointer;
   color: var(--color-ink-soft);
-  min-height: 44px;
-  min-width: 44px;
-  transition: background 0.1s, border-color 0.1s;
+  min-height: 32px;
+  transition: background 0.1s, border-color 0.1s, color 0.1s;
+  white-space: nowrap;
+}
+.level-sel__btn:hover {
+  background: var(--color-surface-2);
+  border-color: var(--color-ink-faint);
 }
 .level-sel__btn--activo {
   background: var(--color-btn-active-bg);
@@ -79,14 +100,24 @@ const NIVELES: { key: NivelGeografico; label: string }[] = [
   border-color: var(--color-btn-active-bg);
   font-weight: 700;
 }
-.level-sel__btn--disponible:not(.level-sel__btn--activo):hover {
-  background: var(--color-surface-2);
-  border-color: var(--color-ink-faint);
+.level-sel__btn--activo:hover {
+  background: var(--color-btn-active-bg);
 }
-.level-sel__btn[aria-disabled="true"] {
-  color: var(--color-border-strong);
+
+/* Circuito — visualmente separado, tipo toggle */
+.level-sel__btn--circuito {
+  margin-left: 0.5rem;
+  border-style: dashed;
+  color: var(--color-ink-muted);
+}
+.level-sel__btn--circuito.level-sel__btn--activo {
+  border-style: solid;
+  background: var(--color-btn-active-bg);
+  color: var(--color-btn-active-fg);
+}
+.level-sel__btn--disabled {
+  opacity: 0.35;
   cursor: not-allowed;
-  border-color: var(--color-border);
-  background: var(--color-surface-1);
+  pointer-events: none;
 }
 </style>

@@ -1,11 +1,11 @@
 [
   {"serie":"HAA","barrio":"Centro"},
   {"serie":"HAB","barrio":"Rivera Chico"},
-  {"serie":"HBA","barrio":"Pirineos"},
+  {"serie":"HBA","barrio":"Don Bosco"},
   {"serie":"HBB","barrio":"La Pedrera"},
-  {"serie":"HBC","barrio":"Rivera Chico"},
-  {"serie":"HBD","barrio":"Sur"},
-  {"serie":"HBE","barrio":"Don Bosco"},
-  {"serie":"HBF","barrio":"Misiones"},
-  {"serie":"HBG","barrio":"Norte"}
+  {"serie":"HBC","barrio":"Lagos del Norte"},
+  {"serie":"HBD","barrio":"Santa Teresa"},
+  {"serie":"HBE","barrio":"Rivera Chico"},
+  {"serie":"HBF","barrio":"La Alegría"},
+  {"serie":"HBG","barrio":"Lagunón"}
 ]

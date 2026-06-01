@@ -15,6 +15,7 @@ interface DesgloseGrupo {
 }
 interface SelInfo {
   geoId: string;
+  label?: string;
   sigla: string;
   nombre: string;
   color: string;
@@ -65,7 +66,7 @@ function fmt(n: number): string {
       <div class="zone-sheet__handle" aria-hidden="true"></div>
 
       <header class="zone-sheet__header">
-        <h2 class="zone-sheet__titulo">{{ sel.geoId }}</h2>
+        <h2 class="zone-sheet__titulo">{{ sel.label ?? sel.geoId }}</h2>
         <button
           class="zone-sheet__cerrar"
           type="button"
