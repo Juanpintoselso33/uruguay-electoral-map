@@ -148,10 +148,12 @@ development_status:
   # Auditoría 2026-06-01: elecciones nacionales (balotajes/plebiscitos/referéndum/nac-2019)
   # solo en MVD (+Colonia balotaje-2024); raw ya disponible con columna Serie → NADA bloqueado.
   # Vertical slice 11.1 prueba la cadena + resuelve niveles-por-elección, luego replican las variantes.
-  epic-11: in-progress
+  epic-11: done
   11-1-rebanada-balotaje-2024-interior-niveles-por-eleccion: done   # 18/18 gates ✅ + niveles-por-elección + browser ✅ 2026-06-01
-  11-2-plebiscitos-referendum-interior: backlog
-  11-3-balotajes-historicos-2014-2019-interior: backlog
-  11-4-nacionales-2019-interior: backlog
-  11-5-auditoria-nivel-barrio-interior: backlog
+  11-2-plebiscitos-referendum-interior: done                        # 3 elecciones × 18 deptos, gates 18/18 ✅ + browser ✅
+  11-3-balotajes-historicos-2014-2019-interior: done                # 2 años × 18 deptos, gates 18/18 + ancla nacional ✅
+  11-4-nacionales-2019-interior: done                               # 18/18 reconcile delta=0 ✅
+  11-5-auditoria-nivel-barrio-interior: done                        # deuda parcial de Epic 8.5 documentada (no bloqueante)
   epic-11-retrospective: optional
+  # Resultado Epic 11: el interior alcanza PARIDAD con Montevideo (las 13 elecciones).
+  # gate:data 247 shards, build 248 páginas, todo verde 2026-06-01.
