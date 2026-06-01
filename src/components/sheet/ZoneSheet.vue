@@ -106,10 +106,19 @@ function fmt(n: number): string {
               </ul>
             </div>
           </div>
+          <!-- Ganador de la zona en compacto: cuando hay selección, NO se muestra el bloque
+               grande (confunde "lo que seleccioné" con "quién ganó la zona"). -->
+          <div class="zone-sheet__gano-zona">
+            <span class="zone-sheet__gano-zona-label">Ganó la zona</span>
+            <img v-if="sel.flagUrl" :src="sel.flagUrl" :alt="sel.sigla" class="zone-sheet__flag--sm" aria-hidden="true" />
+            <span v-else class="zone-sheet__swatch--sm" :style="{ background: sel.color }" aria-hidden="true"></span>
+            <span class="zone-sheet__gano-zona-sigla">{{ sel.sigla }}</span>
+            <span class="zone-sheet__gano-zona-pct">{{ sel.pct.toFixed(1) }}% · {{ fmt(sel.votoGanador) }} votos</span>
+          </div>
         </template>
 
-        <!-- Ganador destacado -->
-        <div class="zone-sheet__ganador">
+        <!-- Ganador destacado (solo sin selección: con selección va el compacto de arriba) -->
+        <div v-if="!(sel.desglose && sel.desglose.length > 0)" class="zone-sheet__ganador">
           <img
             v-if="sel.flagUrl"
             :src="sel.flagUrl"
@@ -354,6 +363,16 @@ function fmt(n: number): string {
 .zone-sheet__hojas { list-style: none; margin: 0.125rem 0 0; padding: 0 0 0 1.125rem; }
 .zone-sheet__hoja { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--color-ink-soft); padding: 0.0625rem 0; }
 .zone-sheet__hoja--mas { color: var(--color-ink-faint); font-style: italic; }
+
+/* Ganador de la zona en compacto (cuando hay selección) */
+.zone-sheet__gano-zona {
+  display: flex; align-items: center; gap: 0.375rem;
+  font-size: 0.75rem; padding: 0.375rem 0.625rem; margin-bottom: 0.75rem;
+  background: var(--color-surface-1); border-radius: 0.375rem;
+}
+.zone-sheet__gano-zona-label { color: var(--color-ink-muted); }
+.zone-sheet__gano-zona-sigla { font-weight: 700; color: var(--color-ink); }
+.zone-sheet__gano-zona-pct { margin-left: auto; color: var(--color-ink-soft); }
 
 .zone-sheet__dl {
   display: flex;
