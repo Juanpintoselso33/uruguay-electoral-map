@@ -173,6 +173,8 @@ development_status:
   epic-13: done
   13-1-decomiso-comparacion-ab: done                                # A/B fuera de la UI
   13-2-toggle-coloreo-ganador-share-heatmap: done                   # {Ganador, Share %, Heatmap}; ganador-entre-seleccionado + banderas, browser ✅
+  13-3-unificar-selector-simple-al-acordeon: done                   # bug: selector simple (nacionales-2019 interior, balotaje/pleb/ref interior) usaba applyGanadorMode (ganador ABSOLUTO) → partido chico que no gana ninguna zona = mapa vacío. Fix: el acordeón es SIEMPRE el selector; sin catalogo.json degrada a catálogo plano sintético desde opciones.json (multi-select + ganador-entre-seleccionado). OpcionSelector.vue eliminado. browser ✅ 2026-06-01
+  13-4-ganador-agrega-por-partido: done                             # ganadorSelDeZona agrega por PARTIDO (suma sus hojas seleccionadas) en vez de por hoja-máxima: corrige leyenda repetida ("CA Cabildo Abierto" × N hojas → 1 renglón) y el ganador-por-zona ahora compara suma de partido, coherente con el color del mapa. browser ✅ 2026-06-01
   epic-13-retrospective: optional
 
   # ---- Epic 14: Ingestar plebiscito "Vivir sin Miedo" (2019) ----

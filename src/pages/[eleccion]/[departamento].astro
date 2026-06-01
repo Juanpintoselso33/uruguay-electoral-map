@@ -4,7 +4,6 @@ import type { NivelGeografico } from '../../lib/contracts';
 import Base from '../../layouts/Base.astro';
 import ChoroplethMap from '../../components/map/ChoroplethMap.vue';
 import DataTable from '../../components/a11y/DataTable.astro';
-import OpcionSelector from '../../components/selectors/OpcionSelector.vue';
 import OpcionAccordion from '../../components/selectors/OpcionAccordion.vue';
 import LevelSelector from '../../components/selectors/LevelSelector.vue';
 import EleccionSelector from '../../components/selectors/EleccionSelector.vue';
@@ -66,25 +65,10 @@ function eleccionParaDepto(dept: DeptEntry): string {
   return dept.elecciones.includes(eleccion) ? eleccion : 'internas-2024';
 }
 
-// Elecciones con catálogo de opción (Epic 10) → acordeón. internas-2024 = los 19 deptos
-// (Montevideo por barrio, interior por serie); nacionales-2019/2024 = solo Montevideo (HOJA);
-// balotaje/plebiscito de Montevideo = escalera PLANA (Story 10.10): el acordeón degrada a
-// lista de opciones con checkbox (candidatos / Sí-No), sin árbol de HOJA.
-const esFlatMontevideo =
-  departamento === 'montevideo' &&
-  (eleccion.startsWith('balotaje-') || eleccion.startsWith('plebiscito-') || eleccion.startsWith('referendum-'));
-// departamentales-2025/2020 (todos los depts): 3 contiendas paralelas (intendente/junta/municipio) → acordeón.
-const esDepartamentales2025 = eleccion === 'departamentales-2025';
-const esDepartamentales2020 = eleccion === 'departamentales-2020';
-const tieneCatalogoHoja =
-  eleccion === 'internas-2024' ||
-  eleccion === 'internas-2019' ||         // HOJA (ODN degradada + ODD), los 19 deptos (Story 7.7)
-  eleccion === 'nacionales-2024' ||
-  eleccion === 'nacionales-2014' ||       // HOJA degradada lema→hoja, los 19 deptos (Story 7.7)
-  (eleccion === 'nacionales-2019' && departamento === 'montevideo') ||
-  esFlatMontevideo ||
-  esDepartamentales2025 ||
-  esDepartamentales2020;
+// Selector de opción = SIEMPRE el acordeón (multi-selección + toggle {Ganador, Share, Heatmap}, Epic 13).
+// Si la elección tiene catálogo de HOJA (internas, nacionales-2024/2014, departamentales, MVD plano)
+// arma el árbol/escalera; si NO lo tiene (nacionales-2019 interior, balotaje/plebiscito/referéndum
+// del interior) degrada a una lista plana de opciones desde opciones.json (catalogoPlanoFallback).
 
 const eleccionLabel = ELECCION_LABELS[eleccion] ?? eleccion;
 
@@ -140,9 +124,7 @@ const canonicalPath = `/${eleccion}/${departamento}`;
       departamento={departamento}
     />
     <!-- Selector de opción — isla fuera de transition:persist, se re-monta en navegación (Story 2.2) -->
-    {tieneCatalogoHoja
-      ? <OpcionAccordion client:idle eleccion={eleccion} departamento={departamento} />
-      : <OpcionSelector client:idle eleccion={eleccion} departamento={departamento} />}
+    <OpcionAccordion client:idle eleccion={eleccion} departamento={departamento} />
     <!-- Selector de nivel geográfico (Story 2.5) -->
     <LevelSelector client:idle availableLevels={availableLevels} />
     <!-- transition:persist: el island MapLibre sobrevive la navegación entre departamentos (NFR1) -->

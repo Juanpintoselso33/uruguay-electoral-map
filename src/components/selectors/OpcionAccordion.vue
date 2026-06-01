@@ -67,6 +67,36 @@ const fetchedHojas = new Set<string>(); // "{contienda}/{lemaId}" ya descargados
 
 let unsub: (() => void) | null = null;
 
+/**
+ * Catálogo PLANO sintético desde opciones.json, para elecciones sin catálogo de HOJA
+ * (nacionales-2019 interior, balotaje/plebiscito/referéndum del interior). Las vuelve
+ * multi-seleccionables con el mismo toggle {Ganador, Share, Heatmap} que el resto (Epic 13):
+ * "ganador entre lo seleccionado" colorea cada zona según cuál opción seleccionada lidera ahí.
+ */
+async function catalogoPlanoFallback(base: string): Promise<Catalogo | null> {
+  const res = await fetch(`${base}/data/${props.eleccion}/${props.departamento}/opciones.json`);
+  if (!res.ok) return null;
+  const opcDoc = (await res.json()) as { opciones: { opcionId: string; nombre: string }[] };
+  const binaria = props.eleccion.includes('plebiscito') || props.eleccion.includes('referendum');
+  return {
+    eleccionId: props.eleccion,
+    departamento: props.departamento,
+    contiendas: [
+      {
+        contienda: 'unica',
+        niveles: ['lema'], // un solo nivel → esPlano → lista de checkboxes
+        nodos: [],
+        opciones: opcDoc.opciones.map((o) => ({
+          clase: binaria ? 'binaria' : 'candidato',
+          id: o.opcionId,
+          etiqueta: o.nombre,
+          candidato: o.nombre,
+        })),
+      },
+    ],
+  };
+}
+
 onMounted(async () => {
   unsub = $selection.subscribe((s) => {
     seleccion.value = new Set(s.seleccion);
@@ -78,8 +108,10 @@ onMounted(async () => {
       fetch(`${base}/data/${props.eleccion}/${props.departamento}/catalogo.json`),
       fetch(`${base}/data/${props.eleccion}/${props.departamento}/votes.json`),
     ]);
-    if (!resCat.ok) return;
-    const doc = (await resCat.json()) as Catalogo;
+    const doc = resCat.ok
+      ? ((await resCat.json()) as Catalogo)
+      : await catalogoPlanoFallback(base); // sin catálogo de HOJA → catálogo plano sintético (Epic 13)
+    if (!doc) return;
     catalogo.value = doc;
     if (!contiendaActiva.value) contiendaActiva.value = doc.contiendas[0]?.contienda ?? null;
     sembrarExpansionDeSeleccion(); // AC7: deep-link abre el árbol en las ramas seleccionadas
@@ -290,11 +322,11 @@ const etiquetaOpcion = (o: OpcionHojaJson): string =>
   o.clase === 'candidato' ? (o.candidato ?? o.etiqueta ?? o.id) : etiquetaLista(o.hoja);
 
 /** Presentación de una opción plana (balotaje/plebiscito): etiqueta legible + color/sigla. */
-function metaPlano(o: OpcionHojaJson): { label: string; color: string; sigla: string } {
+function metaPlano(o: OpcionHojaJson): { label: string; color: string; sigla: string; flagUrl: string | null } {
   // Binaria: el etiqueta del dato es 'si'/'no' → resolveParty lo lleva a Sí/No con su color.
   const nombre = o.clase === 'binaria' ? (o.etiqueta ?? o.id) : (o.candidato ?? o.etiqueta ?? o.id);
   const m = resolveParty(nombre, props.eleccion);
-  return { label: o.clase === 'binaria' ? m.sigla : nombre, color: m.color, sigla: m.sigla };
+  return { label: o.clase === 'binaria' ? m.sigla : nombre, color: m.color, sigla: m.sigla, flagUrl: m.flagUrl };
 }
 
 const colorLema = (l: NodoOpcion): string => resolveParty(l.etiqueta, props.eleccion).color;
@@ -440,7 +472,8 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
             :aria-label="`Seleccionar ${metaPlano(o).label}`"
             @click="toggleHoja(o.id)"
           ><span aria-hidden="true">{{ seleccion.has(o.id) ? '✓' : '' }}</span></button>
-          <span class="acc__swatch" :style="{ background: metaPlano(o).color }" aria-hidden="true"></span>
+          <img v-if="metaPlano(o).flagUrl" :src="metaPlano(o).flagUrl!" :alt="metaPlano(o).sigla" class="acc__flag" aria-hidden="true" />
+          <span v-else class="acc__swatch" :style="{ background: metaPlano(o).color }" aria-hidden="true"></span>
           <span class="acc__lista">{{ metaPlano(o).label }}</span>
         </div>
       </li>

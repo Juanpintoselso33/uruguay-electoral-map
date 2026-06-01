@@ -1,5 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 60">
-  <!-- Cabildo Abierto: colores de marca — amarillo dorado + granate -->
-  <rect x="0" y="0" width="90" height="60" fill="#F5A800"/>
-  <rect x="0" y="38" width="90" height="22" fill="#7B2535"/>
+  <!-- Cabildo Abierto: campo amarillo, emblema arco "CA" granate, cinta artiguista (añil/blanco/rojo) -->
+  <rect width="90" height="60" fill="#F5A800"/>
+  <!-- arco del cabildo -->
+  <path d="M24 44 V27 Q24 13 45 13 Q66 13 66 27 V44" fill="none" stroke="#7B2535" stroke-width="3.5"/>
+  <!-- CA -->
+  <text x="45" y="38" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="20" fill="#7B2535" text-anchor="middle">CA</text>
+  <!-- cinta de la bandera de Artigas ondeando -->
+  <path d="M0 49 Q22 45 45 49 T90 49 V60 H0 Z" fill="#2E4A9E"/>
+  <path d="M0 52.5 Q22 48.5 45 52.5 T90 52.5 V60 H0 Z" fill="#FFFFFF"/>
+  <path d="M0 56 Q22 52 45 56 T90 56 V60 H0 Z" fill="#C62828"/>
 </svg>

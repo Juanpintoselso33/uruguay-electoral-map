@@ -465,10 +465,10 @@ function drawFlagOverlay(m: MlMap): void {
         flagCtx.lineWidth = 2 * dpr;
         flagCtx.stroke();
       } else {
-        // Borde entre polígonos: oscuro y marcado (antes 1px/0.65 se veía lavado en barrios
-        // chicos con relleno claro, p. ej. Sí blanco del plebiscito de seguridad social en MVD).
+        // Borde entre polígonos: oscuro y marcado pero fino (antes 1px/0.65 se veía lavado en
+        // barrios chicos con relleno claro; 1.5 quedaba algo grueso → 1.15).
         flagCtx.strokeStyle = isDark ? 'rgba(255,255,255,0.8)' : 'rgba(10,12,24,0.92)';
-        flagCtx.lineWidth = 1.5 * dpr;
+        flagCtx.lineWidth = 1.15 * dpr;
         flagCtx.stroke();
       }
     }
@@ -812,19 +812,6 @@ function buildSeleccionLegend(modo: 'share' | 'heatmap', n: number): LegendEntry
   ];
 }
 
-/** Opción seleccionada con más votos en una zona (modo "ganador entre lo seleccionado", Epic 13). */
-function ganadorSelDeZona(key: string, sel: string[]): { id: string | null; votos: number } {
-  const mm = hojaVotos.get(key);
-  const base = zonasVotos.get(key);
-  let id: string | null = null;
-  let votos = -1;
-  for (const oid of sel) {
-    const v = mm?.get(oid) ?? base?.get(oid) ?? 0;
-    if (v > votos) { votos = v; id = oid; }
-  }
-  return { id, votos: Math.max(0, votos) };
-}
-
 /** Nombre de partido/lema de una opción para color/sigla: HOJA → lema del catálogo;
  *  plano → nombre de opciones.json. (resolveParty necesita el nombre, no el opcionId.) */
 function nombrePartidoDeOpcion(id: string): string {
@@ -833,21 +820,45 @@ function nombrePartidoDeOpcion(id: string): string {
   return opcNombreMap.get(id) ?? id;
 }
 
-/** FC del modo "ganador entre lo seleccionado": cada zona toma la opción seleccionada
- *  con más votos ahí, con su color/bandera de partido (Story 13.2). */
+/** Mapa opcionId→nombre de partido para la selección (pre-computado una vez por render). */
+function nombresDeSeleccion(sel: string[]): Map<string, string> {
+  return new Map(sel.map((oid) => [oid, nombrePartidoDeOpcion(oid)]));
+}
+
+/** Partido seleccionado con más votos en una zona, sumando TODAS sus hojas/listas seleccionadas
+ *  (modo "ganador entre lo seleccionado", Epic 13). Agrega por PARTIDO, no por hoja: seleccionar
+ *  un lema entero compite por la suma del partido y la leyenda no se repite por cada hoja. */
+function ganadorSelDeZona(key: string, sel: string[], nombres: Map<string, string>): { nombre: string | null; votos: number } {
+  const mm = hojaVotos.get(key);
+  const base = zonasVotos.get(key);
+  const porPartido = new Map<string, number>();
+  for (const oid of sel) {
+    const v = mm?.get(oid) ?? base?.get(oid) ?? 0;
+    if (v <= 0) continue;
+    const nombre = nombres.get(oid) ?? oid;
+    porPartido.set(nombre, (porPartido.get(nombre) ?? 0) + v);
+  }
+  let nombre: string | null = null;
+  let votos = 0;
+  for (const [n, v] of porPartido) if (v > votos) { votos = v; nombre = n; }
+  return { nombre, votos };
+}
+
+/** FC del modo "ganador entre lo seleccionado": cada zona toma el PARTIDO seleccionado
+ *  con más votos ahí, con su color/bandera (Story 13.2). */
 function buildSeleccionGanadorFC(fc: FeatureCollection, sel: string[]): FeatureCollection {
+  const nombres = nombresDeSeleccion(sel);
   return {
     ...fc,
     features: fc.features.map((f) => {
       const key = norm(String((f.properties as { name: string }).name));
       const validos = zonasValidos.get(key) ?? 0;
-      const { id, votos } = ganadorSelDeZona(key, sel);
-      if (!id || votos <= 0) {
+      const { nombre, votos } = ganadorSelDeZona(key, sel, nombres);
+      if (!nombre || votos <= 0) {
         // Sin votos de la selección: base claro si hay urna, gris si no.
         const color = validos > 0 ? interpolateHex(INTENSIDAD_LIGHT, SEL_BASE, 0.12) : COLOR_SIN_DATOS;
         return { ...f, properties: { ...f.properties, color, sigla: '', flagPattern: null, selVal: 0, selPct: 0 } };
       }
-      const nombre = nombrePartidoDeOpcion(id);
       const meta = resolveParty(nombre, activeEleccion);
       const flagPattern = meta.flagUrl ? `flag-${meta.sigla.toLowerCase()}` : null;
       return {
@@ -862,17 +873,17 @@ function buildSeleccionGanadorFC(fc: FeatureCollection, sel: string[]): FeatureC
   } as FeatureCollection;
 }
 
-/** Leyenda del modo ganador-selección: opciones que lideran al menos una zona. */
+/** Leyenda del modo ganador-selección: un renglón por PARTIDO que lidera al menos una zona. */
 function buildSeleccionGanadorLegend(fc: FeatureCollection, sel: string[]): LegendEntry[] {
-  const wins = new Map<string, number>();
+  const nombres = nombresDeSeleccion(sel);
+  const wins = new Map<string, number>(); // keyed por nombre de partido → zonas ganadas
   for (const f of fc.features) {
     const key = norm(String((f.properties as { name: string }).name));
-    const { id, votos } = ganadorSelDeZona(key, sel);
-    if (id && votos > 0) wins.set(id, (wins.get(id) ?? 0) + 1);
+    const { nombre, votos } = ganadorSelDeZona(key, sel, nombres);
+    if (nombre && votos > 0) wins.set(nombre, (wins.get(nombre) ?? 0) + 1);
   }
   return [...wins.entries()]
-    .map(([id, n]) => {
-      const nombre = nombrePartidoDeOpcion(id);
+    .map(([nombre, n]) => {
       const meta = resolveParty(nombre, activeEleccion);
       return { sigla: meta.sigla, nombre, color: meta.color, votos: n, flagUrl: meta.flagUrl };
     })
@@ -1492,7 +1503,7 @@ onMounted(async () => {
       setupFlagCanvas(m);
       m.addSource('zonas', { type: 'geojson', data: fc, promoteId: 'name' });
       m.addLayer({ id: 'zonas-fill', type: 'fill', source: 'zonas', paint: { 'fill-color': ['get', 'color'], 'fill-opacity': ['case', ['!=', ['get', 'flagPattern'], null], 0, 0.85] } });
-      m.addLayer({ id: 'zonas-line', type: 'line', source: 'zonas', paint: { 'line-color': isDark ? 'rgba(255,255,255,0.85)' : 'rgba(20,20,35,0.85)', 'line-width': 2.5 } });
+      m.addLayer({ id: 'zonas-line', type: 'line', source: 'zonas', paint: { 'line-color': isDark ? 'rgba(255,255,255,0.85)' : 'rgba(20,20,35,0.85)', 'line-width': 1.8 } });
       m.on('render', () => drawFlagOverlay(m));
       m.on('movestart', () => { isMapMoving = true; });
       m.on('moveend',   () => { isMapMoving = false; drawFlagOverlay(m); });
