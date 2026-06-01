@@ -31,7 +31,10 @@ export interface BalotajeInteriorConfig {
   deptName: string;
 }
 
-export function runBalotajeInteriorDept(cfg: BalotajeInteriorConfig): void {
+export function runBalotajeInteriorDept(
+  cfg: BalotajeInteriorConfig,
+  preParsedRows?: Record<string, string>[],
+): void {
   const { deptCode, deptName } = cfg;
 
   const GEO_IN = `public/data/geo/${deptName}/serie.topo.json`;
@@ -42,7 +45,8 @@ export function runBalotajeInteriorDept(cfg: BalotajeInteriorConfig): void {
   console.log(`Dependencia: public/data/geo/${deptName}/serie.topo.json debe existir.`);
 
   console.log('\n--- 1) Votos ---');
-  const allRows = parseCsv(CSV);
+  // Reusar el CSV ya parseado cuando se corre en loop (evita re-parsear 267KB por depto).
+  const allRows = preParsedRows ?? parseCsv(CSV);
   // Filtrar al departamento y excluir serie exterior (patrón xZZ)
   const rows = allRows.filter(
     (r) => r['Departamento'] === deptCode && !(r['Serie'] ?? '').toUpperCase().endsWith('ZZ'),
@@ -92,7 +96,48 @@ export function runBalotajeInteriorDept(cfg: BalotajeInteriorConfig): void {
   console.log(`\n=== ${deptName} balotaje-2024: todos los gates PASARON ✅ ===`);
 }
 
-// Piloto: Colonia
+// Los 18 departamentos del interior (mismo set que run-nacionales-2024-interior).
+const DEPTS_INTERIOR: BalotajeInteriorConfig[] = [
+  { deptCode: 'CA', deptName: 'canelones' },
+  { deptCode: 'MA', deptName: 'maldonado' },
+  { deptCode: 'CO', deptName: 'colonia' },
+  { deptCode: 'SA', deptName: 'salto' },
+  { deptCode: 'PA', deptName: 'paysandu' },
+  { deptCode: 'RV', deptName: 'rivera' },
+  { deptCode: 'CL', deptName: 'cerro_largo' },
+  { deptCode: 'TA', deptName: 'tacuarembo' },
+  { deptCode: 'SJ', deptName: 'san_jose' },
+  { deptCode: 'SO', deptName: 'soriano' },
+  { deptCode: 'RO', deptName: 'rocha' },
+  { deptCode: 'FD', deptName: 'florida' },
+  { deptCode: 'AR', deptName: 'artigas' },
+  { deptCode: 'DU', deptName: 'durazno' },
+  { deptCode: 'TT', deptName: 'treinta_y_tres' },
+  { deptCode: 'LA', deptName: 'lavalleja' },
+  { deptCode: 'RN', deptName: 'rio_negro' },
+  { deptCode: 'FS', deptName: 'flores' },
+];
+
 if (require.main === module) {
-  runBalotajeInteriorDept({ deptCode: 'CO', deptName: 'colonia' });
+  console.log('=== ETL Interior balotaje-2024 — todos los departamentos ===');
+  const allRows = parseCsv(CSV);
+  console.log(`CSV total: ${allRows.length} filas\n`);
+
+  let ok = 0;
+  const failed: string[] = [];
+  for (const cfg of DEPTS_INTERIOR) {
+    try {
+      runBalotajeInteriorDept(cfg, allRows);
+      ok++;
+    } catch (e) {
+      console.error(`ERROR en ${cfg.deptName}:`, e);
+      failed.push(cfg.deptName);
+    }
+  }
+
+  console.log(`\n=== Interior balotaje-2024 completo: ${ok}/${DEPTS_INTERIOR.length} departamentos ===`);
+  if (failed.length > 0) {
+    console.error(`FALLARON: ${failed.join(', ')}`);
+    process.exit(1);
+  }
 }

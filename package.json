@@ -39,7 +39,7 @@
     "etl:equiv": "esbuild etl/run-hoja-equivalencias.ts --bundle --platform=node --format=cjs --outfile=node_modules/.cache/etl-equiv.cjs --log-level=warning && node node_modules/.cache/etl-equiv.cjs",
     "etl:circuito": "esbuild etl/run-circuito.ts --bundle --platform=node --format=cjs --outfile=node_modules/.cache/etl-circ.cjs --log-level=warning && node node_modules/.cache/etl-circ.cjs",
     "etl:balotaje-mvd": "esbuild etl/run-balotaje-mvd.ts --bundle --platform=node --format=cjs --outfile=node_modules/.cache/etl-bal-mvd.cjs --log-level=warning && node node_modules/.cache/etl-bal-mvd.cjs",
-    "etl:balotaje-colo": "esbuild etl/run-balotaje-interior.ts --bundle --platform=node --format=cjs --outfile=node_modules/.cache/etl-bal-col.cjs --log-level=warning && node node_modules/.cache/etl-bal-col.cjs",
+    "etl:balotaje-2024-interior": "esbuild etl/run-balotaje-interior.ts --bundle --platform=node --format=cjs --outfile=node_modules/.cache/etl-bal-int.cjs --log-level=warning && node node_modules/.cache/etl-bal-int.cjs",
     "etl:serie-localidad": "npx tsx etl/build-serie-localidad-mapping.ts",
     "etl:montevideo-hoja": "npx tsx etl/run-montevideo-hoja.ts",
     "etl:interior-hoja": "npx tsx etl/run-interior-hoja.ts",

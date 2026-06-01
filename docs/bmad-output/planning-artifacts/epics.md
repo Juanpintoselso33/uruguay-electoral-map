@@ -600,3 +600,55 @@ As a usuario, I want que en balotaje y plebiscito el selector se simplifique a l
 
 **Acceptance Criteria:**
 **Given** una elección de tipo balotaje o plebiscito **When** abro el selector **Then** el acordeón degrada a **lista plana de opciones con checkbox** (candidatos / Sí-No), sin chevrons **And** los modos de mapa aplican (share/votos/heatmap/ganador) **And** existe un **gate** que valida que todo `(tipo, contienda)` declara su escalera de granularidad en el contrato (ningún tipo queda sin escalera) **And** la UI nunca ofrece un nivel que la escalera del tipo no declara.
+
+---
+
+## Epic 11: Completar el catálogo nacional en el interior
+
+Las elecciones nacionales (balotajes, plebiscitos, referéndum, nacionales-2019) están ingeridas solo en Montevideo (+ Colonia en balotaje-2024), pero fueron contiendas de los 19 departamentos. Este epic las lleva a los 18 deptos del interior **reusando los patrones ETL ya probados** (`run-*-interior.ts`, geometría `serie.topo.json` por depto, gates de reconciliación/cobertura). No hay datos nuevos que conseguir: los CSV crudos ya están en `data/raw/electoral/` y todos traen columna `Serie`.
+
+**Auditoría de cobertura (2026-06-01).** Lo que falta en el interior y el raw disponible:
+
+| Elección | Estado actual | Raw disponible | Patrón |
+|---|---|---|---|
+| balotaje-2024 | MVD + Colonia | `balotaje-2024.csv` (19 deptos) | `run-balotaje-interior.ts` (existe) |
+| balotaje-2019 / 2014 | solo MVD | `balotaje-201X.csv` | agregador con columnas de candidato propias por año |
+| plebiscitos-2024 (×2) | solo MVD | `nacionales-2024/totales-generales-plebiscitos.csv` (`Serie`, `SiArt11`/`SiArt67`) | Sí/No por serie (sin join CRV→serie) |
+| referendum-luc-2022 | solo MVD | `referendum-2022/*.csv` (`Serie`, `Total_SI`/`Total_NO`) | idem Sí/No por serie |
+| nacionales-2019 | MVD (nuevo) / 19 legacy | `nacionales-2019-full/` | clonar `run-nacionales-2024-interior.ts` |
+
+**Desbloqueante de integración.** Los niveles geográficos se declaran **por-departamento** (`departments.json`), no por-(elección×depto). Las nuevas elecciones interiores son serie-only → ofrecer localidad/circuito rompería el mapa (`ChoroplethMap.vue` lanza si falta el shard del nivel). Story 11.1 lo resuelve derivando `availableLevels` por elección×depto desde los shards en disco (build-time), lo que además **arregla el break latente de Colonia balotaje-2024** (hoy ofrece circuito sin dato).
+
+**Secuencia:** vertical slice (balotaje-2024 → 18 interior, end-to-end con el fix de niveles) antes que las variantes; cada variante posterior es una variación pura de ETL con la integración ya probada. Sigue el principio de degradación de 10.6 AC4 ("sin algún nivel → degrada, no rompe").
+
+### Story 11.1: Rebanada — balotaje-2024 al interior + niveles por elección
+As a usuario del interior, I want ver el balotaje 2024 en mi departamento, So that explore la segunda vuelta presidencial donde voté, con los niveles que realmente tienen dato.
+*(Vertical slice: prueba toda la cadena ETL→gates→UI→niveles una vez y desbloquea el fanout.)*
+
+**Acceptance Criteria:**
+**Given** `run-balotaje-interior.ts` (piloto Colonia) **When** lo generalizo a los 18 deptos del interior **Then** cada depto emite su `votes.json` (serie) + `opciones.json` para `balotaje-2024` **And** los gates de reconciliación (losslessness) y cobertura serie↔geometría pasan por depto **And** `departments.json` lista `balotaje-2024` en los 18 deptos del interior **And** **`availableLevels` se deriva por elección×depto** desde los shards `votes-{nivel}.json` presentes en disco (build-time), de modo que el selector solo ofrece niveles con dato (arregla también Colonia balotaje-2024) **And** abrir cualquier depto interior en balotaje-2024 renderiza el mapa por serie sin romper **And** `astro check` 0 errores.
+
+### Story 11.2: Plebiscitos 2024 + referéndum LUC 2022 al interior
+As a usuario del interior, I want ver cómo votó mi departamento los plebiscitos y el referéndum, So that explore esas consultas nacionales donde viví.
+
+**Acceptance Criteria:**
+**Given** los CSV de plebiscitos-2024 y referéndum-LUC-2022 (con columna `Serie` y conteo Sí/No) **When** corro el ETL Sí/No por serie para los 18 deptos del interior **Then** cada depto emite `votes.json` (serie) + `opciones.json` (pregunta + Sí/No) para las 3 contiendas **And** el gate de losslessness (Σ Sí+No == Σ válidos) pasa por depto **And** `departments.json` lista las 3 elecciones en los 18 deptos **And** el selector plano (10.10) y la ficha funcionan en el interior.
+
+### Story 11.3: Balotajes históricos 2014/2019 al interior
+As a usuario del interior, I want ver los balotajes 2014 y 2019 en mi departamento, So that compare las segundas vueltas históricas por zona.
+
+**Acceptance Criteria:**
+**Given** `balotaje-2014.csv` y `balotaje-2019.csv` (columnas de candidato propias de cada año) **When** generalizo el agregador de balotaje por serie a esas columnas y corro los 18 deptos **Then** cada depto emite `votes.json` + `opciones.json` con el par de candidatos correcto del año **And** los gates pasan por depto **And** `departments.json` lista ambos balotajes en los 18 deptos.
+
+### Story 11.4: nacionales-2019 al interior
+As a usuario del interior, I want ver las nacionales 2019 en mi departamento, So that tenga la elección presidencial/legislativa 2019 con la misma cobertura que 2024.
+
+**Acceptance Criteria:**
+**Given** `nacionales-2019-full/` (dataset nacional completo) **When** clono el patrón `run-nacionales-2024-interior.ts` apuntando a esa fuente **Then** los 18 deptos del interior emiten `nacionales-2019` a nivel serie con sus gates **And** `departments.json` lista `nacionales-2019` en los 18 deptos **And** (opcional) la granularidad HOJA legislativa de 10.7 se evalúa para el interior.
+
+### Story 11.5: Auditoría del nivel barrio en el interior (¿deuda o diseño?)
+As a desarrollador, I want saber por qué solo 8/18 deptos del interior tienen `votes-barrio.json`, So that decida si es deuda a completar o una decisión de diseño a documentar.
+*(Investigación; no asume trabajo de ETL hasta concluir.)*
+
+**Acceptance Criteria:**
+**Given** que 8 de 18 deptos tienen nivel barrio **When** investigo el rollout serie→barrio y la geometría disponible **Then** documento si los 10 restantes carecen de barrio por falta de mapeo/geometría (deuda) o por diseño (capitales sin barrios finos) **And** queda registrado en `deferred-work.md` o como stories de completado si corresponde.

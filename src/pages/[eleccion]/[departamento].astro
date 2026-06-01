@@ -1,5 +1,5 @@
 ---
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import type { NivelGeografico } from '../../lib/contracts';
 import Base from '../../layouts/Base.astro';
 import ChoroplethMap from '../../components/map/ChoroplethMap.vue';
@@ -44,7 +44,22 @@ export function getStaticPaths() {
 
 const { eleccion, departamento } = Astro.params;
 const deptMeta = DEPT_MAP[departamento] ?? { id: departamento, label: departamento, levels: ['zona'], elecciones: [eleccion] };
-const availableLevels: NivelGeografico[] = deptMeta.levels;
+
+// Niveles por ELECCIÓN×DEPTO: los niveles se declaran por-departamento en departments.json,
+// pero el dato existe por-elección. Una elección serie-only (balotajes/plebiscitos del interior)
+// no tiene votes-localidad/circuito → ofrecer ese nivel rompería el mapa (ChoroplethMap lanza si
+// falta el shard). Derivamos los niveles reales filtrando por la existencia del shard en disco
+// (build-time). El nivel base (zona/serie) siempre mapea a votes.json. Mismo mapeo que ChoroplethMap.
+function shardDeNivel(level: NivelGeografico): string {
+  return level === 'circuito' ? 'votes-circuito.json'
+       : level === 'localidad' ? 'votes-localidad.json'
+       : level === 'barrio'    ? 'votes-barrio.json'
+       : 'votes.json';
+}
+const nivelesConDato = deptMeta.levels.filter((lvl) =>
+  existsSync(`public/data/${eleccion}/${departamento}/${shardDeNivel(lvl)}`),
+);
+const availableLevels: NivelGeografico[] = nivelesConDato.length > 0 ? nivelesConDato : deptMeta.levels;
 const availableElecciones: string[] = deptMeta.elecciones;
 const deptLabel = deptMeta.label;
 
