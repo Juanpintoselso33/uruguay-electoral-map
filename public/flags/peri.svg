@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 60">
+  <!-- Ecologista Radical Intransigente: verde con "PERI" amarillo -->
+  <rect x="0" y="0" width="90" height="60" fill="#1E8A2E"/>
+  <text x="45" y="31" fill="#F2E500"
+        font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="800"
+        text-anchor="middle" dominant-baseline="central" letter-spacing="0.5">PERI</text>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 60">
+  <!-- Constitucional Ambientalista: verde con globo + libro abierto (blanco), simplificado -->
+  <rect x="0" y="0" width="90" height="60" fill="#1E9E57"/>
+  <circle cx="45" cy="23" r="11" fill="#FFFFFF"/>
+  <path d="M40 18 q5 5 0 10 M49 18 q-4 6 1 10" stroke="#1E9E57" stroke-width="1.4" fill="none"/>
+  <path d="M45 39 L24 43 L24 50 L45 47 Z" fill="#FFFFFF"/>
+  <path d="M45 39 L66 43 L66 50 L45 47 Z" fill="#FFFFFF"/>
+  <line x1="45" y1="39" x2="45" y2="47" stroke="#1E9E57" stroke-width="1.2"/>
+</svg>

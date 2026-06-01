@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 60">
+  <!-- Por los Cambios Necesarios: verde con "PCN" blanco y acento amarillo -->
+  <rect x="0" y="0" width="90" height="60" fill="#1FA84C"/>
+  <text x="45" y="28" fill="#FFFFFF"
+        font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="800"
+        text-anchor="middle" dominant-baseline="central">PCN</text>
+  <rect x="31" y="41" width="28" height="3.5" rx="1" fill="#F2C200"/>
+</svg>

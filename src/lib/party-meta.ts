@@ -62,6 +62,11 @@ const FLAGS: Record<string, string> = {
   CR:  '/flags/cr.svg',
   IS:  '/flags/is.svg',
   AP:  '/flags/ap.svg',
+  PERI: '/flags/peri.svg',
+  PCA: '/flags/pca.svg',
+  AR:  '/flags/ar.svg',
+  PCN: '/flags/pcn.svg',
+  PVA: '/flags/pva.svg',
 };
 
 export interface PartyMeta {

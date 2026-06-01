@@ -1,6 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 60">
-  <!-- Asamblea Popular: emblema simplificado — swoosh azul + llama roja sobre blanco -->
-  <rect x="0" y="0" width="90" height="60" fill="#FFFFFF"/>
-  <path d="M12 40 Q 45 13 80 27 Q 48 34 18 49 Z" fill="#1B5FB0"/>
-  <path d="M48 8 L53 47 L43 47 Z" fill="#E2231A"/>
+  <!-- Asamblea Popular / Unidad Popular: rojo (arriba) / verde (abajo) + "UP" negro -->
+  <rect x="0" y="0"  width="90" height="30" fill="#E2231A"/>
+  <rect x="0" y="30" width="90" height="30" fill="#0F9D3A"/>
+  <text x="45" y="30" fill="#111111"
+        font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="800"
+        text-anchor="middle" dominant-baseline="central">UP</text>
 </svg>

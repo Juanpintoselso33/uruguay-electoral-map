@@ -1,5 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 60">
-  <!-- Coalición Republicana: mitad superior roja, mitad inferior azul -->
-  <rect x="0" y="0"  width="90" height="30" fill="#D42B2B"/>
-  <rect x="0" y="30" width="90" height="30" fill="#003580"/>
+  <!-- Coalición Republicana: blanco con barras roja+azul y estrella amarilla (oficial, simplificado) -->
+  <rect x="0" y="0" width="90" height="60" fill="#FFFFFF"/>
+  <rect x="14" y="20" width="9" height="32" fill="#FD0000"/>
+  <rect x="23" y="20" width="9" height="32" fill="#000163"/>
+  <path fill="#FFD400" d="M28 5 L29.65 9.74 L34.66 9.84 L30.66 12.87 L32.11 17.66 L28 14.8 L23.89 17.66 L25.34 12.87 L21.34 9.84 L26.35 9.74 Z"/>
 </svg>

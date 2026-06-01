@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 60">
+  <!-- Verde Animalista: verde con "PV" blanco + "A" naranja -->
+  <rect x="0" y="0" width="90" height="60" fill="#2E9E5B"/>
+  <text x="45" y="31" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="800"
+        text-anchor="middle" dominant-baseline="central">
+    <tspan fill="#FFFFFF">PV</tspan><tspan fill="#F2A11E">A</tspan>
+  </text>
+</svg>

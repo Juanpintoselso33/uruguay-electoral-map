@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 60">
+  <!-- Avanzar Republicano: naranja con "AR" blanco -->
+  <rect x="0" y="0" width="90" height="60" fill="#F47B20"/>
+  <text x="45" y="30" fill="#FFFFFF"
+        font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="800"
+        text-anchor="middle" dominant-baseline="central">AR</text>
+</svg>
