@@ -293,11 +293,11 @@ const etiquetaOpcion = (o: OpcionHojaJson): string =>
 function metaPlano(o: OpcionHojaJson): { label: string; color: string; sigla: string } {
   // Binaria: el etiqueta del dato es 'si'/'no' → resolveParty lo lleva a Sí/No con su color.
   const nombre = o.clase === 'binaria' ? (o.etiqueta ?? o.id) : (o.candidato ?? o.etiqueta ?? o.id);
-  const m = resolveParty(nombre);
+  const m = resolveParty(nombre, props.eleccion);
   return { label: o.clase === 'binaria' ? m.sigla : nombre, color: m.color, sigla: m.sigla };
 }
 
-const colorLema = (l: NodoOpcion): string => resolveParty(l.etiqueta).color;
+const colorLema = (l: NodoOpcion): string => resolveParty(l.etiqueta, props.eleccion).color;
 const siglaLema = (l: NodoOpcion): string => resolveParty(l.etiqueta).sigla;
 const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).flagUrl;
 </script>

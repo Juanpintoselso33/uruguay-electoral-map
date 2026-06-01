@@ -93,12 +93,29 @@ function siglaDe(key: string): string | undefined {
   return SIGLAS[key] ?? (key.startsWith('PARTIDO ') ? SIGLAS[key.slice(8)] : undefined);
 }
 
-/** Resuelve sigla + color + flagUrl para un nombre de partido/opción (nombre original del ETL). */
-export function resolveParty(nombre: string): PartyMeta {
+/**
+ * Colores oficiales de la papeleta por iniciativa de democracia directa (Corte Electoral).
+ * Cada plebiscito/referéndum se identifica binariamente por el color de su papeleta del Sí.
+ */
+const PAPELETA_COLORS: Record<string, { si: string; no: string }> = {
+  'referendum-luc-2022': { si: '#E5308C', no: '#55B5E5' },              // Sí rosado / No celeste (las dos papeletas)
+  'plebiscito-seguridad-social-2024': { si: '#FFFFFF', no: '#94A3B8' }, // Sí papeleta blanca (PIT-CNT) / No sin papeleta
+  'plebiscito-allanamientos-2024': { si: '#F2C200', no: '#94A3B8' },    // Sí papeleta amarilla (Art. 11) / No sin papeleta
+};
+function papeletaColor(eleccionId: string | undefined, k: 'SI' | 'NO'): string | undefined {
+  if (!eleccionId) return undefined;
+  const p = PAPELETA_COLORS[eleccionId];
+  return p ? (k === 'SI' ? p.si : p.no) : undefined;
+}
+
+/** Resuelve sigla + color + flagUrl para un nombre de partido/opción (nombre original del ETL).
+ *  `eleccionId` (opcional) aplica el color de papeleta del plebiscito/referéndum a Sí/No. */
+export function resolveParty(nombre: string, eleccionId?: string): PartyMeta {
   const key = norm(nombre);
-  // Opción binaria de plebiscito/referéndum (Sí/No): Sí verde, No gris neutro (status quo).
-  if (key === 'SI') return { sigla: 'Sí', color: '#16a34a', flagUrl: null };
-  if (key === 'NO') return { sigla: 'No', color: '#94a3b8', flagUrl: null };
+  // Opción binaria de plebiscito/referéndum (Sí/No): color por papeleta de la iniciativa.
+  // Fallback genérico (sin eleccionId o iniciativa desconocida): Sí verde, No gris neutro.
+  if (key === 'SI') return { sigla: 'Sí', color: papeletaColor(eleccionId, 'SI') ?? '#16a34a', flagUrl: null };
+  if (key === 'NO') return { sigla: 'No', color: papeletaColor(eleccionId, 'NO') ?? '#94a3b8', flagUrl: null };
   const sigla = siglaDe(key) ?? acronimo(nombre);
   return { sigla, color: getPartyColor(nombre), flagUrl: FLAGS[sigla] ?? null };
 }

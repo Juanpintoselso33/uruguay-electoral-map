@@ -72,7 +72,7 @@ onMounted(async () => {
 
     opciones.value = doc.opciones
       .map((o) => {
-        const meta = resolveParty(o.nombre);
+        const meta = resolveParty(o.nombre, props.eleccion);
         return { opcionId: o.opcionId, nombre: o.nombre, sigla: meta.sigla, color: meta.color, totalVotos: totalMap[o.opcionId] ?? 0 };
       })
       .sort((a, b) => b.totalVotos - a.totalVotos);

@@ -37,7 +37,7 @@ defineProps<{ entradas: Entrada[]; sinDatos: number }>();
         aria-hidden="true"
       ></span>
       <span class="legend__sigla">{{ e.sigla }}</span>
-      <span class="legend__nombre">{{ e.nombre }}</span>
+      <span v-if="e.nombre !== e.sigla" class="legend__nombre">{{ e.nombre }}</span>
     </div>
     <div v-if="sinDatos > 0" class="legend__item legend__item--muted" role="listitem">
       <span class="legend__swatch legend__swatch--empty" aria-hidden="true"></span>

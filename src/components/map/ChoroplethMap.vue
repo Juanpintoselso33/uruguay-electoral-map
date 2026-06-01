@@ -251,7 +251,7 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
     p.name = name;
     if (zona && zona.porOpcion.length > 0) {
       const nombre = nombrePorOpcion.get(zona.ganadorOpcionId) ?? zona.ganadorOpcionId;
-      const meta = resolveParty(nombre);
+      const meta = resolveParty(nombre, eleccion);
       p.color = meta.color;
       p.sigla = meta.sigla;
       p.flagUrl = meta.flagUrl;
@@ -273,7 +273,7 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
   legend.value = [...barriosGanados.entries()]
     .map(([opcionId, barrios]) => {
       const nombre = nombrePorOpcion.get(opcionId) ?? opcionId;
-      const meta = resolveParty(nombre);
+      const meta = resolveParty(nombre, eleccion);
       return { sigla: meta.sigla, nombre, color: meta.color, votos: barrios, flagUrl: meta.flagUrl };
     })
     .sort((a, b) => b.votos - a.votos);
@@ -736,7 +736,7 @@ function buildDesglose(key: string, sel: string[]): { grupos: DesgloseGrupo[]; t
     .sort((a, b) => b.total - a.total)
     .map((g) => {
       const hojasOrd = g.hojas.filter((h) => h.votos > 0).sort((a, b) => b.votos - a.votos);
-      const meta = resolveParty(g.nombre);
+      const meta = resolveParty(g.nombre, activeEleccion);
       return {
         lemaNombre: g.nombre, sigla: meta.sigla, color: meta.color, flagUrl: meta.flagUrl,
         total: g.total, hojas: hojasOrd.slice(0, TOP), masN: Math.max(0, hojasOrd.length - TOP),
@@ -846,7 +846,7 @@ function buildSeleccionGanadorFC(fc: FeatureCollection, sel: string[]): FeatureC
         return { ...f, properties: { ...f.properties, color, sigla: '', flagPattern: null, selVal: 0, selPct: 0 } };
       }
       const nombre = nombrePartidoDeOpcion(id);
-      const meta = resolveParty(nombre);
+      const meta = resolveParty(nombre, activeEleccion);
       const flagPattern = meta.flagUrl ? `flag-${meta.sigla.toLowerCase()}` : null;
       return {
         ...f,
@@ -871,7 +871,7 @@ function buildSeleccionGanadorLegend(fc: FeatureCollection, sel: string[]): Lege
   return [...wins.entries()]
     .map(([id, n]) => {
       const nombre = nombrePartidoDeOpcion(id);
-      const meta = resolveParty(nombre);
+      const meta = resolveParty(nombre, activeEleccion);
       return { sigla: meta.sigla, nombre, color: meta.color, votos: n, flagUrl: meta.flagUrl };
     })
     .sort((a, b) => b.votos - a.votos);
@@ -959,7 +959,7 @@ function applyGanadorMode(opcionId: string, m: MlMap, fc: FeatureCollection): vo
   setPatternVisible(false);
   rebuildMarkers(fc, opcionId);
   const nombre = opcNombreMap.get(opcionId) ?? opcionId;
-  const meta = resolveParty(nombre);
+  const meta = resolveParty(nombre, activeEleccion);
   const count = fc.features.filter(
     (f) => (f.properties as { ganadorOpcionId?: string }).ganadorOpcionId === opcionId,
   ).length;
@@ -969,7 +969,7 @@ function applyGanadorMode(opcionId: string, m: MlMap, fc: FeatureCollection): vo
 /** Aplica modo intensidad (Story 2.3): gradiente de % de voto para opcion dada. */
 function applyIntensidadMode(opcionId: string, m: MlMap, fc: FeatureCollection): void {
   const nombre = opcNombreMap.get(opcionId) ?? opcionId;
-  const meta = resolveParty(nombre);
+  const meta = resolveParty(nombre, activeEleccion);
   const gradientFC = buildIntensidadFC(fc, opcionId, meta.color);
   (m.getSource('zonas') as GeoJSONSource).setData(gradientFC);
   m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
@@ -1278,7 +1278,7 @@ async function loadCircuitoOverlay(eleccion: string, departamento: string): Prom
       const p = f.properties as Record<string, unknown>;
       if (zona && zona.porOpcion.length > 0) {
         const nombre = opcNombreMap.get(zona.ganadorOpcionId) ?? zona.ganadorOpcionId;
-        const meta = resolveParty(nombre);
+        const meta = resolveParty(nombre, activeEleccion);
         p.color = meta.color;
         p.flagPattern = meta.flagUrl ? `flag-${meta.sigla.toLowerCase()}` : null;
         p.nombre = nombre;
