@@ -166,3 +166,11 @@ development_status:
   12-1-spike-ficha-desglose-actual-vs-legacy: done                  # caracterización del gap + UX objetivo
   12-2-desglose-seleccion-todos-los-caminos: done                   # desglose en selector simple/dual/plano, verificado en browser ✅
   epic-12-retrospective: optional
+
+  # ---- Epic 13: Coloreo del mapa — limpieza del toggle + modo ganador, decomiso A/B ----
+  # Auditoría: Votos≈Heatmap (redundantes); falta modo Ganador en selección múltiple.
+  # Decisión: toggle = {Ganador, Share %, Heatmap} (se elimina Votos); Ganador = entre lo seleccionado.
+  epic-13: done
+  13-1-decomiso-comparacion-ab: done                                # A/B fuera de la UI
+  13-2-toggle-coloreo-ganador-share-heatmap: done                   # {Ganador, Share %, Heatmap}; ganador-entre-seleccionado + banderas, browser ✅
+  epic-13-retrospective: optional

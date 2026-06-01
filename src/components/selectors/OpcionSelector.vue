@@ -9,7 +9,7 @@
  */
 import { onMounted, ref, computed, onUnmounted } from 'vue';
 import { resolveParty } from '../../lib/party-meta';
-import { $selection, $comparison, commit } from '../../stores/map-state';
+import { $selection, commit } from '../../stores/map-state';
 
 const props = defineProps<{
   eleccion: string;
@@ -26,9 +26,6 @@ interface OpcionUI {
 
 const opciones = ref<OpcionUI[]>([]);
 const opcionActiva = ref<string | null>(null);
-// Dual opcion comparison (Story 4.4): a y b de $comparison
-const cmpA = ref<string | null>(null);
-const cmpB = ref<string | null>(null);
 
 const labelSelector = computed(() => {
   if (props.eleccion.startsWith('internas') || props.eleccion.startsWith('legislativas')) {
@@ -51,10 +48,6 @@ const nombreActivo = computed(() => {
 onMounted(async () => {
   $selection.subscribe((s) => {
     opcionActiva.value = s.opcion;
-  });
-  $comparison.subscribe((cmp) => {
-    cmpA.value = cmp.a;
-    cmpB.value = cmp.b;
   });
 
   try {
@@ -94,20 +87,6 @@ function seleccionar(opcionId: string): void {
 
 function limpiar(): void {
   commit({ opcion: null });
-}
-
-function compararVs(targetId: string): void {
-  if (opcionActiva.value) {
-    commit({ a: opcionActiva.value, b: targetId, opcion: null, vs: null });
-  }
-}
-
-function salirDual(): void {
-  commit({ a: null, b: null });
-}
-
-function opcionPorId(id: string | null): OpcionUI | undefined {
-  return id ? opciones.value.find((o) => o.opcionId === id) : undefined;
 }
 
 // ── Listbox keyboard navigation (WCAG 2.1.1 / WAI-ARIA listbox pattern) ──────
@@ -159,25 +138,7 @@ function handleListboxBlur(): void {
 <template>
   <section class="opcion-selector" aria-label="Selector de opción electoral">
 
-    <!-- Modo dual activo (Story 4.4): encabezado A vs B con Salir -->
-    <template v-if="cmpA && cmpB">
-      <div class="opcion-selector__dual-header" aria-live="polite">
-        <span class="opcion-selector__dual-label">
-          <span class="opcion-selector__swatch" :style="{ background: opcionPorId(cmpA)?.color ?? '#ccc' }" aria-hidden="true"></span>
-          <strong>{{ opcionPorId(cmpA)?.sigla ?? cmpA }}</strong>
-          <span class="opcion-selector__dual-vs">vs</span>
-          <span class="opcion-selector__swatch" :style="{ background: opcionPorId(cmpB)?.color ?? '#ccc' }" aria-hidden="true"></span>
-          <strong>{{ opcionPorId(cmpB)?.sigla ?? cmpB }}</strong>
-        </span>
-        <button class="opcion-selector__clear" type="button" @click="salirDual">
-          ✕ Salir
-        </button>
-      </div>
-    </template>
-
-    <!-- Modo normal -->
-    <template v-else>
-      <div class="opcion-selector__header">
+    <div class="opcion-selector__header">
         <span class="opcion-selector__label">{{ labelSelector }}</span>
         <button
           v-if="opcionActiva"
@@ -192,21 +153,6 @@ function handleListboxBlur(): void {
 
       <div v-if="opcionActiva" class="opcion-selector__activa" aria-live="polite" aria-atomic="true">
         Viendo: <strong>{{ nombreActivo }}</strong>
-      </div>
-
-      <!-- Chips "Comparar vs:" cuando hay una opción activa (Story 4.4) -->
-      <div v-if="opcionActiva && opciones.length > 1" class="opcion-selector__vs-chips">
-        <span class="opcion-selector__vs-label">Comparar vs:</span>
-        <button
-          v-for="op in opciones.filter((o) => o.opcionId !== opcionActiva)"
-          :key="op.opcionId"
-          class="opcion-selector__vs-chip"
-          type="button"
-          @click="compararVs(op.opcionId)"
-        >
-          <span class="opcion-selector__swatch opcion-selector__swatch--chip" :style="{ background: op.color }" aria-hidden="true"></span>
-          {{ op.sigla }}
-        </button>
       </div>
 
       <ul
@@ -239,7 +185,6 @@ function handleListboxBlur(): void {
         </li>
       </ul>
       <p v-else class="opcion-selector__cargando">Cargando opciones…</p>
-    </template>
 
   </section>
 </template>

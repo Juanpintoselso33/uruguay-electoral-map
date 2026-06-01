@@ -140,7 +140,7 @@ const SERIE_BARRIO_FILES: Record<string, string> = {
 // ── Epic 10: coloreo por selección múltiple de HOJAS (Story 10.4) ──────────────
 const SEL_BASE = '#1d4ed8'; // azul secuencial para la escala de selección
 const seleccionActiva = ref<string[]>([]);
-const coloreoMode = ref<'share' | 'votos' | 'heatmap'>('share');
+const coloreoMode = ref<'ganador' | 'share' | 'heatmap'>('share');
 // hojaId → {contienda, lemaId, hoja, lemaNombre} (del catalogo.json). Null = aún no cargado.
 let catalogoOpcMeta: Map<string, { contienda: string; lemaId: string; hoja: string; lemaNombre: string }> | null = null;
 // zonaNorm → hojaId → votos (acumulado de los shards de hoja cargados).
@@ -736,7 +736,7 @@ function buildDesglose(key: string, sel: string[]): { grupos: DesgloseGrupo[]; t
 }
 
 /** Construye un FC coloreado por la selección según el modo (share/votos/heatmap). */
-function buildSeleccionFC(fc: FeatureCollection, sel: string[], modo: 'share' | 'votos' | 'heatmap'): FeatureCollection {
+function buildSeleccionFC(fc: FeatureCollection, sel: string[], modo: 'share' | 'heatmap'): FeatureCollection {
   const perFeat = fc.features.map((f) => {
     const key = norm(String((f.properties as { name: string }).name));
     const sum = selSumZona(key, sel);
@@ -745,19 +745,14 @@ function buildSeleccionFC(fc: FeatureCollection, sel: string[], modo: 'share' | 
   });
   const sums = perFeat.map((x) => x.sum);
   const maxSum = Math.max(1, ...sums);
-  const nonZero = sums.filter((v) => v > 0).sort((a, b) => a - b); // para escala por cuantiles (votos)
   return {
     ...fc,
     features: perFeat.map(({ f, sum, validos }) => {
       let t = 0;
       if (sum > 0) {
-        if (modo === 'share') t = validos > 0 ? Math.min(1, sum / validos) : 0;
-        else if (modo === 'heatmap') t = sum / maxSum;
-        else {
-          // votos: rango por cuantil sobre el subconjunto seleccionado (legacy: escala recalculada).
-          const r = nonZero.findIndex((v) => v >= sum);
-          t = nonZero.length ? (r + 1) / nonZero.length : 0;
-        }
+        t = modo === 'share'
+          ? (validos > 0 ? Math.min(1, sum / validos) : 0)
+          : sum / maxSum; // heatmap (magnitud absoluta, escala lineal sobre el máximo)
       }
       // AC5: 0 votos de la selección pero CON urna → nivel más bajo de la escala (≠ gris-sin-dato).
       const color = sum > 0
@@ -773,7 +768,7 @@ function buildSeleccionFC(fc: FeatureCollection, sel: string[], modo: 'share' | 
 }
 
 /** Markers de valor (votos o %) por zona en modo selección — cumple "nunca solo por color". */
-function rebuildSelMarkers(fc: FeatureCollection, modo: 'share' | 'votos' | 'heatmap'): void {
+function rebuildSelMarkers(fc: FeatureCollection, modo: 'share' | 'heatmap'): void {
   if (!mlLib || !map.value || isPointNivel) return;
   markers.forEach((mk) => mk.remove());
   markers.length = 0;
@@ -789,11 +784,10 @@ function rebuildSelMarkers(fc: FeatureCollection, modo: 'share' | 'votos' | 'hea
   }
 }
 
-function buildSeleccionLegend(modo: 'share' | 'votos' | 'heatmap', n: number): LegendEntry[] {
+function buildSeleccionLegend(modo: 'share' | 'heatmap', n: number): LegendEntry[] {
   const titulo =
     modo === 'share' ? `% sobre válidos · ${n} lista${n === 1 ? '' : 's'}`
-    : modo === 'heatmap' ? `Votos (densidad) · ${n} lista${n === 1 ? '' : 's'}`
-    : `Votos (escala por selección) · ${n} lista${n === 1 ? '' : 's'}`;
+    : `Votos (densidad) · ${n} lista${n === 1 ? '' : 's'}`;
   if (modo === 'heatmap') return [
     { sigla: '', nombre: `${titulo} — alto`, color: heatColor(1), votos: 0 },
     { sigla: '', nombre: 'medio', color: heatColor(0.5), votos: 0 },
@@ -804,6 +798,73 @@ function buildSeleccionLegend(modo: 'share' | 'votos' | 'heatmap', n: number): L
     { sigla: '', nombre: 'medio', color: interpolateHex(INTENSIDAD_LIGHT, SEL_BASE, 0.5), votos: 0 },
     { sigla: '', nombre: 'bajo', color: interpolateHex(INTENSIDAD_LIGHT, SEL_BASE, 0.15), votos: 0 },
   ];
+}
+
+/** Opción seleccionada con más votos en una zona (modo "ganador entre lo seleccionado", Epic 13). */
+function ganadorSelDeZona(key: string, sel: string[]): { id: string | null; votos: number } {
+  const mm = hojaVotos.get(key);
+  const base = zonasVotos.get(key);
+  let id: string | null = null;
+  let votos = -1;
+  for (const oid of sel) {
+    const v = mm?.get(oid) ?? base?.get(oid) ?? 0;
+    if (v > votos) { votos = v; id = oid; }
+  }
+  return { id, votos: Math.max(0, votos) };
+}
+
+/** Nombre de partido/lema de una opción para color/sigla: HOJA → lema del catálogo;
+ *  plano → nombre de opciones.json. (resolveParty necesita el nombre, no el opcionId.) */
+function nombrePartidoDeOpcion(id: string): string {
+  const meta = catalogoOpcMeta?.get(id);
+  if (meta && meta.lemaNombre) return meta.lemaNombre;
+  return opcNombreMap.get(id) ?? id;
+}
+
+/** FC del modo "ganador entre lo seleccionado": cada zona toma la opción seleccionada
+ *  con más votos ahí, con su color/bandera de partido (Story 13.2). */
+function buildSeleccionGanadorFC(fc: FeatureCollection, sel: string[]): FeatureCollection {
+  return {
+    ...fc,
+    features: fc.features.map((f) => {
+      const key = norm(String((f.properties as { name: string }).name));
+      const validos = zonasValidos.get(key) ?? 0;
+      const { id, votos } = ganadorSelDeZona(key, sel);
+      if (!id || votos <= 0) {
+        // Sin votos de la selección: base claro si hay urna, gris si no.
+        const color = validos > 0 ? interpolateHex(INTENSIDAD_LIGHT, SEL_BASE, 0.12) : COLOR_SIN_DATOS;
+        return { ...f, properties: { ...f.properties, color, sigla: '', flagPattern: null, selVal: 0, selPct: 0 } };
+      }
+      const nombre = nombrePartidoDeOpcion(id);
+      const meta = resolveParty(nombre);
+      const flagPattern = meta.flagUrl ? `flag-${meta.sigla.toLowerCase()}` : null;
+      return {
+        ...f,
+        properties: {
+          ...f.properties,
+          color: meta.color, sigla: meta.sigla, flagPattern,
+          selVal: votos, selPct: validos > 0 ? votos / validos : 0,
+        },
+      };
+    }),
+  } as FeatureCollection;
+}
+
+/** Leyenda del modo ganador-selección: opciones que lideran al menos una zona. */
+function buildSeleccionGanadorLegend(fc: FeatureCollection, sel: string[]): LegendEntry[] {
+  const wins = new Map<string, number>();
+  for (const f of fc.features) {
+    const key = norm(String((f.properties as { name: string }).name));
+    const { id, votos } = ganadorSelDeZona(key, sel);
+    if (id && votos > 0) wins.set(id, (wins.get(id) ?? 0) + 1);
+  }
+  return [...wins.entries()]
+    .map(([id, n]) => {
+      const nombre = nombrePartidoDeOpcion(id);
+      const meta = resolveParty(nombre);
+      return { sigla: meta.sigla, nombre, color: meta.color, votos: n, flagUrl: meta.flagUrl };
+    })
+    .sort((a, b) => b.votos - a.votos);
 }
 
 /** Restaura el modo ganador desde un FC de selección (síncrono). */
@@ -834,23 +895,40 @@ async function applySeleccion(): Promise<void> {
   await ensureHojaShards(activeEleccion, activeDepartamento, sel);
   if (myGen !== seleccionGen) return; // una llamada más nueva la dejó obsoleta
   const modo = coloreoMode.value;
+  const zonaSel = $selection.get().zona;
+  // setData resetea los feature-state: re-aplicar el resaltado de la zona seleccionada + ficha.
+  const reaplicarZona = (): void => {
+    if (zonaSel) {
+      m.setFeatureState({ source: 'zonas', id: zonaSel }, { sel: true });
+      selectByName(zonaSel, fc);
+    }
+  };
+
+  if (modo === 'ganador') {
+    // Modo "ganador entre lo seleccionado": color/bandera de la opción seleccionada líder por zona.
+    const selFC = buildSeleccionGanadorFC(fc, sel);
+    (m.getSource('zonas') as GeoJSONSource).setData(selFC);
+    m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
+    seleccionFCActive = true;
+    setPatternVisible(true); // banderas (mismo render que el modo ganador por defecto)
+    reaplicarZona();
+    rebuildMarkers(selFC);
+    legend.value = buildSeleccionGanadorLegend(fc, sel);
+    return;
+  }
+
   const selFC = buildSeleccionFC(fc, sel, modo);
   (m.getSource('zonas') as GeoJSONSource).setData(selFC);
   m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
   setPatternVisible(false);
   seleccionFCActive = true;
-  // setData resetea los feature-state: re-aplicar el resaltado de la zona seleccionada.
-  const zonaSel = $selection.get().zona;
-  if (zonaSel) {
-    m.setFeatureState({ source: 'zonas', id: zonaSel }, { sel: true });
-    selectByName(zonaSel, fc); // refresca la ficha con el desglose ya que los shards están cargados
-  }
+  reaplicarZona();
   rebuildSelMarkers(selFC, modo);
   legend.value = buildSeleccionLegend(modo, sel.length);
 }
 
 /** Cambia el modo de coloreo (escribe la URL; el subscribe re-aplica). */
-function setColoreo(modo: 'share' | 'votos' | 'heatmap'): void {
+function setColoreo(modo: 'ganador' | 'share' | 'heatmap'): void {
   coloreoMode.value = modo;
   commit({ modo });
 }
@@ -1247,12 +1325,10 @@ function selectByName(name: string, fc: FeatureCollection): void {
     const validos = Number(p.validos);
     const noP = zonasNoPartidarios.get(key) ?? { enBlanco: 0, anulados: 0, observados: 0 };
     const opcionId = $selection.get().opcion;
-    // Epic 12: desglose de la selección en esta zona para TODOS los caminos.
-    // Prioridad: acordeón HOJA (seleccion[]) > comparación dual A/B > opción simple.
-    const cmp = $comparison.get();
+    // Epic 12: desglose de la selección en esta zona. Prioridad: acordeón HOJA
+    // (seleccion[]) > opción simple. (Comparación dual A/B decomisada — Epic 13.)
     const selFicha = seleccionActiva.value.length > 0
       ? seleccionActiva.value
-      : cmp.a && cmp.b ? [cmp.a, cmp.b]
       : opcionId ? [opcionId]
       : [];
     const desgRaw = selFicha.length > 0 ? buildDesglose(key, selFicha) : null;
@@ -1312,7 +1388,7 @@ function applySelection(zona: string | null): void {
 const unsubSelection = $selection.subscribe((s) => {
   opcionActiva.value = s.opcion;
   seleccionActiva.value = [...s.seleccion];
-  if (s.modo === 'share' || s.modo === 'votos' || s.modo === 'heatmap') coloreoMode.value = s.modo;
+  if (s.modo === 'ganador' || s.modo === 'share' || s.modo === 'heatmap') coloreoMode.value = s.modo;
   applySelection(s.zona);
   if (s.seleccion.length > 0) {
     void applySeleccion(); // Epic 10: coloreo por selección múltiple de hojas
@@ -1473,7 +1549,7 @@ onMounted(async () => {
       {
         const initSel = $selection.get();
         seleccionActiva.value = [...initSel.seleccion];
-        if (initSel.modo === 'share' || initSel.modo === 'votos' || initSel.modo === 'heatmap') coloreoMode.value = initSel.modo;
+        if (initSel.modo === 'ganador' || initSel.modo === 'share' || initSel.modo === 'heatmap') coloreoMode.value = initSel.modo;
         if (initSel.seleccion.length > 0) void applySeleccion();
       }
       status.value = 'listo';
@@ -1557,14 +1633,14 @@ onUnmounted(() => {
     <!-- Conmutador de modo para selección múltiple de hojas (Epic 10, Story 10.4) -->
     <div v-if="seleccionActiva.length > 0" class="vista-toggle" role="group" aria-label="Modo de coloreo del mapa">
       <button
-        v-for="mo in (['share', 'votos', 'heatmap'] as const)"
+        v-for="mo in (['ganador', 'share', 'heatmap'] as const)"
         :key="mo"
         class="vista-toggle__btn"
         :class="{ 'vista-toggle__btn--activo': coloreoMode === mo }"
         :aria-pressed="coloreoMode === mo"
         type="button"
         @click="setColoreo(mo)"
-      >{{ mo === 'share' ? 'Share %' : mo === 'votos' ? 'Votos' : 'Heatmap' }}</button>
+      >{{ mo === 'ganador' ? 'Ganador' : mo === 'share' ? 'Share %' : 'Heatmap' }}</button>
     </div>
 
     <MapLegend :entradas="legend" :sin-datos="sinDatos" />

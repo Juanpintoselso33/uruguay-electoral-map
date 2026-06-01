@@ -678,3 +678,27 @@ As a usuario, I want que al tocar una zona vea el desempeño de lo que tengo sel
 
 **Acceptance Criteria:**
 **Given** una selección activa (HOJA múltiple, opción simple, candidato de balotaje o Sí/No de plebiscito) y una zona tocada **When** se abre la ficha **Then** muestra el desglose de la selección en esa zona (agrupado por partido cuando aplica, con votos por ítem y total + % sobre válidos) **And** el caso "sin selección" mantiene la ficha actual **And** los tipos planos resuelven el desglose desde `votes.json` (no piden shards de HOJA inexistentes) **And** la comparación dual A/B también refleja su desglose **And** `astro check` 0 errores y verificación en browser.
+
+---
+
+## Epic 13: Coloreo del mapa — limpieza del toggle + modo ganador, y decomiso de A/B
+
+Auditoría del conmutador de coloreo (2026-06-01). Hay **dos toggles**: el de opción simple (`vistaMode`: Ganador/Intensidad) y el de selección múltiple HOJA (`coloreoMode`: Share %/Votos/Heatmap). En el de selección múltiple:
+- **`Votos` y `Heatmap` son redundantes**: ambos codifican magnitud absoluta de votos (Votos = escala por cuantil + paleta mono; Heatmap = lineal sum/máx + paleta heat). Solo `Share %` es conceptualmente distinto (proporción sobre válidos).
+- **Falta el modo "Ganador/Banderas"**: con una selección activa no se puede ver quién lidera cada zona con banderas (el toggle de opción simple sí lo tiene). El render de banderas ya existe (`drawFlagOverlay`, lee `props.flagPattern`).
+
+Decisiones de diseño (Juan, 2026-06-01): (1) quedarse con **Heatmap** como único modo absoluto → toggle = `{Ganador, Share %, Heatmap}`, se elimina `Votos`; (2) el modo **Ganador** muestra el **ganador ENTRE las opciones seleccionadas** en cada zona (cuál de mis listas lidera ahí, con su bandera/color), no el ganador global.
+
+Además: la **comparación dual A/B (Story 4.4) queda decomisada** por ahora (se quita de la UI).
+
+### Story 13.1: Decomiso de la comparación A/B
+As a usuario, I want que la UI no ofrezca la comparación dual A/B (no la usamos por ahora), So that el selector quede más simple.
+
+**Acceptance Criteria:**
+**Given** el `OpcionSelector` con chips "Comparar vs:" y el header dual A/B **When** decomiso la feature **Then** se quitan de la UI los chips "Comparar vs", el header dual y sus handlers (`compararVs`/`salirDual`) **And** se quita el import muerto de `CompareControls` en `[departamento].astro` **And** la rama dual del desglose de la ficha (12.2) se retira **And** `astro check` 0 errores. (El store `$comparison` puede quedar inerte; no se borra el contrato.)
+
+### Story 13.2: Toggle de coloreo — {Ganador, Share %, Heatmap} con ganador entre lo seleccionado
+As a usuario, I want elegir entre ver el ganador de mi selección (con banderas), el share % o el heatmap, So that lea el mapa de mi selección como me sirva, sin un modo redundante.
+
+**Acceptance Criteria:**
+**Given** una selección múltiple activa **When** abro el conmutador de coloreo **Then** las opciones son `Ganador` / `Share %` / `Heatmap` (se elimina `Votos`) **And** en modo **Ganador** cada zona se colorea con la opción seleccionada que más votos tiene ahí (color de partido + bandera vía `drawFlagOverlay`), y la leyenda lista las opciones seleccionadas **And** `Share %` y `Heatmap` mantienen su comportamiento **And** una URL vieja con `modo=votos` degrada a un modo válido (no rompe) **And** `astro check` 0 errores y verificación en browser.
