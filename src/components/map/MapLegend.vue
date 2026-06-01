@@ -2,12 +2,14 @@
 /**
  * Leyenda del choropleth (Story 1.8). Nombra cada color, su sigla y qué representa.
  * Requisito a11y/diseño: NUNCA solo color — sigla + nombre como texto.
+ * Si la entrada tiene flagUrl, muestra la bandera del partido en lugar del swatch.
  */
 interface Entrada {
   readonly sigla: string;
   readonly nombre: string;
   readonly color: string;
   readonly votos: number;
+  readonly flagUrl?: string | null;
 }
 defineProps<{ entradas: Entrada[]; sinDatos: number }>();
 </script>
@@ -20,14 +22,27 @@ defineProps<{ entradas: Entrada[]; sinDatos: number }>();
       class="legend__item"
       role="listitem"
     >
-      <span class="legend__swatch" :style="{ background: e.color }" aria-hidden="true"></span>
+      <!-- Bandera si existe, swatch de color si no -->
+      <img
+        v-if="e.flagUrl"
+        :src="e.flagUrl"
+        :alt="e.sigla"
+        class="legend__flag"
+        aria-hidden="true"
+      />
+      <span
+        v-else
+        class="legend__swatch"
+        :style="{ background: e.color }"
+        aria-hidden="true"
+      ></span>
       <span class="legend__sigla">{{ e.sigla }}</span>
       <span class="legend__nombre">{{ e.nombre }}</span>
     </div>
     <div v-if="sinDatos > 0" class="legend__item legend__item--muted" role="listitem">
       <span class="legend__swatch legend__swatch--empty" aria-hidden="true"></span>
       <span class="legend__sigla">—</span>
-      <span class="legend__nombre">{{ sinDatos }} barrio(s) sin datos</span>
+      <span class="legend__nombre">{{ sinDatos }} zona(s) sin datos</span>
     </div>
   </div>
 </template>
@@ -57,6 +72,14 @@ defineProps<{ entradas: Entrada[]; sinDatos: number }>();
 }
 .legend__swatch--empty {
   background: var(--color-sin-datos);
+}
+.legend__flag {
+  width: 1.5rem;
+  height: 1rem;
+  border-radius: 0.1875rem;
+  flex: none;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+  object-fit: cover;
 }
 .legend__sigla {
   font-weight: 700;

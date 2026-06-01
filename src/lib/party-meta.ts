@@ -52,16 +52,29 @@ function acronimo(nombre: string): string {
   return palabras.map((w) => w[0]).join('').slice(0, 4);
 }
 
+/** Mapa de sigla canónica → ruta del SVG de bandera/logo en /flags/. */
+const FLAGS: Record<string, string> = {
+  FA:  '/flags/fa.svg',
+  PN:  '/flags/pn.svg',
+  PC:  '/flags/pc.svg',
+  CA:  '/flags/ca.svg',
+  PI:  '/flags/pi.svg',
+  CR:  '/flags/cr.svg',
+};
+
 export interface PartyMeta {
   readonly sigla: string;
   readonly color: string;
+  /** URL relativa al SVG de bandera/logo del partido, si existe. */
+  readonly flagUrl: string | null;
 }
 
-/** Resuelve sigla + color para un nombre de partido/opción (nombre original del ETL). */
+/** Resuelve sigla + color + flagUrl para un nombre de partido/opción (nombre original del ETL). */
 export function resolveParty(nombre: string): PartyMeta {
   const key = norm(nombre);
   // Opción binaria de plebiscito/referéndum (Sí/No): Sí verde, No gris neutro (status quo).
-  if (key === 'SI') return { sigla: 'Sí', color: '#16a34a' };
-  if (key === 'NO') return { sigla: 'No', color: '#94a3b8' };
-  return { sigla: SIGLAS[key] ?? acronimo(nombre), color: getPartyColor(nombre) };
+  if (key === 'SI') return { sigla: 'Sí', color: '#16a34a', flagUrl: null };
+  if (key === 'NO') return { sigla: 'No', color: '#94a3b8', flagUrl: null };
+  const sigla = SIGLAS[key] ?? acronimo(nombre);
+  return { sigla, color: getPartyColor(nombre), flagUrl: FLAGS[sigla] ?? null };
 }

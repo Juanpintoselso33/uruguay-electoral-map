@@ -19,6 +19,11 @@ import type { VotosShard } from '../../lib/contracts';
 import { $selection, $level, $comparison, bindToLocation, commit, hydrateStores } from '../../stores/map-state';
 import { parseUrl } from '../../lib/url-state';
 import type { NivelGeografico } from '../../lib/contracts';
+import deptsConfig from '../../config/departments.json';
+
+const DEPT_LEVELS: Record<string, NivelGeografico[]> = Object.fromEntries(
+  (deptsConfig as { id: string; levels: NivelGeografico[] }[]).map((d) => [d.id, d.levels])
+);
 import MapLegend from './MapLegend.vue';
 import ZoneSheet from '../sheet/ZoneSheet.vue';
 
@@ -36,6 +41,7 @@ interface SelInfo {
   sigla: string;
   nombre: string;
   color: string;
+  flagUrl?: string | null;
   votoGanador: number;
   validos: number;
   pct: number;
@@ -53,6 +59,7 @@ interface DesgloseGrupo {
   lemaNombre: string;
   sigla: string;
   color: string;
+  flagUrl?: string | null;
   total: number;
   hojas: { id: string; label: string; votos: number }[];
   masN: number;
@@ -62,6 +69,7 @@ interface LegendEntry {
   nombre: string;
   color: string;
   votos: number;
+  flagUrl?: string | null;
 }
 
 let COLOR_SIN_DATOS = '#e5e7eb';
@@ -219,6 +227,8 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
       const meta = resolveParty(nombre);
       p.color = meta.color;
       p.sigla = meta.sigla;
+      p.flagUrl = meta.flagUrl;
+      p.flagPattern = meta.flagUrl ? `flag-${meta.sigla.toLowerCase()}` : null;
       p.nombre = nombre;
       p.validos = zona.validos;
       p.hasData = true;
@@ -237,7 +247,7 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
     .map(([opcionId, barrios]) => {
       const nombre = nombrePorOpcion.get(opcionId) ?? opcionId;
       const meta = resolveParty(nombre);
-      return { sigla: meta.sigla, nombre, color: meta.color, votos: barrios };
+      return { sigla: meta.sigla, nombre, color: meta.color, votos: barrios, flagUrl: meta.flagUrl };
     })
     .sort((a, b) => b.votos - a.votos);
   origLegend = legend.value;
@@ -253,24 +263,127 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
   return { fc: geo, bounds: boundsOf(geo) };
 }
 
-/** Reconstruye los markers de sigla. Limpia los anteriores antes.
- *  Si `filterOpcionId` está definido, sólo pinta markers en zonas donde esa opción ganó.
- *  No-op cuando el nivel activo usa geometría Point (circuito). */
-function rebuildMarkers(fc: FeatureCollection, filterOpcionId?: string | null): void {
-  if (!mlLib || !map.value || isPointNivel) return;
+/** Limpia los markers HTML sobre el mapa. */
+function rebuildMarkers(_fc?: FeatureCollection, _filterOpcionId?: string | null): void {
   markers.forEach((mk) => mk.remove());
   markers.length = 0;
-  for (const f of fc.features) {
-    const p = f.properties as Record<string, unknown>;
-    if (!p.hasData) continue;
-    if (filterOpcionId && p.ganadorOpcionId !== filterOpcionId) continue;
-    const [lng, lat] = centroid(f.geometry as Polygon | MultiPolygon);
-    const el = document.createElement('span');
-    el.className = 'zona-sigla';
-    el.textContent = String(p.sigla);
-    el.setAttribute('aria-hidden', 'true');
-    markers.push(new mlLib!.Marker({ element: el }).setLngLat([lng, lat]).addTo(map.value!));
+}
+
+// Canvas overlay: una bandera centrada y escalada por polígono, recortada al contorno de la zona.
+const flagImgs: Record<string, HTMLImageElement> = {};
+let flagCanvas: HTMLCanvasElement | null = null;
+let flagCtx: CanvasRenderingContext2D | null = null;
+let flagsVisible = true;
+
+/** Carga los SVGs de banderas como HTMLImageElement para el canvas overlay. */
+async function loadFlagImages(): Promise<void> {
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  const ENTRIES: [string, string][] = [
+    ['flag-fa', `${base}/flags/fa.svg`],
+    ['flag-pn', `${base}/flags/pn.svg`],
+    ['flag-pc', `${base}/flags/pc.svg`],
+    ['flag-ca', `${base}/flags/ca.svg`],
+    ['flag-pi', `${base}/flags/pi.svg`],
+    ['flag-cr', `${base}/flags/cr.svg`],
+  ];
+  await Promise.all(ENTRIES.map(([id, src]) =>
+    new Promise<void>((resolve) => {
+      const img = new Image();
+      img.onload = () => { flagImgs[id] = img; resolve(); };
+      img.onerror = () => resolve();
+      img.src = src;
+    })
+  ));
+}
+
+/** Crea el canvas HTML superpuesto sobre el canvas de MapLibre. */
+function setupFlagCanvas(m: MlMap): void {
+  const mc = m.getCanvas();
+  const parent = mc.parentElement;
+  if (!parent) return;
+  flagCanvas = document.createElement('canvas');
+  flagCanvas.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;';
+  parent.appendChild(flagCanvas);
+  flagCtx = flagCanvas.getContext('2d');
+  syncFlagCanvasSize(m);
+}
+
+function syncFlagCanvasSize(m: MlMap): void {
+  if (!flagCanvas) return;
+  const mc = m.getCanvas();
+  flagCanvas.width = mc.width;
+  flagCanvas.height = mc.height;
+  flagCanvas.style.width = mc.style.width || `${mc.clientWidth}px`;
+  flagCanvas.style.height = mc.style.height || `${mc.clientHeight}px`;
+}
+
+/** Dibuja una bandera escalada y recortada dentro de cada polígono visible. */
+function drawFlagOverlay(m: MlMap): void {
+  if (!flagCtx || !flagCanvas) return;
+  syncFlagCanvasSize(m);
+  flagCtx.clearRect(0, 0, flagCanvas.width, flagCanvas.height);
+  if (!flagsVisible || isPointNivel) return;
+
+  const dpr = window.devicePixelRatio || 1;
+  const features = m.queryRenderedFeatures(undefined, { layers: ['zonas-fill'] });
+  const seen = new Set<string | number>();
+
+  for (const feat of features) {
+    const props = feat.properties as Record<string, unknown>;
+    if (!props?.flagPattern || !props?.hasData) continue;
+    const fid = feat.id ?? props.name;
+    if (seen.has(fid as string | number)) continue;
+    seen.add(fid as string | number);
+
+    const img = flagImgs[props.flagPattern as string];
+    if (!img) continue;
+
+    const geom = feat.geometry as { type: string; coordinates: unknown };
+    type Ring = [number, number][];
+    const rings: Ring[] = geom.type === 'Polygon'
+      ? (geom.coordinates as Ring[])
+      : (geom.coordinates as Ring[][]).flat(1);
+
+    // Proyectar coords a pixels físicos del canvas
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    flagCtx.beginPath();
+    for (const ring of rings) {
+      let first = true;
+      for (const coord of ring) {
+        const pt = m.project(coord as [number, number]);
+        const px = pt.x * dpr;
+        const py = pt.y * dpr;
+        if (first) { flagCtx.moveTo(px, py); first = false; }
+        else flagCtx.lineTo(px, py);
+        if (px < minX) minX = px; if (py < minY) minY = py;
+        if (px > maxX) maxX = px; if (py > maxY) maxY = py;
+      }
+      flagCtx.closePath();
+    }
+
+    flagCtx.save();
+    flagCtx.clip('evenodd');
+
+    // Cover: la bandera cubre el bounding box completo, el clip del polígono la recorta.
+    const bw = maxX - minX;
+    const bh = maxY - minY;
+    const flagAspect = img.naturalWidth / img.naturalHeight;
+    let dw = bw;
+    let dh = bw / flagAspect;
+    if (dh < bh) { dh = bh; dw = bh * flagAspect; }
+    const dx = minX + (bw - dw) / 2;
+    const dy = minY + (bh - dh) / 2;
+
+    flagCtx.globalAlpha = 1.0;
+    flagCtx.drawImage(img, dx, dy, dw, dh);
+    flagCtx.restore();
   }
+}
+
+/** Muestra u oculta el overlay de banderas. */
+function setPatternVisible(visible: boolean): void {
+  flagsVisible = visible;
+  if (map.value) drawFlagOverlay(map.value);
 }
 
 /** Interpolación lineal entre dos colores #rrggbb (Story 2.3). */
@@ -280,6 +393,15 @@ function interpolateHex(c1: string, c2: string, t: number): string {
   const [r2, g2, b2] = p(c2);
   const h = (n: number) => Math.round(n).toString(16).padStart(2, '0');
   return `#${h(r1 + (r2 - r1) * t)}${h(g1 + (g2 - g1) * t)}${h(b1 + (b2 - b1) * t)}`;
+}
+
+// Rampa de calor multi-stop: amarillo pálido → naranja → rojo oscuro (YlOrRd, ColorBrewer)
+const HEAT_STOPS = ['#FFFFB2', '#FEB24C', '#F03B20', '#BD0026'] as const;
+function heatColor(t: number): string {
+  const n = HEAT_STOPS.length - 1;
+  const i = Math.min(n - 1, Math.floor(t * n));
+  const local = t * n - i;
+  return interpolateHex(HEAT_STOPS[i], HEAT_STOPS[i + 1], local);
 }
 
 /** Construye un FC con colores de gradiente según % de voto para la opcion dada (Story 2.3). */
@@ -448,8 +570,8 @@ function buildDesglose(key: string, sel: string[]): { grupos: DesgloseGrupo[]; t
       const hojasOrd = g.hojas.filter((h) => h.votos > 0).sort((a, b) => b.votos - a.votos);
       const meta = resolveParty(g.nombre);
       return {
-        lemaNombre: g.nombre, sigla: meta.sigla, color: meta.color, total: g.total,
-        hojas: hojasOrd.slice(0, TOP), masN: Math.max(0, hojasOrd.length - TOP),
+        lemaNombre: g.nombre, sigla: meta.sigla, color: meta.color, flagUrl: meta.flagUrl,
+        total: g.total, hojas: hojasOrd.slice(0, TOP), masN: Math.max(0, hojasOrd.length - TOP),
       };
     });
   return { grupos, total };
@@ -481,9 +603,11 @@ function buildSeleccionFC(fc: FeatureCollection, sel: string[], modo: 'share' | 
       }
       // AC5: 0 votos de la selección pero CON urna → nivel más bajo de la escala (≠ gris-sin-dato).
       const color = sum > 0
-        ? interpolateHex(INTENSIDAD_LIGHT, SEL_BASE, Math.max(0.1, t))
+        ? modo === 'heatmap'
+          ? heatColor(Math.max(0.05, t))
+          : interpolateHex(INTENSIDAD_LIGHT, SEL_BASE, Math.max(0.1, t))
         : validos > 0
-          ? interpolateHex(INTENSIDAD_LIGHT, SEL_BASE, 0.12)
+          ? modo === 'heatmap' ? HEAT_STOPS[0] : interpolateHex(INTENSIDAD_LIGHT, SEL_BASE, 0.12)
           : COLOR_SIN_DATOS;
       return { ...f, properties: { ...f.properties, color, selVal: sum, selPct: validos > 0 ? sum / validos : 0 } };
     }),
@@ -512,6 +636,11 @@ function buildSeleccionLegend(modo: 'share' | 'votos' | 'heatmap', n: number): L
     modo === 'share' ? `% sobre válidos · ${n} lista${n === 1 ? '' : 's'}`
     : modo === 'heatmap' ? `Votos (densidad) · ${n} lista${n === 1 ? '' : 's'}`
     : `Votos (escala por selección) · ${n} lista${n === 1 ? '' : 's'}`;
+  if (modo === 'heatmap') return [
+    { sigla: '', nombre: `${titulo} — alto`, color: heatColor(1), votos: 0 },
+    { sigla: '', nombre: 'medio', color: heatColor(0.5), votos: 0 },
+    { sigla: '', nombre: 'bajo', color: heatColor(0.1), votos: 0 },
+  ];
   return [
     { sigla: '', nombre: `${titulo} — alto`, color: interpolateHex(INTENSIDAD_LIGHT, SEL_BASE, 1), votos: 0 },
     { sigla: '', nombre: 'medio', color: interpolateHex(INTENSIDAD_LIGHT, SEL_BASE, 0.5), votos: 0 },
@@ -530,6 +659,7 @@ function restoreGanadorDesdeSeleccion(): void {
   }
   m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
   rebuildMarkers(fc);
+  setPatternVisible(true);
   legend.value = origLegend;
 }
 
@@ -549,6 +679,7 @@ async function applySeleccion(): Promise<void> {
   const selFC = buildSeleccionFC(fc, sel, modo);
   (m.getSource('zonas') as GeoJSONSource).setData(selFC);
   m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
+  setPatternVisible(false);
   seleccionFCActive = true;
   // setData resetea los feature-state: re-aplicar el resaltado de la zona seleccionada.
   const zonaSel = $selection.get().zona;
@@ -579,6 +710,7 @@ function applyGanadorMode(opcionId: string, m: MlMap, fc: FeatureCollection): vo
     ['get', 'color'],
     COLOR_SIN_DATOS,
   ]);
+  setPatternVisible(false);
   rebuildMarkers(fc, opcionId);
   const nombre = opcNombreMap.get(opcionId) ?? opcionId;
   const meta = resolveParty(nombre);
@@ -596,7 +728,7 @@ function applyIntensidadMode(opcionId: string, m: MlMap, fc: FeatureCollection):
   (m.getSource('zonas') as GeoJSONSource).setData(gradientFC);
   m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
   intensidadActive = true;
-  // Sin markers en modo intensidad (todos los colores son del mismo partido).
+  setPatternVisible(false);
   markers.forEach((mk) => mk.remove());
   markers.length = 0;
   legend.value = buildIntensidadLegend(nombre, meta);
@@ -617,6 +749,7 @@ function applyOpcionFilter(opcionId: string | null): void {
     }
     m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
     rebuildMarkers(fc);
+    setPatternVisible(true);
     legend.value = origLegend;
     vistaMode.value = 'ganador';
     return;
@@ -778,25 +911,9 @@ function applyDualOpcionView(aId: string, bId: string): void {
     (m.getSource('zonas') as GeoJSONSource).setData(fc);
     intensidadActive = false;
   }
-  // Markers: sigla del ganador local (omitido en nivel circuito — Points no tienen centroide de polígono)
   markers.forEach((mk) => mk.remove());
   markers.length = 0;
-  if (mlLib && m && !isPointNivel) {
-    for (const f of fc.features) {
-      const name = String((f.properties as { name: string }).name);
-      const key = norm(name);
-      const aVotos = zonasVotos.get(key)?.get(aId) ?? 0;
-      const bVotos = zonasVotos.get(key)?.get(bId) ?? 0;
-      if (aVotos === 0 && bVotos === 0) continue;
-      const winner = aVotos >= bVotos ? aMeta : bMeta;
-      const [lng, lat] = centroid(f.geometry as Polygon | MultiPolygon);
-      const el = document.createElement('span');
-      el.className = 'zona-sigla';
-      el.textContent = winner.sigla;
-      el.setAttribute('aria-hidden', 'true');
-      markers.push(new mlLib.Marker({ element: el }).setLngLat([lng, lat]).addTo(m));
-    }
-  }
+  setPatternVisible(false);
   legend.value = [
     { sigla: aMeta.sigla, nombre: aNombre, color: aMeta.color, votos: 0 },
     { sigla: bMeta.sigla, nombre: bNombre, color: bMeta.color, votos: 0 },
@@ -815,6 +932,7 @@ function clearDualOpcionView(): void {
   }
   m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
   rebuildMarkers(fc);
+  setPatternVisible(true);
   legend.value = origLegend;
 }
 
@@ -846,6 +964,7 @@ async function reloadData(eleccion: string, departamento: string, nivel: string)
     if (m.getLayer('zonas-fill')) {
       m.setLayoutProperty('zonas-fill', 'visibility', isPointNivel ? 'none' : 'visible');
       m.setLayoutProperty('zonas-line', 'visibility', isPointNivel ? 'none' : 'visible');
+      drawFlagOverlay(m);
     }
     if (m.getLayer('zonas-circle')) {
       m.setLayoutProperty('zonas-circle', 'visibility', isPointNivel ? 'visible' : 'none');
@@ -906,6 +1025,7 @@ function selectByName(name: string, fc: FeatureCollection): void {
       sigla: String(p.sigla),
       nombre: String(p.nombre),
       color: String(p.color),
+      flagUrl: (p.flagUrl as string | null) ?? null,
       votoGanador,
       validos,
       pct: validos > 0 ? (votoGanador / validos) * 100 : 0,
@@ -954,10 +1074,10 @@ $selection.subscribe((s) => {
   }
 });
 
-/** Resuelve el nivel efectivo: si el pedido por URL no está disponible para el depto, usa el primero disponible. */
-function resolveNivel(urlLevel: NivelGeografico): NivelGeografico {
-  const avail = props.availableLevels ?? (['zona'] as NivelGeografico[]);
-  return avail.includes(urlLevel) ? urlLevel : avail[0];
+/** Resuelve el nivel efectivo para un departamento dado: usa DEPT_LEVELS (runtime) para no depender de props congeladas. */
+function resolveNivel(urlLevel: NivelGeografico, dept?: string): NivelGeografico {
+  const avail = (dept ? DEPT_LEVELS[dept] : null) ?? props.availableLevels ?? (['zona'] as NivelGeografico[]);
+  return avail.includes(urlLevel) ? urlLevel : (avail[0] ?? urlLevel);
 }
 
 let afterSwapHandler: (() => void) | null = null;
@@ -968,7 +1088,7 @@ onMounted(async () => {
   // Suscribir $level para reaccionar a cambios de nivel (clic en LevelSelector).
   // Solo recargar si el nivel es distinto al activo y está disponible para este depto.
   unsubLevel = $level.subscribe((newLevel) => {
-    const resolved = resolveNivel(newLevel);
+    const resolved = resolveNivel(newLevel, activeDepartamento);
     if (resolved !== activeNivel && map.value) {
       activeNivel = resolved;
       void reloadData(activeEleccion, activeDepartamento, resolved);
@@ -1014,10 +1134,13 @@ onMounted(async () => {
     });
     map.value = m;
 
-    m.on('load', () => {
+    m.on('load', () => { void (async () => {
+      await loadFlagImages();
+      setupFlagCanvas(m);
       m.addSource('zonas', { type: 'geojson', data: fc, promoteId: 'name' });
       m.addLayer({ id: 'zonas-fill', type: 'fill', source: 'zonas', paint: { 'fill-color': ['get', 'color'], 'fill-opacity': 0.85 } });
-      m.addLayer({ id: 'zonas-line', type: 'line', source: 'zonas', paint: { 'line-color': '#ffffff', 'line-width': 0.6 } });
+      m.addLayer({ id: 'zonas-line', type: 'line', source: 'zonas', paint: { 'line-color': isDark ? 'rgba(255,255,255,0.6)' : 'rgba(20,20,35,0.55)', 'line-width': 1.5 } });
+      m.on('render', () => drawFlagOverlay(m));
       // Overlay de comparación (Story 4.3): borde naranja en zonas que cambiaron ganador.
       m.addLayer({
         id: 'zonas-vs-changed',
@@ -1052,14 +1175,11 @@ onMounted(async () => {
         },
       });
 
-      // En nivel circuito la capa fill no renderiza Points, pero ocultarla explícitamente
-      // evita que feature-states erróneos intenten aplicarse.
       if (isPointNivel) {
         m.setLayoutProperty('zonas-fill', 'visibility', 'none');
         m.setLayoutProperty('zonas-line', 'visibility', 'none');
       }
 
-      rebuildMarkers(fc);
       fcRef.value = fc;
 
       m.on('click', 'zonas-fill', (e) => {
@@ -1095,7 +1215,7 @@ onMounted(async () => {
       } else if (initCmp.vs && initCmp.vs !== props.eleccion) {
         void applyComparisonOverlay(initCmp.vs, props.eleccion, props.departamento, activeNivel);
       }
-    });
+    })(); });
   } catch (err) {
     status.value = 'error';
     errorMsg.value = err instanceof Error ? err.message : String(err);
@@ -1108,7 +1228,7 @@ onMounted(async () => {
     if (view.eleccion !== activeEleccion || view.departamento !== activeDepartamento) {
       activeEleccion = view.eleccion;
       activeDepartamento = view.departamento;
-      const newNivel = resolveNivel(view.level);
+      const newNivel = resolveNivel(view.level, view.departamento);
       activeNivel = newNivel;
       if (newNivel !== view.level) commit({ level: newNivel });
       void reloadData(view.eleccion, view.departamento, newNivel);
@@ -1178,6 +1298,17 @@ onUnmounted(() => {
 
 <style>
 @import 'maplibre-gl/dist/maplibre-gl.css';
+
+.zona-sigla {
+  font: 700 0.6875rem/1 system-ui, sans-serif;
+  color: var(--color-ink);
+  text-shadow:
+    0 0 2px var(--color-card),
+    0 0 2px var(--color-card),
+    0 0 2px var(--color-card);
+  pointer-events: none;
+  user-select: none;
+}
 </style>
 
 <style scoped>
@@ -1228,16 +1359,5 @@ onUnmounted(() => {
   font-weight: 700;
   border-color: #1d4ed8;
 }
-:global(.zona-sigla) {
-  font:
-    700 0.6875rem/1 system-ui,
-    sans-serif;
-  color: var(--color-ink);
-  text-shadow:
-    0 0 2px var(--color-card),
-    0 0 2px var(--color-card),
-    0 0 2px var(--color-card);
-  pointer-events: none;
-  user-select: none;
-}
+
 </style>

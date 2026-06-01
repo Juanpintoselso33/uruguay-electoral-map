@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 60">
+  <!-- Coalición Republicana: mitad superior roja, mitad inferior azul -->
+  <rect x="0" y="0"  width="90" height="30" fill="#D42B2B"/>
+  <rect x="0" y="30" width="90" height="30" fill="#003580"/>
+</svg>

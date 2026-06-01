@@ -61,6 +61,9 @@ const seleccion = ref<Set<string>>(new Set());
 const expandidos = ref<Set<string>>(new Set()); // ids de nodos expandidos
 const filtroPartido = ref<string>('');
 const busqueda = ref<string>('');
+const totalVotosLema = ref<Record<string, number>>({});
+const totalVotosHoja = ref<Record<string, number>>({});
+const fetchedHojas = new Set<string>(); // "{contienda}/{lemaId}" ya descargados
 
 let unsub: (() => void) | null = null;
 
@@ -71,12 +74,25 @@ onMounted(async () => {
   });
   try {
     const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-    const res = await fetch(`${base}/data/${props.eleccion}/${props.departamento}/catalogo.json`);
-    if (!res.ok) return;
-    const doc = (await res.json()) as Catalogo;
+    const [resCat, resVotes] = await Promise.all([
+      fetch(`${base}/data/${props.eleccion}/${props.departamento}/catalogo.json`),
+      fetch(`${base}/data/${props.eleccion}/${props.departamento}/votes.json`),
+    ]);
+    if (!resCat.ok) return;
+    const doc = (await resCat.json()) as Catalogo;
     catalogo.value = doc;
     if (!contiendaActiva.value) contiendaActiva.value = doc.contiendas[0]?.contienda ?? null;
     sembrarExpansionDeSeleccion(); // AC7: deep-link abre el árbol en las ramas seleccionadas
+    if (resVotes.ok) {
+      const vd = (await resVotes.json()) as { zonas: { porOpcion: { opcionId: string; votos: number }[] }[] };
+      const map: Record<string, number> = {};
+      for (const zona of vd.zonas) {
+        for (const op of zona.porOpcion ?? []) {
+          map[op.opcionId] = (map[op.opcionId] ?? 0) + op.votos;
+        }
+      }
+      totalVotosLema.value = map;
+    }
   } catch {
     /* sin catálogo → el mapa sigue en modo ganador por lema */
   }
@@ -105,16 +121,18 @@ const lemas = computed<NodoOpcion[]>(() => {
     const lemasConMatch = new Set(hojasFiltradas.value.map((h) => h.lemaId));
     ls = ls.filter((l) => lemasConMatch.has(l.id));
   }
-  return ls.slice().sort((a, b) => a.etiqueta.localeCompare(b.etiqueta, 'es'));
+  const tv = totalVotosLema.value;
+  return ls.slice().sort((a, b) => (tv[b.id] ?? 0) - (tv[a.id] ?? 0) || a.etiqueta.localeCompare(b.etiqueta, 'es'));
 });
 
 const partidos = computed<{ id: string; nombre: string }[]>(() => {
   const c = contienda.value;
   if (!c) return [];
+  const tv = totalVotosLema.value;
   return c.nodos
     .filter((n) => n.nivel === 'lema')
-    .map((l) => ({ id: l.partidoId ?? l.id, nombre: l.etiqueta }))
-    .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+    .map((l) => ({ id: l.partidoId ?? l.id, nombre: l.etiqueta, votos: tv[l.id] ?? 0 }))
+    .sort((a, b) => b.votos - a.votos || a.nombre.localeCompare(b.nombre, 'es'));
 });
 
 /** Opciones que matchean la búsqueda (por número de hoja o por nombre de candidato; vacío = todas). */
@@ -127,20 +145,30 @@ const hojasFiltradas = computed<OpcionHojaJson[]>(() => {
   return c.opciones.filter((o) => (o.hoja ?? '').includes(q) || etiquetaOpcion(o).toLowerCase().includes(ql));
 });
 
-/** Orden de opciones terminales: por número de hoja si lo hay, si no por etiqueta (candidato). */
+/** Orden de opciones terminales: por votos descendente (si disponibles), si no por número de hoja. */
 function ordenarOpciones(a: OpcionHojaJson, b: OpcionHojaJson): number {
+  const tv = totalVotosHoja.value;
+  const va = tv[a.id];
+  const vb = tv[b.id];
+  if (va !== undefined || vb !== undefined) return (vb ?? 0) - (va ?? 0);
   const na = Number(a.hoja);
   const nb = Number(b.hoja);
   if (Number.isFinite(na) && Number.isFinite(nb)) return na - nb;
   return etiquetaOpcion(a).localeCompare(etiquetaOpcion(b), 'es');
 }
-/** Nodos MEDIOS (sublema/alcalde/precandidato) de un lema, ordenados. */
+/** Nodos MEDIOS (sublema/alcalde/precandidato) de un lema, ordenados por votos totales de sus hojas. */
 function gruposDe(lemaId: string): NodoOpcion[] {
   const nivel = nivelMedio.value;
   if (!nivel) return [];
-  return (contienda.value?.nodos ?? [])
-    .filter((n) => n.nivel === nivel && n.parentId === lemaId)
-    .sort((a, b) => a.etiqueta.localeCompare(b.etiqueta, 'es'));
+  const grupos = (contienda.value?.nodos ?? []).filter((n) => n.nivel === nivel && n.parentId === lemaId);
+  const tv = totalVotosHoja.value;
+  if (Object.keys(tv).length === 0) return grupos.sort((a, b) => a.etiqueta.localeCompare(b.etiqueta, 'es'));
+  // Suma de votos de todas las hojas bajo cada grupo
+  const votosGrupo = (gid: string): number =>
+    (contienda.value?.opciones ?? [])
+      .filter((o) => parentDe(o) === gid)
+      .reduce((acc, o) => acc + (tv[o.id] ?? 0), 0);
+  return grupos.sort((a, b) => votosGrupo(b.id) - votosGrupo(a.id) || a.etiqueta.localeCompare(b.etiqueta, 'es'));
 }
 /** Opciones terminales VISIBLES que cuelgan de un nodo medio. */
 function opcionesDeGrupo(grupoId: string): OpcionHojaJson[] {
@@ -199,9 +227,33 @@ function cambiarContienda(c: string): void {
 }
 function toggleExpand(id: string): void {
   const next = new Set(expandidos.value);
-  if (next.has(id)) next.delete(id);
-  else next.add(id);
+  const opening = !next.has(id);
+  if (!opening) { next.delete(id); expandidos.value = next; return; }
+  next.add(id);
   expandidos.value = next;
+  // Fetch lazy de votos por hoja cuando se abre un lema de primer nivel
+  const cont = contiendaActiva.value;
+  const esLema = catalogo.value?.contiendas.some(
+    (c) => c.nodos.some((n) => n.nivel === 'lema' && n.id === id),
+  );
+  if (!cont || !esLema) return;
+  const key = `${cont}/${id}`;
+  if (fetchedHojas.has(key)) return;
+  fetchedHojas.add(key);
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  fetch(`${base}/data/${props.eleccion}/${props.departamento}/hoja/${cont}/${id}.json`)
+    .then((r) => r.ok ? r.json() : null)
+    .then((vd: { zonas: { porOpcion: { opcionId: string; votos: number }[] }[] } | null) => {
+      if (!vd) return;
+      const map = { ...totalVotosHoja.value };
+      for (const zona of vd.zonas) {
+        for (const op of zona.porOpcion ?? []) {
+          map[op.opcionId] = (map[op.opcionId] ?? 0) + op.votos;
+        }
+      }
+      totalVotosHoja.value = map;
+    })
+    .catch(() => { /* silencioso */ });
 }
 function limpiarTodo(): void {
   filtroPartido.value = '';
@@ -247,6 +299,7 @@ function metaPlano(o: OpcionHojaJson): { label: string; color: string; sigla: st
 
 const colorLema = (l: NodoOpcion): string => resolveParty(l.etiqueta).color;
 const siglaLema = (l: NodoOpcion): string => resolveParty(l.etiqueta).sigla;
+const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).flagUrl;
 </script>
 
 <template>
@@ -322,7 +375,8 @@ const siglaLema = (l: NodoOpcion): string => resolveParty(l.etiqueta).sigla;
           <button type="button" class="acc__chevron" :aria-label="`Expandir ${l.etiqueta}`" @click="toggleExpand(l.id)">
             {{ expandidos.has(l.id) ? '▼' : '▸' }}
           </button>
-          <span class="acc__swatch" :style="{ background: colorLema(l) }" aria-hidden="true"></span>
+          <img v-if="flagLema(l)" :src="flagLema(l)!" :alt="siglaLema(l)" class="acc__flag" aria-hidden="true" />
+          <span v-else class="acc__swatch" :style="{ background: colorLema(l) }" aria-hidden="true"></span>
           <span class="acc__sigla">{{ siglaLema(l) }}</span>
           <span class="acc__etiqueta">{{ l.etiqueta }}</span>
         </div>
@@ -441,6 +495,7 @@ const siglaLema = (l: NodoOpcion): string => resolveParty(l.etiqueta).sigla;
 .acc__chevron:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
 
 .acc__swatch { width: 0.75rem; height: 0.75rem; border-radius: 0.125rem; flex-shrink: 0; border: 1px solid rgba(0,0,0,.1); }
+.acc__flag  { width: 1.25rem; height: 0.8125rem; border-radius: 0.125rem; flex-shrink: 0; border: 1px solid rgba(0,0,0,.15); object-fit: cover; }
 .acc__sigla { font-weight: 700; min-width: 2.25rem; color: var(--color-ink); }
 .acc__etiqueta { color: var(--color-ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .acc__etiqueta--precand { font-weight: 500; color: var(--color-ink); }

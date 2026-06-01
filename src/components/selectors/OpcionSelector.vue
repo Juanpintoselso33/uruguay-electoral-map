@@ -21,6 +21,7 @@ interface OpcionUI {
   nombre: string;
   sigla: string;
   color: string;
+  totalVotos: number;
 }
 
 const opciones = ref<OpcionUI[]>([]);
@@ -55,13 +56,30 @@ onMounted(async () => {
 
   try {
     const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-    const res = await fetch(`${base}/data/${props.eleccion}/${props.departamento}/opciones.json`);
-    if (!res.ok) return;
-    const doc = (await res.json()) as { opciones: { opcionId: string; nombre: string }[] };
-    opciones.value = doc.opciones.map((o) => {
-      const meta = resolveParty(o.nombre);
-      return { opcionId: o.opcionId, nombre: o.nombre, sigla: meta.sigla, color: meta.color };
-    });
+    const [resOpc, resVotes] = await Promise.all([
+      fetch(`${base}/data/${props.eleccion}/${props.departamento}/opciones.json`),
+      fetch(`${base}/data/${props.eleccion}/${props.departamento}/votes.json`),
+    ]);
+    if (!resOpc.ok) return;
+    const doc = (await resOpc.json()) as { opciones: { opcionId: string; nombre: string }[] };
+
+    // Sumar votos totales por opcion para ordenar de mayor a menor
+    const totalMap: Record<string, number> = {};
+    if (resVotes.ok) {
+      const vd = (await resVotes.json()) as { zonas: { porOpcion: { opcionId: string; votos: number }[] }[] };
+      for (const zona of vd.zonas) {
+        for (const op of zona.porOpcion ?? []) {
+          totalMap[op.opcionId] = (totalMap[op.opcionId] ?? 0) + op.votos;
+        }
+      }
+    }
+
+    opciones.value = doc.opciones
+      .map((o) => {
+        const meta = resolveParty(o.nombre);
+        return { opcionId: o.opcionId, nombre: o.nombre, sigla: meta.sigla, color: meta.color, totalVotos: totalMap[o.opcionId] ?? 0 };
+      })
+      .sort((a, b) => b.totalVotos - a.totalVotos);
   } catch {
     // Fallo silencioso — el mapa ya tiene el modo ganador por defecto
   }

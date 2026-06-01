@@ -8,6 +8,7 @@ interface DesgloseGrupo {
   lemaNombre: string;
   sigla: string;
   color: string;
+  flagUrl?: string | null;
   total: number;
   hojas: { id: string; label: string; votos: number }[];
   masN: number;
@@ -17,6 +18,7 @@ interface SelInfo {
   sigla: string;
   nombre: string;
   color: string;
+  flagUrl?: string | null;
   votoGanador: number;
   validos: number;
   pct: number;
@@ -89,7 +91,8 @@ function fmt(n: number): string {
           <div class="zone-sheet__desglose">
             <div v-for="g in sel.desglose" :key="g.lemaNombre" class="zone-sheet__grupo">
               <div class="zone-sheet__grupo-head">
-                <span class="zone-sheet__swatch zone-sheet__swatch--sm" :style="{ background: g.color }" aria-hidden="true"></span>
+                <img v-if="g.flagUrl" :src="g.flagUrl" :alt="g.sigla" class="zone-sheet__swatch--sm zone-sheet__flag--sm" aria-hidden="true" />
+                <span v-else class="zone-sheet__swatch zone-sheet__swatch--sm" :style="{ background: g.color }" aria-hidden="true"></span>
                 <span class="zone-sheet__grupo-sigla">{{ g.sigla }}</span>
                 <span class="zone-sheet__grupo-nombre">{{ g.lemaNombre }}</span>
                 <span class="zone-sheet__grupo-total">{{ fmt(g.total) }}</span>
@@ -106,7 +109,15 @@ function fmt(n: number): string {
 
         <!-- Ganador destacado -->
         <div class="zone-sheet__ganador">
+          <img
+            v-if="sel.flagUrl"
+            :src="sel.flagUrl"
+            :alt="sel.sigla"
+            class="zone-sheet__flag"
+            aria-hidden="true"
+          />
           <span
+            v-else
             class="zone-sheet__swatch"
             :style="{ background: sel.color }"
             aria-hidden="true"
@@ -248,6 +259,22 @@ function fmt(n: number): string {
   border-radius: 0.375rem;
   flex-shrink: 0;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+.zone-sheet__flag {
+  width: 3rem;
+  height: 2rem;
+  border-radius: 0.375rem;
+  flex-shrink: 0;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+}
+.zone-sheet__flag--sm {
+  width: 1.125rem;
+  height: 0.75rem;
+  border-radius: 0.125rem;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.1);
+  flex-shrink: 0;
 }
 
 .zone-sheet__ganador-info {

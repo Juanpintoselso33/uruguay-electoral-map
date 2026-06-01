@@ -96,25 +96,25 @@ const canonicalPath = `/${eleccion}/${departamento}`;
   canonical={canonicalPath}
 >
   <main id="main-content" class="mx-auto max-w-3xl">
-    <header class="px-4 pt-4 flex items-start justify-between gap-2">
+    <header class="masthead">
       <div>
-        <h1 class="text-xl font-bold">{deptLabel}</h1>
-        <p class="text-sm text-gray-600 dark:text-slate-400">{eleccionLabel}</p>
+        <h1 class="masthead__dept">{deptLabel}</h1>
+        <p class="masthead__eleccion">{eleccionLabel}</p>
       </div>
       <ShareButton client:idle />
     </header>
     <!-- Pregunta del plebiscito/referéndum como contexto (Story 7.5) -->
     {preguntaPlebiscito && (
-      <p class="mx-4 mt-2 rounded-md border-l-4 border-emerald-500 bg-emerald-50 px-3 py-2 text-sm text-gray-700 dark:bg-emerald-950/40 dark:text-slate-200">
-        <span class="font-semibold">Se vota Sí o No a:</span> {preguntaPlebiscito}
+      <p class="pregunta-banner">
+        <span class="pregunta-banner__prefix">Se vota Sí o No a:</span> {preguntaPlebiscito}
       </p>
     )}
     <!-- Selector de departamento — links Astro (ClientRouter navega sin reinicializar el mapa) -->
-    <nav class="px-4 py-2 flex flex-wrap gap-x-3 gap-y-1 text-sm border-b border-gray-200 dark:border-slate-700">
+    <nav class="dept-nav" aria-label="Departamentos">
       {DEPTS.filter((d) => d.elecciones.includes(eleccion) || d.id === departamento).map((dept) => (
         <a
           href={`/${eleccionParaDepto(dept)}/${dept.id}`}
-          class={`underline ${departamento === dept.id ? 'font-bold' : 'text-gray-500 dark:text-slate-400'}`}
+          class={`dept-nav__link${departamento === dept.id ? ' dept-nav__link--activo' : ''}`}
         >{dept.label}</a>
       ))}
     </nav>

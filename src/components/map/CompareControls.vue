@@ -15,8 +15,19 @@ const props = defineProps<{
 }>();
 
 const LABELS: Record<string, string> = {
-  'internas-2024':   'Internas 2024',
-  'nacionales-2019': 'Nacionales 2019',
+  'nacionales-2014':                  'Nacionales 2014',
+  'balotaje-2014':                    'Balotaje 2014',
+  'internas-2019':                    'Internas 2019',
+  'nacionales-2019':                  'Nacionales 2019',
+  'balotaje-2019':                    'Balotaje 2019',
+  'departamentales-2020':             'Dptales. 2020',
+  'referendum-luc-2022':              'Referéndum LUC 2022',
+  'internas-2024':                    'Internas 2024',
+  'nacionales-2024':                  'Nacionales 2024',
+  'plebiscito-allanamientos-2024':    'Plebiscito Allanamientos 2024',
+  'plebiscito-seguridad-social-2024': 'Plebiscito Seg. Social 2024',
+  'balotaje-2024':                    'Balotaje 2024',
+  'departamentales-2025':             'Dptales. 2025',
 };
 function label(e: string): string { return LABELS[e] ?? e; }
 
@@ -43,24 +54,39 @@ function exitCompare(): void {
 </script>
 
 <template>
-  <div
-    v-if="availableElecciones.length > 1"
-    class="px-4 py-1 flex gap-2 items-center text-sm border-b border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-800"
-  >
+  <div v-if="availableElecciones.length > 1" class="cmp">
     <template v-if="comparisonVs">
-      <span class="text-gray-500 dark:text-slate-400 text-xs">Comparando con: <strong class="text-gray-700 dark:text-slate-300">{{ label(comparisonVs) }}</strong></span>
-      <button
-        class="text-xs text-blue-600 dark:text-blue-400 underline ml-2"
-        type="button"
-        @click="exitCompare"
-      >Salir</button>
+      <span class="cmp__text">Comparando con: <strong class="cmp__strong">{{ label(comparisonVs) }}</strong></span>
+      <button class="cmp__btn" type="button" @click="exitCompare">Salir</button>
     </template>
     <template v-else-if="otherEleccion()">
-      <button
-        class="text-xs text-blue-600 dark:text-blue-400 underline"
-        type="button"
-        @click="enterCompare"
-      >Comparar con {{ label(otherEleccion()!) }}</button>
+      <button class="cmp__btn" type="button" @click="enterCompare">
+        Comparar con {{ label(otherEleccion()!) }}
+      </button>
     </template>
   </div>
 </template>
+
+<style scoped>
+.cmp {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-1);
+  font-size: 0.75rem;
+}
+.cmp__text { color: var(--color-ink-soft); }
+.cmp__strong { color: var(--color-ink); font-weight: 600; }
+.cmp__btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--color-accent);
+  font-size: 0.75rem;
+  text-decoration: underline;
+}
+.cmp__btn:hover { color: var(--color-ink); }
+</style>

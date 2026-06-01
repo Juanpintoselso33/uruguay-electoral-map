@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 60">
+  <!-- Partido Colorado: rojo con Sol de Mayo amarillo en el cantón superior izquierdo -->
+  <rect x="0" y="0" width="90" height="60" fill="#D42B2B"/>
+  <!-- Sol (círculo amarillo, como en la bandera nacional pero en cantón izquierdo) -->
+  <circle cx="16" cy="14" r="9" fill="#F5C400"/>
+  <!-- Rayos del sol (8 rayos: 4 rectos + 4 ondulados intercalados, simplificado) -->
+  <line x1="16" y1="3" x2="16" y2="1"  stroke="#F5C400" stroke-width="2" stroke-linecap="round"/>
+  <line x1="16" y1="25" x2="16" y2="27" stroke="#F5C400" stroke-width="2" stroke-linecap="round"/>
+  <line x1="5"  y1="14" x2="3"  y2="14" stroke="#F5C400" stroke-width="2" stroke-linecap="round"/>
+  <line x1="27" y1="14" x2="29" y2="14" stroke="#F5C400" stroke-width="2" stroke-linecap="round"/>
+  <line x1="8"  y1="6"  x2="6"  y2="4"  stroke="#F5C400" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="24" y1="22" x2="26" y2="24" stroke="#F5C400" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="24" y1="6"  x2="26" y2="4"  stroke="#F5C400" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="8"  y1="22" x2="6"  y2="24" stroke="#F5C400" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

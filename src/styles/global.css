@@ -56,8 +56,68 @@
 html {
   background: var(--color-bg);
   color: var(--color-ink);
-  font-family: system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
 }
+
+h1, h2, h3 {
+  font-family: 'Source Serif 4', Georgia, serif;
+}
+
+/* ── Masthead ────────────────────────────────────────────────────────────── */
+.masthead {
+  padding: 1rem 1rem 0.75rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.masthead__dept {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  line-height: 1.2;
+  margin: 0;
+}
+.masthead__eleccion {
+  font-size: 0.8125rem;
+  color: var(--color-ink-soft);
+  margin: 0.125rem 0 0;
+}
+
+/* ── Department nav ──────────────────────────────────────────────────────── */
+.dept-nav {
+  padding: 0.5rem 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.dept-nav__link {
+  font-size: 0.8125rem;
+  color: var(--color-ink-muted);
+  text-decoration: none;
+  padding: 0.125rem 0;
+}
+.dept-nav__link:hover { color: var(--color-ink); text-decoration: underline; }
+.dept-nav__link--activo {
+  color: var(--color-ink);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ── Pregunta banner (plebiscito / referéndum) ───────────────────────────── */
+.pregunta-banner {
+  margin: 0 1rem 0;
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--color-accent);
+  background: var(--color-surface-1);
+  font-size: 0.8125rem;
+  color: var(--color-ink-soft);
+  border-radius: 0 0.25rem 0.25rem 0;
+}
+.pregunta-banner__prefix { font-weight: 600; color: var(--color-ink); }
 
 /* ── Skip navigation link (WCAG 2.4.1 Bypass Blocks) ────────────────────── */
 .skip-link {
