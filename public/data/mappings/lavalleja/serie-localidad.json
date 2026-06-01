@@ -21,7 +21,7 @@
   },
   {
     "serie": "SCC",
-    "localidad": "SolíS De Mataojo",
+    "localidad": "Solís De Mataojo",
     "tipo": "1:1"
   },
   {
@@ -36,12 +36,12 @@
   },
   {
     "serie": "SDC",
-    "localidad": "EstacióN Solis",
+    "localidad": "Estación Solis",
     "tipo": "1:1"
   },
   {
     "serie": "SEA",
-    "localidad": "Alto De Santa LucíA",
+    "localidad": "Alto De Santa Lucía",
     "tipo": "1:1"
   },
   {
@@ -101,7 +101,7 @@
   },
   {
     "serie": "SGD",
-    "localidad": "Poblado ColóN",
+    "localidad": "Poblado Colón",
     "tipo": "1:1"
   },
   {
@@ -126,12 +126,12 @@
   },
   {
     "serie": "SIA",
-    "localidad": "ZapicáN",
+    "localidad": "Zapicán",
     "tipo": "1:1"
   },
   {
     "serie": "SIB",
-    "localidad": "ZapicáN",
+    "localidad": "Zapicán",
     "tipo": "1:1"
   },
   {
@@ -141,7 +141,7 @@
   },
   {
     "serie": "SIE",
-    "localidad": "José Batlle Y OrdóñEz",
+    "localidad": "José Batlle Y Ordóñez",
     "tipo": "1:1"
   }
 ]

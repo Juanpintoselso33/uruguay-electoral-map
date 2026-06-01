@@ -1,5 +1,21 @@
 # Deferred Work
 
+## ✅ Resuelto (2026-06-01) — barrido de deuda diferida verificada
+
+Verificación + fixes aplicados sobre los ítems dudosos. Typecheck (`astro check`) 0 errores,
+selftest del contrato 13/13 OK, mapping serie-localidad + geometría de localidades regenerados (18/18 deptos, gates 100%).
+
+- **`toTitleCase` unicode-aware** (de 8-1/8-3) — `etl/build-serie-localidad-mapping.ts`: regex `\p{L}` con flag `u`. Mapping y `localidad.topo.json` regenerados → "Garzón", "Piriápolis" correctos (0 nombres mangleados restantes).
+- **`catch {}` traga errores de topología** (de 8-2) — `etl/build-localidad-topojson.ts`: re-throw selectivo; solo el overrun `[geometry-size]` continúa, el resto se relanza con contexto y `cause`.
+- **`serieProp` solo del primer feature** (de 8-2) — `etl/build-localidad-topojson.ts`: scan multi-feature hasta encontrar props con clave `serie`.
+- **`opcionesNacionales` no testeado** (de 7-1) — `src/lib/contracts/__fixtures__/validate.ts`: importado + 3 aserciones de guard (es hoja, no candidato, no binaria).
+- **`ganadorOpcionId` empate → FA** (de 7-2) — `etl/transform/aggregate-balotaje-by-serie.ts`: convención documentada en comentario (la nota original apuntaba por error a `run-balotaje-interior.ts`).
+- **`OpcionSelector` sin rama plebiscito** (de 7-2) — `OpcionSelector.vue`: rama `'Opción (Sí / No)'` para plebiscito/referéndum.
+- **`resolveParty('Sí'/'No')` output inválido** (de 7-2) — ya resuelto en `party-meta.ts` (Sí verde / No gris); verificado, sin acción.
+- **`OpcionBinaria` sin mapeo a `nombre`** (de 7-2) — resuelto en runtime (los `opciones.json` de plebiscito traen `nombre`, `resolveParty` lo resuelve); verificado, sin acción.
+
+---
+
 ## Deferred from: code review de story 7-1-data-contract-v2-tipos-eleccion (2026-05-31)
 
 - **validate.ts no verifica guard de nacionales** — `opcionesNacionales` nunca se importa en el selftest; gap pre-existente, nacionales usa `OpcionHoja` (same as internas so transitive coverage exists, but no independent assertion).

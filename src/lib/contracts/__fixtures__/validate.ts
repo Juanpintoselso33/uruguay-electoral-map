@@ -9,7 +9,7 @@ import { assertCatalogoConsistente, assertHojasEnCatalogo } from '../guards';
 import { escaleraDe, opcionIdHoja, ESCALERAS } from '../granularidad';
 import type { EleccionTipo } from '../election';
 import { shardInternas, opcionesInternas } from './internas-2024.fixture';
-import { shardNacionales } from './nacionales-2019.fixture';
+import { shardNacionales, opcionesNacionales } from './nacionales-2019.fixture';
 import { shardBalotaje, opcionesBalotaje } from './balotaje.fixture';
 import { shardPlebiscito, opcionesPlebiscito } from './plebiscito.fixture';
 import { catalogoInternasHoja, shardInternasHoja } from './internas-hoja.fixture';
@@ -23,13 +23,16 @@ export function runContractSelfTest(): string[] {
     results.push(`OK shard ${shard.eleccionId}/${shard.departamento}`);
   }
 
-  // Guards de opción: internas = hoja; balotaje = candidato; plebiscito = binaria.
+  // Guards de opción: internas = hoja; nacionales = hoja; balotaje = candidato; plebiscito = binaria.
   if (!isOpcionHoja(opcionesInternas[0])) throw new Error('esperaba hoja en internas');
+  if (!isOpcionHoja(opcionesNacionales[0])) throw new Error('esperaba hoja en nacionales');
+  if (isOpcionCandidato(opcionesNacionales[0])) throw new Error('nacionales NO debe ser candidato');
+  if (isOpcionBinaria(opcionesNacionales[0])) throw new Error('nacionales NO debe ser binaria');
   if (!isOpcionCandidato(opcionesBalotaje[0])) throw new Error('esperaba candidato en balotaje');
   if (!isOpcionBinaria(opcionesPlebiscito[0])) throw new Error('esperaba binaria en plebiscito');
   if (isOpcionHoja(opcionesPlebiscito[0])) throw new Error('plebiscito NO debe ser hoja');
   if (isOpcionCandidato(opcionesPlebiscito[0])) throw new Error('plebiscito NO debe ser candidato');
-  results.push('OK guards de opción (hoja/candidato/binaria)');
+  results.push('OK guards de opción (hoja/nacionales-hoja/candidato/binaria)');
 
   // Negativo: un shard con votos negativos debe lanzar ContractError.
   let lanzado = false;

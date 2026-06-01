@@ -97,6 +97,9 @@ export function aggregateBalotajeBySerie(rows: Record<string, string>[]): Balota
     ];
     zonas.push({
       geoId,
+      // Convención de empate: `>=` ⇒ el empate exacto se adjudica a frente-amplio.
+      // Los empates a nivel serie en un balotaje nacional son prácticamente imposibles;
+      // la elección es determinística (no aleatoria) para mantener el build reproducible.
       ganadorOpcionId: acc.orsi >= acc.coa ? 'frente-amplio' : 'coalicion-republicana',
       validos,
       porOpcion,

@@ -86,9 +86,14 @@ function main(): void {
       serieToEntry.set(entry.serie.toUpperCase(), entry);
     }
 
-    // Detect serie name property (serie/SERIE/etc.)
-    const sampleProps = seriesGeo.features[0]?.properties ?? {};
-    const serieProp = Object.keys(sampleProps).find((k) => k.toLowerCase() === 'serie') ?? 'serie';
+    // Detect serie name property (serie/SERIE/etc.). Escanea todos los features:
+    // si el primero tiene properties null/casing distinto, el fallback a 'serie'
+    // haría fallar en silencio a todos los features de ese departamento.
+    let serieProp = 'serie';
+    for (const f of seriesGeo.features) {
+      const k = f.properties && Object.keys(f.properties).find((k) => k.toLowerCase() === 'serie');
+      if (k) { serieProp = k; break; }
+    }
 
     // Group polygons by localidad — 1:1 only; ciudad-grande handled in Stories 8.4/8.5
     const byLocalidad = new Map<string, { display: string; polys: PcMultiPoly[] }>();
@@ -142,8 +147,15 @@ function main(): void {
         serialized = s;
         gzipBytes = r.gzipBytes;
         break;
-      } catch {
-        // budget exceeded, try more aggressive simplification
+      } catch (err) {
+        // Solo el overrun de budget es esperado → probar simplificación más agresiva.
+        // Cualquier otro error (geometría corrupta, topología inválida) NO debe tragarse:
+        // antes se misatribuía como "no cumple budget".
+        if (err instanceof Error && err.message.includes('[geometry-size]')) continue;
+        throw new Error(
+          `${deptName}: error de topología en simplifyQuantile=${q}: ${err instanceof Error ? err.message : String(err)}`,
+          { cause: err },
+        );
       }
     }
 

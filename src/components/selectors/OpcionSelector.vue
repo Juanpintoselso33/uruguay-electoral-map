@@ -37,6 +37,9 @@ const labelSelector = computed(() => {
   if (props.eleccion.includes('balotaje') || props.eleccion.startsWith('presidencial')) {
     return 'Candidato / Lema';
   }
+  if (props.eleccion.includes('plebiscito') || props.eleccion.includes('referendum')) {
+    return 'Opción (Sí / No)';
+  }
   return 'Opción';
 });
 

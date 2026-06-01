@@ -41,7 +41,10 @@ const DEPT_CODE_TO_NAME: Record<string, string> = {
 };
 
 function toTitleCase(s: string): string {
-  return s.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+  // Unicode-aware: capitaliza la primera letra de cada palabra respetando acentos.
+  // `\b\w` (no-unicode) trata ó/á/ñ como límites de palabra → "GarzóN", "PiriáPolis".
+  // `\p{L}` con flag `u` reconoce las vocales acentuadas como letras → "Garzón", "Piriápolis".
+  return s.toLowerCase().replace(/(^|[\s\-/'])(\p{L})/gu, (_m, sep, ch) => sep + ch.toUpperCase());
 }
 
 function main(): void {

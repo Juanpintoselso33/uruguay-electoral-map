@@ -31,7 +31,7 @@
   },
   {
     "serie": "DAG",
-    "localidad": "HipóDromo",
+    "localidad": "Hipódromo",
     "tipo": "1:1"
   },
   {
@@ -81,7 +81,7 @@
   },
   {
     "serie": "DBF",
-    "localidad": "RodríGuez Barrios",
+    "localidad": "Rodríguez Barrios",
     "tipo": "1:1"
   },
   {
@@ -91,22 +91,22 @@
   },
   {
     "serie": "DCA",
-    "localidad": "Pan De AzúCar",
+    "localidad": "Pan De Azúcar",
     "tipo": "1:1"
   },
   {
     "serie": "DCB",
-    "localidad": "PiriáPolis",
+    "localidad": "Piriápolis",
     "tipo": "1:1"
   },
   {
     "serie": "DCC",
-    "localidad": "Sierras De P. De AzúCar",
+    "localidad": "Sierras De P. De Azúcar",
     "tipo": "1:1"
   },
   {
     "serie": "DCD",
-    "localidad": "Gregorio AznáRez",
+    "localidad": "Gregorio Aznárez",
     "tipo": "1:1"
   },
   {
@@ -146,17 +146,17 @@
   },
   {
     "serie": "DEA",
-    "localidad": "GarzóN",
+    "localidad": "Garzón",
     "tipo": "1:1"
   },
   {
     "serie": "DEB",
-    "localidad": "GarzóN Arriba",
+    "localidad": "Garzón Arriba",
     "tipo": "1:1"
   },
   {
     "serie": "DEC",
-    "localidad": "GarzóN Abajo",
+    "localidad": "Garzón Abajo",
     "tipo": "1:1"
   },
   {
@@ -166,12 +166,12 @@
   },
   {
     "serie": "DEE",
-    "localidad": "RincóN De José Ignacio",
+    "localidad": "Rincón De José Ignacio",
     "tipo": "1:1"
   },
   {
     "serie": "DEF",
-    "localidad": "Las CañAs",
+    "localidad": "Las Cañas",
     "tipo": "1:1"
   },
   {
