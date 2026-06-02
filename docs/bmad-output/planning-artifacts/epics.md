@@ -751,6 +751,31 @@ As a usuario, I want que la vista nacional por zona cargue rápido, So that sea 
 
 ---
 
+## Epic 16: Polígonos grises — auditoría y cierre de huecos de visualización
+
+Hay polígonos pintados de **gris** (`COLOR_SIN_DATOS`) en casi todos los departamentos. Un polígono queda gris cuando su `name` (normalizado) NO matchea ningún `geoId` del `votes.json` de esa elección. El **inverso** (voto sin polígono) es peor: esos votos no se ven en ningún lado.
+
+**Hallazgos del spike (auditoría 2026-06-02, `scripts/audit-grises.py`) — TRES causas:**
+- **A) Drift temporal de series (la mayoría, mayormente benigno):** la geometría de series (`geo/{depto}/serie.topo.json`) está fijada al padrón **~2024** (en 2024 hay solo ~0,2-0,8% grises). En elecciones viejas muchas de esas series no existían/no votaron → sus polígonos 2024 quedan grises. El gris sube con la antigüedad: **referéndum-LUC-2022 4,0%, balotaje-2019 3,6%, nacionales-2014 2,9%**. Es correcto en su mayoría (esa serie no tuvo votantes esa elección).
+- **B) Geometría mergeada (bug estructural):** polígonos con label tipo **`sia-sib-sic`** (lavalleja) = 3 series combinadas en una forma; nunca matchean las series individuales del voto (`sia`,`sib`,`sic`) → gris siempre, Y dejan esas series sin polígono.
+- **C) Votos invisibles (inverso, MÁS GRAVE):** zonas con voto pero **sin** polígono. Despreciable (~0,06-0,09%, ~1,4k votos) en casi todas, PERO **departamentales-2020/2025 ~0,55% (136-143 zonas, ~11k votos)** por series especiales (`q1`,`q2`,`q3`…) sin geometría.
+
+**Decisión abierta:** A es esperable (¿documentar/leyendar "sin votantes en esta elección" en vez de gris ambiguo?); B y C son huecos reales a cerrar.
+
+### Story 16.1: Spike — auditoría de grises y votos invisibles
+As a desarrollador, I want medir y categorizar los polígonos grises y los votos sin polígono, So that sepamos qué arreglar. **AC:** **Given** geometría + votos de las 14 elecciones **When** corro `scripts/audit-grises.py` **Then** queda cuantificado por elección/depto (grises % + votos invisibles %) y categorizado (drift temporal / mergeado / votos sin geo) **And** documentado. **[DONE]**
+
+### Story 16.2: Cerrar votos invisibles de departamentales (series especiales)
+As a usuario, I want ver los votos de las series especiales (`q1`,`q2`…) de las departamentales, So that no se pierdan ~11k votos del mapa. **AC:** **Given** las ~140 zonas con voto sin polígono en departamentales-2020/2025 **When** decido el tratamiento (mapear a localidad/serie contenedora, agrupar, o excluir EXPLÍCITO con conteo logueado) **Then** esos votos se visualizan o se reportan sin pérdida silenciosa.
+
+### Story 16.3: Resolver geometría mergeada (`sia-sib-sic`)
+As a usuario, I want que las series `sia/sib/sic` de Lavalleja se vean, So that no quede un polígono gris permanente. **AC:** **Given** el polígono mergeado **When** lo split o mapeo las 3 series al mismo polígono **Then** ni el polígono queda gris ni las series quedan invisibles.
+
+### Story 16.4: Gris temporal — desambiguar "sin votantes" de "sin dato"
+As a usuario, I want entender por qué una zona está gris, So that no confunda "no votó esa serie" con "falta el dato". **AC:** **Given** el gris por drift temporal **When** evalúo la UX **Then** se documenta/leyenda (p.ej. "sin votantes en esta elección" vs gris ambiguo) o se acepta explícitamente con su razón.
+
+---
+
 ## Epic 17: Circuito geolocalizado en todas las elecciones — anclaje por LOCAL
 
 > _(Numerado 17 por pedido explícito; Epic 16 queda libre/reservado. Epic 15 es el último previo.)_
