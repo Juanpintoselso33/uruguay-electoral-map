@@ -11,8 +11,10 @@ import type { VotosShard } from '../../lib/contracts';
 interface Props {
   eleccion: string;
   departamento: string;
+  /** Shard de votos a tabular (un nivel geográfico). Default: nivel base. */
+  shard?: string;
 }
-const { eleccion, departamento } = Astro.props;
+const { eleccion, departamento, shard = 'votes.json' } = Astro.props;
 // Epic 15: la vista nacional usa el shard '_nacional'; mostrar "Uruguay" en el caption.
 const deptoLabel = departamento === '_nacional' ? 'Uruguay' : departamento;
 
@@ -21,7 +23,7 @@ interface OpcionesDoc {
 }
 
 const votes = JSON.parse(
-  readFileSync(`public/data/${eleccion}/${departamento}/votes.json`, 'utf8'),
+  readFileSync(`public/data/${eleccion}/${departamento}/${shard}`, 'utf8'),
 ) as VotosShard;
 const opcDoc = JSON.parse(
   readFileSync(`public/data/${eleccion}/${departamento}/opciones.json`, 'utf8'),
@@ -40,8 +42,17 @@ const filas = votes.zonas
 
 const fmt = (n: number): string => n.toLocaleString('es-UY');
 
-const nivelSingular = votes.nivel === 'zona' ? 'barrio' : votes.nivel === 'serie' ? 'serie' : votes.nivel === 'localidad' ? 'localidad' : votes.nivel;
-const nivelPlural = votes.nivel === 'zona' ? 'barrios' : votes.nivel === 'serie' ? 'series' : votes.nivel === 'localidad' ? 'localidades' : `${votes.nivel}s`;
+const NIVEL_LABEL: Record<string, { sing: string; plur: string }> = {
+  zona: { sing: 'barrio', plur: 'barrios' },
+  barrio: { sing: 'barrio', plur: 'barrios' },
+  serie: { sing: 'serie', plur: 'series' },
+  localidad: { sing: 'localidad', plur: 'localidades' },
+  circuito: { sing: 'circuito', plur: 'circuitos' },
+  local: { sing: 'local', plur: 'locales' },
+};
+const lbl = NIVEL_LABEL[votes.nivel] ?? { sing: votes.nivel, plur: `${votes.nivel}s` };
+const nivelSingular = lbl.sing;
+const nivelPlural = lbl.plur;
 const nivelCol = nivelSingular.charAt(0).toUpperCase() + nivelSingular.slice(1);
 ---
 

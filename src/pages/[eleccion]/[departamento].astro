@@ -141,7 +141,10 @@ const canonicalPath = `/${eleccion}/${departamento}`;
         availableLevels={availableLevels}
       />
     </div>
-    <DataTable eleccion={eleccion} departamento={departamento} />
+    <!-- Tabla accesible por CADA nivel geográfico disponible (serie/localidad/barrio/circuito/local) -->
+    {availableLevels.map((lvl) => (
+      <DataTable eleccion={eleccion} departamento={departamento} shard={shardDeNivel(lvl)} />
+    ))}
     <div class="share-actions">
       <ExportButton client:idle eleccion={eleccion} departamento={departamento} />
       <MapScreenshotButton
