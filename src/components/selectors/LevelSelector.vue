@@ -64,7 +64,7 @@ function toggleCircuito() {
         <rect x="0.5" y="7.5" width="5" height="5" rx="0.5" stroke="currentColor"/>
         <rect x="7.5" y="7.5" width="5" height="5" rx="0.5" stroke="currentColor"/>
       </svg>
-      Local
+      Circuito
     </button>
   </div>
 </template>
