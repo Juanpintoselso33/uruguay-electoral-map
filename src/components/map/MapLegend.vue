@@ -11,7 +11,14 @@ interface Entrada {
   readonly votos: number;
   readonly flagUrl?: string | null;
 }
-defineProps<{ entradas: Entrada[]; sinDatos: number }>();
+const props = defineProps<{
+  entradas: Entrada[];
+  sinDatos: number;
+  /** Epic 16: votos cuyo geoId no tiene polígono (series especiales/observados sin ubicación). */
+  votosSinUbicacion?: number;
+  zonasSinUbicacion?: number;
+}>();
+const fmt = (n: number): string => n.toLocaleString('es-UY');
 </script>
 
 <template>
@@ -45,6 +52,11 @@ defineProps<{ entradas: Entrada[]; sinDatos: number }>();
       <span class="legend__nombre">{{ sinDatos }} zona(s) sin datos</span>
     </div>
   </div>
+  <!-- Epic 16: limitación documentada — votos sin ubicación geográfica (series especiales/observados) -->
+  <p v-if="(props.votosSinUbicacion ?? 0) > 0" class="legend__nota">
+    ⚠ {{ fmt(props.votosSinUbicacion!) }} votos en {{ props.zonasSinUbicacion }} serie(s) sin ubicación geográfica
+    (series especiales / voto observado, o sin geometría) — contabilizados en los totales pero no representables en el mapa.
+  </p>
 </template>
 
 <style scoped>
@@ -87,5 +99,13 @@ defineProps<{ entradas: Entrada[]; sinDatos: number }>();
 }
 .legend__nombre {
   color: var(--color-ink-muted);
+}
+.legend__nota {
+  margin: 0 0 0.5rem;
+  padding: 0 1rem;
+  text-align: center;
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  color: var(--color-ink-faint);
 }
 </style>

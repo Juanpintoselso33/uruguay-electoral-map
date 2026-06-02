@@ -89,6 +89,10 @@ const status = ref<'cargando' | 'listo' | 'error'>('cargando');
 const errorMsg = ref('');
 const legend = ref<LegendEntry[]>([]);
 const sinDatos = ref(0);
+// Epic 16: votos cuyo geoId no tiene polígono (series especiales/observados de las departamentales,
+// sin ubicación geográfica real) → se anotan como limitación, no se pierden silenciosamente.
+const votosSinUbicacion = ref(0);
+const zonasSinUbicacion = ref(0);
 const selected = ref<SelInfo | null>(null);
 const map = shallowRef<MlMap | null>(null);
 const fcRef = shallowRef<FeatureCollection | null>(null);
@@ -253,6 +257,33 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
   const zonaPorGeo = new Map(votes.zonas.map((z) => [norm(z.geoId), z]));
   const barriosGanados = new Map<string, number>();
 
+  // Epic 16 — Polígonos MERGEADOS ("a-b-c"): la geometría dibuja varias series como una sola forma
+  // (mismo lugar), pero el voto las trae separadas. Sintetizamos la zona del polígono sumando sus
+  // series constituyentes → "vincula" esos votos al polígono (no quedan gris ni invisibles).
+  const consumidasPorMerge = new Set<string>();
+  for (const f of geo.features) {
+    const name = String((f.properties as { name: string }).name);
+    const key = norm(name);
+    if (!name.includes('-') || zonaPorGeo.has(key)) continue;
+    const partes = name.split('-').map((s) => norm(s));
+    const zs = partes.map((p) => zonaPorGeo.get(p)).filter((z): z is NonNullable<typeof z> => !!z);
+    if (zs.length === 0) continue;
+    const porOp = new Map<string, number>();
+    let vv = 0, eb = 0, an = 0, ob = 0;
+    for (const z of zs) {
+      for (const o of z.porOpcion) porOp.set(o.opcionId, (porOp.get(o.opcionId) ?? 0) + o.votos);
+      vv += z.validos; eb += z.noPartidarios.enBlanco; an += z.noPartidarios.anulados; ob += z.noPartidarios.observados;
+    }
+    const porOpcion = [...porOp.entries()].map(([opcionId, votos]) => ({ opcionId, votos }));
+    const ganadorOpcionId = porOpcion.reduce((a, b) => (b.votos > a.votos ? b : a)).opcionId;
+    zonaPorGeo.set(key, { geoId: name, ganadorOpcionId, validos: vv, porOpcion,
+      noPartidarios: { enBlanco: eb, anulados: an, observados: ob } } as (typeof zs)[number]);
+    zonasVotos.set(key, new Map(porOpcion.map((o) => [o.opcionId, o.votos])));
+    zonasValidos.set(key, vv);
+    zonasNoPartidarios.set(key, { enBlanco: eb, anulados: an, observados: ob });
+    partes.forEach((p) => consumidasPorMerge.add(p));
+  }
+
   let sin = 0;
   for (const f of geo.features) {
     const name = String((f.properties as { name: string }).name);
@@ -279,6 +310,18 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
     }
   }
   sinDatos.value = sin;
+
+  // Epic 16 — Votos SIN UBICACIÓN: zonas con voto cuyo geoId no tiene polígono (ni directo ni vía
+  // merge). En las departamentales son ~127 series especiales/observados (c1,d1,n1…) sin lugar real
+  // → se reportan como limitación abajo, sin perderlos del conteo.
+  const featKeys = new Set(geo.features.map((f) => norm(String((f.properties as { name: string }).name))));
+  let zSU = 0, vSU = 0;
+  for (const z of votes.zonas) {
+    const k = norm(z.geoId);
+    if (!featKeys.has(k) && !consumidasPorMerge.has(k)) { zSU++; vSU += z.validos; }
+  }
+  zonasSinUbicacion.value = zSU;
+  votosSinUbicacion.value = vSU;
 
   legend.value = [...barriosGanados.entries()]
     .map(([opcionId, barrios]) => {
@@ -1699,7 +1742,7 @@ onUnmounted(() => {
       >{{ mo === 'ganador' ? 'Ganador' : mo === 'share' ? 'Share %' : 'Heatmap' }}</button>
     </div>
 
-    <MapLegend :entradas="legend" :sin-datos="sinDatos" />
+    <MapLegend :entradas="legend" :sin-datos="sinDatos" :votos-sin-ubicacion="votosSinUbicacion" :zonas-sin-ubicacion="zonasSinUbicacion" />
   </section>
 </template>
 
