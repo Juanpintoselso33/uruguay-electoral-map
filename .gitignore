@@ -20,3 +20,8 @@ data/raw/
 /*.png
 data/processed/geographic/_nacional/
 data/processed/_annex_tmp/
+
+# Python bytecode
+scripts/__pycache__/
+__pycache__/
+*.pyc
