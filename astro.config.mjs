@@ -11,6 +11,11 @@ export default defineConfig({
   site: 'https://uruguay-electoral-map.vercel.app',
   // Sitio estático servido por CDN (dato inmutable, sin backend). Ver architecture.md §NFR5.
   output: 'static',
+  // Redirect de raíz INSTANTÁNEO: el adapter Vercel lo emite como redirect HTTP de plataforma
+  // (no una página HTML con meta-refresh, que mostraba el "flash" de redirección).
+  redirects: {
+    '/': '/internas-2024/montevideo',
+  },
   // Deploy en Vercel. El adapter es la fuente de verdad del deploy (reemplaza vercel.json).
   adapter: vercel(),
   integrations: [vue(), sitemap()],

@@ -129,6 +129,16 @@ h1, h2, h3 {
   text-decoration: none;
 }
 
+/* Entrada a la vista nacional (Epic 15) — destacada al inicio de la nav */
+.dept-nav__link--nacional {
+  color: var(--color-ink);
+  font-weight: 600;
+  border-color: var(--color-border-strong);
+}
+.dept-nav__link--nacional:hover {
+  background: var(--color-card);
+}
+
 /* ── Pregunta banner (plebiscito / referéndum) ───────────────────────────── */
 .pregunta-banner {
   margin: 0 1rem 0;

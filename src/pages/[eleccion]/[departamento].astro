@@ -111,6 +111,9 @@ const canonicalPath = `/${eleccion}/${departamento}`;
     )}
     <!-- Selector de departamento — links Astro (ClientRouter navega sin reinicializar el mapa) -->
     <nav class="dept-nav" aria-label="Departamentos">
+      {existsSync(`public/data/${eleccion}/_nacional/votes.json`) && (
+        <a href={`/${eleccion}`} class="dept-nav__link dept-nav__link--nacional">🇺🇾 Nacional</a>
+      )}
       {DEPTS.filter((d) => d.elecciones.includes(eleccion) || d.id === departamento).map((dept) => (
         <a
           href={`/${eleccionParaDepto(dept)}/${dept.id}`}
