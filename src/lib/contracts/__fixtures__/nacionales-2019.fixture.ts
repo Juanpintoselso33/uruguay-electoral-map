@@ -13,7 +13,7 @@ export const eleccionNacionales2019 = {
 
 export const opcionesNacionales = [
   { clase: 'hoja', id: 'n19-609', hoja: '609', partidoId: 'frente-amplio' },
-  { clase: 'hoja', id: 'n19-404', hoja: '404', partidoId: 'partido-nacional' },
+  { clase: 'hoja', id: 'n19-404', hoja: '404', partidoId: 'nacional' },
 ] as const satisfies readonly Opcion[];
 
 export const shardNacionales = {

@@ -23,7 +23,7 @@ export const opcionesInternas = [
     clase: 'hoja',
     id: 'i24-71',
     hoja: '71',
-    partidoId: 'partido-nacional',
+    partidoId: 'nacional',
     precandidato: 'Álvaro Delgado',
   },
 ] as const satisfies readonly Opcion[];

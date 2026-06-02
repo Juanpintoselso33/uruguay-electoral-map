@@ -171,13 +171,26 @@ def agregar_eleccion(eleccion, id2label):
 
     outdir = f'{base}/_nacional'
     os.makedirs(outdir, exist_ok=True)
-    json.dump(votes_nac, open(f'{outdir}/votes.json', 'w', encoding='utf-8'), ensure_ascii=False)
-    json.dump(votes_zona, open(f'{outdir}/votes-zona.json', 'w', encoding='utf-8'), ensure_ascii=False)
+
+    def _write(name, obj):  # context manager + retry (Windows EINVAL bajo file-watcher)
+        import time
+        path = f'{outdir}/{name}'
+        for attempt in range(5):
+            try:
+                with open(path, 'w', encoding='utf-8') as fh:
+                    json.dump(obj, fh, ensure_ascii=False)
+                return
+            except OSError:
+                if attempt == 4:
+                    raise
+                time.sleep(0.2)
+
+    _write('votes.json', votes_nac)
+    _write('votes-zona.json', votes_zona)
     # override de anexión para la vista zona nacional (16.4 propagado); el front lo aplica como en per-depto
     if annex_feats:
-        json.dump({'type': 'FeatureCollection', 'features': annex_feats},
-                  open(f'{outdir}/zona-annexed.json', 'w', encoding='utf-8'), ensure_ascii=False)
-    json.dump(opciones_nac, open(f'{outdir}/opciones.json', 'w', encoding='utf-8'), ensure_ascii=False)
+        _write('zona-annexed.json', {'type': 'FeatureCollection', 'features': annex_feats})
+    _write('opciones.json', opciones_nac)
 
     tot_validos = sum(z['validos'] for z in zonas_nac)
     top = sorted(nac_por_opcion.items(), key=lambda kv: -kv[1])[:3]
