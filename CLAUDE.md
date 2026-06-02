@@ -1,283 +1,93 @@
-# CLAUDE.md - Uruguay Electoral Map
+# CLAUDE.md — Mapa Electoral de Uruguay (v2)
 
-## Project Overview
+Instrucciones para agentes de IA que trabajan en este repo. Comunicación y documentos: **español**.
 
-Interactive electoral map visualization for Uruguay's 19 departments, showing vote distribution by ballot lists and candidates across geographic zones.
+> Este proyecto es el **rebuild (v2)** de un mapa electoral brownfield. Lo durable es el **dominio electoral uruguayo**, no una implementación puntual. No replicar la deuda de la v1.
 
-## Quick Start
+## Qué es
+
+Visualización interactiva de resultados electorales de Uruguay: **19 departamentos + vista nacional**, **14 instancias electorales (2014–2025)**, drill-down hasta circuito/local y desglose **por hoja (lista)**.
+
+App en vivo: https://uruguay-electoral-map.vercel.app
+
+## Documentación (leer antes de tocar cada área)
+
+| Área | Doc |
+|------|-----|
+| Visión general, quick start, arquitectura | [`README.md`](README.md) |
+| **Contrato de datos + invariantes de dominio** | [`public/data/README.md`](public/data/README.md) |
+| Pipeline de datos | [`etl/README.md`](etl/README.md) |
+| Builders Python + quality gates | [`scripts/README.md`](scripts/README.md) |
+| Frontend (Astro + Vue) | [`src/README.md`](src/README.md) |
+
+## Stack (real, confirmado en `package.json`)
+
+- **Astro 5** (islas) + **Vue 3.5** (Composition API)
+- **MapLibre GL 5** · TopoJSON · d3-geo · polygon-clipping
+- Estado: **nanostores** (`@nanostores/vue`, `src/stores/map-state.ts`) — **no Pinia**
+- Estilos: **Tailwind CSS 4**
+- ETL: **TypeScript** (esbuild / tsx) + **Python** (geometría, vista nacional, casos especiales)
+- Deploy: **Vercel** (`@astrojs/vercel`, `vercel.ts`) — **no Netlify**
+
+## Quick start
 
 ```bash
-# Install dependencies
 npm install
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
+npm run dev        # desarrollo
+npm run build      # producción (corre gates + genera OG e índice de búsqueda)
+npm run check      # type-check
 ```
 
-## Non-Negotiables
+## Invariantes NO negociables (dominio)
 
-### CSV Data Schema
-All electoral CSV files MUST have these columns:
-```
-PARTIDO, DEPTO, CIRCUITO, SERIES, ESCRUTINIO, PRECANDIDATO, HOJA, CNT_VOTOS, ZONA
-```
+El detalle completo está en [`public/data/README.md`](public/data/README.md). En resumen:
 
-### File Requirements
-- **Encoding**: UTF-8 (mandatory)
-- **GeoJSON size**: Maximum 3MB per file
-- **Naming convention**: `{department}_{type}.csv` and `{department}_map.json`
+- **Esquema CSV de origen:** `PARTIDO, DEPTO, CIRCUITO, SERIES, ESCRUTINIO, PRECANDIDATO, HOJA, CNT_VOTOS, ZONA`.
+- **Encoding UTF-8** obligatorio (el origen de la Corte suele venir en Latin-1; normalizar en la ingesta).
+- **Voto canónico** de una sola etapa de escrutinio (la definitiva); nunca sumar a través de etapas.
+- **Unidad base = opción electoral × unidad geográfica** (hoja en internas/legislativas; candidato/lema en balotaje/presidencial). Modelo **agnóstico al tipo de elección**.
+- **Blancos / anulados / observados** son categorías aparte (sin partido ni hoja); reconciliar contra **votos válidos**.
+- **Join geográfico varía:** Montevideo por barrio/zona; interior por mapeo curado **serie → barrio/localidad** (no por ZONA directa, no por join espacial automático).
+- **Granularidad por hoja NO se downscopea** a nivel-lema: siempre ingerir las contiendas completas con hoja, aunque el join sea laborioso.
+- GeoJSON/TopoJSON ≤ 3 MB por archivo (simplificar si excede).
 
-### Data Types
-- ODN: Orden Departamental Nacional (national order)
-- ODD: Orden Departamental Departamental (departmental order)
+## Fuente de verdad de cobertura
 
-## Departments Status
+[`src/config/departments.json`](src/config/departments.json) declara qué departamentos, niveles y elecciones existen. Agregar una elección/departamento empieza por acá. (Los antiguos `regions.json` / `elections-meta.json` son legacy.)
 
-### Implemented (4)
-| Department | Status | Map Size | Lists (ODN/ODD) |
-|------------|--------|----------|-----------------|
-| Montevideo | ✅ Complete | 2.1 MB | 245/238 |
-| Maldonado | ✅ Complete | 1.8 MB | 156/142 |
-| Colonia | ✅ Complete | 1.5 MB | 98/89 |
-| Treinta y Tres | ✅ Complete | 2.8 MB | 67/58 |
+## Pipeline ETL
 
-### Pending (15)
-| Priority | Departments |
-|----------|-------------|
-| High | Canelones, San José, Rocha |
-| Medium | Florida, Lavalleja, Durazno, Flores, Soriano, Río Negro, Paysandú, Salto |
-| Low | Artigas, Rivera, Tacuarembó, Cerro Largo |
-
-## Project Structure
-
-```
-uruguay-electoral-map/
-├── data/                         # ETL data directory
-│   ├── raw/                      # Downloaded raw data
-│   │   ├── electoral/            # CSVs from Corte Electoral
-│   │   └── geographic/           # GeoJSON from IDE Uruguay
-│   ├── processed/                # Transformed data
-│   │   ├── electoral/{dept}/     # JSON per department
-│   │   └── geographic/           # Optimized GeoJSON
-│   ├── mappings/                 # Zone mapping tables
-│   └── cache/                    # Download cache
-├── etl/                          # ETL Pipeline
-│   ├── config/                   # Sources and schemas
-│   ├── extractors/               # Data download
-│   ├── transformers/             # Data processing
-│   └── loaders/                  # Data deployment
-├── public/
-│   ├── {dept}_odn.csv            # ODN electoral data (legacy)
-│   ├── {dept}_odd.csv            # ODD electoral data (legacy)
-│   ├── {dept}_map.json           # GeoJSON boundaries
-│   ├── data/                     # New: processed data
-│   ├── regions.json              # Department configuration
-│   └── partidos_abrev.json       # Party abbreviations
-├── src/
-│   ├── App.vue                   # Main application
-│   ├── components/
-│   │   ├── RegionMap.vue         # Map visualization
-│   │   ├── ListSelector.vue      # List/candidate selection
-│   │   └── RegionSelector.vue    # Department selector
-│   ├── stores/
-│   │   └── electoral.ts          # Pinia state management
-│   └── main.js                   # Entry point
-├── scripts/
-│   ├── validate-csv.js           # CSV validation
-│   ├── optimize-geojson.js       # GeoJSON optimization
-│   └── add-department.js         # Department integration
-├── .claude/
-│   ├── agents/                   # Specialized agents
-│   ├── commands/                 # User commands
-│   ├── skills/                   # Reusable skills
-│   └── shared/                   # Constants and schemas
-├── CLAUDE.md                     # This file
-└── PLAN_REFACTORIZACION.md       # Detailed refactoring plan
-```
-
-## Adding a New Department
-
-### Prerequisites
-1. Obtain electoral data from Corte Electoral Uruguay
-2. Obtain GeoJSON boundaries from IDE Uruguay
-3. Ensure files are in UTF-8 encoding
-
-### Using the Command
-```bash
-/add-department <department_name>
-```
-
-### Manual Process
-1. Place files in `public/`:
-   - `{dept}_odn.csv`
-   - `{dept}_odd.csv`
-   - `{dept}_map.json`
-
-2. Validate data:
-   ```bash
-   /validate-data {dept}
-   ```
-
-3. Optimize GeoJSON if >3MB:
-   ```bash
-   /optimize-geojson {dept}
-   ```
-
-4. Add to `public/regions.json`:
-   ```json
-   {
-     "name": "Department Name",
-     "odnCsvPath": "/dept_odn.csv",
-     "oddCsvPath": "/dept_odd.csv",
-     "geojsonPath": "/dept_map.json",
-     "mapCenter": [-34.0, -56.0],
-     "mapZoom": 10
-   }
-   ```
-
-## Tech Stack
-
-- **Frontend**: Vue 3 (Composition API)
-- **Build**: Vite
-- **Maps**: Leaflet
-- **CSV Parsing**: PapaParse
-- **Colors**: Chroma.js
-- **State**: Pinia (planned)
-- **Styling**: Tailwind CSS (planned)
-
-## Data Sources
-
-- **Electoral Data**: [Corte Electoral Uruguay](https://www.corteelectoral.gub.uy/)
-  - [Catálogo de Datos Abiertos](https://catalogodatos.gub.uy/dataset/corte-electoral-elecciones-internas-de-los-partidos-politicos-2024)
-- **Geographic Data**: [IDE Uruguay](https://www.gub.uy/infraestructura-datos-espaciales/)
-  - [Límites Departamentales](https://catalogodatos.gub.uy/dataset/ide-limites-departamentales)
-
-## ETL Pipeline
-
-The project includes an ETL (Extract, Transform, Load) pipeline to automate data acquisition and processing.
-
-### ETL Commands
+Cada instancia electoral tiene su runner (`etl/run-*.ts`), expuesto como script `npm run etl:*`. Ejemplos:
 
 ```bash
-# Download raw data from official sources
-npm run etl:extract
-
-# Process and normalize data
-npm run etl:transform
-
-# Deploy to public directory
-npm run etl:load
-
-# Run full pipeline
-npm run etl:run
-
-# Validate processed data
-npm run etl:validate
-
-# Clean cache
-npm run etl:clean
+npm run etl:montevideo               # Montevideo por barrio
+npm run etl:nacionales-2024-interior # nacionales 2024, interior
+npm run etl:nacional                 # consolida la vista nacional (geo + votos)
+npm run etl:vivir-sin-miedo          # plebiscito 2019 (extraído de PDF oficial)
 ```
 
-### Adding All Departments via ETL
+Catálogo completo (~50 runners) en `package.json`. Detalle en [`etl/README.md`](etl/README.md).
+
+## Quality gates
 
 ```bash
-# 1. Download all electoral data (includes all 19 departments)
-npm run etl:extract --type electoral
-
-# 2. Transform for specific department
-npm run etl:transform -- --dept canelones
-
-# 3. Or transform all at once
-npm run etl:transform -- --all
-
-# 4. Load to public
-npm run etl:load
+npm run gate:data        # integridad de shards
+npm run gate:escaleras   # escaleras de color
+npm run gate:grises      # zonas sin geometría (Python)
+npm run gate:all         # perf + a11y + Core Web Vitals
 ```
 
-### Data Flow
+## Fuentes de datos
 
-```
-Corte Electoral API → data/raw/electoral/*.csv
-                           ↓
-                    ETL Transform
-                           ↓
-              data/processed/electoral/{dept}/odn.json
-                           ↓
-                      ETL Load
-                           ↓
-               public/data/electoral/{dept}/
-```
+- **Electoral:** [Corte Electoral Uruguay](https://www.corteelectoral.gub.uy/) — [Catálogo de Datos Abiertos](https://catalogodatos.gub.uy/).
+- **Geográfico:** [IDE Uruguay](https://www.gub.uy/infraestructura-datos-espaciales/) — límites departamentales.
 
-## Available Commands
+## Notas para agentes
 
-| Command | Description |
-|---------|-------------|
-| `/add-department <name>` | Add a new department |
-| `/validate-data <name>` | Validate department data |
-| `/optimize-geojson <name>` | Optimize GeoJSON file |
-| `/commit` | Create standardized commit |
+- `legacy/`, `spikes/`, `_bmad/` y `docs/bmad-output/` están **gitignoreados** (presentes en disco, fuera del repo). No referenciarlos en código ni docs públicos.
+- No commitear sin que el usuario lo pida.
+- Workflow de contribución: rama desde `master` → cambios → validar con gates → `/commit` → PR.
 
-## Available Agents
+## Licencia
 
-| Agent | Role | Color |
-|-------|------|-------|
-| electoral-data-agent | CSV validation & processing | 🟢 Green |
-| geojson-map-agent | GeoJSON optimization | 🔵 Blue |
-| vue-frontend-agent | Frontend development | 🟠 Orange |
-| electoral-orchestrator | Workflow coordination | 🟣 Purple |
-
-## Testing Checklist
-
-### Manual Tests
-- [ ] `npm run dev` starts without errors
-- [ ] Can switch between departments
-- [ ] Can toggle ODD/ODN data source
-- [ ] Can select individual lists
-- [ ] Can select candidates (ODN only)
-- [ ] Map coloring updates correctly
-- [ ] Tooltips show on hover
-- [ ] Mobile responsive layout works
-- [ ] Selected items panel shows correct totals
-
-### Data Validation
-- [ ] All zones in CSV exist in GeoJSON
-- [ ] No duplicate HOJA+ZONA combinations
-- [ ] Vote counts are non-negative
-- [ ] Party-candidate relationships are consistent
-
-## Common Issues
-
-### GeoJSON too large
-```bash
-/optimize-geojson <department>
-# Or manually with mapshaper:
-mapshaper input.json -simplify 15% -o output.json
-```
-
-### Zone name mismatch
-Check that CSV `ZONA` values match GeoJSON properties:
-- `BARRIO` (primary)
-- `texto` (secondary)
-- `zona` (tertiary)
-
-### Encoding issues
-Ensure all files are UTF-8:
-```bash
-file -I filename.csv  # Check encoding
-iconv -f ISO-8859-1 -t UTF-8 input.csv > output.csv  # Convert
-```
-
-## Contributing
-
-1. Create feature branch from `master`
-2. Make changes following project conventions
-3. Validate data with `/validate-data`
-4. Create commit with `/commit`
-5. Open PR with description
-
-## License
-
-MIT License
+MIT.
