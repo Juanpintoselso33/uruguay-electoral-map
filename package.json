@@ -71,7 +71,10 @@
     "etl:plebiscitos-referendum-interior": "npx tsx etl/run-plebiscitos-referendum-interior.ts",
     "etl:balotajes-historicos-interior": "npx tsx etl/run-balotajes-historicos-interior.ts",
     "etl:nacionales-2019-interior": "npx tsx etl/run-nacionales-2019-interior.ts",
-    "etl:vivir-sin-miedo": "npx tsx etl/run-vivir-sin-miedo.ts"
+    "etl:vivir-sin-miedo": "npx tsx etl/run-vivir-sin-miedo.ts",
+    "etl:nacional-geo": "python scripts/build-nacional-geo.py && npx mapshaper data/processed/geographic/_nacional/departamento.geojson -simplify 3% keep-shapes -clean -o force format=topojson public/data/geo/_nacional/departamento.topo.json",
+    "etl:nacional-votes": "python scripts/build-nacional-votes.py",
+    "etl:nacional": "npm run etl:nacional-geo && npm run etl:nacional-votes"
   },
   "dependencies": {
     "@nanostores/vue": "^0.11.0",
