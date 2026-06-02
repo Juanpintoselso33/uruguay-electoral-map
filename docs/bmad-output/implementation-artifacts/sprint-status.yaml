@@ -188,8 +188,8 @@ development_status:
   # ---- Epic 15: Vista nacional con granularidad toggleable ----
   # País entero: nivel departamental (19 deptos agregados) + nivel zona (combinar todos los
   # polígonos por-depto existentes). Toggleable. Spike-first por arquitectura/performance.
-  epic-15: backlog
-  15-1-spike-arquitectura-vista-nacional: backlog
+  epic-15: in-progress   # spike hecho 2026-06-01; 15.2+ requiere OK de Juan (geometría depto: stub vacío → sourcear IDE; 8,72 MB zona nacional opt-in)
+  15-1-spike-arquitectura-vista-nacional: done   # uruguayDepartamentos.geojson=0 bytes → sourcear IDE límites-depto (<150KB); zona nacional=8,72MB excede NFR1 → departamental default + zona lazy (15.5); agregación=sumar porOpcion de shards, gate con ancla nacional (NO tautológico); ruta /{eleccion} (sin colisión, falta [eleccion]/index.astro)
   15-2-geometria-agregacion-nacional-etl: backlog
   15-3-pagina-nacional-nivel-departamental: backlog
   15-4-toggle-granularidad-departamental-zona: backlog
