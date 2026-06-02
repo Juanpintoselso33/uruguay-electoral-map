@@ -7,8 +7,11 @@ docs/superpowers/specs/2026-06-02-votos-no-partidarios-design.md.
 Nivel base (votes.json): MVD por barrio (vía crvToBarrio.{ciclo}); interior por serie (col del totales).
 NO toca votos por opción ni válidos. Idempotente. Uso: python scripts/build-no-partidarios.py
 """
-import csv, json, os, re
+import csv, json, os, re, unicodedata
 from collections import defaultdict
+
+def strip_acc(s):
+    return ''.join(c for c in unicodedata.normalize('NFD', s or '') if unicodedata.category(c) != 'Mn')
 
 # elección → (csv de totales, ciclo para crvToBarrio MVD, plan-circuital para CRV→serie+rango→local)
 ELECTIONS = {
@@ -30,6 +33,12 @@ CODE_TO_NAME = {'MO': 'Montevideo', 'CA': 'Canelones', 'MA': 'Maldonado', 'RO': 
                 'CL': 'Cerro Largo', 'RV': 'Rivera', 'AR': 'Artigas', 'SA': 'Salto', 'PA': 'Paysandú',
                 'RN': 'Río Negro', 'SO': 'Soriano', 'CO': 'Colonia', 'SJ': 'San José', 'FS': 'Flores',
                 'FD': 'Florida', 'DU': 'Durazno', 'LA': 'Lavalleja', 'TA': 'Tacuarembó'}
+# nombre completo (sin acentos, MAYÚS) → código, para planes que usan "PAYSANDÚ"/"RÍO NEGRO"/etc.
+FULLNAME_TO_CODE = {strip_acc(n).upper(): c for c, n in CODE_TO_NAME.items()}
+def resolve_code(dep_raw):
+    d = (dep_raw or '').strip().strip('"')
+    if d.upper() in DEPTO_DIR: return d.upper()
+    return NAME_TO_CODE.get(d.lower()) or FULLNAME_TO_CODE.get(strip_acc(d).upper())
 
 def to_int(s):
     try: return int(re.sub(r'[^0-9-]', '', str(s)) or 0)
@@ -53,7 +62,7 @@ def parse_totales(path):
         cB = col('totalenblanco', 'totalvotosenblanco')
         for r in rd:
             dep = (r.get(cD) or '').strip().strip('"').upper()
-            code = dep if dep in DEPTO_DIR else NAME_TO_CODE.get(dep.lower())
+            code = resolve_code(dep)
             if not code: continue
             out.append({'code': code, 'crv': (r.get(cC) or '').strip(), 'serie': (r.get(cS) or '').strip().lower(),
                         'hab': to_int(r.get(cH)), 'emit': to_int(r.get(cE)),
@@ -75,7 +84,7 @@ def load_plan_ranges(plan_path):
         if not (cC and cS and cDe and cHa): return out
         for r in rd:
             dep = (r.get(cD) or '').strip().strip('"').upper()
-            code = dep if dep in DEPTO_DIR else NAME_TO_CODE.get(dep.lower())
+            code = resolve_code(dep)
             if not code: continue
             de, ha = to_int(r[cDe]), to_int(r[cHa])
             out[(code, r[cC].strip())] = (r[cS].strip().upper(), de, ha)
