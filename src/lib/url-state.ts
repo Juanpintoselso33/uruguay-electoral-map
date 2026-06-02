@@ -56,10 +56,16 @@ export function parseUrl(pathname: string, search: string): MapView {
 
   const eleccionPath = seg[0] ?? '';
   const eleccion = params.get('eleccion') ?? eleccionPath;
-  const departamento = seg[1] ?? '';
+  // Ruta nacional `/{eleccion}` (un solo segmento) → departamento '_nacional' (vista país, Epic 15).
+  // Sin esto, la navegación orgánica (ClientRouter + transition:persist) re-parseaba departamento=''
+  // y reloadData cargaba `/data/geo//…` → mapa roto.
+  const departamento = seg[1] ?? (eleccionPath ? '_nacional' : '');
 
   const levelRaw = params.get('level');
-  const level: NivelGeografico = isNivel(levelRaw) ? levelRaw : NIVEL_DEFAULT;
+  // Default de nivel: 'zona' por-depto; 'departamento' en la vista nacional (Epic 15.4).
+  const level: NivelGeografico = isNivel(levelRaw)
+    ? levelRaw
+    : (departamento === '_nacional' ? 'departamento' : NIVEL_DEFAULT);
 
   const orNull = (v: string | null): string | null => (v && v.length > 0 ? v : null);
 
@@ -85,11 +91,17 @@ export function parseUrl(pathname: string, search: string): MapView {
 
 /** Serializa una `MapView` a pathname + search. No emite params vacíos; `level=zona` se omite. */
 export function toUrl(view: MapView): { pathname: string; search: string } {
-  const pathname = `/${encodeURIComponent(view.eleccion)}/${encodeURIComponent(view.departamento)}`;
+  // Vista nacional: ruta de un solo segmento `/{eleccion}` (sin departamento); su nivel-default
+  // es 'departamento' (no 'zona'), así el toggle a 'zona' SÍ se persiste en la URL.
+  const esNacional = view.departamento === '_nacional';
+  const pathname = esNacional
+    ? `/${encodeURIComponent(view.eleccion)}`
+    : `/${encodeURIComponent(view.eleccion)}/${encodeURIComponent(view.departamento)}`;
+  const nivelDefault: NivelGeografico = esNacional ? 'departamento' : NIVEL_DEFAULT;
   const params = new URLSearchParams();
   if (view.zona) params.set('zona', view.zona);
   if (view.opcion) params.set('opcion', view.opcion);
-  if (view.level !== NIVEL_DEFAULT) params.set('level', view.level);
+  if (view.level !== nivelDefault) params.set('level', view.level);
   if (view.vs) params.set('vs', view.vs);
   if (view.a) params.set('a', view.a);
   if (view.b) params.set('b', view.b);

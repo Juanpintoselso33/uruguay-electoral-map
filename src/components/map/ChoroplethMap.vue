@@ -21,9 +21,14 @@ import { parseUrl } from '../../lib/url-state';
 import type { NivelGeografico } from '../../lib/contracts';
 import deptsConfig from '../../config/departments.json';
 
-const DEPT_LEVELS: Record<string, NivelGeografico[]> = Object.fromEntries(
-  (deptsConfig as { id: string; levels: NivelGeografico[] }[]).map((d) => [d.id, d.levels])
-);
+const DEPT_LEVELS: Record<string, NivelGeografico[]> = {
+  ...Object.fromEntries(
+    (deptsConfig as { id: string; levels: NivelGeografico[] }[]).map((d) => [d.id, d.levels])
+  ),
+  // Vista nacional (Epic 15): resolveNivel necesita los niveles aunque '_nacional' no esté en
+  // departments.json. Sin esto, tras navegar (persist) caía a props.availableLevels stale.
+  _nacional: ['departamento', 'zona'],
+};
 import MapLegend from './MapLegend.vue';
 import ZoneSheet from '../sheet/ZoneSheet.vue';
 
