@@ -12,6 +12,7 @@ por depto decodifica+namespacea con mapshaper, luego combina + simplifica todo a
 Final: public/data/geo/_nacional/zona.topo.json   ·   tmp: data/processed/geographic/_nacional/parts/
 """
 import json, os, sys, subprocess, glob
+from nacional_labels import build_label_map, label_for
 
 DATA = 'public/data'
 GEO = 'public/data/geo'
@@ -39,11 +40,16 @@ def main():
         topo = f'{GEO}/{did}/{nivel}.topo.json'
         if not os.path.exists(topo):
             print(f'  ⚠ {did}: falta {topo}'); continue
-        # decodificar + namespacear name con el label del depto + tirar props sobrantes
-        expr = f'name = (name || "") + " · {label}"'
-        run([topo, '-each', expr, '-each', f'depto="{did}"',
-             '-filter-fields', 'name,depto', '-o', 'format=geojson', f'{PARTS}/{did}.geojson'])
-        print(f'  {did}: {nivel} → namespaced')
+        # 1) decodificar topojson → geojson con el name CRUDO (mapshaper resuelve los arcos)
+        run([topo, '-filter-fields', 'name', '-o', 'format=geojson', f'{PARTS}/{did}.geojson'])
+        # 2) reescribir name al label legible (MVD=barrio; interior="Localidad · SERIE")
+        lmap = build_label_map(did, nivel)
+        fc = json.load(open(f'{PARTS}/{did}.geojson', encoding='utf-8'))
+        for f in fc['features']:
+            raw = f['properties'].get('name', '')
+            f['properties'] = {'name': label_for(raw, lmap), 'depto': did}
+        json.dump(fc, open(f'{PARTS}/{did}.geojson', 'w', encoding='utf-8'), ensure_ascii=False)
+        print(f'  {did}: {nivel} → {len(fc["features"])} zonas ({"mapeo localidad" if lmap else "barrio"})')
     # combinar todas las partes + simplificar + un solo topojson
     parts = sorted(glob.glob(f'{PARTS}/*.geojson'))
     os.makedirs(os.path.dirname(OUT), exist_ok=True)

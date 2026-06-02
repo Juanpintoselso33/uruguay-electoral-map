@@ -20,6 +20,7 @@ GATES:
 """
 import json, os, sys, unicodedata
 from collections import defaultdict
+from nacional_labels import build_label_map, label_for
 
 DATA = 'public/data'
 DEPTS = 'src/config/departments.json'
@@ -54,10 +55,11 @@ def agregar_eleccion(eleccion, id2label):
         v = json.load(open(f'{base}/{d}/votes.json', encoding='utf-8'))
         tipo = tipo or v.get('tipo')
         label = id2label.get(d, d)
-        # Nivel zona nacional: cada zona namespaceada con el label del depto (igual que la geometría
-        # zona.topo.json) → geoId único, join geometría↔votos por norm(name==geoId) intacto.
+        # Nivel zona nacional: geoId legible y único = label de zona (MVD barrio; interior
+        # "Localidad · SERIE"), igual que la geometría zona.topo.json → join norm(name==geoId) intacto.
+        lmap_zona = build_label_map(d, v['nivel'])
         for z in v['zonas']:
-            zonas_zona.append({**z, 'geoId': f"{z['geoId']} · {label}"})
+            zonas_zona.append({**z, 'geoId': label_for(z['geoId'], lmap_zona)})
         por_opcion = defaultdict(int)
         validos = enblanco = anulados = observados = 0
         for z in v['zonas']:
