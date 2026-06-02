@@ -199,8 +199,8 @@ development_status:
   # ---- Epic 16: Polígonos grises — auditoría y cierre de huecos de visualización ----
   epic-16: in-progress   # spike 16.1 hecho 2026-06-02; 16.2-16.4 backlog (requieren OK de Juan sobre el tratamiento)
   16-1-spike-auditoria-grises: done   # scripts/audit-grises.py. 3 causas: A)drift temporal de series (geometría ~2024; viejas tienen series sin votantes → gris, benigno, sube a 4% en ref-LUC-2022); B)geometría mergeada 'sia-sib-sic' lavalleja (1 caso, bug); C)VOTOS INVISIBLES (voto sin polígono): ~0,07% en casi todas PERO departamentales-2020/2025 ~0,55% (136-143 zonas, ~11k votos) por series especiales q1/q2/q3 sin geo
-  16-2-cerrar-votos-invisibles-departamentales: backlog   # ~140 zonas / ~11k votos de series especiales (q1,q2…) sin polígono en dptales 2020/2025
-  16-3-resolver-geometria-mergeada-sia-sib-sic: backlog   # split o mapear las 3 series al polígono mergeado de lavalleja
+  16-2-cerrar-votos-invisibles-departamentales: backlog   # CONFIRMADO: 127 de las ~143 son series FICTICIAS (letra+número c1/d1/n1…, sin localidad, no existen en nacionales, =observados/comisiones) → NO geometría, reconocer como "sin ubicación" en total/leyenda. Solo 16 (3-letras) son hueco real
+  16-3-resolver-geometria-mergeada-sia-sib-sic: backlog   # CONFIRMADO agregable: sia(271v)+sib(80v) ambas en Zapicán; sumar series constituyentes al polígono mergeado 'a-b-c' (regla ETL)
   16-4-gris-temporal-desambiguar-sin-votantes: backlog    # UX: "sin votantes en esta elección" vs gris ambiguo (drift temporal benigno)
   epic-16-retrospective: optional
 

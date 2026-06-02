@@ -43,10 +43,22 @@ Zonas con voto pero SIN polígono. Despreciable en casi todas (~0,06-0,09%, ~1,4
 
 Causa: las departamentales traen **series especiales** (`q1`,`q2`,`q3`… en florida, p.ej.) que no existen en la geometría de series. ~140 zonas × ~11k votos no se visualizan.
 
+## Investigación profunda de B y C (pedido de Juan 2026-06-02)
+
+### C — los ~11k votos invisibles de departamentales son SERIES FICTICIAS (observados/especiales)
+Las invisibles de departamentales-2025 se parten en:
+- **127 series "especiales" (letra+número: `c1`,`d1`,`n1`,`j1`,`t20`…) = 10.184 votos.** Verificado: (1) NO están en `serie-localidad.json` (sin localidad), (2) NO existen en nacionales-2024 (0/32 canelones, 0/13 colonia), (3) patrón administrativo: 1 letra = depto + número, una tanda por depto. → Son **series no-geográficas exclusivas de las departamentales** (votos observados / comisiones especiales / voto en otra seccional). **No tienen polígono porque no son un lugar.**
+- **16 series normales (3 letras: `qee`,`sia`,`sib`,`cld`…) = 1.147 votos.** Series reales con geometría faltante o mergeada (overlap con B).
+
+**Tratamiento (16.2):** NO inventar geometría a las especiales; reconocerlas como categoría "observados/sin ubicación" y mostrarlas en el total/leyenda (sin pérdida silenciosa). Las 16 normales sí son hueco de geometría real.
+
+### B — `sia-sib-sic` es AGREGABLE (no hay que split)
+`sia` (271v) y `sib` (80v) son reales y **ambas en la localidad "Zapicán"**; `sic` no tiene votos. La geometría tiene UN polígono `sia-sib-sic` (las 3 áreas unidas). → Fix: **sumar los votos de sia+sib+sic al polígono mergeado** (mismo lugar). Regla general en el ETL: un polígono con label `a-b-c` recibe la suma de sus series constituyentes.
+
 ## Conclusión / qué arreglar
-- **A (drift temporal):** esperable; decisión de UX en 16.4 (leyendar "sin votantes en esta elección" vs gris ambiguo) o aceptar.
-- **B (mergeado `sia-sib-sic`):** hueco real → 16.3 (split o mapear las 3 al mismo polígono).
-- **C (departamentales ~11k votos invisibles):** el más relevante → 16.2 (mapear/agrupar/excluir explícito sin pérdida silenciosa).
+- **A (drift temporal):** esperable (serie sin votantes esa elección); decisión de UX en 16.4.
+- **B (mergeado `sia-sib-sic`):** 16.3 — agregar votos de las series constituyentes al polígono mergeado.
+- **C (departamentales):** 16.2 — las ~127 especiales son observados/no-geográficas → categoría aparte (no perderlas); las 16 normales = hueco de geometría real.
 
 ## Change Log
 - 2026-06-02 — Auditoría con `scripts/audit-grises.py`: 3 causas cuantificadas (drift temporal, geometría mergeada, votos invisibles). Departamentales = el hueco grande (~11k votos). Status → done.
