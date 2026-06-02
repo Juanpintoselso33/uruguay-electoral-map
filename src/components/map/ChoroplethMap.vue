@@ -519,73 +519,66 @@ function drawFlagOverlay(m: MlMap): void {
   if (flagsVisible && !isPointNivel) {
     type Ring = [number, number][];
     const features = m.queryRenderedFeatures(undefined, { layers: ['zonas-fill'] });
-    const seen = new Set<string | number>();
-    const visibleFeats: (typeof features)[0][] = [];
-
+    // A alto zoom maplibre PARTE un polígono en varias tiles → devuelve varias features con el MISMO
+    // id y geometría clipeada por tile. Agrupamos todas las piezas por id (antes se deduplicaba y se
+    // quedaba con una sola, dejando el resto del polígono sin bandera = el "pedacito transparente").
+    const byId = new Map<string, { props: Record<string, unknown>; pieces: (typeof features)[0][] }>();
     for (const feat of features) {
-      const fid = feat.id ?? (feat.properties as Record<string, unknown>).name;
-      if (seen.has(fid as string | number)) continue;
-      seen.add(fid as string | number);
-      visibleFeats.push(feat);
-    }
-
-    // Pasada 1: flags recortados a cada polígono
-    for (const feat of visibleFeats) {
       const props = feat.properties as Record<string, unknown>;
+      const fid = String(feat.id ?? props.name ?? '');
+      const g = byId.get(fid);
+      if (g) g.pieces.push(feat);
+      else byId.set(fid, { props, pieces: [feat] });
+    }
+    const ringsOf = (feat: (typeof features)[0]): Ring[] => {
+      const geom = feat.geometry as { type: string; coordinates: unknown };
+      if (geom.type !== 'Polygon' && geom.type !== 'MultiPolygon') return [];
+      return geom.type === 'Polygon' ? (geom.coordinates as Ring[]) : (geom.coordinates as Ring[][]).flat(1);
+    };
+    const tracePath = (pieces: (typeof features)[0][], bbox?: { minX: number; minY: number; maxX: number; maxY: number }): void => {
+      flagCtx!.beginPath();
+      for (const piece of pieces) {
+        for (const ring of ringsOf(piece)) {
+          let first = true;
+          for (const coord of ring) {
+            const pt = m.project(coord as [number, number]);
+            const px = pt.x * dpr; const py = pt.y * dpr;
+            if (first) { flagCtx!.moveTo(px, py); first = false; }
+            else flagCtx!.lineTo(px, py);
+            if (bbox) {
+              if (px < bbox.minX) bbox.minX = px; if (py < bbox.minY) bbox.minY = py;
+              if (px > bbox.maxX) bbox.maxX = px; if (py > bbox.maxY) bbox.maxY = py;
+            }
+          }
+          flagCtx!.closePath();
+        }
+      }
+    };
+
+    // Pasada 1: flags recortados a cada polígono (todas sus piezas de tile juntas → un solo drawImage)
+    for (const { props, pieces } of byId.values()) {
       if (!props.flagPattern || !props.hasData) continue;
       const img = flagImgs[props.flagPattern as string];
       if (!img) continue;
-      const geom = feat.geometry as { type: string; coordinates: unknown };
-      const rings: Ring[] = geom.type === 'Polygon'
-        ? (geom.coordinates as Ring[])
-        : (geom.coordinates as Ring[][]).flat(1);
-      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-      flagCtx.beginPath();
-      for (const ring of rings) {
-        let first = true;
-        for (const coord of ring) {
-          const pt = m.project(coord as [number, number]);
-          const px = pt.x * dpr; const py = pt.y * dpr;
-          if (first) { flagCtx.moveTo(px, py); first = false; }
-          else flagCtx.lineTo(px, py);
-          if (px < minX) minX = px; if (py < minY) minY = py;
-          if (px > maxX) maxX = px; if (py > maxY) maxY = py;
-        }
-        flagCtx.closePath();
-      }
+      const bbox = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
+      tracePath(pieces, bbox);
+      if (!Number.isFinite(bbox.minX)) continue;
       flagCtx.save();
       flagCtx.clip('evenodd');
-      const bw = maxX - minX, bh = maxY - minY;
+      const bw = bbox.maxX - bbox.minX, bh = bbox.maxY - bbox.minY;
       const flagAspect = img.naturalWidth / img.naturalHeight;
       let dw = bw, dh = bw / flagAspect;
       if (dh < bh) { dh = bh; dw = bh * flagAspect; }
       flagCtx.globalAlpha = 1.0;
-      flagCtx.drawImage(img, minX + (bw - dw) / 2, minY + (bh - dh) / 2, dw, dh);
+      flagCtx.drawImage(img, bbox.minX + (bw - dw) / 2, bbox.minY + (bh - dh) / 2, dw, dh);
       flagCtx.restore();
     }
 
     // Pasada 2: bordes encima de todos los flags + highlight de zona seleccionada
     const selectedGeoId = selected.value?.geoId ?? null;
     flagCtx.lineJoin = 'round';
-    for (const feat of visibleFeats) {
-      const props = feat.properties as Record<string, unknown>;
-      const fid = String(feat.id ?? props.name ?? '');
-      const geom = feat.geometry as { type: string; coordinates: unknown };
-      if (geom.type !== 'Polygon' && geom.type !== 'MultiPolygon') continue;
-      const rings: Ring[] = geom.type === 'Polygon'
-        ? (geom.coordinates as Ring[])
-        : (geom.coordinates as Ring[][]).flat(1);
-      flagCtx.beginPath();
-      for (const ring of rings) {
-        let first = true;
-        for (const coord of ring) {
-          const pt = m.project(coord as [number, number]);
-          const px = pt.x * dpr; const py = pt.y * dpr;
-          if (first) { flagCtx.moveTo(px, py); first = false; }
-          else flagCtx.lineTo(px, py);
-        }
-        flagCtx.closePath();
-      }
+    for (const [fid, { pieces }] of byId) {
+      tracePath(pieces);
       const isSelected = selectedGeoId !== null && fid === selectedGeoId;
       if (isSelected) {
         flagCtx.strokeStyle = '#f59e0b';
