@@ -226,10 +226,13 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
       ? fetch(`${base}/data/mappings/${departamento}/${SERIE_BARRIO_FILES[departamento]}`).catch(() => null)
       : Promise.resolve(null),
     // Epic 16.4: override de anexión — series nuevas que no votaron esa elección, fusionadas con su
-    // madre (misma localidad / vecino espacial). Solo nivel serie por-depto; ausente = sin anexiones.
+    // madre. Per-depto (nivel serie) usa serie-annexed.json; la vista zona nacional usa el
+    // consolidado zona-annexed.json. Ausente = sin anexiones.
     nivel === 'serie' && departamento !== '_nacional'
       ? fetch(`${base}/data/${eleccion}/${departamento}/serie-annexed.json`).catch(() => null)
-      : Promise.resolve(null),
+      : (nivel === 'zona' && departamento === '_nacional')
+        ? fetch(`${base}/data/${eleccion}/_nacional/zona-annexed.json`).catch(() => null)
+        : Promise.resolve(null),
   ]);
   if (!topoRes.ok || !votesRes.ok || !opcRes.ok) throw new Error('No se pudieron cargar los datos del mapa');
   const topo = (await topoRes.json()) as Topology;

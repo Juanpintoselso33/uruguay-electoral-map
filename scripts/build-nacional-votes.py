@@ -22,6 +22,24 @@ import json, os, sys, unicodedata
 from collections import defaultdict
 from nacional_labels import build_label_map, label_for
 
+GEO = 'public/data/geo'
+
+def merged_labels(depto):
+    """Labels mergeados ('a-b-c') de la geometría serie del depto (16.3) → [(label, [partes])]."""
+    p = f'{GEO}/{depto}/serie.topo.json'
+    if not os.path.exists(p): return []
+    t = json.load(open(p, encoding='utf-8')); o = list(t['objects'].keys())[0]
+    out = []
+    for g in t['objects'][o]['geometries']:
+        nm = str(g.get('properties', {}).get('name', ''))
+        if '-' in nm:
+            out.append((nm, nm.split('-')))
+    return out
+
+def nrm(s):
+    s = unicodedata.normalize('NFD', str(s)); s = ''.join(c for c in s if unicodedata.category(c) != 'Mn')
+    return s.lower().strip()
+
 DATA = 'public/data'
 DEPTS = 'src/config/departments.json'
 NO_ELEC = {'geo', 'geographic', 'mappings', 'electoral', 'hoja-equivalencias'}
@@ -50,6 +68,7 @@ def agregar_eleccion(eleccion, id2label):
     pregunta = None
     zonas_nac = []
     zonas_zona = []                           # nivel zona nacional (15.4): todas las zonas namespaceadas
+    annex_feats = []                          # override de anexión nacional (16.4 propagado a zona nacional)
     nac_por_opcion = defaultdict(int)         # para gate ancla
     for d in deptos:
         v = json.load(open(f'{base}/{d}/votes.json', encoding='utf-8'))
@@ -58,8 +77,34 @@ def agregar_eleccion(eleccion, id2label):
         # Nivel zona nacional: geoId legible y único = label de zona (MVD barrio; interior
         # "Localidad · SERIE"), igual que la geometría zona.topo.json → join norm(name==geoId) intacto.
         lmap_zona = build_label_map(d, v['nivel'])
+        # (16.3 propagado) MERGE: el polígono 'a-b-c' de la geometría suma sus series constituyentes.
+        zpid = {nrm(z['geoId']): z for z in v['zonas']}
+        consumido = set()
+        for label, partes in merged_labels(d):
+            zs = [zpid[nrm(p)] for p in partes if nrm(p) in zpid]
+            if not zs: continue
+            po = defaultdict(int); vv = eb = an = ob = 0
+            for z in zs:
+                for op in z['porOpcion']: po[op['opcionId']] += op['votos']
+                vv += z.get('validos', 0); npd = z.get('noPartidarios', {})
+                eb += npd.get('enBlanco', 0); an += npd.get('anulados', 0); ob += npd.get('observados', 0)
+            if not po: continue
+            zonas_zona.append({'geoId': label_for(label, lmap_zona),
+                'ganadorOpcionId': max(po.items(), key=lambda kv: kv[1])[0], 'validos': vv,
+                'porOpcion': [{'opcionId': k, 'votos': po[k]} for k in sorted(po, key=lambda k: -po[k])],
+                'noPartidarios': {'enBlanco': eb, 'anulados': an, 'observados': ob}})
+            for p in partes: consumido.add(nrm(p))
         for z in v['zonas']:
+            if nrm(z['geoId']) in consumido: continue   # ya contabilizada en el mergeado
             zonas_zona.append({**z, 'geoId': label_for(z['geoId'], lmap_zona)})
+        # (16.4 propagado) ANEXIÓN: relabel del serie-annexed per-depto → override nacional de zona.
+        sa = f'{base}/{d}/serie-annexed.json'
+        if os.path.exists(sa):
+            for f in json.load(open(sa, encoding='utf-8'))['features']:
+                annex_feats.append({'type': 'Feature',
+                    'properties': {'name': label_for(f['properties']['name'], lmap_zona),
+                                   'replaces': [label_for(r, lmap_zona) for r in f['properties'].get('replaces', [])]},
+                    'geometry': f['geometry']})
         por_opcion = defaultdict(int)
         validos = enblanco = anulados = observados = 0
         for z in v['zonas']:
@@ -128,6 +173,10 @@ def agregar_eleccion(eleccion, id2label):
     os.makedirs(outdir, exist_ok=True)
     json.dump(votes_nac, open(f'{outdir}/votes.json', 'w', encoding='utf-8'), ensure_ascii=False)
     json.dump(votes_zona, open(f'{outdir}/votes-zona.json', 'w', encoding='utf-8'), ensure_ascii=False)
+    # override de anexión para la vista zona nacional (16.4 propagado); el front lo aplica como en per-depto
+    if annex_feats:
+        json.dump({'type': 'FeatureCollection', 'features': annex_feats},
+                  open(f'{outdir}/zona-annexed.json', 'w', encoding='utf-8'), ensure_ascii=False)
     json.dump(opciones_nac, open(f'{outdir}/opciones.json', 'w', encoding='utf-8'), ensure_ascii=False)
 
     tot_validos = sum(z['validos'] for z in zonas_nac)
