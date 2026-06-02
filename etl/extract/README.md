@@ -1,3 +1,9 @@
 # etl/extract
 
-Placeholder. Se implementa en las historias del Epic 1 (datos) y Epic 3 (og/search-index).
+Extracción y parseo de los datos crudos de la Corte Electoral.
+
+| Archivo | Función |
+|---------|---------|
+| `parse-csv.ts` | Parser CSV con soporte de campos entre comillas. Necesario porque `PRECANDIDATO` trae comas dentro de comillas. |
+
+La normalización de nombres y encoding (UTF-8, sin acentos, mayúsculas, espacios colapsados) vive en [`etl/lib/normalize.ts`](../lib/).

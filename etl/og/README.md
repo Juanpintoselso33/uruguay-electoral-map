@@ -1,3 +1,5 @@
 # etl/og
 
-Placeholder. Se implementa en las historias del Epic 1 (datos) y Epic 3 (og/search-index).
+Carpeta reservada para la generación de imágenes Open Graph (previews para redes sociales).
+
+La implementación actual vive en **[`scripts/generate-og.mjs`](../../scripts/README.md)** y corre en el build (`npm run generate:og`), emitiendo a `public/og/` (gitignoreado, es artefacto de build).
