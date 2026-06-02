@@ -41,7 +41,7 @@ Estas reglas son **durables** y todo el modelo las respeta. No replicar datos qu
 - El voto se cuenta de la etapa de **escrutinio definitiva** (la final validada). **Nunca** sumar a través de etapas distintas.
 - **Unidad base = opción electoral × unidad geográfica.** La *opción* es `HOJA` en internas/legislativas, o **candidato/lema** en balotaje/presidencial (donde no hay hoja).
 - Las agregaciones (serie, circuito, departamento, nacional) se derivan por *roll-up* de **votos válidos**.
-- **Blancos / anulados / observados** existen en los totales oficiales pero **no** tienen partido ni hoja → son categorías aparte. La reconciliación contra oficiales se hace sobre **votos válidos**, no sobre el total bruto.
+- **Blancos / anulados / observados** existen en los totales oficiales pero **no** tienen partido ni hoja → son categorías aparte. Se ingieren del *totales-generales por circuito* (no del desglose) vía `scripts/build-no-partidarios.py`, junto con `habilitados`/`emitidos` (participación/abstención). **No reconcilian exacto contra válidos por zona**: el voto *observado* se emite en un circuito y se cuenta en el de origen del votante (`emitidos` [totales] y `válidos` [desglose] son productos oficiales distintos; ~2% de delta nacional en nacionales, ~10% en internas). Ver `docs/superpowers/specs/2026-06-02-votos-no-partidarios-design.md`.
 - Sin duplicados (opción × geografía) dentro de una misma etapa. Votos ≥ 0.
 
 ### Join geográfico (varía según el mapa)

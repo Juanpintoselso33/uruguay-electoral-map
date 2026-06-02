@@ -45,6 +45,20 @@ Corren en el build (`package.json → build`) y/o a demanda:
 
 > Contexto y decisión: [`docs/adr/0001-circuito-barrio-por-ciclo.md`](../docs/adr/0001-circuito-barrio-por-ciclo.md) · diagnóstico: [`docs/AUDIT-carrasco-2014-circuito-barrio.md`](../docs/AUDIT-carrasco-2014-circuito-barrio.md). Tras regenerar mapeos y re-correr runners MVD, correr `sweep-party-consistency.py --apply` y `build-nacional-votes.py`.
 
+## Votos no-partidarios (blanco / anulados / observados + participación)
+
+| Script | Comando | Función |
+|--------|---------|---------|
+| `fetch-totales-ckan.py` | `npm run etl:totales-fetch` | Baja de CKAN (Corte) los `totales-generales` por circuito faltantes (internas-2024, dep-2025). |
+| `build-no-partidarios.py` | `npm run etl:no-partidarios` | Post-pass: puebla `noPartidarios` + `habilitados`/`emitidos` por barrio (MVD vía `crvToBarrio.{ciclo}`), serie (interior) y departamento (`_nacional`), desde el totales por circuito. |
+| `gate-no-partidarios.py` | `npm run gate:no-partidarios` | Sanidad (no-negativos) + reconciliación nacional informativa. |
+
+> **Dominio:** `emitidos`/`habilitados` salen del *totales* (donde se emitió el voto); `validos`/`porOpcion`
+> del *desglose* (donde se contó). El voto **observado** se emite en un circuito y se cuenta en el de
+> origen del votante → `emitidos = válidos + blanco + anulados + observados` **no cierra por zona** (ni
+> exacto a nivel país: ~2% nacionales, ~10% internas). Son dos productos oficiales distintos; no se fuerzan
+> a reconciliar. Spec: [`docs/superpowers/specs/2026-06-02-votos-no-partidarios-design.md`](../docs/superpowers/specs/2026-06-02-votos-no-partidarios-design.md).
+
 ## Utilidades y auditoría
 
 - `extract-vivir-sin-miedo.py` — extrae el Sí/No del plebiscito 2019 desde el PDF oficial, circuito por circuito.
