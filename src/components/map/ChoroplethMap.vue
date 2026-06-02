@@ -31,6 +31,8 @@ const props = defineProps<{
   eleccion: string;
   departamento: string;
   availableLevels?: NivelGeografico[];
+  /** Nivel inicial cuando la URL no trae ?level (Epic 15.4: vista nacional abre en 'departamento'). */
+  defaultNivel?: NivelGeografico;
 }>();
 
 interface OpcionesDoc {
@@ -197,6 +199,9 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
   const votesFile = nivel === 'circuito' ? 'votes-circuito.json'
                   : nivel === 'localidad' ? 'votes-localidad.json'
                   : nivel === 'barrio'    ? 'votes-barrio.json'
+                  // Vista nacional (Epic 15.4): nivel 'departamento' usa votes.json (agregado);
+                  // nivel 'zona' usa votes-zona.json (todas las zonas de los 19 deptos combinadas).
+                  : (departamento === '_nacional' && nivel === 'zona') ? 'votes-zona.json'
                   : 'votes.json';
   const [topoRes, votesRes, opcRes, metaRes, serieMapRes, serieBarrioRes] = await Promise.all([
     fetch(`${base}/data/geo/${departamento}/${nivel}.topo.json`),
@@ -1486,11 +1491,15 @@ onMounted(async () => {
   try {
     mlLib = await import('maplibre-gl');
     // Resolver nivel desde URL ($level) respetando disponibilidad del depto.
-    const urlLevel = $level.get();
+    // Si la URL no trae ?level explícito y hay defaultNivel (vista nacional → 'departamento'),
+    // usar ese default en vez del genérico 'zona' (Epic 15.4).
+    const urlTieneLevel = new URLSearchParams(window.location.search).has('level');
+    const urlLevel = (!urlTieneLevel && props.defaultNivel) ? props.defaultNivel : $level.get();
     const geoNivel = resolveNivel(urlLevel);
     activeNivel = geoNivel;
-    // Si el nivel efectivo difiere del de la URL, corregir la URL silenciosamente (AC4: Rivera).
-    if (geoNivel !== urlLevel) commit({ level: geoNivel });
+    // Si el nivel efectivo difiere del estado actual, fijarlo en URL+store (AC4: Rivera;
+    // y vista nacional: el default 'departamento' se materializa aunque el atom arranque en 'zona').
+    if (geoNivel !== $level.get()) commit({ level: geoNivel });
     isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     if (isDark) COLOR_SIN_DATOS = '#313C56';
     const { fc, bounds } = await loadData(props.eleccion, props.departamento, geoNivel);

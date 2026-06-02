@@ -48,11 +48,16 @@ def agregar_eleccion(eleccion, id2label):
     nombres_por_id = defaultdict(set)
     pregunta = None
     zonas_nac = []
+    zonas_zona = []                           # nivel zona nacional (15.4): todas las zonas namespaceadas
     nac_por_opcion = defaultdict(int)         # para gate ancla
     for d in deptos:
         v = json.load(open(f'{base}/{d}/votes.json', encoding='utf-8'))
         tipo = tipo or v.get('tipo')
         label = id2label.get(d, d)
+        # Nivel zona nacional: cada zona namespaceada con el label del depto (igual que la geometría
+        # zona.topo.json) → geoId único, join geometría↔votos por norm(name==geoId) intacto.
+        for z in v['zonas']:
+            zonas_zona.append({**z, 'geoId': f"{z['geoId']} · {label}"})
         por_opcion = defaultdict(int)
         validos = enblanco = anulados = observados = 0
         for z in v['zonas']:
@@ -112,9 +117,15 @@ def agregar_eleccion(eleccion, id2label):
     if pregunta:
         opciones_nac = {'pregunta': pregunta, **opciones_nac}
 
+    votes_zona = {
+        'eleccionId': eleccion, 'departamento': '_nacional', 'nivel': 'zona',
+        'escrutinio': 'definitivo', 'tipo': tipo, 'zonas': zonas_zona,
+    }
+
     outdir = f'{base}/_nacional'
     os.makedirs(outdir, exist_ok=True)
     json.dump(votes_nac, open(f'{outdir}/votes.json', 'w', encoding='utf-8'), ensure_ascii=False)
+    json.dump(votes_zona, open(f'{outdir}/votes-zona.json', 'w', encoding='utf-8'), ensure_ascii=False)
     json.dump(opciones_nac, open(f'{outdir}/opciones.json', 'w', encoding='utf-8'), ensure_ascii=False)
 
     tot_validos = sum(z['validos'] for z in zonas_nac)

@@ -12,6 +12,7 @@ import ChoroplethMap from '../../components/map/ChoroplethMap.vue';
 import DataTable from '../../components/a11y/DataTable.astro';
 import OpcionAccordion from '../../components/selectors/OpcionAccordion.vue';
 import EleccionSelector from '../../components/selectors/EleccionSelector.vue';
+import GranularitySelector from '../../components/selectors/GranularitySelector.vue';
 import Sello from '../../components/ui/Sello.astro';
 import ShareButton from '../../components/share/ShareButton.vue';
 import deptsConfig from '../../config/departments.json';
@@ -97,12 +98,15 @@ const canonicalPath = `/${eleccion}`;
       departamento="_nacional"
     />
     <OpcionAccordion client:idle eleccion={eleccion} departamento="_nacional" />
+    <!-- Toggle de granularidad departamental ↔ zona (Story 15.4) -->
+    <GranularitySelector client:idle />
     <div id="map-persist" transition:persist>
       <ChoroplethMap
         client:load
         eleccion={eleccion}
         departamento="_nacional"
-        availableLevels={['departamento']}
+        availableLevels={['departamento', 'zona']}
+        defaultNivel="departamento"
       />
     </div>
     <DataTable eleccion={eleccion} departamento="_nacional" />
