@@ -179,10 +179,10 @@ development_status:
 
   # ---- Epic 14: Ingestar plebiscito "Vivir sin Miedo" (2019) ----
   # Binaria Sí/No, mismo patrón que plebiscitos 2024 / referéndum LUC. Bloquea: sourcing del raw 2019.
-  epic-14: backlog
-  14-1-sourcing-dataset-vivir-sin-miedo-2019: backlog
-  14-2-etl-vivir-sin-miedo-mvd-interior: backlog
-  14-3-cableado-color-papeleta-verificacion: backlog
+  epic-14: done   # DESBLOQUEADO + COMPLETO 2026-06-01: dato del PDF oficial por circuito, 19 deptos en el mapa
+  14-1-sourcing-dataset-vivir-sin-miedo-2019: done   # dato NO está en datos abiertos (CKAN solo expone TotalSoloSi=0,6%), PERO el PDF oficial "Resultados del plebiscito por circuito" tiene la columna "Papeleta por SI" (Sí completo por CRV). scripts/extract-vivir-sin-miedo.py (pdfplumber + join greedy por tupla vs totales-por-CRV) → vivir-sin-miedo-2019-por-crv.csv (7229 CRV). VALIDADO: Sí=1.139.433 nacional exacto, 0 sin match.
+  14-2-etl-vivir-sin-miedo-mvd-interior: done         # etl/run-vivir-sin-miedo.ts: MVD por barrio (CRV→barrio, ancla Sí% MO ~39%) + 18 interior por serie (runBinariaInterior). Gates 19/19 verdes: losslessness delta=0, placement ≥98,5%.
+  14-3-cableado-color-papeleta-verificacion: done     # departments.json (19 deptos, tras nacionales-2019) + PAPELETA_COLORS Sí celeste #4AA3DB + label timeline "Vivir s/M". astro check 0 err. Browser ✅ (MVD barrio + canelones serie).
   epic-14-retrospective: optional
 
   # ---- Epic 15: Vista nacional con granularidad toggleable ----

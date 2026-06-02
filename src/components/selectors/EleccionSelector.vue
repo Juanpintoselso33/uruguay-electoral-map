@@ -13,6 +13,7 @@ const META: Record<string, { short: string; type: 'internas' | 'nacionales' | 'b
   'balotaje-2014':                    { short: 'Balotaje',   type: 'balotaje',    año: 2014 },
   'internas-2019':                    { short: 'Internas',   type: 'internas',    año: 2019 },
   'nacionales-2019':                  { short: 'Nacionales', type: 'nacionales',  año: 2019 },
+  'plebiscito-vivir-sin-miedo-2019':  { short: 'Vivir s/M',  type: 'plebiscito',  año: 2019 },
   'balotaje-2019':                    { short: 'Balotaje',   type: 'balotaje',    año: 2019 },
   'departamentales-2020':             { short: 'Dptales.',   type: 'dptales',     año: 2020 },
   'referendum-luc-2022':              { short: 'Ref. LUC',   type: 'plebiscito',  año: 2022 },

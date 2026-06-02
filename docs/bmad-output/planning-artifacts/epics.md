@@ -711,6 +711,8 @@ El plebiscito **"Vivir sin Miedo"** (reforma constitucional de seguridad impulsa
 
 **Sourcing:** a diferencia de los plebiscitos 2024 (`totales-generales-plebiscitos.csv`), el dato del 2019 hay que ubicarlo en la Corte Electoral (API CKAN — ver [[corte-electoral-datos-abiertos]]). Posible columna Sí/No en un dataset de totales del plebiscito 2019; verificar antes de asumir formato.
 
+> ✅ **DESBLOQUEADO (2026-06-01).** El desglose por serie/CRV **no está en datos abiertos** (CKAN solo expone `TotalSoloSi` = "sobres con ÚNICAMENTE la hoja del sí" ≈0,6%, no el ~46,8% real), PERO el **PDF oficial** "Resultados del plebiscito, por circuito" (gub.uy/corte-electoral) tiene la columna **"Papeleta por SI"** = el Sí completo por CRV. `scripts/extract-vivir-sin-miedo.py` (pdfplumber, parseo por posición + carry-forward del circuito/serie) lo extrae a `data/raw/electoral/plebiscito-2019/vivir-sin-miedo-2019-por-crv.csv` (7229 CRV: Depto, Circuito, Serie, Emitidos, EnBlanco, Anulados, Si, No). **Validado:** Sí=1.139.433 (nacional oficial exacto) + emitidos por (depto,serie) 717/717 vs `totales-generales-por-CRV`. No = Emitidos − Sí. → 14.2 puede correr el ETL binaria.
+
 ### Story 14.1: Sourcing — dataset crudo del plebiscito 2019
 As a desarrollador, I want ubicar e ingerir a `data/raw/` el dato del plebiscito Vivir sin Miedo 2019, So that el ETL pueda agregarlo. **AC:** **Given** la API de la Corte Electoral **When** busco el resultado del plebiscito 2019 **Then** documento la fuente y descargo el CSV (UTF-8) con la columna Sí/No por CRV/serie **And** si no existe públicamente queda como límite explícito (no se inventa).
 

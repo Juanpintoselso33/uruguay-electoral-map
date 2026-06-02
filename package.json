@@ -70,7 +70,8 @@
     "etl:hoja-geo": "npx tsx etl/run-hoja-geo.ts",
     "etl:plebiscitos-referendum-interior": "npx tsx etl/run-plebiscitos-referendum-interior.ts",
     "etl:balotajes-historicos-interior": "npx tsx etl/run-balotajes-historicos-interior.ts",
-    "etl:nacionales-2019-interior": "npx tsx etl/run-nacionales-2019-interior.ts"
+    "etl:nacionales-2019-interior": "npx tsx etl/run-nacionales-2019-interior.ts",
+    "etl:vivir-sin-miedo": "npx tsx etl/run-vivir-sin-miedo.ts"
   },
   "dependencies": {
     "@nanostores/vue": "^0.11.0",

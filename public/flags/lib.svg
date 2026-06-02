@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 60">
+  <!-- Partido Libertario del Uruguay: campo amarillo, disco negro y llama (antorcha de la libertad) amarilla -->
+  <rect width="90" height="60" fill="#F2D200"/>
+  <circle cx="45" cy="30" r="21" fill="#111111"/>
+  <!-- llama: lágrima con punta curvada, levemente inclinada -->
+  <path fill="#F2D200" d="M45 46c-8 0-12-7-10-14 2-6 6-8 6-14 0-3-1-5-1-5 4 2 7 6 7 11 0 3 2 4 3 1 1-2 0-5-1-7 5 3 8 9 6 15-1 4-4 6-4 9 4-1 6-4 6-8 3 4 3 10 0 14-3 4-8 5-13 4 4 1 9-1 10-5-3 3-9 4-16-1z"/>
+</svg>

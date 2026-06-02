@@ -78,6 +78,7 @@ const FLAGS: Record<string, string> = {
   PG:  '/flags/pg.svg',
   PD:  '/flags/pd.svg',
   PT:  '/flags/pt.svg',
+  LIB: '/flags/lib.svg',
 };
 
 export interface PartyMeta {
@@ -101,6 +102,7 @@ const PAPELETA_COLORS: Record<string, { si: string; no: string }> = {
   'referendum-luc-2022': { si: '#E5308C', no: '#55B5E5' },              // Sí rosado / No celeste (las dos papeletas)
   'plebiscito-seguridad-social-2024': { si: '#FFFFFF', no: '#94A3B8' }, // Sí papeleta blanca (PIT-CNT) / No sin papeleta
   'plebiscito-allanamientos-2024': { si: '#F2C200', no: '#94A3B8' },    // Sí papeleta amarilla (Art. 11) / No sin papeleta
+  'plebiscito-vivir-sin-miedo-2019': { si: '#F2761A', no: '#94A3B8' },  // Sí: la papeleta oficial era blanca, pero se usa el NARANJA de la campaña "Vivir sin Miedo" (identidad reconocible; el blanco chocaría con seguridad-social-2024) / No sin papeleta
 };
 function papeletaColor(eleccionId: string | undefined, k: 'SI' | 'NO'): string | undefined {
   if (!eleccionId) return undefined;

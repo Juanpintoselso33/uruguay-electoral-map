@@ -140,7 +140,7 @@ const SERIE_BARRIO_FILES: Record<string, string> = {
 // ── Epic 10: coloreo por selección múltiple de HOJAS (Story 10.4) ──────────────
 const SEL_BASE = '#1d4ed8'; // azul secuencial para la escala de selección
 const seleccionActiva = ref<string[]>([]);
-const coloreoMode = ref<'ganador' | 'share' | 'heatmap'>('share');
+const coloreoMode = ref<'ganador' | 'share' | 'heatmap'>('heatmap');
 // hojaId → {contienda, lemaId, hoja, lemaNombre} (del catalogo.json). Null = aún no cargado.
 let catalogoOpcMeta: Map<string, { contienda: string; lemaId: string; hoja: string; lemaNombre: string }> | null = null;
 // zonaNorm → hojaId → votos (acumulado de los shards de hoja cargados).
@@ -344,6 +344,7 @@ async function loadFlagImages(): Promise<void> {
     ['flag-pg', `${base}/flags/pg.svg`],
     ['flag-pd', `${base}/flags/pd.svg`],
     ['flag-pt', `${base}/flags/pt.svg`],
+    ['flag-lib', `${base}/flags/lib.svg`],
   ];
   await Promise.all(ENTRIES.map(([id, src]) =>
     new Promise<void>((resolve) => {
@@ -467,7 +468,8 @@ function drawFlagOverlay(m: MlMap): void {
       } else {
         // Borde entre polígonos: oscuro y marcado pero fino (antes 1px/0.65 se veía lavado en
         // barrios chicos con relleno claro; 1.5 quedaba algo grueso → 1.15).
-        flagCtx.strokeStyle = isDark ? 'rgba(255,255,255,0.8)' : 'rgba(10,12,24,0.92)';
+        // Oscuro en AMBOS temas (pedido del usuario): no invertir a blanco en modo oscuro.
+        flagCtx.strokeStyle = 'rgba(10,12,24,0.92)';
         flagCtx.lineWidth = 1.15 * dpr;
         flagCtx.stroke();
       }
@@ -1503,7 +1505,7 @@ onMounted(async () => {
       setupFlagCanvas(m);
       m.addSource('zonas', { type: 'geojson', data: fc, promoteId: 'name' });
       m.addLayer({ id: 'zonas-fill', type: 'fill', source: 'zonas', paint: { 'fill-color': ['get', 'color'], 'fill-opacity': ['case', ['!=', ['get', 'flagPattern'], null], 0, 0.85] } });
-      m.addLayer({ id: 'zonas-line', type: 'line', source: 'zonas', paint: { 'line-color': isDark ? 'rgba(255,255,255,0.85)' : 'rgba(20,20,35,0.85)', 'line-width': 1.8 } });
+      m.addLayer({ id: 'zonas-line', type: 'line', source: 'zonas', paint: { 'line-color': 'rgba(20,20,35,0.85)', 'line-width': 1.8 } });
       m.on('render', () => drawFlagOverlay(m));
       m.on('movestart', () => { isMapMoving = true; });
       m.on('moveend',   () => { isMapMoving = false; drawFlagOverlay(m); });
@@ -1656,7 +1658,7 @@ onUnmounted(() => {
     <!-- Conmutador de modo para selección múltiple de hojas (Epic 10, Story 10.4) -->
     <div v-if="seleccionActiva.length > 0" class="vista-toggle" role="group" aria-label="Modo de coloreo del mapa">
       <button
-        v-for="mo in (['ganador', 'share', 'heatmap'] as const)"
+        v-for="mo in (['ganador', 'heatmap', 'share'] as const)"
         :key="mo"
         class="vista-toggle__btn"
         :class="{ 'vista-toggle__btn--activo': coloreoMode === mo }"
