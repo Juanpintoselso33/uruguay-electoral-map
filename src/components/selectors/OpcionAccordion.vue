@@ -167,6 +167,18 @@ const partidos = computed<{ id: string; nombre: string }[]>(() => {
     .sort((a, b) => b.votos - a.votos || a.nombre.localeCompare(b.nombre, 'es'));
 });
 
+/** Caso plano (balotaje/plebiscito/referendum): opciones ordenadas por votos desc.
+ * El id de la opción plana coincide con el opcionId de votes.json → totalVotosLema. */
+const opcionesPlano = computed<OpcionHojaJson[]>(() => {
+  const ops = contienda.value?.opciones ?? [];
+  const tvL = totalVotosLema.value;
+  const tvH = totalVotosHoja.value;
+  const votos = (o: OpcionHojaJson): number => tvL[o.id] ?? tvH[o.id] ?? 0;
+  return ops
+    .slice()
+    .sort((a, b) => votos(b) - votos(a) || (a.etiqueta ?? '').localeCompare(b.etiqueta ?? '', 'es'));
+});
+
 /** Opciones que matchean la búsqueda (por número de hoja o por nombre de candidato; vacío = todas). */
 const hojasFiltradas = computed<OpcionHojaJson[]>(() => {
   const c = contienda.value;
@@ -463,7 +475,7 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
 
     <!-- Tipo plano (balotaje/plebiscito): lista simple de opciones con checkbox, sin chevrons -->
     <ul v-else-if="contienda && esPlano" class="acc__tree acc__tree--plano" role="group">
-      <li v-for="o in contienda.opciones" :key="o.id" class="acc__hoja">
+      <li v-for="o in opcionesPlano" :key="o.id" class="acc__hoja">
         <div class="acc__row">
           <button
             type="button"
