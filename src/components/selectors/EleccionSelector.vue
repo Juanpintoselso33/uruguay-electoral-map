@@ -15,21 +15,22 @@ function hrefDe(id: string): string {
   return props.nacional ? `/${id}` : `/${id}/${props.departamento}`;
 }
 
-const META: Record<string, { short: string; type: 'internas' | 'nacionales' | 'balotaje' | 'dptales' | 'plebiscito'; año: number }> = {
-  'nacionales-2014':                  { short: 'Nacionales', type: 'nacionales',  año: 2014 },
-  'balotaje-2014':                    { short: 'Balotaje',   type: 'balotaje',    año: 2014 },
-  'internas-2019':                    { short: 'Internas',   type: 'internas',    año: 2019 },
-  'nacionales-2019':                  { short: 'Nacionales', type: 'nacionales',  año: 2019 },
-  'plebiscito-vivir-sin-miedo-2019':  { short: 'Vivir s/M',  type: 'plebiscito',  año: 2019 },
-  'balotaje-2019':                    { short: 'Balotaje',   type: 'balotaje',    año: 2019 },
-  'departamentales-2020':             { short: 'Dptales.',   type: 'dptales',     año: 2020 },
-  'referendum-luc-2022':              { short: 'Ref. LUC',   type: 'plebiscito',  año: 2022 },
-  'internas-2024':                    { short: 'Internas',   type: 'internas',    año: 2024 },
-  'nacionales-2024':                  { short: 'Nacionales', type: 'nacionales',  año: 2024 },
-  'plebiscito-allanamientos-2024':    { short: 'Pleb. All.', type: 'plebiscito',  año: 2024 },
-  'plebiscito-seguridad-social-2024': { short: 'Pleb. SS',   type: 'plebiscito',  año: 2024 },
-  'balotaje-2024':                    { short: 'Balotaje',   type: 'balotaje',    año: 2024 },
-  'departamentales-2025':             { short: 'Dptales.',   type: 'dptales',     año: 2025 },
+type TipoEleccion = 'internas' | 'nacionales' | 'balotaje' | 'dptales' | 'plebiscito';
+const META: Record<string, { short: string; type: TipoEleccion; año: number }> = {
+  'nacionales-2014':                  { short: 'Nacionales',       type: 'nacionales',  año: 2014 },
+  'balotaje-2014':                    { short: 'Balotaje',         type: 'balotaje',    año: 2014 },
+  'internas-2019':                    { short: 'Internas',         type: 'internas',    año: 2019 },
+  'nacionales-2019':                  { short: 'Nacionales',       type: 'nacionales',  año: 2019 },
+  'plebiscito-vivir-sin-miedo-2019':  { short: 'Vivir sin Miedo',  type: 'plebiscito',  año: 2019 },
+  'balotaje-2019':                    { short: 'Balotaje',         type: 'balotaje',    año: 2019 },
+  'departamentales-2020':             { short: 'Departamentales',  type: 'dptales',     año: 2020 },
+  'referendum-luc-2022':              { short: 'Referéndum LUC',   type: 'plebiscito',  año: 2022 },
+  'internas-2024':                    { short: 'Internas',         type: 'internas',    año: 2024 },
+  'nacionales-2024':                  { short: 'Nacionales',       type: 'nacionales',  año: 2024 },
+  'plebiscito-allanamientos-2024':    { short: 'Allanamientos',    type: 'plebiscito',  año: 2024 },
+  'plebiscito-seguridad-social-2024': { short: 'Seguridad Social', type: 'plebiscito',  año: 2024 },
+  'balotaje-2024':                    { short: 'Balotaje',         type: 'balotaje',    año: 2024 },
+  'departamentales-2025':             { short: 'Departamentales',  type: 'dptales',     año: 2025 },
 };
 
 const ALL_IDS = Object.keys(META);
@@ -37,24 +38,30 @@ const ALL_IDS = Object.keys(META);
 interface Item {
   id: string;
   short: string;
-  type: string;
+  type: TipoEleccion;
   año: number;
-  showYear: boolean;
   disponible: boolean;
 }
+interface Grupo {
+  año: number;
+  items: Item[];
+}
 
-const items: Item[] = ALL_IDS.map((e, i) => {
+// Agrupar por AÑO (consecutivos): un encabezado de año por grupo, no por dot (consistente).
+const grupos: Grupo[] = [];
+for (const e of ALL_IDS) {
   const m = META[e];
-  const prev = i > 0 ? META[ALL_IDS[i - 1]] : null;
-  return {
+  const item: Item = {
     id: e,
     short: m.short,
     type: m.type,
     año: m.año,
-    showYear: !prev || prev.año !== m.año,
     disponible: props.eleccionesDisponibles.includes(e),
   };
-});
+  const last = grupos[grupos.length - 1];
+  if (last && last.año === m.año) last.items.push(item);
+  else grupos.push({ año: m.año, items: [item] });
+}
 
 const scrollRef = ref<HTMLElement | null>(null);
 
@@ -108,38 +115,48 @@ onUnmounted(() => {
   <nav class="esel" aria-label="Seleccionar elección">
     <div ref="scrollRef" class="esel__scroll" @mousedown="onDragStart" @click.capture="onClickCapture">
       <div class="esel__track">
-        <div class="esel__rail" aria-hidden="true" />
-        <div
-          v-for="item in items"
-          :key="item.id"
-          class="esel__item"
-          :class="[`esel__item--${item.type}`, { 'esel__item--bloqueado': !item.disponible }]"
-        >
-          <span class="esel__year" :class="{ 'esel__year--hidden': !item.showYear }">
-            {{ item.año }}
-          </span>
-          <a
-            v-if="item.disponible"
-            :href="hrefDe(item.id)"
-            class="esel__dot"
-            :class="{ 'esel__dot--activa': item.id === eleccionActual }"
-            :aria-current="item.id === eleccionActual ? 'page' : undefined"
-            :title="item.short + ' ' + item.año"
-          >
-            <span class="sr-only">{{ item.short }} {{ item.año }}</span>
-          </a>
-          <span
-            v-else
-            class="esel__dot esel__dot--bloqueado"
-            :title="`${item.short} ${item.año} — sin datos para este departamento`"
-            aria-disabled="true"
-          />
-          <span class="esel__label" :class="{ 'esel__label--activa': item.id === eleccionActual }">
-            {{ item.short }}
-          </span>
+        <div v-for="g in grupos" :key="g.año" class="esel__grupo">
+          <span class="esel__year">{{ g.año }}</span>
+          <div class="esel__grupo-body">
+            <div class="esel__rail" aria-hidden="true" />
+            <div class="esel__grupo-items">
+              <div
+                v-for="item in g.items"
+                :key="item.id"
+                class="esel__item"
+                :class="[`esel__item--${item.type}`, { 'esel__item--bloqueado': !item.disponible }]"
+              >
+                <a
+                  v-if="item.disponible"
+                  :href="hrefDe(item.id)"
+                  class="esel__dot"
+                  :class="{ 'esel__dot--activa': item.id === eleccionActual }"
+                  :aria-current="item.id === eleccionActual ? 'page' : undefined"
+                  :title="item.short + ' ' + item.año"
+                >
+                  <span class="sr-only">{{ item.short }} {{ item.año }}</span>
+                </a>
+                <span
+                  v-else
+                  class="esel__dot esel__dot--bloqueado"
+                  :title="`${item.short} ${item.año} — sin datos para este departamento`"
+                  aria-disabled="true"
+                />
+                <span class="esel__label" :class="{ 'esel__label--activa': item.id === eleccionActual }">
+                  {{ item.short }}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+    <!-- Leyenda de formas por tipo de elección -->
+    <ul class="esel__leyenda" aria-label="Referencia de formas">
+      <li><span class="esel__shape esel__shape--circle" aria-hidden="true" /> Internas · Nacionales · Departamentales</li>
+      <li><span class="esel__shape esel__shape--rombo" aria-hidden="true" /> Balotaje</li>
+      <li><span class="esel__shape esel__shape--cuadrado" aria-hidden="true" /> Plebiscito · Referéndum</li>
+    </ul>
   </nav>
 </template>
 
@@ -152,33 +169,70 @@ onUnmounted(() => {
 .esel__scroll {
   overflow-x: auto;
   scrollbar-width: none;
-  padding: 0.625rem 1.25rem 0.875rem;
+  padding: 0.625rem 1.25rem 0.75rem;
   cursor: grab;
 }
 .esel__scroll::-webkit-scrollbar { display: none; }
 
 .esel__track {
-  position: relative;
   display: flex;
   align-items: flex-start;
+  gap: 1.5rem;                /* separación entre grupos de año */
   min-width: max-content;
 }
 
+/* Grupo de año */
+.esel__grupo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+.esel__grupo:not(:first-child)::before {  /* separador vertical entre años */
+  content: '';
+  position: absolute;
+  left: -0.75rem;
+  top: 6px;
+  bottom: 18px;
+  width: 1px;
+  background: var(--color-border);
+}
+
+.esel__year {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-ink-muted);
+  line-height: 1;
+  margin-bottom: 6px;
+  user-select: none;
+}
+
+.esel__grupo-body {
+  position: relative;
+}
+
+/* Riel horizontal por grupo (detrás de los dots) */
 .esel__rail {
   position: absolute;
-  top: 26px;
-  left: 0;
-  right: 0;
+  top: 6px;
+  left: 8px;
+  right: 8px;
   height: 2px;
   background: var(--color-border-strong);
   pointer-events: none;
+}
+
+.esel__grupo-items {
+  display: flex;
+  align-items: flex-start;
 }
 
 .esel__item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 60px;
+  min-width: 64px;
   padding: 0 6px;
   text-align: center;
   cursor: pointer;
@@ -187,20 +241,6 @@ onUnmounted(() => {
   cursor: not-allowed;
   opacity: 0.38;
 }
-
-/* Year marker */
-.esel__year {
-  height: 16px;
-  margin-bottom: 4px;
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: var(--color-ink-muted);
-  line-height: 16px;
-  white-space: nowrap;
-  user-select: none;
-}
-.esel__year--hidden { visibility: hidden; }
 
 /* Dot — disponible */
 .esel__dot {
@@ -266,7 +306,7 @@ onUnmounted(() => {
 
 /* Label */
 .esel__label {
-  margin-top: 5px;
+  margin-top: 6px;
   font-size: 0.625rem;
   color: var(--color-ink-faint);
   white-space: nowrap;
@@ -277,6 +317,34 @@ onUnmounted(() => {
   color: var(--color-ink);
   font-weight: 600;
 }
+
+/* Leyenda */
+.esel__leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin: 0;
+  padding: 0 1.25rem 0.625rem;
+  list-style: none;
+  font-size: 0.625rem;
+  color: var(--color-ink-faint);
+}
+.esel__leyenda li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+.esel__shape {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border: 1.5px solid var(--color-ink-muted);
+  background: var(--color-paper);
+  flex-shrink: 0;
+}
+.esel__shape--circle { border-radius: 50%; }
+.esel__shape--rombo { border-radius: 2px; transform: rotate(45deg); }
+.esel__shape--cuadrado { border-radius: 1px; width: 8px; height: 8px; }
 
 .sr-only {
   position: absolute;
