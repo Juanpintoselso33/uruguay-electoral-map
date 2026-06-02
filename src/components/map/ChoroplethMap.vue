@@ -511,6 +511,110 @@ function syncFlagCanvasSize(m: MlMap): void {
 }
 
 /** Dibuja banderas de partido en zonas y dots de circuito sobre el canvas overlay. */
+/** Sigla de partido de una opción (hoja o lema), para matchear contra el porOpcion de los circuitos
+ *  (que es a nivel partido/lema, sin hoja). Ej: 'unica-frente-amplio-90' → 'FA'. */
+function siglaDeOpcion(oid: string): string {
+  return resolveParty(nombrePartidoDeOpcion(oid), activeEleccion).sigla;
+}
+
+/** Contexto de coloreo de los dots de circuito para el frame actual: modo activo + siglas de la
+ *  selección + máximos de escala (heatmap/intensidad se normalizan al máximo sobre los circuitos). */
+function circuitColorCtx(): {
+  sel: string[]; opcion: string | null; modo: 'ganador' | 'share' | 'heatmap';
+  intensidad: boolean; selSiglas: Set<string>; maxSelSum: number; maxPct: number;
+} {
+  const sel = seleccionActiva.value;
+  const opcion = opcionActiva.value;
+  const modo = coloreoMode.value;
+  const intensidad = intensidadActive;
+  // Los circuitos son a nivel partido: matcheamos la selección (que viene en ids de hoja) por sigla.
+  const selSiglas = new Set(sel.map(siglaDeOpcion));
+  let maxSelSum = 1, maxPct = 0;
+  if (circuitoFCForCanvas && (sel.length > 0 || (opcion && intensidad))) {
+    for (const f of circuitoFCForCanvas.features) {
+      const z = circuitoZonaPorGeo.get(norm(String((f.properties as { name?: string }).name ?? '')));
+      if (!z) continue;
+      if (sel.length > 0 && modo === 'heatmap') {
+        let s = 0; for (const o of z.porOpcion) if (selSiglas.has(siglaDeOpcion(o.opcionId))) s += o.votos;
+        if (s > maxSelSum) maxSelSum = s;
+      }
+      if (opcion && intensidad && z.validos > 0) {
+        const p = (z.porOpcion.find((o) => o.opcionId === opcion)?.votos ?? 0) / z.validos;
+        if (p > maxPct) maxPct = p;
+      }
+    }
+  }
+  return { sel, opcion, modo, intensidad, selSiglas, maxSelSum, maxPct };
+}
+
+/** Color/bandera de un dot de circuito según el modo de coloreo activo — paridad con las zonas.
+ *  Los circuitos son a nivel partido/lema: la selección se agrega por partido (sigla), no por hoja. */
+function circuitStyle(z: ZonaLocal, ctx: ReturnType<typeof circuitColorCtx>): { color: string; flagPattern: string | null } {
+  const validos = z.validos;
+  const MUTED = validos > 0 ? interpolateHex(INTENSIDAD_LIGHT, SEL_BASE, 0.12) : COLOR_SIN_DATOS;
+  const partyStyle = (nombre: string): { color: string; flagPattern: string | null } => {
+    const meta = resolveParty(nombre, activeEleccion);
+    return { color: meta.color, flagPattern: meta.flagUrl ? `flag-${meta.sigla.toLowerCase()}` : null };
+  };
+  // Selección activa (acordeón): ganador-entre-seleccionado | share | heatmap. Agrega por partido.
+  if (ctx.sel.length > 0) {
+    const porPartido = new Map<string, { votos: number; nombre: string }>();
+    for (const o of z.porOpcion) {
+      const sigla = siglaDeOpcion(o.opcionId);
+      if (!ctx.selSiglas.has(sigla)) continue;
+      const nombre = opcNombreMap.get(o.opcionId) ?? o.opcionId;
+      const e = porPartido.get(sigla) ?? { votos: 0, nombre };
+      e.votos += o.votos; porPartido.set(sigla, e);
+    }
+    if (ctx.modo === 'ganador') {
+      let best: { votos: number; nombre: string } | null = null;
+      for (const v of porPartido.values()) if (!best || v.votos > best.votos) best = v;
+      return best && best.votos > 0 ? partyStyle(best.nombre) : { color: MUTED, flagPattern: null };
+    }
+    let sum = 0; for (const v of porPartido.values()) sum += v.votos;
+    if (sum <= 0) return { color: validos > 0 ? (ctx.modo === 'heatmap' ? HEAT_STOPS[0] : MUTED) : COLOR_SIN_DATOS, flagPattern: null };
+    const t = ctx.modo === 'share' ? (validos > 0 ? Math.min(1, sum / validos) : 0) : Math.min(1, sum / ctx.maxSelSum);
+    const color = ctx.modo === 'heatmap' ? heatColor(Math.max(0.05, t)) : interpolateHex(INTENSIDAD_LIGHT, SEL_BASE, Math.max(0.1, t));
+    return { color, flagPattern: null };
+  }
+  // Filtro de opción simple (sin acordeón): intensidad por % | ganador filtrado.
+  if (ctx.opcion) {
+    const votesOpcion = z.porOpcion.find((o) => o.opcionId === ctx.opcion)?.votos ?? 0;
+    if (ctx.intensidad) {
+      const t = validos > 0 && ctx.maxPct > 0 ? (votesOpcion / validos) / ctx.maxPct : 0;
+      const meta = resolveParty(opcNombreMap.get(ctx.opcion) ?? ctx.opcion, activeEleccion);
+      return { color: t > 0.01 ? interpolateHex(INTENSIDAD_LIGHT, meta.color, t) : COLOR_SIN_DATOS, flagPattern: null };
+    }
+    return z.ganadorOpcionId === ctx.opcion ? partyStyle(opcNombreMap.get(ctx.opcion) ?? ctx.opcion) : { color: COLOR_SIN_DATOS, flagPattern: null };
+  }
+  // Default: ganador absoluto.
+  return partyStyle(opcNombreMap.get(z.ganadorOpcionId) ?? z.ganadorOpcionId);
+}
+
+/** Desglose de la selección en un circuito/local, agrupado por PARTIDO (sigla; los circuitos no
+ *  tienen granularidad de hoja → sin sub-listas). Espeja buildDesglose para la ficha del circuito. */
+function buildDesgloseCircuito(z: ZonaLocal, sel: string[]): { grupos: DesgloseGrupo[]; total: number } {
+  const selSiglas = new Set(sel.map(siglaDeOpcion));
+  const byParty = new Map<string, { nombre: string; total: number }>();
+  let total = 0;
+  for (const o of z.porOpcion) {
+    const sigla = siglaDeOpcion(o.opcionId);
+    if (!selSiglas.has(sigla)) continue;
+    total += o.votos;
+    const nombre = opcNombreMap.get(o.opcionId) ?? o.opcionId;
+    const e = byParty.get(sigla) ?? { nombre, total: 0 };
+    e.total += o.votos; byParty.set(sigla, e);
+  }
+  const grupos: DesgloseGrupo[] = [...byParty.values()]
+    .filter((g) => g.total > 0)
+    .sort((a, b) => b.total - a.total)
+    .map((g) => {
+      const meta = resolveParty(g.nombre, activeEleccion);
+      return { lemaNombre: g.nombre, sigla: meta.sigla, color: meta.color, flagUrl: meta.flagUrl, total: g.total, hojas: [], masN: 0 };
+    });
+  return { grupos, total };
+}
+
 function drawFlagOverlay(m: MlMap): void {
   if (!flagCtx || !flagCanvas) return;
   syncFlagCanvasSize(m);
@@ -612,9 +716,15 @@ function drawFlagOverlay(m: MlMap): void {
     type Ring = [number, number][];
     // Highlight del circuito/local seleccionado (mismo ámbar que el polígono seleccionado).
     const selCircId = selected.value?.geoId ? norm(selected.value.geoId) : null;
+    // Coloreo de los dots según el modo activo (ganador/filtro/share/heatmap) — paridad con zonas.
+    const cctx = circuitColorCtx();
     for (const f of circuitoFCForCanvas.features) {
       const fprops = f.properties as Record<string, unknown>;
       if (!fprops.hasData) continue;
+      // El color/bandera del dot sale del modo activo, no del ganador estático del FC.
+      const czl = circuitoZonaPorGeo.get(norm(String(fprops.name ?? '')));
+      const cstyle = czl ? circuitStyle(czl, cctx)
+        : { color: String(fprops.color ?? '#999'), flagPattern: (fprops.flagPattern as string | null) ?? null };
       const geom = f.geometry as { type: string; coordinates: unknown };
 
       // Calcular el centroide según tipo de geometría (Point, Polygon, MultiPolygon).
@@ -640,7 +750,7 @@ function drawFlagOverlay(m: MlMap): void {
       const cpx = (sx / cnt) * dpr;
       const cpy = (sy / cnt) * dpr;
       const r = 5 * dpr;
-      const dotImg = fprops.flagPattern ? flagImgs[fprops.flagPattern as string] : null;
+      const dotImg = cstyle.flagPattern ? flagImgs[cstyle.flagPattern] : null;
       flagCtx.save();
       flagCtx.beginPath();
       flagCtx.arc(cpx, cpy, r, 0, Math.PI * 2);
@@ -652,7 +762,7 @@ function drawFlagOverlay(m: MlMap): void {
         const ih = aspect >= 1 ? r * 2 : (r * 2) / aspect;
         flagCtx.drawImage(dotImg, cpx - iw / 2, cpy - ih / 2, iw, ih);
       } else {
-        flagCtx.fillStyle = String(fprops.color ?? '#999');
+        flagCtx.fillStyle = cstyle.color;
         flagCtx.fill();
       }
       flagCtx.restore();
@@ -1574,6 +1684,14 @@ function selectCircuitoLocal(name: string): void {
     const m = resolveParty(nm, activeEleccion);
     return { circuito: c.circuito, sigla: m.sigla, nombre: nm, color: m.color, flagUrl: m.flagUrl, validos: c.validos };
   });
+  // Desglose de lo seleccionado en este circuito (paridad con selectByName, a nivel partido).
+  const opcionId = $selection.get().opcion;
+  const selFicha = seleccionActiva.value.length > 0 ? seleccionActiva.value : opcionId ? [opcionId] : [];
+  const desgRaw = selFicha.length > 0 ? buildDesgloseCircuito(z, selFicha) : null;
+  const desg = desgRaw && desgRaw.grupos.length > 0 ? desgRaw : null;
+  const pctOpcionActiva = !desg && opcionId && z.validos > 0
+    ? ((z.porOpcion.find((o) => o.opcionId === opcionId)?.votos ?? 0) / z.validos) * 100
+    : null;
   selected.value = {
     geoId: name,
     label: z.local?.nombre ?? name,
@@ -1582,7 +1700,10 @@ function selectCircuitoLocal(name: string): void {
     pct: z.validos > 0 ? (votoGanador / z.validos) * 100 : 0,
     enBlanco: noP.enBlanco, anulados: noP.anulados, observados: noP.observados,
     habilitados: z.habilitados || undefined, emitidos: z.emitidos || undefined,
-    pctOpcionActiva: null,
+    pctOpcionActiva,
+    seleccionTotal: desg?.total,
+    seleccionPct: desg && z.validos > 0 ? (desg.total / z.validos) * 100 : undefined,
+    desglose: desg?.grupos,
     local: z.local, circuitos,
   };
 }
