@@ -608,6 +608,8 @@ function drawFlagOverlay(m: MlMap): void {
   // Overlay de circuitos: skip durante movimiento activo para evitar lag a 60fps.
   if (circuitoFCForCanvas && !isMapMoving) {
     type Ring = [number, number][];
+    // Highlight del circuito/local seleccionado (mismo ámbar que el polígono seleccionado).
+    const selCircId = selected.value?.geoId ? norm(selected.value.geoId) : null;
     for (const f of circuitoFCForCanvas.features) {
       const fprops = f.properties as Record<string, unknown>;
       if (!fprops.hasData) continue;
@@ -652,11 +654,26 @@ function drawFlagOverlay(m: MlMap): void {
         flagCtx.fill();
       }
       flagCtx.restore();
-      flagCtx.beginPath();
-      flagCtx.arc(cpx, cpy, r, 0, Math.PI * 2);
-      flagCtx.strokeStyle = 'rgba(255,255,255,0.8)';
-      flagCtx.lineWidth = 1 * dpr;
-      flagCtx.stroke();
+      const isSelCirc = selCircId !== null && norm(String(fprops.name ?? '')) === selCircId;
+      if (isSelCirc) {
+        // Anillo ámbar como el polígono seleccionado (dot agrandado + doble trazo).
+        flagCtx.beginPath();
+        flagCtx.arc(cpx, cpy, r + 4 * dpr, 0, Math.PI * 2);
+        flagCtx.strokeStyle = '#f59e0b';
+        flagCtx.lineWidth = 3.5 * dpr;
+        flagCtx.stroke();
+        flagCtx.beginPath();
+        flagCtx.arc(cpx, cpy, r + 4 * dpr, 0, Math.PI * 2);
+        flagCtx.strokeStyle = '#fef9c3';
+        flagCtx.lineWidth = 1.25 * dpr;
+        flagCtx.stroke();
+      } else {
+        flagCtx.beginPath();
+        flagCtx.arc(cpx, cpy, r, 0, Math.PI * 2);
+        flagCtx.strokeStyle = 'rgba(255,255,255,0.8)';
+        flagCtx.lineWidth = 1 * dpr;
+        flagCtx.stroke();
+      }
     }
   }
 }
@@ -1585,6 +1602,9 @@ function applySelection(zona: string | null): void {
     selected.value = null;
   }
   prevSelId = zona;
+  // El highlight de circuito/local se pinta en el canvas overlay (no usa feature-state), así que
+  // forzamos un render para que aparezca/desaparezca al seleccionar o limpiar.
+  m.triggerRepaint();
 }
 const unsubSelection = $selection.subscribe((s) => {
   opcionActiva.value = s.opcion;
