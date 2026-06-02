@@ -197,11 +197,11 @@ development_status:
   epic-15-retrospective: optional
 
   # ---- Epic 16: Polígonos grises — auditoría y cierre de huecos de visualización ----
-  epic-16: in-progress   # 16.1 spike + 16.2 nota limitación + 16.3 merge hechos 2026-06-02; falta 16.4 (UX gris temporal, opcional)
+  epic-16: done   # COMPLETO 2026-06-02: 16.1 spike + 16.2 nota limitación + 16.3 merge + 16.4 anexión de series nuevas a su madre (fusión) + gate de grises
   16-1-spike-auditoria-grises: done   # scripts/audit-grises.py. 3 causas: A)drift temporal de series (geometría ~2024; viejas tienen series sin votantes → gris, benigno, sube a 4% en ref-LUC-2022); B)geometría mergeada 'sia-sib-sic' lavalleja (1 caso, bug); C)VOTOS INVISIBLES (voto sin polígono): ~0,07% en casi todas PERO departamentales-2020/2025 ~0,55% (136-143 zonas, ~11k votos) por series especiales q1/q2/q3 sin geo
   16-2-cerrar-votos-invisibles-departamentales: done   # nota de limitación en MapLegend: "N votos en M series sin ubicación geográfica — contabilizados pero no representables". Las ficticias (c1/d1…) no se inventan geometría, se anotan. Browser ✅ lavalleja (61 votos en 5 series)
   16-3-resolver-geometria-mergeada-sia-sib-sic: done    # ChoroplethMap loadData: polígono mergeado 'a-b-c' sintetiza su zona sumando series constituyentes (zonaPorGeo+zonasVotos) → vincula sia+sib a Zapicán. General para cualquier label con '-'. Browser ✅ (lavalleja sin grises)
-  16-4-gris-temporal-desambiguar-sin-votantes: backlog    # UX: "sin votantes en esta elección" vs gris ambiguo (drift temporal benigno)
+  16-4-anexion-series-nuevas-a-madre: done    # serie nueva (no votó esa elección) se fusiona con su MADRE (hermana de misma localidad — lógica oficial Corte vía Tavily; o vecino espacial fallback). ETL build-annex-series.py (shapely union → serie-annexed.json override por elección×depto) + gate-grises.py (cruza grises vs raw VÁLIDOS>0, 0 bugs reales; los "7" eran falsos positivos del registro/0-votos). ChoroplethMap reemplaza polígonos por el fusionado. 148 anexiones, browser ✅ cerro_largo balotaje-2014 sin grises. Spec: docs/superpowers/specs/2026-06-02-anexion-series-temporales-design.md
   epic-16-retrospective: optional
 
   # ---- Epic 17: Circuito geolocalizado en todas las elecciones — anclaje por LOCAL ----

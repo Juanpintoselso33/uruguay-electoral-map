@@ -212,7 +212,7 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
                   // nivel 'zona' usa votes-zona.json (todas las zonas de los 19 deptos combinadas).
                   : (departamento === '_nacional' && nivel === 'zona') ? 'votes-zona.json'
                   : 'votes.json';
-  const [topoRes, votesRes, opcRes, metaRes, serieMapRes, serieBarrioRes] = await Promise.all([
+  const [topoRes, votesRes, opcRes, metaRes, serieMapRes, serieBarrioRes, annexRes] = await Promise.all([
     fetch(`${base}/data/geo/${departamento}/${nivel}.topo.json`),
     fetch(`${base}/data/${eleccion}/${departamento}/${votesFile}`),
     fetch(`${base}/data/${eleccion}/${departamento}/opciones.json`),
@@ -225,6 +225,11 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
     nivel === 'serie' && SERIE_BARRIO_FILES[departamento]
       ? fetch(`${base}/data/mappings/${departamento}/${SERIE_BARRIO_FILES[departamento]}`).catch(() => null)
       : Promise.resolve(null),
+    // Epic 16.4: override de anexión — series nuevas que no votaron esa elección, fusionadas con su
+    // madre (misma localidad / vecino espacial). Solo nivel serie por-depto; ausente = sin anexiones.
+    nivel === 'serie' && departamento !== '_nacional'
+      ? fetch(`${base}/data/${eleccion}/${departamento}/serie-annexed.json`).catch(() => null)
+      : Promise.resolve(null),
   ]);
   if (!topoRes.ok || !votesRes.ok || !opcRes.ok) throw new Error('No se pudieron cargar los datos del mapa');
   const topo = (await topoRes.json()) as Topology;
@@ -233,6 +238,22 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
 
   const objName = Object.keys(topo.objects)[0];
   const geo = topoFeature(topo, topo.objects[objName] as GeometryCollection) as FeatureCollection;
+
+  // Epic 16.4: aplicar el override de anexión — quitar las series grises + sus madres originales y
+  // agregar el polígono fusionado M′ (que joinea al voto de la madre por su geoId). Resultado: la
+  // serie nueva deja de ser gris y se ve fusionada con su madre, solo para esta elección.
+  if (annexRes && annexRes.ok) {
+    try {
+      const annexFC = (await annexRes.json()) as FeatureCollection;
+      const reemplazados = new Set<string>();
+      for (const f of annexFC.features) {
+        for (const r of ((f.properties as { replaces?: string[] }).replaces ?? [])) reemplazados.add(norm(r));
+      }
+      geo.features = geo.features
+        .filter((f) => !reemplazados.has(norm(String((f.properties as { name?: string }).name ?? ''))))
+        .concat(annexFC.features);
+    } catch { /* override malformado → ignorar, sigue el mapa base */ }
+  }
 
   const nombrePorOpcion = new Map(opcDoc.opciones.map((o) => [o.opcionId, o.nombre]));
   opcNombreMap = nombrePorOpcion;

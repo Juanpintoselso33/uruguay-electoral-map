@@ -75,7 +75,9 @@
     "etl:nacional-geo": "python scripts/build-nacional-geo.py && npx mapshaper data/processed/geographic/_nacional/departamento.geojson -simplify 3% keep-shapes -clean -o force format=topojson public/data/geo/_nacional/departamento.topo.json",
     "etl:nacional-votes": "python scripts/build-nacional-votes.py",
     "etl:nacional-zona-geo": "python scripts/build-nacional-zona-geo.py",
-    "etl:nacional": "npm run etl:nacional-geo && npm run etl:nacional-zona-geo && npm run etl:nacional-votes"
+    "etl:nacional": "npm run etl:nacional-geo && npm run etl:nacional-zona-geo && npm run etl:nacional-votes",
+    "etl:annex": "python scripts/build-annex-series.py",
+    "gate:grises": "python scripts/gate-grises.py"
   },
   "dependencies": {
     "@nanostores/vue": "^0.11.0",

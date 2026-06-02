@@ -19,3 +19,4 @@ data/raw/
 # Screenshots de verificación sueltos en la raíz (artefactos de debugging, no del producto).
 /*.png
 data/processed/geographic/_nacional/
+data/processed/_annex_tmp/
