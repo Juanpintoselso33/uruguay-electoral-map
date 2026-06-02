@@ -11,8 +11,8 @@ import type { EleccionTipo } from './election';
 /** Etapa de escrutinio. La canónica del producto es 'definitivo'. */
 export type Escrutinio = 'definitivo' | 'primario' | 'total';
 
-/** Nivel geográfico (jerarquía CIRCUITO ⊃ SERIE ⊃ ZONA; LOCALIDAD agrega series por localidad del interior; BARRIO subdivide ciudades grandes). */
-export type NivelGeografico = 'zona' | 'serie' | 'circuito' | 'localidad' | 'barrio';
+/** Nivel geográfico (jerarquía DEPARTAMENTO ⊃ {CIRCUITO ⊃ SERIE ⊃ ZONA; LOCALIDAD agrega series por localidad del interior; BARRIO subdivide ciudades grandes}. DEPARTAMENTO = vista nacional, agrega los 19 deptos — Epic 15). */
+export type NivelGeografico = 'departamento' | 'zona' | 'serie' | 'circuito' | 'localidad' | 'barrio';
 
 /** Categorías no partidarias presentes en los totales oficiales. */
 export interface CategoriasNoPartidarias {

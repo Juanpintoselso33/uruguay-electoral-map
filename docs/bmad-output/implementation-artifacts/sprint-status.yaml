@@ -188,10 +188,10 @@ development_status:
   # ---- Epic 15: Vista nacional con granularidad toggleable ----
   # País entero: nivel departamental (19 deptos agregados) + nivel zona (combinar todos los
   # polígonos por-depto existentes). Toggleable. Spike-first por arquitectura/performance.
-  epic-15: in-progress   # 15.1 spike + 15.2 ETL hechos 2026-06-01; próximo 15.3 (página nacional) = checkpoint user-facing
+  epic-15: in-progress   # 15.1 spike + 15.2 ETL + 15.3 página nacional hechos 2026-06-01; falta 15.4 (toggle dept↔zona) + 15.5 (perf zona nacional)
   15-1-spike-arquitectura-vista-nacional: done   # uruguayDepartamentos.geojson=0 bytes → sourcear IDE límites-depto (<150KB); zona nacional=8,72MB excede NFR1 → departamental default + zona lazy (15.5); agregación=sumar porOpcion de shards, gate con ancla nacional (NO tautológico); ruta /{eleccion} (sin colisión, falta [eleccion]/index.astro)
   15-2-geometria-agregacion-nacional-etl: done   # IDE límites-depto (era polyline→poligonizado shapely, cierre de anillo) → geo/_nacional/departamento.topo.json 146KB. Agregación 14 elecciones (cobertura 19/19) por opcionId → */_nacional/votes.json+opciones.json. 3 gates: estructural(==19, mata doble-suma de _nacional), reconciliación(delta=0), ancla(VsM Sí -2,55% por placement, dentro de tol 3%). VERIFICADO vs oficial: balotaje-2024 FA gana exacto 5/19 deptos (MO,Cane,Salto,Pays,SJ). npm etl:nacional
-  15-3-pagina-nacional-nivel-departamental: backlog
+  15-3-pagina-nacional-nivel-departamental: done   # ruta /{eleccion} (src/pages/[eleccion]/index.astro, 14 páginas) con ChoroplethMap departamento=_nacional nivel=departamento. 'departamento' agregado a NivelGeografico. Reúso total (shard _nacional = elección plana → OpcionAccordion degrada a partidos; join name==geoId). EleccionSelector prop nacional. Fix resize/fitBounds (contenedor ancho-0 al construir → sliver). Build 281 págs, browser ✅ (mapa+banderas+leyenda+ficha MO 58,4% FA+selección)
   15-4-toggle-granularidad-departamental-zona: backlog
   15-5-performance-nivel-zona-nacional: backlog
   epic-15-retrospective: optional

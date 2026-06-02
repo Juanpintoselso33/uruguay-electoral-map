@@ -13,6 +13,8 @@ interface Props {
   departamento: string;
 }
 const { eleccion, departamento } = Astro.props;
+// Epic 15: la vista nacional usa el shard '_nacional'; mostrar "Uruguay" en el caption.
+const deptoLabel = departamento === '_nacional' ? 'Uruguay' : departamento;
 
 interface OpcionesDoc {
   opciones: { opcionId: string; nombre: string }[];
@@ -48,7 +50,7 @@ const nivelCol = nivelSingular.charAt(0).toUpperCase() + nivelSingular.slice(1);
   <div class="datatable__scroll">
     <table>
       <caption>
-        Resultados por {nivelSingular} — {departamento}, {eleccion}. Partido ganador, votos del
+        Resultados por {nivelSingular} — {deptoLabel}, {eleccion}. Partido ganador, votos del
         ganador y porcentaje sobre votos válidos. Equivalente textual del mapa.
       </caption>
       <thead>

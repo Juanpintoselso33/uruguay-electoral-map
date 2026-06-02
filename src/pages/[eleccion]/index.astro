@@ -1,0 +1,123 @@
+---
+/**
+ * Vista NACIONAL (Epic 15, Story 15.3) — ruta `/{eleccion}`.
+ * Muestra los 19 departamentos coloreados por ganador agregado (banderas + leyenda + ficha).
+ * Reusa el contrato y los componentes: el shard vive en `_nacional/` (nivel 'departamento'),
+ * que se comporta como una elección PLANA (OpcionAccordion degrada a lista de partidos).
+ * El toggle de granularidad departamental↔zona es Story 15.4; aquí solo el nivel departamental.
+ */
+import { existsSync, readFileSync } from 'node:fs';
+import Base from '../../layouts/Base.astro';
+import ChoroplethMap from '../../components/map/ChoroplethMap.vue';
+import DataTable from '../../components/a11y/DataTable.astro';
+import OpcionAccordion from '../../components/selectors/OpcionAccordion.vue';
+import EleccionSelector from '../../components/selectors/EleccionSelector.vue';
+import Sello from '../../components/ui/Sello.astro';
+import ShareButton from '../../components/share/ShareButton.vue';
+import deptsConfig from '../../config/departments.json';
+
+type DeptEntry = { id: string; label: string; elecciones: string[] };
+const DEPTS = deptsConfig as DeptEntry[];
+
+const ELECCION_LABELS: Record<string, string> = {
+  'internas-2019':   'Elecciones Internas 2019',
+  'internas-2024':   'Elecciones Internas 2024',
+  'nacionales-2014': 'Elecciones Nacionales 2014',
+  'nacionales-2019': 'Elecciones Nacionales 2019',
+  'nacionales-2024': 'Elecciones Nacionales 2024',
+  'balotaje-2014':   'Balotaje 2014',
+  'balotaje-2019':   'Balotaje 2019',
+  'balotaje-2024':   'Balotaje 2024',
+  'plebiscito-allanamientos-2024':    'Plebiscito Allanamientos Nocturnos 2024',
+  'plebiscito-seguridad-social-2024': 'Plebiscito Seguridad Social 2024',
+  'departamentales-2020':             'Elecciones Departamentales y Municipales 2020',
+  'departamentales-2025':             'Elecciones Departamentales y Municipales 2025',
+  'referendum-luc-2022':             'Referéndum LUC 2022',
+  'plebiscito-vivir-sin-miedo-2019': 'Plebiscito Vivir sin Miedo 2019',
+};
+
+export function getStaticPaths() {
+  const depts = deptsConfig as DeptEntry[];
+  const elecciones = new Set<string>();
+  for (const d of depts) for (const e of d.elecciones) elecciones.add(e);
+  // Solo elecciones con shard nacional agregado (Story 15.2).
+  return [...elecciones]
+    .filter((e) => existsSync(`public/data/${e}/_nacional/votes.json`))
+    .map((e) => ({ params: { eleccion: e } }));
+}
+
+const { eleccion } = Astro.params;
+const eleccionLabel = ELECCION_LABELS[eleccion!] ?? eleccion!;
+
+// Elecciones con vista nacional (para el selector de elección, variante nacional).
+const eleccionesNacionales: string[] = [
+  ...new Set(DEPTS.flatMap((d) => d.elecciones)),
+].filter((e) => existsSync(`public/data/${e}/_nacional/votes.json`));
+
+// Pregunta del plebiscito/referéndum como contexto (Story 7.5).
+let preguntaPlebiscito: string | null = null;
+if (eleccion!.startsWith('plebiscito-') || eleccion!.startsWith('referendum-')) {
+  try {
+    const opc = JSON.parse(readFileSync(`public/data/${eleccion}/_nacional/opciones.json`, 'utf8'));
+    preguntaPlebiscito = typeof opc.pregunta === 'string' ? opc.pregunta : null;
+  } catch { /* sin opciones.json → sin banner */ }
+}
+
+const titulo = `Uruguay — ${eleccionLabel} | Mapa nacional`;
+const descripcion = `Resultado nacional por departamento de las ${eleccionLabel} en Uruguay.`;
+const canonicalPath = `/${eleccion}`;
+---
+
+<Base title={titulo} description={descripcion} canonical={canonicalPath}>
+  <main id="main-content" class="mx-auto max-w-3xl">
+    <header class="masthead">
+      <div>
+        <h1 class="masthead__dept">Uruguay</h1>
+        <p class="masthead__eleccion">{eleccionLabel} — mapa nacional</p>
+      </div>
+      <ShareButton client:idle />
+    </header>
+    {preguntaPlebiscito && (
+      <p class="pregunta-banner">
+        <span class="pregunta-banner__prefix">Se vota Sí o No a:</span> {preguntaPlebiscito}
+      </p>
+    )}
+    <!-- Entrar a la vista por-departamento (Montevideo como punto de partida) -->
+    <nav class="dept-nav" aria-label="Ver por departamento">
+      <a class="dept-nav__link dept-nav__link--activo" href={`/${eleccion}`}>Nacional</a>
+      {DEPTS.filter((d) => d.elecciones.includes(eleccion!)).map((dept) => (
+        <a class="dept-nav__link" href={`/${eleccion}/${dept.id}`}>{dept.label}</a>
+      ))}
+    </nav>
+    <EleccionSelector
+      client:idle
+      nacional
+      eleccionesDisponibles={eleccionesNacionales}
+      eleccionActual={eleccion}
+      departamento="_nacional"
+    />
+    <OpcionAccordion client:idle eleccion={eleccion} departamento="_nacional" />
+    <div id="map-persist" transition:persist>
+      <ChoroplethMap
+        client:load
+        eleccion={eleccion}
+        departamento="_nacional"
+        availableLevels={['departamento']}
+      />
+    </div>
+    <DataTable eleccion={eleccion} departamento="_nacional" />
+    <Sello eleccion={eleccion} departamento="_nacional" />
+  </main>
+</Base>
+
+<script>
+// Centrar el link activo del dept-nav (igual que la página por-departamento).
+document.addEventListener('astro:page-load', () => {
+  const nav = document.querySelector<HTMLElement>('.dept-nav');
+  if (!nav) return;
+  let startX = 0, startScroll = 0, dragging = false;
+  nav.addEventListener('mousedown', (e) => { dragging = true; startX = e.pageX; startScroll = nav.scrollLeft; nav.style.cursor = 'grabbing'; e.preventDefault(); });
+  window.addEventListener('mousemove', (e) => { if (!dragging) return; nav.scrollLeft = startScroll - (e.pageX - startX); });
+  window.addEventListener('mouseup', () => { dragging = false; nav.style.cursor = ''; });
+});
+</script>

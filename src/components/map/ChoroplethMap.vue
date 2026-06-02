@@ -1587,6 +1587,15 @@ onMounted(async () => {
       }
       // Activar overlay de circuitos si la URL ya traía ?circ=1.
       if ($circuito.get()) void loadCircuitoOverlay(props.eleccion, props.departamento);
+      // Fix (Epic 15): en algunas rutas (p. ej. la vista nacional, con menos contenido sobre el
+      // mapa) el contenedor puede tener ancho 0 al construir el mapa → el fitBounds inicial queda
+      // mal (la geometría aparece como un sliver). Tras el layout, re-medir y re-ajustar a bounds.
+      // Idempotente en las páginas que ya encajaban (resize no-op + mismo bounds).
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (!map.value) return;
+        m.resize();
+        m.fitBounds(bounds, { padding: 24, animate: false });
+      }));
     })(); });
   } catch (err) {
     status.value = 'error';

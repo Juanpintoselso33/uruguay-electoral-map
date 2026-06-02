@@ -5,8 +5,15 @@ interface Props {
   eleccionesDisponibles: string[];
   eleccionActual: string;
   departamento: string;
+  /** Vista nacional (Epic 15): los links van a `/${id}` (ruta nacional) en vez de `/${id}/${depto}`. */
+  nacional?: boolean;
 }
 const props = defineProps<Props>();
+
+/** Destino de un dot de elección: nacional → `/${id}`, por-depto → `/${id}/${depto}`. */
+function hrefDe(id: string): string {
+  return props.nacional ? `/${id}` : `/${id}/${props.departamento}`;
+}
 
 const META: Record<string, { short: string; type: 'internas' | 'nacionales' | 'balotaje' | 'dptales' | 'plebiscito'; año: number }> = {
   'nacionales-2014':                  { short: 'Nacionales', type: 'nacionales',  año: 2014 },
@@ -113,7 +120,7 @@ onUnmounted(() => {
           </span>
           <a
             v-if="item.disponible"
-            :href="`/${item.id}/${departamento}`"
+            :href="hrefDe(item.id)"
             class="esel__dot"
             :class="{ 'esel__dot--activa': item.id === eleccionActual }"
             :aria-current="item.id === eleccionActual ? 'page' : undefined"

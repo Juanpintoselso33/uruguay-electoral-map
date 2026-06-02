@@ -19,6 +19,7 @@ onMounted(() => { unsubCircuito = $circuito.subscribe((v) => { isCircuito.value 
 onUnmounted(() => { unsubCircuito?.(); });
 
 const BASE_LABELS: Partial<Record<NivelGeografico, string>> = {
+  departamento: 'Departamentos',
   zona:      'Zonas',
   barrio:    'Barrios',
   localidad: 'Localidades',
