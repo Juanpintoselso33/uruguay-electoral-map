@@ -30,6 +30,7 @@ const DEPT_LEVELS: Record<string, NivelGeografico[]> = {
   _nacional: ['departamento', 'zona'],
 };
 import MapLegend from './MapLegend.vue';
+import ResultadoGlobal from './ResultadoGlobal.vue';
 import ZoneSheet from '../sheet/ZoneSheet.vue';
 
 const props = defineProps<{
@@ -84,6 +85,16 @@ interface LegendEntry {
   votos: number;
   flagUrl?: string | null;
 }
+/** Resultado agregado de la geografía mostrada (% de voto real, no polígonos ganados). */
+interface ResultadoEntry {
+  opcionId: string;
+  sigla: string;
+  nombre: string;
+  color: string;
+  flagUrl?: string | null;
+  votos: number;
+  pct: number;
+}
 
 let COLOR_SIN_DATOS = '#e5e7eb';
 const INTENSIDAD_LIGHT = '#f0f4f8';
@@ -97,6 +108,9 @@ const sinDatos = ref(0);
 // sin ubicación geográfica real) → se anotan como limitación, no se pierden silenciosamente.
 const votosSinUbicacion = ref(0);
 const zonasSinUbicacion = ref(0);
+// Resultado agregado (% de voto) de la geografía mostrada — independiente de la selección.
+const resultadoGlobal = ref<ResultadoEntry[]>([]);
+const resultadoValidos = ref(0);
 const selected = ref<SelInfo | null>(null);
 const map = shallowRef<MlMap | null>(null);
 const fcRef = shallowRef<FeatureCollection | null>(null);
@@ -359,6 +373,31 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
     })
     .sort((a, b) => b.votos - a.votos);
   origLegend = legend.value;
+
+  // Resultado agregado (% de voto real) — se suma desde votes.zonas (la fuente cruda del shard, sin
+  // las entradas sintéticas del merge "a-b-c" que duplicarían las series constituyentes). Incluye las
+  // series sin ubicación geográfica (igual que la nota de la leyenda: contabilizadas en los totales).
+  {
+    const votosPorOpcion = new Map<string, number>();
+    let totalValidos = 0;
+    for (const z of votes.zonas) {
+      totalValidos += z.validos;
+      for (const { opcionId, votos: v } of z.porOpcion) {
+        votosPorOpcion.set(opcionId, (votosPorOpcion.get(opcionId) ?? 0) + v);
+      }
+    }
+    resultadoValidos.value = totalValidos;
+    resultadoGlobal.value = [...votosPorOpcion.entries()]
+      .map(([opcionId, v]) => {
+        const nombre = nombrePorOpcion.get(opcionId) ?? opcionId;
+        const meta = resolveParty(nombre, eleccion);
+        return {
+          opcionId, sigla: meta.sigla, nombre, color: meta.color, flagUrl: meta.flagUrl,
+          votos: v, pct: totalValidos > 0 ? (v / totalValidos) * 100 : 0,
+        };
+      })
+      .sort((a, b) => b.votos - a.votos);
+  }
 
   ciudadesGrandesSet = new Set<string>();
   if (metaRes?.ok) {
@@ -1808,6 +1847,12 @@ onUnmounted(() => {
         @click="setColoreo(mo)"
       >{{ mo === 'ganador' ? 'Ganador' : mo === 'share' ? 'Share %' : 'Heatmap' }}</button>
     </div>
+
+    <ResultadoGlobal
+      :entradas="resultadoGlobal"
+      :validos="resultadoValidos"
+      :titulo="departamento === '_nacional' ? 'Resultado nacional' : 'Resultado'"
+    />
 
     <MapLegend :entradas="legend" :sin-datos="sinDatos" :votos-sin-ubicacion="votosSinUbicacion" :zonas-sin-ubicacion="zonasSinUbicacion" />
   </section>
