@@ -208,6 +208,8 @@ def main():
             c2l, methods = build_circ2local_match(dep, plan_by_dept.get(dep, []))
             cat = load_catalog(dep)
         order=[lo["localId"] for lo in cat["locales"]]
+        # metadata por local para enriquecer la ficha (nombre/dirección/habilitados)
+        cat_meta={lo["localId"]:{"nombre":lo.get("nombre"),"direccion":lo.get("direccion"),"habilitados":lo.get("habilitados")} for lo in cat["locales"]}
         # construir circ_votes (filtrando opciones no canónicas → log)
         unknown=set()
         circ_votes={}
@@ -222,7 +224,7 @@ def main():
         # agregar a local
         sys.path.insert(0, os.path.join(ROOT,"scripts"))
         from votes_local_lib import aggregate_to_local
-        shard, rep = aggregate_to_local(circ_votes, c2l, a.eleccion, dep, a.tipo, local_order=order)
+        shard, rep = aggregate_to_local(circ_votes, c2l, a.eleccion, dep, a.tipo, local_order=order, cat_meta=cat_meta)
         out=os.path.join(ROOT,f"public/data/{a.eleccion}/{dep}/votes-local.json")
         os.makedirs(os.path.dirname(out),exist_ok=True)
         json.dump(shard, open(out,"w",encoding="utf-8"), ensure_ascii=False)

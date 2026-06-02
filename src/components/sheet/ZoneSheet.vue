@@ -32,6 +32,9 @@ interface SelInfo {
   seleccionPct?: number;
   desglose?: DesgloseGrupo[];
   esCiudadGrande?: boolean;
+  // Ficha por circuito/local: metadata del local + desglose de sus circuitos.
+  local?: { nombre: string; direccion: string; habilitados: number };
+  circuitos?: { circuito: string; sigla: string; nombre: string; color: string; flagUrl?: string | null; validos: number }[];
 }
 
 const props = defineProps<{
@@ -74,6 +77,13 @@ function fmt(n: number): string {
           @click="emit('close')"
         >✕</button>
       </header>
+
+      <!-- Ficha por circuito/local: dirección + habilitados del lugar de votación -->
+      <p v-if="sel.local" class="zone-sheet__local-meta">
+        <span v-if="sel.local.direccion">{{ sel.local.direccion }}</span>
+        <span v-if="sel.local.habilitados" class="zone-sheet__local-hab">· {{ fmt(sel.local.habilitados) }} habilitados</span>
+        <span v-if="sel.circuitos && sel.circuitos.length" class="zone-sheet__local-hab">· {{ sel.circuitos.length }} circuito(s)</span>
+      </p>
 
       <p v-if="sel.esCiudadGrande" class="zone-sheet__degradacion">
         Vista por barrio no disponible aún — mostrando resultado agregado de la ciudad
@@ -167,6 +177,20 @@ function fmt(n: number): string {
             <dd>{{ fmt(sel.observados) }}</dd>
           </div>
         </dl>
+
+        <!-- Ficha por circuito/local: desglose de los circuitos que votan en este local -->
+        <div v-if="sel.circuitos && sel.circuitos.length > 1" class="zone-sheet__circuitos">
+          <span class="zone-sheet__circuitos-titulo">Circuitos que votan acá</span>
+          <ul class="zone-sheet__circuitos-lista">
+            <li v-for="c in sel.circuitos" :key="c.circuito" class="zone-sheet__circuito">
+              <span class="zone-sheet__circuito-n">Circuito {{ c.circuito }}</span>
+              <img v-if="c.flagUrl" :src="c.flagUrl" :alt="c.sigla" class="zone-sheet__circuito-flag" aria-hidden="true" />
+              <span v-else class="zone-sheet__circuito-swatch" :style="{ background: c.color }" aria-hidden="true"></span>
+              <span class="zone-sheet__circuito-sigla">{{ c.sigla }}</span>
+              <span class="zone-sheet__circuito-votos">{{ fmt(c.validos) }}</span>
+            </li>
+          </ul>
+        </div>
 
         <p class="zone-sheet__fuente">Corte Electoral — escrutinio definitivo</p>
       </div>
@@ -418,4 +442,38 @@ function fmt(n: number): string {
   padding: 0.375rem 1rem 0;
   margin: 0;
 }
+
+/* Ficha por circuito/local */
+.zone-sheet__local-meta {
+  font-size: 0.75rem;
+  color: var(--color-ink-muted);
+  padding: 0 1rem;
+  margin: -0.25rem 0 0;
+  line-height: 1.4;
+}
+.zone-sheet__local-hab { white-space: nowrap; }
+.zone-sheet__circuitos {
+  margin-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.5rem;
+}
+.zone-sheet__circuitos-titulo {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-ink-muted);
+}
+.zone-sheet__circuitos-lista { list-style: none; margin: 0.375rem 0 0; padding: 0; }
+.zone-sheet__circuito {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+  font-size: 0.8125rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.zone-sheet__circuito-n { flex: 1; color: var(--color-ink-muted); }
+.zone-sheet__circuito-flag { width: 1.25rem; height: 0.83rem; border-radius: 2px; flex: none; box-shadow: 0 0 0 1px rgba(0,0,0,.15); object-fit: cover; }
+.zone-sheet__circuito-swatch { width: 0.8rem; height: 0.8rem; border-radius: 2px; flex: none; box-shadow: inset 0 0 0 1px rgba(0,0,0,.15); }
+.zone-sheet__circuito-sigla { font-weight: 700; min-width: 2.5rem; }
+.zone-sheet__circuito-votos { font-variant-numeric: tabular-nums; color: var(--color-ink-muted); }
 </style>

@@ -15,7 +15,7 @@ import type { Feature, FeatureCollection, Polygon, MultiPolygon, Position } from
 import type { Topology, GeometryCollection } from 'topojson-specification';
 import { feature as topoFeature } from 'topojson-client';
 import { resolveParty } from '../../lib/party-meta';
-import type { VotosShard } from '../../lib/contracts';
+import type { VotosShard, AgregadoZona } from '../../lib/contracts';
 import { $selection, $level, $comparison, $circuito, bindToLocation, commit, hydrateStores } from '../../stores/map-state';
 import { parseUrl } from '../../lib/url-state';
 import type { NivelGeografico } from '../../lib/contracts';
@@ -63,7 +63,11 @@ interface SelInfo {
   seleccionPct?: number;
   desglose?: DesgloseGrupo[];
   esCiudadGrande?: boolean;
+  // Ficha por circuito/local: metadata del local + desglose de sus circuitos.
+  local?: { nombre: string; direccion: string; habilitados: number };
+  circuitos?: { circuito: string; sigla: string; nombre: string; color: string; flagUrl?: string | null; validos: number }[];
 }
+interface CircuitoBreak { circuito: string; ganadorOpcionId: string; validos: number }
 interface DesgloseGrupo {
   lemaNombre: string;
   sigla: string;
@@ -400,6 +404,9 @@ let flagCtx: CanvasRenderingContext2D | null = null;
 let flagsVisible = true;
 // FeatureCollection de circuitos con datos de partido, para dibujar en el canvas overlay.
 let circuitoFCForCanvas: FeatureCollection | null = null;
+// Ficha por circuito/local: dato completo de cada local/circuito del overlay (norm(geoId) → zona).
+type ZonaLocal = AgregadoZona & { local?: { nombre: string; direccion: string; habilitados: number }; circuitos?: CircuitoBreak[] };
+let circuitoZonaPorGeo = new Map<string, ZonaLocal>();
 
 /** Carga los SVGs de banderas como HTMLImageElement para el canvas overlay. */
 async function loadFlagImages(): Promise<void> {
@@ -1289,6 +1296,7 @@ async function reloadData(eleccion: string, departamento: string, nivel: string)
   catalogoOpcMeta = null;
   catalogoPromise = null;
   hojaVotos = new Map();
+  circuitoZonaPorGeo = new Map();   // ficha por circuito/local: limpiar dato del overlay al cambiar depto/elección
   lemasCargados = new Set();
   hojaGeoPromise = null; // Story 7.8: re-cargar el consolidado hoja-{nivel} al cambiar nivel/depto
   seleccionFCActive = false;
@@ -1372,6 +1380,7 @@ async function loadCircuitoOverlay(eleccion: string, departamento: string): Prom
     const geo = topoFeature(topo, topo.objects[objName] as GeometryCollection) as FeatureCollection;
 
     const zonaPorGeo = new Map(votes.zonas.map((z) => [norm(z.geoId), z]));
+    circuitoZonaPorGeo = new Map(votes.zonas.map((z) => [norm(z.geoId), z as ZonaLocal]));
     for (const f of geo.features) {
       const name = String((f.properties as { name: string }).name);
       const zona = zonaPorGeo.get(norm(name));
@@ -1420,6 +1429,9 @@ async function loadCircuitoOverlay(eleccion: string, departamento: string): Prom
       m.on('mouseleave', 'circuitos-circle', () => { m.getCanvas().style.cursor = ''; });
     }
     m.setLayoutProperty('circuitos-circle', 'visibility', 'visible');
+    // Si la URL ya traía ?zona=<localId> (deep-link), abrir su ficha ahora que el overlay cargó.
+    const zsel = $selection.get().zona;
+    if (zsel && circuitoZonaPorGeo.has(norm(zsel))) selectCircuitoLocal(zsel);
   } catch {
     // Sin datos de circuito — silencioso
   }
@@ -1482,14 +1494,45 @@ function selectByName(name: string, fc: FeatureCollection): void {
   }
 }
 
+/** Ficha de un circuito/local del overlay (Epic "ficha por circuito"): total del local + metadata
+ *  + desglose de los circuitos que votan ahí. El dato viene del overlay (circuitoZonaPorGeo). */
+function selectCircuitoLocal(name: string): void {
+  const z = circuitoZonaPorGeo.get(norm(name));
+  if (!z) return;
+  const ganNombre = opcNombreMap.get(z.ganadorOpcionId) ?? z.ganadorOpcionId;
+  const ganMeta = resolveParty(ganNombre, activeEleccion);
+  const votoGanador = z.porOpcion.find((o) => o.opcionId === z.ganadorOpcionId)?.votos ?? 0;
+  const noP = z.noPartidarios ?? { enBlanco: 0, anulados: 0, observados: 0 };
+  const circuitos = (z.circuitos ?? []).map((c) => {
+    const nm = opcNombreMap.get(c.ganadorOpcionId) ?? c.ganadorOpcionId;
+    const m = resolveParty(nm, activeEleccion);
+    return { circuito: c.circuito, sigla: m.sigla, nombre: nm, color: m.color, flagUrl: m.flagUrl, validos: c.validos };
+  });
+  selected.value = {
+    geoId: name,
+    label: z.local?.nombre ?? name,
+    sigla: ganMeta.sigla, nombre: ganNombre, color: ganMeta.color, flagUrl: ganMeta.flagUrl,
+    votoGanador, validos: z.validos,
+    pct: z.validos > 0 ? (votoGanador / z.validos) * 100 : 0,
+    enBlanco: noP.enBlanco, anulados: noP.anulados, observados: noP.observados,
+    pctOpcionActiva: null,
+    local: z.local, circuitos,
+  };
+}
+
 let prevSelId: string | null = null;
 function applySelection(zona: string | null): void {
   const m = map.value;
   if (!m || !m.getSource('zonas')) return;
   if (prevSelId !== null) m.setFeatureState({ source: 'zonas', id: prevSelId }, { sel: false });
   if (zona) {
-    m.setFeatureState({ source: 'zonas', id: zona }, { sel: true });
-    if (fcRef.value) selectByName(zona, fcRef.value);
+    // Circuito/local activo: la ficha sale del dato del overlay (localIds no colisionan con zonas base).
+    if (circuitoZonaPorGeo.has(norm(zona))) {
+      selectCircuitoLocal(zona);
+    } else {
+      m.setFeatureState({ source: 'zonas', id: zona }, { sel: true });
+      if (fcRef.value) selectByName(zona, fcRef.value);
+    }
   } else {
     selected.value = null;
   }

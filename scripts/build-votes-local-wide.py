@@ -131,7 +131,8 @@ def main():
         if cfg["mode"]=="direct": c2l,cat=c2l_direct(dep); meth={}
         else: c2l,meth,cat=c2l_match(dep, plan.get(dep,[]))
         order=[lo["localId"] for lo in cat["locales"]]
-        shard,rep=aggregate_to_local(crvs, c2l, el, dep, cfg["tipo"], local_order=order)
+        cat_meta={lo["localId"]:{"nombre":lo.get("nombre"),"direccion":lo.get("direccion"),"habilitados":lo.get("habilitados")} for lo in cat["locales"]}
+        shard,rep=aggregate_to_local(crvs, c2l, el, dep, cfg["tipo"], local_order=order, cat_meta=cat_meta)
         out=os.path.join(ROOT,f"public/data/{el}/{dep}/votes-local.json")
         os.makedirs(os.path.dirname(out),exist_ok=True); json.dump(shard,open(out,"w",encoding="utf-8"),ensure_ascii=False)
         tot_loc+=len(shard["zonas"]); tot_vot+=sum(p["votos"] for z in shard["zonas"] for p in z["porOpcion"])
