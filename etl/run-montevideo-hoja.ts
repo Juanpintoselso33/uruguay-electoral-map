@@ -21,7 +21,7 @@ import { normName } from './lib/normalize';
 
 const ODN_CSV = 'public/montevideo_odn.csv';
 const ODD_CSV = 'public/montevideo_odd.csv';
-const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.json';
+const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.2024.json';
 const VOTES_LEMA_IN = 'public/data/internas-2024/montevideo/votes.json';
 const CATALOGO_OUT = 'public/data/internas-2024/montevideo/catalogo.json';
 const HOJA_DIR = 'public/data/internas-2024/montevideo/hoja';

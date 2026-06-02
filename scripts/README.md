@@ -36,6 +36,15 @@ Corren en el build (`package.json → build`) y/o a demanda:
 | `build-nacional-votes.py` | `npm run etl:nacional-votes` | Votos consolidados a nivel nacional. |
 | `build-annex-series.py` | `npm run etl:annex` | Anexa series sin geometría propia. |
 
+## Mapeo CRV → barrio de Montevideo (por ciclo)
+
+| Script | Función |
+|--------|---------|
+| `build-circuito-barrio-cycles.py` | Genera un `data/mappings/montevideo-circuito-barrio.{ciclo}.json` por ciclo electoral (CRV→barrio). Tiers: dir → geo (cache) → coarse → tok → serie. Los CRV se reasignan entre elecciones → **un mapeo por ciclo, no compartido**. |
+| `geocode-missing-barrios.py` | Geocodifica (Nominatim/OSM) las direcciones ausentes del georef-2024 y mantiene `data/mappings/montevideo-geocode-cache.json` (resumible, **commiteado** → build reproducible). Guard: PIP descarta calles homónimas fuera de MVD. |
+
+> Contexto y decisión: [`docs/adr/0001-circuito-barrio-por-ciclo.md`](../docs/adr/0001-circuito-barrio-por-ciclo.md) · diagnóstico: [`docs/AUDIT-carrasco-2014-circuito-barrio.md`](../docs/AUDIT-carrasco-2014-circuito-barrio.md). Tras regenerar mapeos y re-correr runners MVD, correr `sweep-party-consistency.py --apply` y `build-nacional-votes.py`.
+
 ## Utilidades y auditoría
 
 - `extract-vivir-sin-miedo.py` — extrae el Sí/No del plebiscito 2019 desde el PDF oficial, circuito por circuito.

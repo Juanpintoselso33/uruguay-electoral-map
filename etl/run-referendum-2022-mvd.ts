@@ -27,7 +27,7 @@ import { buildShard, writeShard } from './load/emit-shard';
 import { normName } from './lib/normalize';
 
 const CSV = 'data/raw/electoral/referendum-2022/refer-ndum-contra-135-art-culos-de-la-le.csv';
-const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.json';
+const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.referendum-2022.json';
 const DEPTO = 'montevideo';
 const ELECCION = 'referendum-luc-2022';
 const PREGUNTA = '¿Está a favor de derogar los 135 artículos de la Ley de Urgente Consideración (LUC)?';

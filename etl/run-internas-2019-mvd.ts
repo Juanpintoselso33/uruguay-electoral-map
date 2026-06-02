@@ -25,7 +25,7 @@ import { checkCoverage } from './gates/coverage';
 import { normName, slug } from './lib/normalize';
 
 const CSV = 'data/raw/electoral/internas-2019/desglose-de-votos.csv';
-const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.json';
+const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.internas-2019.json';
 const GEO_IN = 'public/data/geo/montevideo/zona.topo.json';
 const SHARD_OUT = 'public/data/internas-2019/montevideo/votes.json';
 const OPCIONES_OUT = 'public/data/internas-2019/montevideo/opciones.json';

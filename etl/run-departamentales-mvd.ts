@@ -29,7 +29,7 @@ import { normName } from './lib/normalize';
 
 const DESG = 'data/raw/electoral/departamentales-2025/desglose-de-votos.csv';
 const INTG = 'data/raw/electoral/departamentales-2025/integracion-de-hojas-full.csv';
-const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.json';
+const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.departamentales-2025.json';
 const DEP = 'MO';
 const ELECCION = 'departamentales-2025';
 const DEPTO = 'montevideo';

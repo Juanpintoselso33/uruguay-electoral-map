@@ -23,7 +23,7 @@ import { normName } from './lib/normalize';
 
 const CSV = 'data/raw/electoral/nacionales-2019/montevideo_odd.csv';
 const INTG = 'data/raw/electoral/nacionales-2019/integracion-hojas.csv'; // Latin-1
-const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.json';
+const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.2019.json';
 const VOTES_LEMA_IN = 'public/data/nacionales-2019/montevideo/votes.json';
 const CATALOGO_OUT = 'public/data/nacionales-2019/montevideo/catalogo.json';
 const HOJA_DIR = 'public/data/nacionales-2019/montevideo/hoja';

@@ -23,7 +23,7 @@ import { buildShard, writeShard } from './load/emit-shard';
 import { normName } from './lib/normalize';
 
 const CSV = 'data/raw/electoral/internas-2019/desglose-de-votos.csv';
-const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.json';
+const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.internas-2019.json';
 const ELECCION = 'internas-2019';
 const VL = 'vl';
 

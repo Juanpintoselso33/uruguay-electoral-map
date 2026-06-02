@@ -7,14 +7,13 @@
  * geometría ahora viene de v_sig_barrios.json (limpio, nombres = mapping) y los votos
  * se agregan por circuito, no por la columna ZONA. Ejecutar: esbuild bundle + node.
  */
-import { mkdirSync, writeFileSync, statSync } from 'node:fs';
+import { mkdirSync, writeFileSync, statSync, readFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { feature } from 'topojson-client';
 import type { GeometryCollection } from 'topojson-specification';
 import type { FeatureCollection } from 'geojson';
 import { cleanFeatureCollection, topojsonFromFC } from './geometry/build-topojson';
 import { dissolveEmpty } from './geometry/dissolve-empty';
-import { buildCircuitoBarrio } from './geometry/build-circuito-barrio';
 import { assertGeometryBudget } from './gates/geometry-size';
 import { parseCsv } from './extract/parse-csv';
 import { aggregateByCircuito } from './transform/aggregate-by-circuito';
@@ -29,11 +28,9 @@ const GEO_NAME_PROP = 'BARRIO';
 const BUDGET_GZ = 500 * 1024;
 
 const CSV = 'public/montevideo_odn.csv';
-// Geolocalización oficial: circuito → dirección → coords (georef Corte) → PIP → barrio.
-// Reemplaza el serie-dominante de montevideo-crv-barrio.json (rescata los barrios grises).
-const GEOREF = 'data/raw/geographic/plan-circuital-georreferencia-nacional-2024.csv';
-const PLAN_INTERNAS = 'data/raw/electoral/plan-circuital.csv';
-const MAPPING_OUT = 'data/mappings/montevideo-circuito-barrio.json';
+// Mapeo del ciclo 2024 (CRV→coords→PIP georef-direct), generado por
+// scripts/build-circuito-barrio-cycles.py. Debe correr ANTES que este ETL.
+const MAPPING_2024 = 'data/mappings/montevideo-circuito-barrio.2024.json';
 const SHARD_OUT = 'public/data/internas-2024/montevideo/votes.json';
 const OPCIONES_OUT = 'public/data/internas-2024/montevideo/opciones.json';
 const ESC_CANONICO = 'Departamental';
@@ -80,18 +77,12 @@ function geometryStep(hasVotes: Set<string>): { names: string[] } {
 }
 
 function votesStep(): { shard: ReturnType<typeof buildShard>; totalCanonico: number; unmappedVotos: number } {
-  console.log('--- 1) Votos (CIRCUITO → BARRIO por geolocalización oficial) ---');
+  console.log('--- 1) Votos (CIRCUITO → BARRIO, mapeo 2024 georef-direct) ---');
   const rows = parseCsv(CSV);
-  const { circuitoToBarrio, stats } = buildCircuitoBarrio({
-    georefPath: GEOREF,
-    planInternasPath: PLAN_INTERNAS,
-    barriosGeojsonPath: GEO_SRC,
-  });
-  console.log(
-    `circuito→barrio: ${stats.viaDireccion} via dirección + ${stats.viaSerie} via serie (fallback) = ${stats.barrios} barrios cubiertos`,
-  );
-  mkdirSync(dirname(MAPPING_OUT), { recursive: true });
-  writeFileSync(MAPPING_OUT, JSON.stringify({ crvToBarrio: circuitoToBarrio }, null, 0), 'utf8');
+  // Mapeo del ciclo 2024 (CRV→coords→PIP), generado por scripts/build-circuito-barrio-cycles.py.
+  // Reemplaza el buildCircuitoBarrio por-dirección (que tenía ~44% de fallback por serie).
+  const { crvToBarrio: circuitoToBarrio } = JSON.parse(readFileSync(MAPPING_2024, 'utf8')) as { crvToBarrio: Record<string, string> };
+  console.log(`circuito→barrio: ${Object.keys(circuitoToBarrio).length} circuitos (georef-direct)`);
   const agg = aggregateByCircuito(rows, { escrutinioCanonico: ESC_CANONICO, crvToBarrio: circuitoToBarrio });
   console.log(
     `CSV ${rows.length} filas → barrios ${agg.zonas.length} · total canónico ${agg.totalCanonico.toLocaleString('es-UY')} · ` +

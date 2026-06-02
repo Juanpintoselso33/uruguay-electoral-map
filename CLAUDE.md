@@ -47,7 +47,8 @@ El detalle completo está en [`public/data/README.md`](public/data/README.md). E
 - **Voto canónico** de una sola etapa de escrutinio (la definitiva); nunca sumar a través de etapas.
 - **Unidad base = opción electoral × unidad geográfica** (hoja en internas/legislativas; candidato/lema en balotaje/presidencial). Modelo **agnóstico al tipo de elección**.
 - **Blancos / anulados / observados** son categorías aparte (sin partido ni hoja); reconciliar contra **votos válidos**.
-- **Join geográfico varía:** Montevideo por barrio/zona; interior por mapeo curado **serie → barrio/localidad** (no por ZONA directa, no por join espacial automático).
+- **Join geográfico varía:** Montevideo une **CIRCUITO (CRV) → barrio** por geolocalización (dirección → coords → point-in-polygon contra los 62 barrios); interior por mapeo curado **serie → barrio/localidad**. Nunca por la columna `ZONA` directa ni por join espacial de series.
+- **El mapeo CRV → barrio de Montevideo es POR CICLO ELECTORAL, no compartido:** los números de CRV se reasignan entre elecciones, así que un único mapeo aplicado a todas produce joins falsos (el bug "Carrasco FA 66,5% en 2014"). Se generan con `scripts/build-circuito-barrio-cycles.py` (un `data/mappings/montevideo-circuito-barrio.{ciclo}.json` por ciclo) + cache de geocoding `montevideo-geocode-cache.json`. Ver [`docs/adr/0001-circuito-barrio-por-ciclo.md`](docs/adr/0001-circuito-barrio-por-ciclo.md).
 - **Granularidad por hoja NO se downscopea** a nivel-lema: siempre ingerir las contiendas completas con hoja, aunque el join sea laborioso.
 - GeoJSON/TopoJSON ≤ 3 MB por archivo (simplificar si excede).
 

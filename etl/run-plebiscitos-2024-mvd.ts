@@ -18,7 +18,7 @@ import { buildShard, writeShard } from './load/emit-shard';
 import { normName } from './lib/normalize';
 
 const CSV = 'data/raw/electoral/nacionales-2024/totales-generales-plebiscitos.csv';
-const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.json';
+const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.2024.json';
 const DEPTO = 'montevideo';
 
 interface Pleb { eleccionId: string; nombre: string; col: string; pregunta: string }

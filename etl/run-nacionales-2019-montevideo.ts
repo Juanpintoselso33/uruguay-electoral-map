@@ -19,7 +19,7 @@ import { reconcile } from './gates/reconcile';
 import { checkCoverage } from './gates/coverage';
 
 const CSV = 'data/raw/electoral/nacionales-2019/montevideo_odd.csv';
-const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.json';
+const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.2019.json';
 const GEO_IN = 'public/data/geo/montevideo/zona.topo.json';
 const SHARD_OUT = 'public/data/nacionales-2019/montevideo/votes.json';
 const OPCIONES_OUT = 'public/data/nacionales-2019/montevideo/opciones.json';

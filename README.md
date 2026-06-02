@@ -109,6 +109,8 @@ npm run gate:all         # performance + accesibilidad + Core Web Vitals
 
 El modelo es **agnóstico al tipo de elección** y respeta las invariantes del sistema electoral uruguayo (voto canónico por etapa de escrutinio, opción×geografía como unidad base, blancos/anulados como categorías aparte, etc.). El contrato de datos completo está documentado en **[`public/data/README.md`](public/data/README.md)**.
 
+En Montevideo los votos se ubican en el mapa por **circuito → barrio** (geolocalización: dirección → coordenada → *point-in-polygon*), con un mapeo **por ciclo electoral** porque los números de circuito se reasignan entre elecciones. La decisión de diseño está en **[`docs/adr/0001-circuito-barrio-por-ciclo.md`](docs/adr/0001-circuito-barrio-por-ciclo.md)**.
+
 ## 📚 Fuentes de datos y atribución
 
 - **Datos electorales:** [Corte Electoral de Uruguay](https://www.corteelectoral.gub.uy/) — [Catálogo de Datos Abiertos](https://catalogodatos.gub.uy/).

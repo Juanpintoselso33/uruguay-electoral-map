@@ -19,7 +19,7 @@ import { reconcile } from './gates/reconcile';
 import { checkCoverage } from './gates/coverage';
 
 const CSV = 'data/raw/electoral/balotaje-2024/balotaje-2024.csv';
-const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.json';
+const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.2024.json';
 const GEO_IN = 'public/data/geo/montevideo/zona.topo.json';
 const SHARD_OUT = 'public/data/balotaje-2024/montevideo/votes.json';
 const OPCIONES_OUT = 'public/data/balotaje-2024/montevideo/opciones.json';

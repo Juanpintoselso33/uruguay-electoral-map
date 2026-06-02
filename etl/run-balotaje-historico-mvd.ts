@@ -20,12 +20,14 @@ import { parseCsv } from './extract/parse-csv';
 import { buildShard, writeShard } from './load/emit-shard';
 import { normName } from './lib/normalize';
 
-const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.json';
 const DEPTO = 'montevideo';
 
 interface Bal {
   eleccionId: string;
   csv: string;
+  // Mapeo CRV→barrio del CICLO del balotaje (los CRV se reasignan entre elecciones;
+  // ver docs/AUDIT-carrasco-2014-circuito-barrio.md). NO el mapeo único de 2024.
+  mapping: string;
   faCol: string;
   pnCol: string;
   faNombre: string;
@@ -36,11 +38,13 @@ interface Bal {
 const BALOTAJES: Bal[] = [
   {
     eleccionId: 'balotaje-2014', csv: 'data/raw/electoral/balotaje-2014/balotaje-2014.csv',
+    mapping: 'data/mappings/montevideo-circuito-barrio.2014.json',
     faCol: 'Total_Vazquez_Sendic', pnCol: 'Total_Lacalle Pou_Larrañaga',
     faNombre: 'Frente Amplio', pnNombre: 'Partido Nacional', faMinPct: 55, faMaxPct: 70,
   },
   {
     eleccionId: 'balotaje-2019', csv: 'data/raw/electoral/balotaje-2019/balotaje-2019.csv',
+    mapping: 'data/mappings/montevideo-circuito-barrio.2019.json',
     faCol: 'Total_Martinez_Villar', pnCol: 'Total_Lacalle Pou_Argimon',
     faNombre: 'Frente Amplio', pnNombre: 'Partido Nacional', faMinPct: 52, faMaxPct: 65,
   },
@@ -55,9 +59,9 @@ function resolveBarrio(map: Record<string, string>, crv: string): string | undef
 
 function main(): void {
   console.log('=== ETL Balotajes históricos (2014, 2019) Montevideo (Story 7.7) ===');
-  const { crvToBarrio } = JSON.parse(readFileSync(MAPPING_IN, 'utf8')) as { crvToBarrio: Record<string, string> };
 
   for (const bal of BALOTAJES) {
+    const { crvToBarrio } = JSON.parse(readFileSync(bal.mapping, 'utf8')) as { crvToBarrio: Record<string, string> };
     const rows = parseCsv(bal.csv).filter((r) => r['Departamento'] === 'MO');
     interface Acc { display: string; fa: number; pn: number; enBlanco: number; anulados: number; observados: number }
     const porBarrio = new Map<string, Acc>();

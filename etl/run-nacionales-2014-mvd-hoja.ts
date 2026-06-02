@@ -17,7 +17,7 @@ import { buildShard, writeShard } from './load/emit-shard';
 import { normName } from './lib/normalize';
 
 const CSV = 'data/raw/electoral/nacionales-2014/desglose-de-votos.csv';
-const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.json';
+const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.2014.json';
 const VOTES_LEMA_IN = 'public/data/nacionales-2014/montevideo/votes.json';
 const CATALOGO_OUT = 'public/data/nacionales-2014/montevideo/catalogo.json';
 const HOJA_DIR = 'public/data/nacionales-2014/montevideo/hoja';

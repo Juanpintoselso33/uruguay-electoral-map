@@ -24,8 +24,8 @@ flowchart LR
 | `extract/` | Parseo de CSV y normalización de encoding. |
 | `transform/` | Agregaciones por serie, localidad, circuito, barrio y hoja; lógica agnóstica al tipo de elección (`aggregate-*.ts`). |
 | `load/` | Emisión de los shards JSON finales (`emit-shard.ts`). |
-| `geometry/` | Construcción y simplificación de TopoJSON; join circuito↔barrio. |
-| `mappings/` | Tablas de mapeo geográfico (serie → barrio / localidad), curadas manualmente por capital. |
+| `geometry/` | Construcción y simplificación de TopoJSON; join circuito↔barrio (el generador vigente es Python, ver `scripts/`). |
+| `mappings/` | Lógica de mapeo geográfico. Las tablas viven en `data/mappings/`: serie→barrio/localidad (interior, curado) y **`montevideo-circuito-barrio.{ciclo}.json`** (CRV→barrio, **por ciclo**). |
 | `lib/` | Utilidades compartidas: normalización, mapeos serie-barrio / serie-localidad. |
 | `gates/` | Validaciones que corren en build: cobertura de zonas, reconciliación de totales, tamaño de geometría. |
 | `og/` | Generación de imágenes Open Graph. |
@@ -43,6 +43,19 @@ npm run etl:vivir-sin-miedo            # plebiscito 2019 (desde PDF oficial)
 ```
 
 Ver `package.json` (`scripts.etl:*`) para el catálogo completo (~50 runners).
+
+## Regenerar Montevideo (mapeo CRV→barrio por ciclo)
+
+El join CRV→barrio de Montevideo se construye **por ciclo** (los CRV se reasignan entre elecciones; ver [`docs/adr/0001-circuito-barrio-por-ciclo.md`](../docs/adr/0001-circuito-barrio-por-ciclo.md)). Orden para regenerar:
+
+```bash
+python scripts/geocode-missing-barrios.py          # 1) cache de geocoding (resumible; commitear)
+python scripts/build-circuito-barrio-cycles.py     # 2) un mapeo por ciclo en data/mappings/
+npm run etl:montevideo && npm run etl:montevideo-hoja  # 3) re-correr runners MVD afectados…
+#   …+ nacionales/internas/balotaje/plebiscitos/departamentales/referendum MVD de cada ciclo
+python scripts/sweep-party-consistency.py --apply  # 4) el ETL revierte nombres canónicos de partido
+python scripts/build-nacional-votes.py             # 5) reconsolidar la vista nacional
+```
 
 ## Invariantes que respeta
 

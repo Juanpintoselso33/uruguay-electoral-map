@@ -22,7 +22,7 @@ import { normName } from './lib/normalize';
 
 const CSV = 'data/raw/electoral/nacionales-2024/desglose-de-votos.csv';
 const INTG = 'data/raw/electoral/nacionales-2024/integracion-de-hojas.csv'; // UTF-8 (2024)
-const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.json';
+const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.2024.json';
 const VOTES_LEMA_IN = 'public/data/nacionales-2024/montevideo/votes.json';
 const CATALOGO_OUT = 'public/data/nacionales-2024/montevideo/catalogo.json';
 const HOJA_DIR = 'public/data/nacionales-2024/montevideo/hoja';

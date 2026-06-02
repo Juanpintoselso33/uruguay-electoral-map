@@ -45,9 +45,10 @@ Estas reglas son **durables** y todo el modelo las respeta. No replicar datos qu
 - Sin duplicados (opción × geografía) dentro de una misma etapa. Votos ≥ 0.
 
 ### Join geográfico (varía según el mapa)
-- **Mapa por barrio/zona** (Montevideo): join `ZONA ↔ GeoJSON (BARRIO | texto | zona)`.
+- **Mapa por barrio/zona** (Montevideo): join **`CIRCUITO (CRV) → barrio`** por geolocalización (dirección del local → coordenada → *point-in-polygon* contra los 62 barrios de `v_sig_barrios.json`). **No** se usa la columna `ZONA` directa.
 - **Mapa por serie** (interior): join vía mapeo curado `SERIE → barrio/localidad`, **no** por `ZONA` directa.
 - El mapeo serie↔barrio se cura **manualmente por capital**: no existe un join espacial automático correcto.
+- **El mapeo CRV → barrio de Montevideo es POR CICLO ELECTORAL.** Los números de CRV se **reasignan entre elecciones**; reutilizar un único mapeo produce joins falsos (caso testigo: "FA 66,5% en Carrasco 2014", que en realidad era voto de Malvín Norte/Punta Gorda). Cada ciclo lee su `data/mappings/montevideo-circuito-barrio.{ciclo}.json`. Detalle y decisión: [`docs/adr/0001-circuito-barrio-por-ciclo.md`](../../docs/adr/0001-circuito-barrio-por-ciclo.md).
 
 ### Integridad en ingesta
 - Normalización a **UTF-8** (el origen de la Corte Electoral suele venir en Latin-1).

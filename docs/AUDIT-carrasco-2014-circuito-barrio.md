@@ -45,9 +45,33 @@ Re-derivando el join con las **direcciones propias de 2014** (mismo método PIP)
   parcial**, **2024 aproximadamente alineado** (no verificado al 100%).
 - Niveles `circuito`/`local` no dependen de este mapeo → no afectados por esto.
 
-## Fix propuesto (no aplicado)
-Construir un `crvToBarrio` **por elección**, derivado de las direcciones del plan circuital de
-**ese** año (point-in-polygon, como hace `build-circuito-barrio.ts`), en vez de reutilizar uno
-solo para todas. Para 2014/2019 alcanza con correr el mismo método sobre su `plan-circuital.csv`
-(las coords salen del georef 2024 por street-key; el fallback serie cubre el resto).
-Decisión pendiente con el usuario.
+## Alcance medido (drift vs mapeo servido, por ciclo)
+Reconstruyendo el mapeo correcto por ciclo y comparando circuito-a-circuito con el servido:
+`2014` 85% · `internas-2019` 83% · `2019` 85% · `departamentales-2020` 84% · `referendum-2022` 70%
+· `departamentales-2025` 59% · **`2024` (internas/nac/bal/plebiscitos) 0% ✅**. Solo el ciclo 2024
+está bien; el resto está mal-joineado a nivel barrio. (Drift = "difiere del roto", no prueba de
+correcto; ver validación abajo.) Interior NO afectado (mapea por serie estable vía `run-barrio-all`).
+
+## Método elegido (optimizado para mínimos errores/desvinculaciones)
+`crvToBarrio` **por ciclo**, generado del `plan-circuital.csv` de ese ciclo contra el georef-2024.
+Tiers de asignación (de más a menos preciso):
+1. **dir** — street-key exacta → coords georef → PIP.
+2. **coarse** (NUEVO) — calle sin número; si la coarse-key mapea a un único barrio en el georef.
+   Gold test sobre 2024: **100% de acierto**. Sube la cobertura por dirección 56%→66%.
+3. **serie-dominante** — fallback; gold test: **~63%** de acierto (el eslabón débil).
+- **range (serie+credencial Desde–Hasta) RECHAZADO**: baja la correlación (los rangos se reparten
+  entre elecciones). 
+Resultado en 2014: 66% por dirección (≈100% preciso) + 34% por serie (≈63%) ≈ **~87% de circuitos
+bien**; votos sin ubicar 5.678 = **0,7%** (mejor que el 2,7% del propio 2024).
+
+## Validación contra realidad (no contra el roto)
+- Correlación de rango (Spearman) FA% 2014-corregido vs 2024-servido (known-good): **0,80**
+  (un mapeo scrambleado daría ~0).
+- Spot-checks coherentes (FA% 2014corr / 2024served): Cerro 68/65, Casavalle 62/61 (alto FA);
+  Pocitos 35/32, Punta Carretas 37/34, Carrasco 41/25 (bajo FA). Shift de nivel ~3-10pp (FA más
+  fuerte en 2014) con geografía preservada = fix correcto.
+
+## Implementación
+Generador per-ciclo + `coarse` en `build-circuito-barrio.ts`; cada runner MVD lee el mapeo de su
+ciclo; re-correr runners MVD; **re-correr `scripts/sweep-party-consistency.py`** (el ETL revierte
+los nombres canónicos de partidos en `opciones.json`). Spike: `spikes/opt-circuito-barrio.py`.

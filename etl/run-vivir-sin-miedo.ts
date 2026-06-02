@@ -21,7 +21,7 @@ import { normName } from './lib/normalize';
 import { runBinariaInterior } from './lib/run-binaria-interior';
 
 const CSV = 'data/raw/electoral/plebiscito-2019/vivir-sin-miedo-2019-por-crv.csv';
-const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.json';
+const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.2019.json';
 const ELECCION = 'plebiscito-vivir-sin-miedo-2019';
 const PREGUNTA = '¿Aprueba el proyecto de reforma constitucional sobre seguridad pública ("Vivir sin Miedo")?';
 const SI_NO = [
