@@ -1276,10 +1276,18 @@ async function loadCircuitoOverlay(eleccion: string, departamento: string): Prom
   if (!m) return;
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   try {
-    const [topoRes, votesRes] = await Promise.all([
-      fetch(`${base}/data/geo/${departamento}/circuito.topo.json`),
-      fetch(`${base}/data/${eleccion}/${departamento}/votes-circuito.json`),
+    // Epic 17: el overlay de puntos prefiere LOCAL (1 punto por local de votación, votos
+    // agregados, estable entre elecciones). Fallback a circuito donde aún no hay votes-local.json.
+    let [topoRes, votesRes] = await Promise.all([
+      fetch(`${base}/data/geo/${departamento}/local.topo.json`),
+      fetch(`${base}/data/${eleccion}/${departamento}/votes-local.json`),
     ]);
+    if (!topoRes.ok || !votesRes.ok) {
+      [topoRes, votesRes] = await Promise.all([
+        fetch(`${base}/data/geo/${departamento}/circuito.topo.json`),
+        fetch(`${base}/data/${eleccion}/${departamento}/votes-circuito.json`),
+      ]);
+    }
     if (!topoRes.ok || !votesRes.ok) return;
     const topo = (await topoRes.json()) as Topology;
     const votes = (await votesRes.json()) as VotosShard;
@@ -1426,7 +1434,7 @@ const unsubSelection = $selection.subscribe((s) => {
 /** Resuelve el nivel base efectivo: excluye 'circuito' (ahora es overlay, no nivel base). */
 function resolveNivel(urlLevel: NivelGeografico, dept?: string): NivelGeografico {
   const avail = (dept ? DEPT_LEVELS[dept] : null) ?? props.availableLevels ?? (['zona'] as NivelGeografico[]);
-  const base = avail.filter(l => l !== 'circuito');
+  const base = avail.filter(l => l !== 'circuito' && l !== 'local');
   const valid = base.length > 0 ? base : avail;
   return valid.includes(urlLevel) ? urlLevel : (valid[0] ?? urlLevel);
 }

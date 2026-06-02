@@ -51,6 +51,7 @@ const deptMeta = DEPT_MAP[departamento] ?? { id: departamento, label: departamen
 // (build-time). El nivel base (zona/serie) siempre mapea a votes.json. Mismo mapeo que ChoroplethMap.
 function shardDeNivel(level: NivelGeografico): string {
   return level === 'circuito' ? 'votes-circuito.json'
+       : level === 'local'     ? 'votes-local.json'
        : level === 'localidad' ? 'votes-localidad.json'
        : level === 'barrio'    ? 'votes-barrio.json'
        : 'votes.json';

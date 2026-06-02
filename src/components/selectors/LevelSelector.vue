@@ -8,12 +8,15 @@ const props = defineProps<{ availableLevels: NivelGeografico[] }>();
 const BASE_PRIORITY: NivelGeografico[] = ['zona', 'serie', 'barrio', 'localidad'];
 
 const defaultBase = computed<NivelGeografico>(() =>
-  BASE_PRIORITY.find(l => props.availableLevels.includes(l)) ?? props.availableLevels.find(l => l !== 'circuito') ?? 'zona'
+  BASE_PRIORITY.find(l => props.availableLevels.includes(l)) ?? props.availableLevels.find(l => l !== 'circuito' && l !== 'local') ?? 'zona'
 );
 
-const hasCircuito = computed(() => props.availableLevels.includes('circuito'));
+// Epic 17: el overlay de puntos prefiere LOCAL; el botón se habilita si hay local o circuito.
+const hasCircuito = computed(() => props.availableLevels.includes('local') || props.availableLevels.includes('circuito'));
 
-const isCircuito = ref<boolean>($circuito.get());
+// Arranca en false para coincidir con el SSR (el store no existe en server) y evitar el hydration
+// mismatch en deep-links con ?circ=1; el subscribe de nanostores dispara al montar y sincroniza.
+const isCircuito = ref<boolean>(false);
 let unsubCircuito: (() => void) | undefined;
 onMounted(() => { unsubCircuito = $circuito.subscribe((v) => { isCircuito.value = v; }); });
 onUnmounted(() => { unsubCircuito?.(); });
@@ -61,7 +64,7 @@ function toggleCircuito() {
         <rect x="0.5" y="7.5" width="5" height="5" rx="0.5" stroke="currentColor"/>
         <rect x="7.5" y="7.5" width="5" height="5" rx="0.5" stroke="currentColor"/>
       </svg>
-      Circuito
+      Local
     </button>
   </div>
 </template>
