@@ -449,6 +449,10 @@ let flagCtx: CanvasRenderingContext2D | null = null;
 let flagsVisible = true;
 // FeatureCollection de circuitos con datos de partido, para dibujar en el canvas overlay.
 let circuitoFCForCanvas: FeatureCollection | null = null;
+// FC de zonas ACTUALMENTE mostrado (el último setData('zonas')). drawFlagOverlay lo recorre para
+// tener geometría COMPLETA (sin clipear por tile) + props del modo activo (color/flagPattern/hasData).
+// Se actualiza en cada setData('zonas'); los builders preservan la geometría por referencia (...f).
+let zonasDisplayFC: FeatureCollection | null = null;
 // Ficha por circuito/local: dato completo de cada local/circuito del overlay (norm(geoId) → zona).
 type ZonaLocal = AgregadoZona & { local?: { nombre: string; direccion: string; habilitados: number }; circuitos?: CircuitoBreak[] };
 let circuitoZonaPorGeo = new Map<string, ZonaLocal>();
@@ -518,50 +522,46 @@ function drawFlagOverlay(m: MlMap): void {
   // Dos pasadas: primero todos los flags, luego todos los bordes encima.
   if (flagsVisible && !isPointNivel) {
     type Ring = [number, number][];
-    const features = m.queryRenderedFeatures(undefined, { layers: ['zonas-fill'] });
-    // A alto zoom maplibre PARTE un polígono en varias tiles → devuelve varias features con el MISMO
-    // id y geometría clipeada por tile. Agrupamos todas las piezas por id (antes se deduplicaba y se
-    // quedaba con una sola, dejando el resto del polígono sin bandera = el "pedacito transparente").
-    const byId = new Map<string, { props: Record<string, unknown>; pieces: (typeof features)[0][] }>();
-    for (const feat of features) {
-      const props = feat.properties as Record<string, unknown>;
-      const fid = String(feat.id ?? props.name ?? '');
-      const g = byId.get(fid);
-      if (g) g.pieces.push(feat);
-      else byId.set(fid, { props, pieces: [feat] });
-    }
-    const ringsOf = (feat: (typeof features)[0]): Ring[] => {
-      const geom = feat.geometry as { type: string; coordinates: unknown };
+    // Recorremos el FC ACTUALMENTE mostrado (no queryRenderedFeatures). queryRenderedFeatures devuelve
+    // la geometría PARTIDA por tile (con buffer): combinar las piezas en un clip('evenodd') hacía que
+    // los solapes de buffer se cancelaran (conteo par) → franjas/polígonos transparentes a alto zoom, y
+    // bordear cada pieza dibujaba las líneas de la grilla de tiles. Además, a alto zoom QRF puede dejar
+    // de devolver barrios enteros (cobertura por tile) → quedaban blancos. El FC de origen tiene la
+    // geometría COMPLETA y todos los barrios; sus props ya reflejan el modo activo (los builders hacen
+    // ...f preservando geometría y seteando color/flagPattern del modo).
+    const dispFC = zonasDisplayFC ?? fcRef.value;
+    const feats = dispFC?.features ?? [];
+    const ringsOf = (f: Feature): Ring[] => {
+      const geom = f.geometry as { type: string; coordinates: unknown };
       if (geom.type !== 'Polygon' && geom.type !== 'MultiPolygon') return [];
       return geom.type === 'Polygon' ? (geom.coordinates as Ring[]) : (geom.coordinates as Ring[][]).flat(1);
     };
-    const tracePath = (pieces: (typeof features)[0][], bbox?: { minX: number; minY: number; maxX: number; maxY: number }): void => {
+    const tracePath = (f: Feature, bbox?: { minX: number; minY: number; maxX: number; maxY: number }): void => {
       flagCtx!.beginPath();
-      for (const piece of pieces) {
-        for (const ring of ringsOf(piece)) {
-          let first = true;
-          for (const coord of ring) {
-            const pt = m.project(coord as [number, number]);
-            const px = pt.x * dpr; const py = pt.y * dpr;
-            if (first) { flagCtx!.moveTo(px, py); first = false; }
-            else flagCtx!.lineTo(px, py);
-            if (bbox) {
-              if (px < bbox.minX) bbox.minX = px; if (py < bbox.minY) bbox.minY = py;
-              if (px > bbox.maxX) bbox.maxX = px; if (py > bbox.maxY) bbox.maxY = py;
-            }
+      for (const ring of ringsOf(f)) {
+        let first = true;
+        for (const coord of ring) {
+          const pt = m.project(coord as [number, number]);
+          const px = pt.x * dpr; const py = pt.y * dpr;
+          if (first) { flagCtx!.moveTo(px, py); first = false; }
+          else flagCtx!.lineTo(px, py);
+          if (bbox) {
+            if (px < bbox.minX) bbox.minX = px; if (py < bbox.minY) bbox.minY = py;
+            if (px > bbox.maxX) bbox.maxX = px; if (py > bbox.maxY) bbox.maxY = py;
           }
-          flagCtx!.closePath();
         }
+        flagCtx!.closePath();
       }
     };
 
-    // Pasada 1: flags recortados a cada polígono (todas sus piezas de tile juntas → un solo drawImage)
-    for (const { props, pieces } of byId.values()) {
+    // Pasada 1: flags recortados a cada polígono completo (un solo drawImage por barrio)
+    for (const f of feats) {
+      const props = f.properties as Record<string, unknown>;
       if (!props.flagPattern || !props.hasData) continue;
       const img = flagImgs[props.flagPattern as string];
       if (!img) continue;
       const bbox = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
-      tracePath(pieces, bbox);
+      tracePath(f, bbox);
       if (!Number.isFinite(bbox.minX)) continue;
       // A alto zoom un polígono puede salirse de pantalla → su bbox en px llega a decenas de miles.
       // drawImage con dimensiones enormes (>~32k px, límite del canvas) FALLA silenciosamente y el
@@ -585,8 +585,9 @@ function drawFlagOverlay(m: MlMap): void {
     // Pasada 2: bordes encima de todos los flags + highlight de zona seleccionada
     const selectedGeoId = selected.value?.geoId ?? null;
     flagCtx.lineJoin = 'round';
-    for (const [fid, { pieces }] of byId) {
-      tracePath(pieces);
+    for (const f of feats) {
+      const fid = String((f.properties as { name?: string }).name ?? '');
+      tracePath(f);
       const isSelected = selectedGeoId !== null && fid === selectedGeoId;
       if (isSelected) {
         flagCtx.strokeStyle = '#f59e0b';
@@ -1045,7 +1046,7 @@ function restoreGanadorDesdeSeleccion(): void {
   const fc = fcRef.value;
   if (!m || !fc || !m.getSource('zonas')) return;
   if (seleccionFCActive) {
-    (m.getSource('zonas') as GeoJSONSource).setData(fc);
+    (m.getSource('zonas') as GeoJSONSource).setData(fc); zonasDisplayFC = fc;
     seleccionFCActive = false;
   }
   m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
@@ -1079,7 +1080,7 @@ async function applySeleccion(): Promise<void> {
   if (modo === 'ganador') {
     // Modo "ganador entre lo seleccionado": color/bandera de la opción seleccionada líder por zona.
     const selFC = buildSeleccionGanadorFC(fc, sel);
-    (m.getSource('zonas') as GeoJSONSource).setData(selFC);
+    (m.getSource('zonas') as GeoJSONSource).setData(selFC); zonasDisplayFC = selFC;
     m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
     seleccionFCActive = true;
     setPatternVisible(true); // banderas (mismo render que el modo ganador por defecto)
@@ -1108,7 +1109,7 @@ function setColoreo(modo: 'ganador' | 'share' | 'heatmap'): void {
 /** Aplica modo ganador (Story 2.2): zonas donde gana opcion en color, resto gris. */
 function applyGanadorMode(opcionId: string, m: MlMap, fc: FeatureCollection): void {
   if (intensidadActive) {
-    (m.getSource('zonas') as GeoJSONSource).setData(fc);
+    (m.getSource('zonas') as GeoJSONSource).setData(fc); zonasDisplayFC = fc;
     m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
     intensidadActive = false;
   }
@@ -1133,7 +1134,7 @@ function applyIntensidadMode(opcionId: string, m: MlMap, fc: FeatureCollection):
   const nombre = opcNombreMap.get(opcionId) ?? opcionId;
   const meta = resolveParty(nombre, activeEleccion);
   const gradientFC = buildIntensidadFC(fc, opcionId, meta.color);
-  (m.getSource('zonas') as GeoJSONSource).setData(gradientFC);
+  (m.getSource('zonas') as GeoJSONSource).setData(gradientFC); zonasDisplayFC = gradientFC;
   m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
   intensidadActive = true;
   setPatternVisible(false);
@@ -1152,7 +1153,7 @@ function applyOpcionFilter(opcionId: string | null): void {
     const cmp = $comparison.get();
     if (cmp.a && cmp.b) return;
     if (intensidadActive) {
-      (m.getSource('zonas') as GeoJSONSource).setData(fc);
+      (m.getSource('zonas') as GeoJSONSource).setData(fc); zonasDisplayFC = fc;
       intensidadActive = false;
     }
     m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
@@ -1316,7 +1317,7 @@ function applyDualOpcionView(aId: string, bId: string): void {
     COLOR_SIN_DATOS,
   ]);
   if (intensidadActive) {
-    (m.getSource('zonas') as GeoJSONSource).setData(fc);
+    (m.getSource('zonas') as GeoJSONSource).setData(fc); zonasDisplayFC = fc;
     intensidadActive = false;
   }
   markers.forEach((mk) => mk.remove());
@@ -1367,7 +1368,7 @@ async function reloadData(eleccion: string, departamento: string, nivel: string)
     const { fc, bounds } = await loadData(eleccion, departamento, nivel);
     // Esperar a que la fuente esté lista (puede que el mapa aún esté cargando).
     if (m.getSource('zonas')) {
-      (m.getSource('zonas') as GeoJSONSource).setData(fc);
+      (m.getSource('zonas') as GeoJSONSource).setData(fc); zonasDisplayFC = fc;
     }
     // Alternar visibilidad entre capas fill/line (poligonos) y circle (puntos) según nivel.
     if (m.getLayer('zonas-fill')) {
@@ -1700,11 +1701,12 @@ onMounted(async () => {
       preserveDrawingBuffer: true, // permite canvas.toDataURL() para export PNG (Story 6.2)
     });
     map.value = m;
+    if (import.meta.env.DEV) (window as unknown as { __mlMap?: MlMap }).__mlMap = m; // debug/QA only
 
     m.on('load', () => { void (async () => {
       await loadFlagImages();
       setupFlagCanvas(m);
-      m.addSource('zonas', { type: 'geojson', data: fc, promoteId: 'name' });
+      m.addSource('zonas', { type: 'geojson', data: fc, promoteId: 'name' }); zonasDisplayFC = fc;
       m.addLayer({ id: 'zonas-fill', type: 'fill', source: 'zonas', paint: { 'fill-color': ['get', 'color'], 'fill-opacity': ['case', ['!=', ['get', 'flagPattern'], null], 0, 0.85] } });
       m.addLayer({ id: 'zonas-line', type: 'line', source: 'zonas', paint: { 'line-color': 'rgba(20,20,35,0.85)', 'line-width': 1.8 } });
       m.on('render', () => drawFlagOverlay(m));
