@@ -26,6 +26,8 @@ interface SelInfo {
   enBlanco: number;
   anulados: number;
   observados: number;
+  habilitados?: number;
+  emitidos?: number;
   pctOpcionActiva: number | null;
   // Epic 10 (Story 10.5): desglose por hoja de la selección en esta zona.
   seleccionTotal?: number;
@@ -58,6 +60,15 @@ function fmt(n: number): string {
 function pctValidos(n: number): string {
   const v = props.sel?.validos ?? 0;
   return v > 0 ? `${((100 * n) / v).toFixed(1)}%` : '—';
+}
+/** % genérico n/d (1 decimal). */
+function pctDe(n: number, d: number): string {
+  return d > 0 ? `${((100 * n) / d).toFixed(1)}%` : '—';
+}
+/** % sobre votos emitidos de la zona (denominador natural de blanco/anulados/observados). */
+function pctEmit(n: number): string {
+  const e = props.sel?.emitidos ?? 0;
+  return e > 0 ? `${((100 * n) / e).toFixed(1)}%` : '';
 }
 </script>
 
@@ -167,23 +178,36 @@ function pctValidos(n: number): string {
           <strong>{{ sel.pctOpcionActiva.toFixed(1) }}%</strong>
         </div>
 
-        <!-- Totales -->
+        <!-- Participación / abstención (Epic no-partidarios) -->
+        <div v-if="sel.emitidos && sel.habilitados" class="zone-sheet__part">
+          <div class="zone-sheet__part-item">
+            <span class="zone-sheet__part-label">Participación</span>
+            <strong>{{ pctDe(sel.emitidos, sel.habilitados) }}</strong>
+            <span class="zone-sheet__part-sub">{{ fmt(sel.emitidos) }} / {{ fmt(sel.habilitados) }}</span>
+          </div>
+          <div class="zone-sheet__part-item">
+            <span class="zone-sheet__part-label">Abstención</span>
+            <strong>{{ pctDe(sel.habilitados - sel.emitidos, sel.habilitados) }}</strong>
+          </div>
+        </div>
+
+        <!-- Totales (con % sobre emitidos para no-partidarios) -->
         <dl class="zone-sheet__dl">
           <div class="zone-sheet__dl-row">
             <dt>Votos válidos</dt>
-            <dd>{{ fmt(sel.validos) }}</dd>
+            <dd>{{ fmt(sel.validos) }}<span v-if="sel.emitidos" class="zone-sheet__dl-pct">{{ pctEmit(sel.validos) }}</span></dd>
           </div>
           <div class="zone-sheet__dl-row zone-sheet__dl-row--muted">
             <dt>En blanco</dt>
-            <dd>{{ fmt(sel.enBlanco) }}</dd>
+            <dd>{{ fmt(sel.enBlanco) }}<span v-if="sel.emitidos" class="zone-sheet__dl-pct">{{ pctEmit(sel.enBlanco) }}</span></dd>
           </div>
           <div class="zone-sheet__dl-row zone-sheet__dl-row--muted">
             <dt>Anulados</dt>
-            <dd>{{ fmt(sel.anulados) }}</dd>
+            <dd>{{ fmt(sel.anulados) }}<span v-if="sel.emitidos" class="zone-sheet__dl-pct">{{ pctEmit(sel.anulados) }}</span></dd>
           </div>
           <div class="zone-sheet__dl-row zone-sheet__dl-row--muted">
             <dt>Observados</dt>
-            <dd>{{ fmt(sel.observados) }}</dd>
+            <dd>{{ fmt(sel.observados) }}<span v-if="sel.emitidos" class="zone-sheet__dl-pct">{{ pctEmit(sel.observados) }}</span></dd>
           </div>
         </dl>
 
@@ -441,6 +465,18 @@ function pctValidos(n: number): string {
   color: var(--color-ink-faint);
   font-weight: 400;
 }
+.zone-sheet__dl-row dd { display: flex; align-items: baseline; gap: 0.5rem; }
+.zone-sheet__dl-pct { color: var(--color-ink-faint); font-variant-numeric: tabular-nums; font-weight: 400; min-width: 3rem; text-align: right; }
+
+/* Participación / abstención */
+.zone-sheet__part { display: flex; gap: 0.5rem; margin: 0 0 0.75rem; }
+.zone-sheet__part-item {
+  flex: 1; background: var(--color-surface-1); border-radius: 0.375rem;
+  padding: 0.5rem 0.625rem; display: flex; flex-direction: column; gap: 0.0625rem;
+}
+.zone-sheet__part-label { font-size: 0.6875rem; color: var(--color-ink-muted); }
+.zone-sheet__part-item strong { font-size: 1.125rem; color: var(--color-ink); line-height: 1.1; }
+.zone-sheet__part-sub { font-size: 0.6875rem; color: var(--color-ink-faint); font-variant-numeric: tabular-nums; }
 
 .zone-sheet__fuente {
   font-size: 0.6875rem;

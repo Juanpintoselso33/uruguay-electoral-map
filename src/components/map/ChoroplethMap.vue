@@ -58,6 +58,9 @@ interface SelInfo {
   enBlanco: number;
   anulados: number;
   observados: number;
+  /** Padrón y emitidos de la zona (Epic no-partidarios) — para participación/abstención. */
+  habilitados?: number;
+  emitidos?: number;
   pctOpcionActiva: number | null;
   // Epic 10 (Story 10.5): desglose por hoja de la selección en esta zona.
   seleccionTotal?: number;
@@ -136,7 +139,7 @@ let origLegend: LegendEntry[] = [];
 let zonasVotos = new Map<string, Map<string, number>>();
 let zonasValidos = new Map<string, number>();
 // Categorías no partidarias por zona (Story 2.4 — ficha).
-let zonasNoPartidarios = new Map<string, { enBlanco: number; anulados: number; observados: number }>();
+let zonasNoPartidarios = new Map<string, { enBlanco: number; anulados: number; observados: number; habilitados: number; emitidos: number }>();
 // Ciudades grandes para nivel localidad (Story 8.4 — rótulo degradación).
 let ciudadesGrandesSet = new Set<string>();
 // Flag: indica si se hizo setData con FC de intensidad (para saber cuándo restaurar).
@@ -293,6 +296,8 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
       enBlanco: z.noPartidarios.enBlanco,
       anulados: z.noPartidarios.anulados,
       observados: z.noPartidarios.observados,
+      habilitados: z.habilitados ?? 0,
+      emitidos: z.emitidos ?? 0,
     });
   }
 
@@ -311,18 +316,19 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
     const zs = partes.map((p) => zonaPorGeo.get(p)).filter((z): z is NonNullable<typeof z> => !!z);
     if (zs.length === 0) continue;
     const porOp = new Map<string, number>();
-    let vv = 0, eb = 0, an = 0, ob = 0;
+    let vv = 0, eb = 0, an = 0, ob = 0, hb = 0, em = 0;
     for (const z of zs) {
       for (const o of z.porOpcion) porOp.set(o.opcionId, (porOp.get(o.opcionId) ?? 0) + o.votos);
       vv += z.validos; eb += z.noPartidarios.enBlanco; an += z.noPartidarios.anulados; ob += z.noPartidarios.observados;
+      hb += z.habilitados ?? 0; em += z.emitidos ?? 0;
     }
     const porOpcion = [...porOp.entries()].map(([opcionId, votos]) => ({ opcionId, votos }));
     const ganadorOpcionId = porOpcion.reduce((a, b) => (b.votos > a.votos ? b : a)).opcionId;
     zonaPorGeo.set(key, { geoId: name, ganadorOpcionId, validos: vv, porOpcion,
-      noPartidarios: { enBlanco: eb, anulados: an, observados: ob } } as (typeof zs)[number]);
+      noPartidarios: { enBlanco: eb, anulados: an, observados: ob }, habilitados: hb, emitidos: em } as (typeof zs)[number]);
     zonasVotos.set(key, new Map(porOpcion.map((o) => [o.opcionId, o.votos])));
     zonasValidos.set(key, vv);
-    zonasNoPartidarios.set(key, { enBlanco: eb, anulados: an, observados: ob });
+    zonasNoPartidarios.set(key, { enBlanco: eb, anulados: an, observados: ob, habilitados: hb, emitidos: em });
     partes.forEach((p) => consumidasPorMerge.add(p));
   }
 
@@ -1513,6 +1519,8 @@ function selectByName(name: string, fc: FeatureCollection): void {
       enBlanco: noP.enBlanco,
       anulados: noP.anulados,
       observados: noP.observados,
+      habilitados: noP.habilitados || undefined,
+      emitidos: noP.emitidos || undefined,
       pctOpcionActiva,
       seleccionTotal: desg?.total,
       seleccionPct: desg && validos > 0 ? (desg.total / validos) * 100 : undefined,
@@ -1554,6 +1562,7 @@ function selectCircuitoLocal(name: string): void {
     votoGanador, validos: z.validos,
     pct: z.validos > 0 ? (votoGanador / z.validos) * 100 : 0,
     enBlanco: noP.enBlanco, anulados: noP.anulados, observados: noP.observados,
+    habilitados: z.habilitados || undefined, emitidos: z.emitidos || undefined,
     pctOpcionActiva: null,
     local: z.local, circuitos,
   };
