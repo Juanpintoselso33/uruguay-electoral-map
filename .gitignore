@@ -21,6 +21,20 @@ data/raw/
 data/processed/geographic/_nacional/
 data/processed/_annex_tmp/
 
+# Borrador del post de LinkedIn (no es parte del producto)
+POST_LINKEDIN.md
+
+# Spikes / experimentos descartables (throwaway research code)
+spikes/
+etl/geometry/spike-geo-join.ts
+
+# Código legacy archivado (v1, pre-overhaul). Se conserva en disco, fuera del repo.
+legacy/
+
+# Artefactos de trabajo de BMAD (working docs internos del método, no del producto)
+_bmad/
+docs/bmad-output/
+
 # Python bytecode
 scripts/__pycache__/
 __pycache__/
