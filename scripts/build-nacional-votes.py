@@ -80,7 +80,7 @@ def agregar_eleccion(eleccion, id2label):
         # (16.3 propagado) MERGE: el polígono 'a-b-c' de la geometría suma sus series constituyentes.
         zpid = {nrm(z['geoId']): z for z in v['zonas']}
         consumido = set()
-        for label, partes in merged_labels(d):
+        for mlabel, partes in merged_labels(d):  # NO reusar `label` (es el label del depto, l.76)
             zs = [zpid[nrm(p)] for p in partes if nrm(p) in zpid]
             if not zs: continue
             po = defaultdict(int); vv = eb = an = ob = 0
@@ -89,7 +89,7 @@ def agregar_eleccion(eleccion, id2label):
                 vv += z.get('validos', 0); npd = z.get('noPartidarios', {})
                 eb += npd.get('enBlanco', 0); an += npd.get('anulados', 0); ob += npd.get('observados', 0)
             if not po: continue
-            zonas_zona.append({'geoId': label_for(label, lmap_zona),
+            zonas_zona.append({'geoId': label_for(mlabel, lmap_zona),
                 'ganadorOpcionId': max(po.items(), key=lambda kv: kv[1])[0], 'validos': vv,
                 'porOpcion': [{'opcionId': k, 'votos': po[k]} for k in sorted(po, key=lambda k: -po[k])],
                 'noPartidarios': {'enBlanco': eb, 'anulados': an, 'observados': ob}})
