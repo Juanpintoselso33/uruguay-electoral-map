@@ -563,14 +563,22 @@ function drawFlagOverlay(m: MlMap): void {
       const bbox = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
       tracePath(pieces, bbox);
       if (!Number.isFinite(bbox.minX)) continue;
+      // A alto zoom un polígono puede salirse de pantalla → su bbox en px llega a decenas de miles.
+      // drawImage con dimensiones enormes (>~32k px, límite del canvas) FALLA silenciosamente y el
+      // polígono queda SIN bandera (blanco/transparente). Clampeamos el bbox al área visible del
+      // canvas (con margen): el flag se escala a lo visible y el clip lo recorta al polígono igual.
+      const W = flagCanvas.width, H = flagCanvas.height;
+      const minX = Math.max(bbox.minX, -W), minY = Math.max(bbox.minY, -H);
+      const maxX = Math.min(bbox.maxX, 2 * W), maxY = Math.min(bbox.maxY, 2 * H);
+      if (maxX <= minX || maxY <= minY) continue;  // polígono fuera de pantalla
       flagCtx.save();
       flagCtx.clip('evenodd');
-      const bw = bbox.maxX - bbox.minX, bh = bbox.maxY - bbox.minY;
+      const bw = maxX - minX, bh = maxY - minY;
       const flagAspect = img.naturalWidth / img.naturalHeight;
       let dw = bw, dh = bw / flagAspect;
       if (dh < bh) { dh = bh; dw = bh * flagAspect; }
       flagCtx.globalAlpha = 1.0;
-      flagCtx.drawImage(img, bbox.minX + (bw - dw) / 2, bbox.minY + (bh - dh) / 2, dw, dh);
+      flagCtx.drawImage(img, minX + (bw - dw) / 2, minY + (bh - dh) / 2, dw, dh);
       flagCtx.restore();
     }
 
