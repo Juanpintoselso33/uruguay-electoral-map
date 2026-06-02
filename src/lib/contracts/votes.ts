@@ -39,6 +39,11 @@ export interface AgregadoZona {
   readonly porOpcion: readonly VotoOpcion[];
   /** Categorías no partidarias de la zona. */
   readonly noPartidarios: CategoriasNoPartidarias;
+  /** Total de habilitados (padrón) de la zona, para participación. Opcional: lo puebla el
+   *  post-pass de no-partidarios desde el totales oficial por circuito (no todas las fuentes). */
+  readonly habilitados?: number;
+  /** Total de votos emitidos (= válidos + blanco + anulados + observados). Opcional, ídem. */
+  readonly emitidos?: number;
 }
 
 /**

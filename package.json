@@ -77,7 +77,10 @@
     "etl:nacional-zona-geo": "python scripts/build-nacional-zona-geo.py",
     "etl:nacional": "npm run etl:nacional-geo && npm run etl:nacional-zona-geo && npm run etl:nacional-votes",
     "etl:annex": "python scripts/build-annex-series.py",
-    "gate:grises": "python scripts/gate-grises.py"
+    "etl:totales-fetch": "python scripts/fetch-totales-ckan.py",
+    "etl:no-partidarios": "python scripts/build-no-partidarios.py",
+    "gate:grises": "python scripts/gate-grises.py",
+    "gate:no-partidarios": "python scripts/gate-no-partidarios.py"
   },
   "dependencies": {
     "@nanostores/vue": "^0.11.0",
