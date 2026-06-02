@@ -53,6 +53,12 @@ function onTouchEnd(e: TouchEvent): void {
 function fmt(n: number): string {
   return n.toLocaleString('es-UY');
 }
+
+/** % de los votos válidos de la zona (mismo denominador que el ganador y la selección). */
+function pctValidos(n: number): string {
+  const v = props.sel?.validos ?? 0;
+  return v > 0 ? `${((100 * n) / v).toFixed(1)}%` : '—';
+}
 </script>
 
 <template>
@@ -106,11 +112,14 @@ function fmt(n: number): string {
                 <span v-else class="zone-sheet__swatch zone-sheet__swatch--sm" :style="{ background: g.color }" aria-hidden="true"></span>
                 <span class="zone-sheet__grupo-sigla">{{ g.sigla }}</span>
                 <span class="zone-sheet__grupo-nombre">{{ g.lemaNombre }}</span>
+                <span class="zone-sheet__grupo-pct">{{ pctValidos(g.total) }}</span>
                 <span class="zone-sheet__grupo-total">{{ fmt(g.total) }}</span>
               </div>
               <ul class="zone-sheet__hojas">
                 <li v-for="h in g.hojas" :key="h.id" class="zone-sheet__hoja">
-                  <span>{{ h.label }}</span><span>{{ fmt(h.votos) }}</span>
+                  <span class="zone-sheet__hoja-label">{{ h.label }}</span>
+                  <span class="zone-sheet__hoja-pct">{{ pctValidos(h.votos) }}</span>
+                  <span class="zone-sheet__hoja-votos">{{ fmt(h.votos) }}</span>
                 </li>
                 <li v-if="g.masN > 0" class="zone-sheet__hoja zone-sheet__hoja--mas">y {{ g.masN }} más…</li>
               </ul>
@@ -382,10 +391,14 @@ function fmt(n: number): string {
   display: flex; align-items: center; gap: 0.375rem; font-size: 0.8125rem; font-weight: 600; color: var(--color-ink);
 }
 .zone-sheet__grupo-nombre { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--color-ink-soft); font-weight: 400; }
-.zone-sheet__grupo-total { font-weight: 700; }
+.zone-sheet__grupo-pct { font-variant-numeric: tabular-nums; color: var(--color-ink-soft); font-weight: 600; min-width: 3rem; text-align: right; }
+.zone-sheet__grupo-total { font-weight: 700; font-variant-numeric: tabular-nums; min-width: 3rem; text-align: right; }
 .zone-sheet__swatch--sm { width: 0.75rem; height: 0.75rem; border-radius: 0.125rem; box-shadow: inset 0 0 0 1px rgba(0,0,0,.1); flex-shrink: 0; }
 .zone-sheet__hojas { list-style: none; margin: 0.125rem 0 0; padding: 0 0 0 1.125rem; }
-.zone-sheet__hoja { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--color-ink-soft); padding: 0.0625rem 0; }
+.zone-sheet__hoja { display: flex; align-items: baseline; gap: 0.5rem; font-size: 0.75rem; color: var(--color-ink-soft); padding: 0.0625rem 0; }
+.zone-sheet__hoja-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.zone-sheet__hoja-pct { color: var(--color-ink-faint); font-variant-numeric: tabular-nums; min-width: 2.75rem; text-align: right; }
+.zone-sheet__hoja-votos { font-variant-numeric: tabular-nums; min-width: 3rem; text-align: right; }
 .zone-sheet__hoja--mas { color: var(--color-ink-faint); font-style: italic; }
 
 /* Ganador de la zona en compacto (cuando hay selección) */
