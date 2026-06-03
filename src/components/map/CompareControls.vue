@@ -1,12 +1,15 @@
 <script setup lang="ts">
 /**
- * Controles de comparación dual entre elecciones (Story 4.3).
+ * Controles de comparación entre elecciones (Story 4.3 · prototipo Fase 1).
  *
- * `client:idle`. Muestra botón entrar/salir del modo comparación.
- * Estado: $comparison.vs (URL ?vs=). Entrar → commit({ vs: otherEleccion }).
- * Solo renderiza el botón si el depto tiene ≥2 elecciones disponibles.
+ * `client:idle`. Permite elegir, de un dropdown, otra elección DEL MISMO TIPO contra la cual
+ * comparar (nacionales↔nacionales, internas↔internas, …). Entrar → commit({ vs }). Salir → commit({ vs: null }).
+ * El overlay (borde naranja en zonas donde cambió el partido ganador) lo aplica ChoroplethMap al ver `?vs=`.
+ *
+ * Solo elecciones del MISMO tipo son comparables: balotaje vs plebiscito tienen universos de opciones
+ * disjuntos → comparar ahí daría basura. El "tipo" se deriva quitando el año del id.
  */
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { $comparison, commit } from '../../stores/map-state';
 
 const props = defineProps<{
@@ -31,39 +34,38 @@ const LABELS: Record<string, string> = {
 };
 function label(e: string): string { return LABELS[e] ?? e; }
 
-const comparisonVs = ref<string | null>(null);
+/** Tipo de elección = id sin el año (y lo que le siga). Solo se compara dentro del mismo tipo. */
+function tipoDe(e: string): string { return e.replace(/-?\d{4}.*$/, ''); }
 
+const comparisonVs = ref<string | null>(null);
 onMounted(() => {
-  $comparison.subscribe((cmp) => {
-    comparisonVs.value = cmp.vs;
-  });
+  $comparison.subscribe((cmp) => { comparisonVs.value = cmp.vs; });
 });
 
-function otherEleccion(): string | null {
-  return props.availableElecciones.find((e) => e !== props.eleccionActual) ?? null;
-}
+/** Elecciones comparables: mismo tipo, distinta del actual, ordenadas por año desc. */
+const comparables = computed<string[]>(() => {
+  const tipo = tipoDe(props.eleccionActual);
+  return props.availableElecciones
+    .filter((e) => e !== props.eleccionActual && tipoDe(e) === tipo)
+    .sort((a, b) => (b.match(/\d{4}/)?.[0] ?? '').localeCompare(a.match(/\d{4}/)?.[0] ?? ''));
+});
 
-function enterCompare(): void {
-  const other = otherEleccion();
-  if (other) commit({ vs: other });
+function onSelect(e: Event): void {
+  const val = (e.target as HTMLSelectElement).value;
+  commit({ vs: val || null });
 }
-
-function exitCompare(): void {
-  commit({ vs: null });
-}
+function exitCompare(): void { commit({ vs: null }); }
 </script>
 
 <template>
-  <div v-if="availableElecciones.length > 1" class="cmp">
-    <template v-if="comparisonVs">
-      <span class="cmp__text">Comparando con: <strong class="cmp__strong">{{ label(comparisonVs) }}</strong></span>
-      <button class="cmp__btn" type="button" @click="exitCompare">Salir</button>
-    </template>
-    <template v-else-if="otherEleccion()">
-      <button class="cmp__btn" type="button" @click="enterCompare">
-        Comparar con {{ label(otherEleccion()!) }}
-      </button>
-    </template>
+  <div v-if="comparables.length > 0" class="cmp">
+    <span class="cmp__lbl">Comparar con:</span>
+    <select class="cmp__sel" :value="comparisonVs ?? ''" @change="onSelect" aria-label="Elegí una elección para comparar">
+      <option value="">— elegí una elección —</option>
+      <option v-for="e in comparables" :key="e" :value="e">{{ label(e) }}</option>
+    </select>
+    <button v-if="comparisonVs" class="cmp__btn" type="button" @click="exitCompare">Salir</button>
+    <span v-if="comparisonVs" class="cmp__hint">Borde naranja = cambió el partido ganador</span>
   </div>
 </template>
 
@@ -71,14 +73,23 @@ function exitCompare(): void {
 .cmp {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.5rem;
   padding: 0.375rem 1rem;
   border-bottom: 1px solid var(--color-border);
   background: var(--color-surface-1);
   font-size: 0.75rem;
 }
-.cmp__text { color: var(--color-ink-soft); }
-.cmp__strong { color: var(--color-ink); font-weight: 600; }
+.cmp__lbl { color: var(--color-ink-soft); font-weight: 600; }
+.cmp__sel {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0.25rem;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  cursor: pointer;
+}
 .cmp__btn {
   background: none;
   border: none;
@@ -89,4 +100,5 @@ function exitCompare(): void {
   text-decoration: underline;
 }
 .cmp__btn:hover { color: var(--color-ink); }
+.cmp__hint { color: var(--color-ink-faint); font-size: 0.6875rem; }
 </style>

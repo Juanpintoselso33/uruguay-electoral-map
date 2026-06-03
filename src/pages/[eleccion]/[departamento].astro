@@ -7,6 +7,7 @@ import DataTable from '../../components/a11y/DataTable.astro';
 import OpcionAccordion from '../../components/selectors/OpcionAccordion.vue';
 import LevelSelector from '../../components/selectors/LevelSelector.vue';
 import EleccionSelector from '../../components/selectors/EleccionSelector.vue';
+import CompareControls from '../../components/map/CompareControls.vue';
 import Sello from '../../components/ui/Sello.astro';
 import ShareButton from '../../components/share/ShareButton.vue';
 import ExportButton from '../../components/share/ExportButton.vue';
@@ -132,6 +133,13 @@ const canonicalPath = `/${eleccion}/${departamento}`;
     />
     <!-- Toggle Zonas/Circuito (nivel geográfico) — control del mapa: va PEGADO arriba del mapa. -->
     <LevelSelector client:idle availableLevels={availableLevels} />
+    <!-- Comparación entre elecciones (prototipo Fase 1): dropdown de elecciones del mismo tipo;
+         marca con borde naranja las zonas donde cambió el partido ganador. -->
+    <CompareControls
+      client:idle
+      availableElecciones={availableElecciones}
+      eleccionActual={eleccion}
+    />
     <!-- Map-first: el mapa (héroe) va arriba de los selectores para quedar visible sin scrollear.
          transition:persist con nombre ESTABLE ("map") → el island MapLibre sobrevive la navegación
          entre departamentos aunque vaya antes en el DOM (NFR1). -->
