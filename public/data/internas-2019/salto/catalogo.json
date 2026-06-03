@@ -7,6 +7,7 @@
    "niveles": [
     "lema",
     "precandidato",
+    "sublema",
     "hoja"
    ],
    "nodos": [
@@ -153,6 +154,162 @@
      "nivel": "precandidato",
      "etiqueta": "SARTORI PIÑEYRO, Juan José",
      "parentId": "nacional"
+    },
+    {
+     "id": "odn-asamblea-popular-pc-abella-garcia-gonzalo-mariano-sl-una-propuesta-de-izquierda",
+     "nivel": "sublema",
+     "etiqueta": "UNA PROPUESTA DE IZQUIERDA",
+     "parentId": "odn-asamblea-popular-pc-abella-garcia-gonzalo-mariano"
+    },
+    {
+     "id": "odn-asamblea-popular-pc-abella-garcia-gonzalo-mariano-sl-en-lucha-por-la-soberania",
+     "nivel": "sublema",
+     "etiqueta": "EN LUCHA POR LA SOBERANIA",
+     "parentId": "odn-asamblea-popular-pc-abella-garcia-gonzalo-mariano"
+    },
+    {
+     "id": "odn-cabildo-abierto-pc-manini-stratta-guido-sl-movimiento-social-artiguista",
+     "nivel": "sublema",
+     "etiqueta": "MOVIMIENTO SOCIAL ARTIGUISTA",
+     "parentId": "odn-cabildo-abierto-pc-manini-stratta-guido"
+    },
+    {
+     "id": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista",
+     "nivel": "sublema",
+     "etiqueta": "URUGUAY BATLLISTA",
+     "parentId": "odn-colorado-pc-amorin-batlle-jose-gerardo"
+    },
+    {
+     "id": "odn-colorado-pc-sanguinetti-coirolo-julio-maria-sl-batllistas",
+     "nivel": "sublema",
+     "etiqueta": "BATLLISTAS",
+     "parentId": "odn-colorado-pc-sanguinetti-coirolo-julio-maria"
+    },
+    {
+     "id": "odn-colorado-pc-talvi-perez-ernesto-sl-ciudadanos",
+     "nivel": "sublema",
+     "etiqueta": "CIUDADANOS",
+     "parentId": "odn-colorado-pc-talvi-perez-ernesto"
+    },
+    {
+     "id": "odn-de-la-gente-pc-novick-varela-hector-edgardo-sl-somos-novick",
+     "nivel": "sublema",
+     "etiqueta": "SOMOS NOVICK",
+     "parentId": "odn-de-la-gente-pc-novick-varela-hector-edgardo"
+    },
+    {
+     "id": "odn-de-la-gente-pc-novick-varela-hector-edgardo-sl-el-equipo-de-novick",
+     "nivel": "sublema",
+     "etiqueta": "EL EQUIPO DE NOVICK",
+     "parentId": "odn-de-la-gente-pc-novick-varela-hector-edgardo"
+    },
+    {
+     "id": "odn-frente-amplio-pc-andrade-lallana-oscar-sl-arriba-los-que-luchan",
+     "nivel": "sublema",
+     "etiqueta": "ARRIBA LOS QUE LUCHAN",
+     "parentId": "odn-frente-amplio-pc-andrade-lallana-oscar"
+    },
+    {
+     "id": "odn-frente-amplio-pc-andrade-lallana-oscar-sl-unidad-para-los-cambios",
+     "nivel": "sublema",
+     "etiqueta": "UNIDAD PARA LOS CAMBIOS",
+     "parentId": "odn-frente-amplio-pc-andrade-lallana-oscar"
+    },
+    {
+     "id": "odn-frente-amplio-pc-bergara-duque-mario-esteban-sl-movimiento-popular-frenteamplista",
+     "nivel": "sublema",
+     "etiqueta": "MOVIMIENTO POPULAR FRENTEAMPLISTA",
+     "parentId": "odn-frente-amplio-pc-bergara-duque-mario-esteban"
+    },
+    {
+     "id": "odn-frente-amplio-pc-cosse-garrido-ana-carolina-sl-la-fuerza-que-transforma",
+     "nivel": "sublema",
+     "etiqueta": "LA FUERZA QUE TRANSFORMA",
+     "parentId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina"
+    },
+    {
+     "id": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos-sl-frente-liber-seregni",
+     "nivel": "sublema",
+     "etiqueta": "FRENTE LÍBER SEREGNI",
+     "parentId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos"
+    },
+    {
+     "id": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos-sl-el-nuevo-impulso",
+     "nivel": "sublema",
+     "etiqueta": "EL NUEVO IMPULSO",
+     "parentId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos"
+    },
+    {
+     "id": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos-sl-alianza-mas-frente-amplio",
+     "nivel": "sublema",
+     "etiqueta": "ALIANZA  MAS FRENTE AMPLIO",
+     "parentId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos"
+    },
+    {
+     "id": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos-sl-construyendo-pais",
+     "nivel": "sublema",
+     "etiqueta": "CONSTRUYENDO PAÍS",
+     "parentId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos"
+    },
+    {
+     "id": "odn-nacional-pc-antia-behrens-enrique-andres-sl-mejor-pais",
+     "nivel": "sublema",
+     "etiqueta": "MEJOR PAÍS",
+     "parentId": "odn-nacional-pc-antia-behrens-enrique-andres"
+    },
+    {
+     "id": "odn-nacional-pc-iafigliola-pimentel-carlos-alberto-sl-por-la-vida-la-familia-y-la-patria",
+     "nivel": "sublema",
+     "etiqueta": "POR LA VIDA, LA FAMILIA Y LA PATRIA",
+     "parentId": "odn-nacional-pc-iafigliola-pimentel-carlos-alberto"
+    },
+    {
+     "id": "odn-nacional-pc-lacalle-pou-luis-alberto-sl-todos-hacia-adelante",
+     "nivel": "sublema",
+     "etiqueta": "TODOS, HACIA ADELANTE",
+     "parentId": "odn-nacional-pc-lacalle-pou-luis-alberto"
+    },
+    {
+     "id": "odn-nacional-pc-larranaga-fraga-jorge-washington-sl-juntos",
+     "nivel": "sublema",
+     "etiqueta": "JUNTOS",
+     "parentId": "odn-nacional-pc-larranaga-fraga-jorge-washington"
+    },
+    {
+     "id": "odn-nacional-pc-sartori-pineyro-juan-jose-sl-todo-por-el-pueblo",
+     "nivel": "sublema",
+     "etiqueta": "TODO POR EL PUEBLO",
+     "parentId": "odn-nacional-pc-sartori-pineyro-juan-jose"
+    },
+    {
+     "id": "odn-nacional-pc-sartori-pineyro-juan-jose-sl-la-lista-de-juan-sartori",
+     "nivel": "sublema",
+     "etiqueta": "LA LISTA DE JUAN SARTORI",
+     "parentId": "odn-nacional-pc-sartori-pineyro-juan-jose"
+    },
+    {
+     "id": "odn-nacional-pc-sartori-pineyro-juan-jose-sl-movimiento-ciudadanos",
+     "nivel": "sublema",
+     "etiqueta": "MOVIMIENTO CIUDADANOS",
+     "parentId": "odn-nacional-pc-sartori-pineyro-juan-jose"
+    },
+    {
+     "id": "odn-de-la-gente-pc-novick-varela-hector-edgardo-sl-novick-zunino-mas-la-gente",
+     "nivel": "sublema",
+     "etiqueta": "NOVICK ZUNINO MÁS LA GENTE",
+     "parentId": "odn-de-la-gente-pc-novick-varela-hector-edgardo"
+    },
+    {
+     "id": "odn-independiente-pc-mieres-gomez-pablo-andres-sl-generacion-renovadora",
+     "nivel": "sublema",
+     "etiqueta": "GENERACIÓN RENOVADORA",
+     "parentId": "odn-independiente-pc-mieres-gomez-pablo-andres"
+    },
+    {
+     "id": "odn-asamblea-popular-pc-abella-garcia-gonzalo-mariano-sl-el-pueblo-en-lucha",
+     "nivel": "sublema",
+     "etiqueta": "EL PUEBLO EN LUCHA",
+     "parentId": "odn-asamblea-popular-pc-abella-garcia-gonzalo-mariano"
     }
    ],
    "opciones": [
@@ -163,7 +320,9 @@
      "partidoId": "asamblea-popular",
      "contienda": "odn",
      "lemaId": "asamblea-popular",
-     "precandidatoId": "odn-asamblea-popular-pc-abella-garcia-gonzalo-mariano"
+     "precandidatoId": "odn-asamblea-popular-pc-abella-garcia-gonzalo-mariano",
+     "sublemaId": "odn-asamblea-popular-pc-abella-garcia-gonzalo-mariano-sl-una-propuesta-de-izquierda",
+     "grupoId": "odn-asamblea-popular-pc-abella-garcia-gonzalo-mariano-sl-una-propuesta-de-izquierda"
     },
     {
      "clase": "hoja",
@@ -172,7 +331,9 @@
      "partidoId": "asamblea-popular",
      "contienda": "odn",
      "lemaId": "asamblea-popular",
-     "precandidatoId": "odn-asamblea-popular-pc-abella-garcia-gonzalo-mariano"
+     "precandidatoId": "odn-asamblea-popular-pc-abella-garcia-gonzalo-mariano",
+     "sublemaId": "odn-asamblea-popular-pc-abella-garcia-gonzalo-mariano-sl-en-lucha-por-la-soberania",
+     "grupoId": "odn-asamblea-popular-pc-abella-garcia-gonzalo-mariano-sl-en-lucha-por-la-soberania"
     },
     {
      "clase": "hoja",
@@ -181,7 +342,9 @@
      "partidoId": "cabildo-abierto",
      "contienda": "odn",
      "lemaId": "cabildo-abierto",
-     "precandidatoId": "odn-cabildo-abierto-pc-manini-stratta-guido"
+     "precandidatoId": "odn-cabildo-abierto-pc-manini-stratta-guido",
+     "sublemaId": "odn-cabildo-abierto-pc-manini-stratta-guido-sl-movimiento-social-artiguista",
+     "grupoId": "odn-cabildo-abierto-pc-manini-stratta-guido-sl-movimiento-social-artiguista"
     },
     {
      "clase": "hoja",
@@ -199,7 +362,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo"
+     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo",
+     "sublemaId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista",
+     "grupoId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista"
     },
     {
      "clase": "hoja",
@@ -208,7 +373,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo"
+     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo",
+     "sublemaId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista",
+     "grupoId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista"
     },
     {
      "clase": "hoja",
@@ -217,7 +384,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo"
+     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo",
+     "sublemaId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista",
+     "grupoId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista"
     },
     {
      "clase": "hoja",
@@ -226,7 +395,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo"
+     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo",
+     "sublemaId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista",
+     "grupoId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista"
     },
     {
      "clase": "hoja",
@@ -235,7 +406,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo"
+     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo",
+     "sublemaId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista",
+     "grupoId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista"
     },
     {
      "clase": "hoja",
@@ -244,7 +417,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo"
+     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo",
+     "sublemaId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista",
+     "grupoId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista"
     },
     {
      "clase": "hoja",
@@ -262,7 +437,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo"
+     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo",
+     "sublemaId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista",
+     "grupoId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista"
     },
     {
      "clase": "hoja",
@@ -271,7 +448,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo"
+     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo",
+     "sublemaId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista",
+     "grupoId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista"
     },
     {
      "clase": "hoja",
@@ -280,7 +459,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo"
+     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo",
+     "sublemaId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista",
+     "grupoId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista"
     },
     {
      "clase": "hoja",
@@ -289,7 +470,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo"
+     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo",
+     "sublemaId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista",
+     "grupoId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista"
     },
     {
      "clase": "hoja",
@@ -298,7 +481,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo"
+     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo",
+     "sublemaId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista",
+     "grupoId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista"
     },
     {
      "clase": "hoja",
@@ -307,7 +492,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo"
+     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo",
+     "sublemaId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista",
+     "grupoId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista"
     },
     {
      "clase": "hoja",
@@ -316,7 +503,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo"
+     "precandidatoId": "odn-colorado-pc-amorin-batlle-jose-gerardo",
+     "sublemaId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista",
+     "grupoId": "odn-colorado-pc-amorin-batlle-jose-gerardo-sl-uruguay-batllista"
     },
     {
      "clase": "hoja",
@@ -325,7 +514,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "odn-colorado-pc-sanguinetti-coirolo-julio-maria"
+     "precandidatoId": "odn-colorado-pc-sanguinetti-coirolo-julio-maria",
+     "sublemaId": "odn-colorado-pc-sanguinetti-coirolo-julio-maria-sl-batllistas",
+     "grupoId": "odn-colorado-pc-sanguinetti-coirolo-julio-maria-sl-batllistas"
     },
     {
      "clase": "hoja",
@@ -334,7 +525,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "odn-colorado-pc-sanguinetti-coirolo-julio-maria"
+     "precandidatoId": "odn-colorado-pc-sanguinetti-coirolo-julio-maria",
+     "sublemaId": "odn-colorado-pc-sanguinetti-coirolo-julio-maria-sl-batllistas",
+     "grupoId": "odn-colorado-pc-sanguinetti-coirolo-julio-maria-sl-batllistas"
     },
     {
      "clase": "hoja",
@@ -343,7 +536,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "odn-colorado-pc-sanguinetti-coirolo-julio-maria"
+     "precandidatoId": "odn-colorado-pc-sanguinetti-coirolo-julio-maria",
+     "sublemaId": "odn-colorado-pc-sanguinetti-coirolo-julio-maria-sl-batllistas",
+     "grupoId": "odn-colorado-pc-sanguinetti-coirolo-julio-maria-sl-batllistas"
     },
     {
      "clase": "hoja",
@@ -352,7 +547,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "odn-colorado-pc-talvi-perez-ernesto"
+     "precandidatoId": "odn-colorado-pc-talvi-perez-ernesto",
+     "sublemaId": "odn-colorado-pc-talvi-perez-ernesto-sl-ciudadanos",
+     "grupoId": "odn-colorado-pc-talvi-perez-ernesto-sl-ciudadanos"
     },
     {
      "clase": "hoja",
@@ -361,7 +558,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "odn-colorado-pc-talvi-perez-ernesto"
+     "precandidatoId": "odn-colorado-pc-talvi-perez-ernesto",
+     "sublemaId": "odn-colorado-pc-talvi-perez-ernesto-sl-ciudadanos",
+     "grupoId": "odn-colorado-pc-talvi-perez-ernesto-sl-ciudadanos"
     },
     {
      "clase": "hoja",
@@ -370,7 +569,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "odn-colorado-pc-talvi-perez-ernesto"
+     "precandidatoId": "odn-colorado-pc-talvi-perez-ernesto",
+     "sublemaId": "odn-colorado-pc-talvi-perez-ernesto-sl-ciudadanos",
+     "grupoId": "odn-colorado-pc-talvi-perez-ernesto-sl-ciudadanos"
     },
     {
      "clase": "hoja",
@@ -379,7 +580,9 @@
      "partidoId": "de-la-gente",
      "contienda": "odn",
      "lemaId": "de-la-gente",
-     "precandidatoId": "odn-de-la-gente-pc-novick-varela-hector-edgardo"
+     "precandidatoId": "odn-de-la-gente-pc-novick-varela-hector-edgardo",
+     "sublemaId": "odn-de-la-gente-pc-novick-varela-hector-edgardo-sl-somos-novick",
+     "grupoId": "odn-de-la-gente-pc-novick-varela-hector-edgardo-sl-somos-novick"
     },
     {
      "clase": "hoja",
@@ -388,7 +591,9 @@
      "partidoId": "de-la-gente",
      "contienda": "odn",
      "lemaId": "de-la-gente",
-     "precandidatoId": "odn-de-la-gente-pc-novick-varela-hector-edgardo"
+     "precandidatoId": "odn-de-la-gente-pc-novick-varela-hector-edgardo",
+     "sublemaId": "odn-de-la-gente-pc-novick-varela-hector-edgardo-sl-el-equipo-de-novick",
+     "grupoId": "odn-de-la-gente-pc-novick-varela-hector-edgardo-sl-el-equipo-de-novick"
     },
     {
      "clase": "hoja",
@@ -397,7 +602,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "odn-frente-amplio-pc-andrade-lallana-oscar"
+     "precandidatoId": "odn-frente-amplio-pc-andrade-lallana-oscar",
+     "sublemaId": "odn-frente-amplio-pc-andrade-lallana-oscar-sl-arriba-los-que-luchan",
+     "grupoId": "odn-frente-amplio-pc-andrade-lallana-oscar-sl-arriba-los-que-luchan"
     },
     {
      "clase": "hoja",
@@ -406,7 +613,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "odn-frente-amplio-pc-andrade-lallana-oscar"
+     "precandidatoId": "odn-frente-amplio-pc-andrade-lallana-oscar",
+     "sublemaId": "odn-frente-amplio-pc-andrade-lallana-oscar-sl-unidad-para-los-cambios",
+     "grupoId": "odn-frente-amplio-pc-andrade-lallana-oscar-sl-unidad-para-los-cambios"
     },
     {
      "clase": "hoja",
@@ -415,7 +624,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "odn-frente-amplio-pc-andrade-lallana-oscar"
+     "precandidatoId": "odn-frente-amplio-pc-andrade-lallana-oscar",
+     "sublemaId": "odn-frente-amplio-pc-andrade-lallana-oscar-sl-unidad-para-los-cambios",
+     "grupoId": "odn-frente-amplio-pc-andrade-lallana-oscar-sl-unidad-para-los-cambios"
     },
     {
      "clase": "hoja",
@@ -424,7 +635,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "odn-frente-amplio-pc-andrade-lallana-oscar"
+     "precandidatoId": "odn-frente-amplio-pc-andrade-lallana-oscar",
+     "sublemaId": "odn-frente-amplio-pc-andrade-lallana-oscar-sl-unidad-para-los-cambios",
+     "grupoId": "odn-frente-amplio-pc-andrade-lallana-oscar-sl-unidad-para-los-cambios"
     },
     {
      "clase": "hoja",
@@ -433,7 +646,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "odn-frente-amplio-pc-andrade-lallana-oscar"
+     "precandidatoId": "odn-frente-amplio-pc-andrade-lallana-oscar",
+     "sublemaId": "odn-frente-amplio-pc-andrade-lallana-oscar-sl-unidad-para-los-cambios",
+     "grupoId": "odn-frente-amplio-pc-andrade-lallana-oscar-sl-unidad-para-los-cambios"
     },
     {
      "clase": "hoja",
@@ -451,7 +666,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "odn-frente-amplio-pc-bergara-duque-mario-esteban"
+     "precandidatoId": "odn-frente-amplio-pc-bergara-duque-mario-esteban",
+     "sublemaId": "odn-frente-amplio-pc-bergara-duque-mario-esteban-sl-movimiento-popular-frenteamplista",
+     "grupoId": "odn-frente-amplio-pc-bergara-duque-mario-esteban-sl-movimiento-popular-frenteamplista"
     },
     {
      "clase": "hoja",
@@ -469,7 +686,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina"
+     "precandidatoId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina",
+     "sublemaId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina-sl-la-fuerza-que-transforma",
+     "grupoId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina-sl-la-fuerza-que-transforma"
     },
     {
      "clase": "hoja",
@@ -478,7 +697,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina"
+     "precandidatoId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina",
+     "sublemaId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina-sl-la-fuerza-que-transforma",
+     "grupoId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina-sl-la-fuerza-que-transforma"
     },
     {
      "clase": "hoja",
@@ -487,7 +708,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina"
+     "precandidatoId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina",
+     "sublemaId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina-sl-la-fuerza-que-transforma",
+     "grupoId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina-sl-la-fuerza-que-transforma"
     },
     {
      "clase": "hoja",
@@ -496,7 +719,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina"
+     "precandidatoId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina",
+     "sublemaId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina-sl-la-fuerza-que-transforma",
+     "grupoId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina-sl-la-fuerza-que-transforma"
     },
     {
      "clase": "hoja",
@@ -505,7 +730,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina"
+     "precandidatoId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina",
+     "sublemaId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina-sl-la-fuerza-que-transforma",
+     "grupoId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina-sl-la-fuerza-que-transforma"
     },
     {
      "clase": "hoja",
@@ -523,7 +750,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos"
+     "precandidatoId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos",
+     "sublemaId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos-sl-frente-liber-seregni",
+     "grupoId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos-sl-frente-liber-seregni"
     },
     {
      "clase": "hoja",
@@ -532,7 +761,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos"
+     "precandidatoId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos",
+     "sublemaId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos-sl-el-nuevo-impulso",
+     "grupoId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos-sl-el-nuevo-impulso"
     },
     {
      "clase": "hoja",
@@ -541,7 +772,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos"
+     "precandidatoId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos",
+     "sublemaId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos-sl-frente-liber-seregni",
+     "grupoId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos-sl-frente-liber-seregni"
     },
     {
      "clase": "hoja",
@@ -550,7 +783,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos"
+     "precandidatoId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos",
+     "sublemaId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos-sl-alianza-mas-frente-amplio",
+     "grupoId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos-sl-alianza-mas-frente-amplio"
     },
     {
      "clase": "hoja",
@@ -568,7 +803,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos"
+     "precandidatoId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos",
+     "sublemaId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos-sl-frente-liber-seregni",
+     "grupoId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos-sl-frente-liber-seregni"
     },
     {
      "clase": "hoja",
@@ -577,7 +814,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos"
+     "precandidatoId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos",
+     "sublemaId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos-sl-frente-liber-seregni",
+     "grupoId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos-sl-frente-liber-seregni"
     },
     {
      "clase": "hoja",
@@ -613,7 +852,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos"
+     "precandidatoId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos",
+     "sublemaId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos-sl-construyendo-pais",
+     "grupoId": "odn-frente-amplio-pc-martinez-villaamil-daniel-carlos-sl-construyendo-pais"
     },
     {
      "clase": "hoja",
@@ -631,7 +872,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "odn-nacional-pc-antia-behrens-enrique-andres"
+     "precandidatoId": "odn-nacional-pc-antia-behrens-enrique-andres",
+     "sublemaId": "odn-nacional-pc-antia-behrens-enrique-andres-sl-mejor-pais",
+     "grupoId": "odn-nacional-pc-antia-behrens-enrique-andres-sl-mejor-pais"
     },
     {
      "clase": "hoja",
@@ -640,7 +883,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "odn-nacional-pc-iafigliola-pimentel-carlos-alberto"
+     "precandidatoId": "odn-nacional-pc-iafigliola-pimentel-carlos-alberto",
+     "sublemaId": "odn-nacional-pc-iafigliola-pimentel-carlos-alberto-sl-por-la-vida-la-familia-y-la-patria",
+     "grupoId": "odn-nacional-pc-iafigliola-pimentel-carlos-alberto-sl-por-la-vida-la-familia-y-la-patria"
     },
     {
      "clase": "hoja",
@@ -649,7 +894,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "odn-nacional-pc-lacalle-pou-luis-alberto"
+     "precandidatoId": "odn-nacional-pc-lacalle-pou-luis-alberto",
+     "sublemaId": "odn-nacional-pc-lacalle-pou-luis-alberto-sl-todos-hacia-adelante",
+     "grupoId": "odn-nacional-pc-lacalle-pou-luis-alberto-sl-todos-hacia-adelante"
     },
     {
      "clase": "hoja",
@@ -658,7 +905,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "odn-nacional-pc-lacalle-pou-luis-alberto"
+     "precandidatoId": "odn-nacional-pc-lacalle-pou-luis-alberto",
+     "sublemaId": "odn-nacional-pc-lacalle-pou-luis-alberto-sl-todos-hacia-adelante",
+     "grupoId": "odn-nacional-pc-lacalle-pou-luis-alberto-sl-todos-hacia-adelante"
     },
     {
      "clase": "hoja",
@@ -667,7 +916,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "odn-nacional-pc-lacalle-pou-luis-alberto"
+     "precandidatoId": "odn-nacional-pc-lacalle-pou-luis-alberto",
+     "sublemaId": "odn-nacional-pc-lacalle-pou-luis-alberto-sl-todos-hacia-adelante",
+     "grupoId": "odn-nacional-pc-lacalle-pou-luis-alberto-sl-todos-hacia-adelante"
     },
     {
      "clase": "hoja",
@@ -676,7 +927,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "odn-nacional-pc-lacalle-pou-luis-alberto"
+     "precandidatoId": "odn-nacional-pc-lacalle-pou-luis-alberto",
+     "sublemaId": "odn-nacional-pc-lacalle-pou-luis-alberto-sl-todos-hacia-adelante",
+     "grupoId": "odn-nacional-pc-lacalle-pou-luis-alberto-sl-todos-hacia-adelante"
     },
     {
      "clase": "hoja",
@@ -685,7 +938,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "odn-nacional-pc-lacalle-pou-luis-alberto"
+     "precandidatoId": "odn-nacional-pc-lacalle-pou-luis-alberto",
+     "sublemaId": "odn-nacional-pc-lacalle-pou-luis-alberto-sl-todos-hacia-adelante",
+     "grupoId": "odn-nacional-pc-lacalle-pou-luis-alberto-sl-todos-hacia-adelante"
     },
     {
      "clase": "hoja",
@@ -694,7 +949,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "odn-nacional-pc-lacalle-pou-luis-alberto"
+     "precandidatoId": "odn-nacional-pc-lacalle-pou-luis-alberto",
+     "sublemaId": "odn-nacional-pc-lacalle-pou-luis-alberto-sl-todos-hacia-adelante",
+     "grupoId": "odn-nacional-pc-lacalle-pou-luis-alberto-sl-todos-hacia-adelante"
     },
     {
      "clase": "hoja",
@@ -703,7 +960,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "odn-nacional-pc-larranaga-fraga-jorge-washington"
+     "precandidatoId": "odn-nacional-pc-larranaga-fraga-jorge-washington",
+     "sublemaId": "odn-nacional-pc-larranaga-fraga-jorge-washington-sl-juntos",
+     "grupoId": "odn-nacional-pc-larranaga-fraga-jorge-washington-sl-juntos"
     },
     {
      "clase": "hoja",
@@ -712,7 +971,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "odn-nacional-pc-larranaga-fraga-jorge-washington"
+     "precandidatoId": "odn-nacional-pc-larranaga-fraga-jorge-washington",
+     "sublemaId": "odn-nacional-pc-larranaga-fraga-jorge-washington-sl-juntos",
+     "grupoId": "odn-nacional-pc-larranaga-fraga-jorge-washington-sl-juntos"
     },
     {
      "clase": "hoja",
@@ -721,7 +982,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "odn-nacional-pc-larranaga-fraga-jorge-washington"
+     "precandidatoId": "odn-nacional-pc-larranaga-fraga-jorge-washington",
+     "sublemaId": "odn-nacional-pc-larranaga-fraga-jorge-washington-sl-juntos",
+     "grupoId": "odn-nacional-pc-larranaga-fraga-jorge-washington-sl-juntos"
     },
     {
      "clase": "hoja",
@@ -730,7 +993,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "odn-nacional-pc-sartori-pineyro-juan-jose"
+     "precandidatoId": "odn-nacional-pc-sartori-pineyro-juan-jose",
+     "sublemaId": "odn-nacional-pc-sartori-pineyro-juan-jose-sl-todo-por-el-pueblo",
+     "grupoId": "odn-nacional-pc-sartori-pineyro-juan-jose-sl-todo-por-el-pueblo"
     },
     {
      "clase": "hoja",
@@ -739,7 +1004,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "odn-nacional-pc-sartori-pineyro-juan-jose"
+     "precandidatoId": "odn-nacional-pc-sartori-pineyro-juan-jose",
+     "sublemaId": "odn-nacional-pc-sartori-pineyro-juan-jose-sl-todo-por-el-pueblo",
+     "grupoId": "odn-nacional-pc-sartori-pineyro-juan-jose-sl-todo-por-el-pueblo"
     },
     {
      "clase": "hoja",
@@ -748,7 +1015,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "odn-nacional-pc-sartori-pineyro-juan-jose"
+     "precandidatoId": "odn-nacional-pc-sartori-pineyro-juan-jose",
+     "sublemaId": "odn-nacional-pc-sartori-pineyro-juan-jose-sl-la-lista-de-juan-sartori",
+     "grupoId": "odn-nacional-pc-sartori-pineyro-juan-jose-sl-la-lista-de-juan-sartori"
     },
     {
      "clase": "hoja",
@@ -757,7 +1026,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "odn-nacional-pc-sartori-pineyro-juan-jose"
+     "precandidatoId": "odn-nacional-pc-sartori-pineyro-juan-jose",
+     "sublemaId": "odn-nacional-pc-sartori-pineyro-juan-jose-sl-todo-por-el-pueblo",
+     "grupoId": "odn-nacional-pc-sartori-pineyro-juan-jose-sl-todo-por-el-pueblo"
     },
     {
      "clase": "hoja",
@@ -766,7 +1037,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "odn-nacional-pc-sartori-pineyro-juan-jose"
+     "precandidatoId": "odn-nacional-pc-sartori-pineyro-juan-jose",
+     "sublemaId": "odn-nacional-pc-sartori-pineyro-juan-jose-sl-movimiento-ciudadanos",
+     "grupoId": "odn-nacional-pc-sartori-pineyro-juan-jose-sl-movimiento-ciudadanos"
     },
     {
      "clase": "hoja",
@@ -775,7 +1048,9 @@
      "partidoId": "de-la-gente",
      "contienda": "odn",
      "lemaId": "de-la-gente",
-     "precandidatoId": "odn-de-la-gente-pc-novick-varela-hector-edgardo"
+     "precandidatoId": "odn-de-la-gente-pc-novick-varela-hector-edgardo",
+     "sublemaId": "odn-de-la-gente-pc-novick-varela-hector-edgardo-sl-novick-zunino-mas-la-gente",
+     "grupoId": "odn-de-la-gente-pc-novick-varela-hector-edgardo-sl-novick-zunino-mas-la-gente"
     },
     {
      "clase": "hoja",
@@ -784,7 +1059,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina"
+     "precandidatoId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina",
+     "sublemaId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina-sl-la-fuerza-que-transforma",
+     "grupoId": "odn-frente-amplio-pc-cosse-garrido-ana-carolina-sl-la-fuerza-que-transforma"
     },
     {
      "clase": "hoja",
@@ -802,7 +1079,9 @@
      "partidoId": "independiente",
      "contienda": "odn",
      "lemaId": "independiente",
-     "precandidatoId": "odn-independiente-pc-mieres-gomez-pablo-andres"
+     "precandidatoId": "odn-independiente-pc-mieres-gomez-pablo-andres",
+     "sublemaId": "odn-independiente-pc-mieres-gomez-pablo-andres-sl-generacion-renovadora",
+     "grupoId": "odn-independiente-pc-mieres-gomez-pablo-andres-sl-generacion-renovadora"
     },
     {
      "clase": "hoja",
@@ -811,7 +1090,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "odn-nacional-pc-lacalle-pou-luis-alberto"
+     "precandidatoId": "odn-nacional-pc-lacalle-pou-luis-alberto",
+     "sublemaId": "odn-nacional-pc-lacalle-pou-luis-alberto-sl-todos-hacia-adelante",
+     "grupoId": "odn-nacional-pc-lacalle-pou-luis-alberto-sl-todos-hacia-adelante"
     },
     {
      "clase": "hoja",
@@ -820,7 +1101,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "odn-nacional-pc-sartori-pineyro-juan-jose"
+     "precandidatoId": "odn-nacional-pc-sartori-pineyro-juan-jose",
+     "sublemaId": "odn-nacional-pc-sartori-pineyro-juan-jose-sl-todo-por-el-pueblo",
+     "grupoId": "odn-nacional-pc-sartori-pineyro-juan-jose-sl-todo-por-el-pueblo"
     },
     {
      "clase": "hoja",
@@ -847,7 +1130,9 @@
      "partidoId": "asamblea-popular",
      "contienda": "odn",
      "lemaId": "asamblea-popular",
-     "precandidatoId": "odn-asamblea-popular-pc-abella-garcia-gonzalo-mariano"
+     "precandidatoId": "odn-asamblea-popular-pc-abella-garcia-gonzalo-mariano",
+     "sublemaId": "odn-asamblea-popular-pc-abella-garcia-gonzalo-mariano-sl-el-pueblo-en-lucha",
+     "grupoId": "odn-asamblea-popular-pc-abella-garcia-gonzalo-mariano-sl-el-pueblo-en-lucha"
     }
    ]
   },

@@ -136,12 +136,26 @@ const contienda = computed<ContiendaCat | null>(
 );
 const tieneVariasContiendas = computed(() => (catalogo.value?.contiendas.length ?? 0) > 1);
 const esPlano = computed(() => (contienda.value?.niveles.length ?? 2) <= 1);
-// Escalera genérica (Story 10.9): el nivel MEDIO (cuando hay 3) es precandidato|sublema|alcalde;
-// el nivel TERMINAL (la hoja del árbol) es hoja|candidato. El acordeón no hardcodea ninguno.
-const nivelMedio = computed(() => (contienda.value?.niveles.length === 3 ? contienda.value.niveles[1] : null));
+// Escalera genérica (Story 10.9 + sublema ODN): puede haber 0, 1 o 2 niveles intermedios
+// (precandidato y/o sublema) entre lema y hoja. El árbol se arma recursivamente por `parentId`,
+// sin hardcodear cuál es el nivel medio. El TERMINAL (hoja del árbol) es hoja|candidato.
 const nivelHoja = computed(() => contienda.value?.niveles[contienda.value.niveles.length - 1] ?? 'hoja');
-/** Id del nodo medio (sublema/alcalde/precandidato) al que cuelga una opción terminal. */
+/** Id del nodo padre directo (sublema/precandidato/alcalde) del que cuelga una opción terminal. */
 const parentDe = (o: OpcionHojaJson): string | undefined => o.grupoId ?? o.precandidatoId;
+/** Nodos agrupadores (no-lema) por id, para caminar la cadena de ancestros. */
+const nodoPorId = computed<Map<string, NodoOpcion>>(() => {
+  const m = new Map<string, NodoOpcion>();
+  for (const n of contienda.value?.nodos ?? []) m.set(n.id, n);
+  return m;
+});
+/** Cadena de ancestros agrupadores de una opción: [sublema?, precandidato?, …] — SIN el lema. */
+function ancestrosDe(o: OpcionHojaJson): string[] {
+  const out: string[] = [];
+  let cur = parentDe(o);
+  const nodos = nodoPorId.value;
+  while (cur && nodos.has(cur)) { out.push(cur); cur = nodos.get(cur)!.parentId; }
+  return out;
+}
 
 /** lemas (nodos nivel 'lema') filtrados por partido y por búsqueda de hoja. */
 const lemas = computed<NodoOpcion[]>(() => {
@@ -200,19 +214,20 @@ function ordenarOpciones(a: OpcionHojaJson, b: OpcionHojaJson): number {
   if (Number.isFinite(na) && Number.isFinite(nb)) return na - nb;
   return etiquetaOpcion(a).localeCompare(etiquetaOpcion(b), 'es');
 }
-/** Nodos MEDIOS (sublema/alcalde/precandidato) de un lema, ordenados por votos totales de sus hojas. */
-function gruposDe(lemaId: string): NodoOpcion[] {
-  const nivel = nivelMedio.value;
-  if (!nivel) return [];
-  const grupos = (contienda.value?.nodos ?? []).filter((n) => n.nivel === nivel && n.parentId === lemaId);
+/** Nodos agrupadores hijos directos de un nodo (lema o grupo) = el siguiente nivel del árbol.
+ * Genérico: lema→precandidato, precandidato→sublema, lema→sublema… ordenados por votos. */
+function gruposDe(parentId: string): NodoOpcion[] {
+  const grupos = (contienda.value?.nodos ?? []).filter((n) => n.nivel !== 'lema' && n.parentId === parentId);
   const tv = totalVotosHoja.value;
   if (Object.keys(tv).length === 0) return grupos.sort((a, b) => a.etiqueta.localeCompare(b.etiqueta, 'es'));
-  // Suma de votos de todas las hojas bajo cada grupo
-  const votosGrupo = (gid: string): number =>
-    (contienda.value?.opciones ?? [])
-      .filter((o) => parentDe(o) === gid)
-      .reduce((acc, o) => acc + (tv[o.id] ?? 0), 0);
-  return grupos.sort((a, b) => votosGrupo(b.id) - votosGrupo(a.id) || a.etiqueta.localeCompare(b.etiqueta, 'es'));
+  return grupos.sort((a, b) => votosBajoNodo(b.id) - votosBajoNodo(a.id) || a.etiqueta.localeCompare(b.etiqueta, 'es'));
+}
+/** Σ votos de TODAS las hojas bajo un nodo (recursivo: incluye sub-grupos). Para ordenar grupos. */
+function votosBajoNodo(nodeId: string): number {
+  const tv = totalVotosHoja.value;
+  return (contienda.value?.opciones ?? [])
+    .filter((o) => ancestrosDe(o).includes(nodeId))
+    .reduce((acc, o) => acc + (tv[o.id] ?? 0), 0);
 }
 /** Opciones terminales VISIBLES que cuelgan de un nodo medio. */
 function opcionesDeGrupo(grupoId: string): OpcionHojaJson[] {
@@ -233,10 +248,13 @@ function hojasDeLema(lemaId: string): string[] {
   const set = new Set(hojasFiltradas.value.map((h) => h.id));
   return (contienda.value?.opciones ?? []).filter((o) => o.lemaId === lemaId && set.has(o.id)).map((o) => o.id);
 }
-/** Ids VISIBLES de las opciones de un nodo medio — para tri-estado del nodo. */
+/** Ids VISIBLES de TODAS las opciones bajo un nodo agrupador (recursivo: incluye sub-grupos) —
+ * para tri-estado y "seleccionar todo" del nodo (un precandidato suma todas sus listas de sublema). */
 function idsDeGrupo(grupoId: string): string[] {
   const set = new Set(hojasFiltradas.value.map((h) => h.id));
-  return (contienda.value?.opciones ?? []).filter((o) => parentDe(o) === grupoId && set.has(o.id)).map((o) => o.id);
+  return (contienda.value?.opciones ?? [])
+    .filter((o) => set.has(o.id) && ancestrosDe(o).includes(grupoId))
+    .map((o) => o.id);
 }
 
 type TriState = 'empty' | 'partial' | 'full';
@@ -320,8 +338,7 @@ function sembrarExpansionDeSeleccion(): void {
   for (const o of c.opciones) {
     if (seleccion.value.has(o.id)) {
       if (o.lemaId) next.add(o.lemaId);
-      const g = parentDe(o);
-      if (g) next.add(g);
+      for (const a of ancestrosDe(o)) next.add(a); // abre lema → precandidato → sublema
     }
   }
   expandidos.value = next;
@@ -437,7 +454,7 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
         </div>
 
         <ul v-if="expandidos.has(l.id)" class="acc__children" role="group">
-          <!-- Nivel medio genérico (precandidato/sublema/alcalde): lema → grupo → opción -->
+          <!-- Nivel intermedio 1 (precandidato en ODN; sublema en ODD/nacionales): lema → g1 -->
           <li v-for="g in gruposDe(l.id)" :key="g.id" class="acc__precand" role="treeitem" :aria-expanded="expandidos.has(g.id)">
             <div class="acc__row acc__row--precand">
               <button
@@ -459,6 +476,43 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
               </button>
             </div>
             <ul v-if="expandidos.has(g.id)" class="acc__children" role="group">
+              <!-- Nivel intermedio 2 (sublema bajo precandidato en ODN): g1 → g2 → hoja -->
+              <li v-for="g2 in gruposDe(g.id)" :key="g2.id" class="acc__precand" role="treeitem" :aria-expanded="expandidos.has(g2.id)">
+                <div class="acc__row acc__row--sublema">
+                  <button
+                    type="button"
+                    class="acc__cb"
+                    :class="`acc__cb--${tri(idsDeGrupo(g2.id))}`"
+                    :aria-label="`Seleccionar todas las opciones de ${g2.etiqueta}`"
+                    @click="toggleSet(idsDeGrupo(g2.id))"
+                  ><span aria-hidden="true">{{ tri(idsDeGrupo(g2.id)) === 'full' ? '✓' : tri(idsDeGrupo(g2.id)) === 'partial' ? '–' : '' }}</span></button>
+                  <button
+                    type="button"
+                    class="acc__expand"
+                    :aria-expanded="expandidos.has(g2.id)"
+                    :aria-label="`${expandidos.has(g2.id) ? 'Contraer' : 'Ver listas de'} ${g2.etiqueta}`"
+                    @click="toggleExpand(g2.id)"
+                  >
+                    <span class="acc__chevron" aria-hidden="true">{{ expandidos.has(g2.id) ? '▾' : '▸' }}</span>
+                    <span class="acc__etiqueta acc__etiqueta--precand">{{ g2.etiqueta }}</span>
+                  </button>
+                </div>
+                <ul v-if="expandidos.has(g2.id)" class="acc__children" role="group">
+                  <li v-for="h in opcionesDeGrupo(g2.id)" :key="h.id" class="acc__hoja" role="treeitem">
+                    <div class="acc__row acc__row--hoja2">
+                      <button
+                        type="button"
+                        class="acc__cb"
+                        :class="seleccion.has(h.id) ? 'acc__cb--full' : 'acc__cb--empty'"
+                        :aria-label="`Seleccionar ${etiquetaOpcion(h)}`"
+                        @click="toggleHoja(h.id)"
+                      ><span aria-hidden="true">{{ seleccion.has(h.id) ? '✓' : '' }}</span></button>
+                      <span class="acc__lista">{{ etiquetaOpcion(h) }}</span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+              <!-- Hojas directas de g1 (sin sub-grupo): ODD/nacionales todas; ODN listas sin sublema -->
               <li v-for="h in opcionesDeGrupo(g.id)" :key="h.id" class="acc__hoja" role="treeitem">
                 <div class="acc__row acc__row--hoja">
                   <button
@@ -551,7 +605,9 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
 .acc__row { display: flex; align-items: center; gap: 0.375rem; min-height: 40px; padding: 0.125rem 0.375rem; border-bottom: 1px solid var(--color-surface-2); }
 .acc__row--lema { font-weight: 600; }
 .acc__row--precand { padding-left: 1.75rem; }
+.acc__row--sublema { padding-left: 3rem; }
 .acc__row--hoja { padding-left: 3rem; }
+.acc__row--hoja2 { padding-left: 4.25rem; }
 .acc__tree--plano .acc__row { padding-left: 0.375rem; }
 
 .acc__cb {

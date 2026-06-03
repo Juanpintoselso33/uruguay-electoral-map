@@ -7,6 +7,7 @@
    "niveles": [
     "lema",
     "precandidato",
+    "sublema",
     "hoja"
    ],
    "nodos": [
@@ -228,6 +229,168 @@
      "etiqueta": "Roxana Lilián Corbran Rizzo",
      "parentId": "nacional",
      "partidoId": "nacional"
+    },
+    {
+     "id": "cabildo-abierto-manini-stratta-guido-sl-espacio-de-los-pueblos-libres",
+     "nivel": "sublema",
+     "etiqueta": "ESPACIO DE LOS PUEBLOS LIBRES",
+     "parentId": "cabildo-abierto-manini-stratta-guido"
+    },
+    {
+     "id": "cabildo-abierto-manini-stratta-guido-sl-la-columna-lealtad-y-unidad",
+     "nivel": "sublema",
+     "etiqueta": "LA COLUMNA LEALTAD Y UNIDAD",
+     "parentId": "cabildo-abierto-manini-stratta-guido"
+    },
+    {
+     "id": "cabildo-abierto-manini-stratta-guido-sl-adelante",
+     "nivel": "sublema",
+     "etiqueta": "ADELANTE",
+     "parentId": "cabildo-abierto-manini-stratta-guido"
+    },
+    {
+     "id": "frente-amplio-cosse-garrido-ana-carolina-sl-espacio-democratico-avanzado",
+     "nivel": "sublema",
+     "etiqueta": "ESPACIO DEMOCRÁTICO AVANZADO",
+     "parentId": "frente-amplio-cosse-garrido-ana-carolina"
+    },
+    {
+     "id": "frente-amplio-cosse-garrido-ana-carolina-sl-casa-grande",
+     "nivel": "sublema",
+     "etiqueta": "CASA GRANDE",
+     "parentId": "frente-amplio-cosse-garrido-ana-carolina"
+    },
+    {
+     "id": "frente-amplio-cosse-garrido-ana-carolina-sl-espacio-socialdemocrata-amplio",
+     "nivel": "sublema",
+     "etiqueta": "ESPACIO SOCIALDEMOCRATA AMPLIO",
+     "parentId": "frente-amplio-cosse-garrido-ana-carolina"
+    },
+    {
+     "id": "frente-amplio-orsi-martinez-yamandu-ramon-sl-unir",
+     "nivel": "sublema",
+     "etiqueta": "UNIR",
+     "parentId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "id": "frente-amplio-orsi-martinez-yamandu-ramon-sl-por-el-uruguay-que-queremos-construir",
+     "nivel": "sublema",
+     "etiqueta": "POR EL URUGUAY QUE QUEREMOS CONSTRUIR",
+     "parentId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "id": "frente-amplio-orsi-martinez-yamandu-ramon-sl-no-te-rindas",
+     "nivel": "sublema",
+     "etiqueta": "NO TE RINDAS",
+     "parentId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "id": "frente-amplio-cosse-garrido-ana-carolina-sl-sumemos",
+     "nivel": "sublema",
+     "etiqueta": "SUMEMOS",
+     "parentId": "frente-amplio-cosse-garrido-ana-carolina"
+    },
+    {
+     "id": "frente-amplio-lima-proserpio-andres-pablo-sl-encuentro-federal-artiguista",
+     "nivel": "sublema",
+     "etiqueta": "ENCUENTRO FEDERAL ARTIGUISTA",
+     "parentId": "frente-amplio-lima-proserpio-andres-pablo"
+    },
+    {
+     "id": "frente-amplio-orsi-martinez-yamandu-ramon-sl-el-abrazo-crece",
+     "nivel": "sublema",
+     "etiqueta": "EL ABRAZO CRECE",
+     "parentId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "id": "frente-amplio-orsi-martinez-yamandu-ramon-sl-progresistas",
+     "nivel": "sublema",
+     "etiqueta": "PROGRESISTAS",
+     "parentId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "id": "colorado-ojeda-spitz-andres-sl-unir-para-ganar",
+     "nivel": "sublema",
+     "etiqueta": "UNIR PARA GANAR",
+     "parentId": "colorado-ojeda-spitz-andres"
+    },
+    {
+     "id": "colorado-ojeda-spitz-andres-sl-tercera-via",
+     "nivel": "sublema",
+     "etiqueta": "TERCERA VÍA",
+     "parentId": "colorado-ojeda-spitz-andres"
+    },
+    {
+     "id": "colorado-silva-garcia-robert-sl-crece",
+     "nivel": "sublema",
+     "etiqueta": "CRECE",
+     "parentId": "colorado-silva-garcia-robert"
+    },
+    {
+     "id": "colorado-viera-duarte-tabare-sl-batllistas-unidos",
+     "nivel": "sublema",
+     "etiqueta": "BATLLISTAS UNIDOS",
+     "parentId": "colorado-viera-duarte-tabare"
+    },
+    {
+     "id": "identidad-soberana-salle-lorier-gustavo-alberto-sl-nosotros-mismos",
+     "nivel": "sublema",
+     "etiqueta": "NOSOTROS MISMOS",
+     "parentId": "identidad-soberana-salle-lorier-gustavo-alberto"
+    },
+    {
+     "id": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "nivel": "sublema",
+     "etiqueta": "URUGUAY PARA ADELANTE",
+     "parentId": "nacional-delgado-ceretta-alvaro-luis"
+    },
+    {
+     "id": "nacional-gandini-astesiano-jorge-osvaldo-sl-por-la-patria",
+     "nivel": "sublema",
+     "etiqueta": "POR LA PATRIA",
+     "parentId": "nacional-gandini-astesiano-jorge-osvaldo"
+    },
+    {
+     "id": "nacional-raffo-degeromini-maria-laura-sl-sumar",
+     "nivel": "sublema",
+     "etiqueta": "SUMAR",
+     "parentId": "nacional-raffo-degeromini-maria-laura"
+    },
+    {
+     "id": "devolucion-paiva-fiures-pablo-marcelo-sl-liberales-por-la-gente",
+     "nivel": "sublema",
+     "etiqueta": "LIBERALES POR LA GENTE",
+     "parentId": "devolucion-paiva-fiures-pablo-marcelo"
+    },
+    {
+     "id": "frente-amplio-orsi-martinez-yamandu-ramon-sl-legado-seregnista",
+     "nivel": "sublema",
+     "etiqueta": "LEGADO SEREGNISTA",
+     "parentId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "id": "colorado-gurmendez-armand-ugon-gabriel-sl-viento-de-cambio-uruguay",
+     "nivel": "sublema",
+     "etiqueta": "VIENTO DE CAMBIO URUGUAY",
+     "parentId": "colorado-gurmendez-armand-ugon-gabriel"
+    },
+    {
+     "id": "nacional-iafigliola-pimentel-carlos-alberto-sl-por-la-vida-la-familia-y-la-patria",
+     "nivel": "sublema",
+     "etiqueta": "POR LA VIDA, LA FAMILIA Y LA PATRIA",
+     "parentId": "nacional-iafigliola-pimentel-carlos-alberto"
+    },
+    {
+     "id": "nacional-delgado-ceretta-alvaro-luis-sl-unidad-nacional",
+     "nivel": "sublema",
+     "etiqueta": "UNIDAD NACIONAL",
+     "parentId": "nacional-delgado-ceretta-alvaro-luis"
+    },
+    {
+     "id": "nacional-corbran-rizzo-roxana-lilian-sl-de-palabra",
+     "nivel": "sublema",
+     "etiqueta": "DE PALABRA",
+     "parentId": "nacional-corbran-rizzo-roxana-lilian"
     }
    ],
    "opciones": [
@@ -238,7 +401,9 @@
      "partidoId": "cabildo-abierto",
      "contienda": "odn",
      "lemaId": "cabildo-abierto",
-     "precandidatoId": "cabildo-abierto-manini-stratta-guido"
+     "precandidatoId": "cabildo-abierto-manini-stratta-guido",
+     "sublemaId": "cabildo-abierto-manini-stratta-guido-sl-espacio-de-los-pueblos-libres",
+     "grupoId": "cabildo-abierto-manini-stratta-guido-sl-espacio-de-los-pueblos-libres"
     },
     {
      "clase": "hoja",
@@ -247,7 +412,9 @@
      "partidoId": "cabildo-abierto",
      "contienda": "odn",
      "lemaId": "cabildo-abierto",
-     "precandidatoId": "cabildo-abierto-manini-stratta-guido"
+     "precandidatoId": "cabildo-abierto-manini-stratta-guido",
+     "sublemaId": "cabildo-abierto-manini-stratta-guido-sl-la-columna-lealtad-y-unidad",
+     "grupoId": "cabildo-abierto-manini-stratta-guido-sl-la-columna-lealtad-y-unidad"
     },
     {
      "clase": "hoja",
@@ -256,7 +423,9 @@
      "partidoId": "cabildo-abierto",
      "contienda": "odn",
      "lemaId": "cabildo-abierto",
-     "precandidatoId": "cabildo-abierto-manini-stratta-guido"
+     "precandidatoId": "cabildo-abierto-manini-stratta-guido",
+     "sublemaId": "cabildo-abierto-manini-stratta-guido-sl-espacio-de-los-pueblos-libres",
+     "grupoId": "cabildo-abierto-manini-stratta-guido-sl-espacio-de-los-pueblos-libres"
     },
     {
      "clase": "hoja",
@@ -265,7 +434,9 @@
      "partidoId": "cabildo-abierto",
      "contienda": "odn",
      "lemaId": "cabildo-abierto",
-     "precandidatoId": "cabildo-abierto-manini-stratta-guido"
+     "precandidatoId": "cabildo-abierto-manini-stratta-guido",
+     "sublemaId": "cabildo-abierto-manini-stratta-guido-sl-adelante",
+     "grupoId": "cabildo-abierto-manini-stratta-guido-sl-adelante"
     },
     {
      "clase": "hoja",
@@ -283,7 +454,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina",
+     "sublemaId": "frente-amplio-cosse-garrido-ana-carolina-sl-espacio-democratico-avanzado",
+     "grupoId": "frente-amplio-cosse-garrido-ana-carolina-sl-espacio-democratico-avanzado"
     },
     {
      "clase": "hoja",
@@ -292,7 +465,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina",
+     "sublemaId": "frente-amplio-cosse-garrido-ana-carolina-sl-casa-grande",
+     "grupoId": "frente-amplio-cosse-garrido-ana-carolina-sl-casa-grande"
     },
     {
      "clase": "hoja",
@@ -301,7 +476,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina",
+     "sublemaId": "frente-amplio-cosse-garrido-ana-carolina-sl-espacio-socialdemocrata-amplio",
+     "grupoId": "frente-amplio-cosse-garrido-ana-carolina-sl-espacio-socialdemocrata-amplio"
     },
     {
      "clase": "hoja",
@@ -328,7 +505,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon",
+     "sublemaId": "frente-amplio-orsi-martinez-yamandu-ramon-sl-unir",
+     "grupoId": "frente-amplio-orsi-martinez-yamandu-ramon-sl-unir"
     },
     {
      "clase": "hoja",
@@ -355,7 +534,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon",
+     "sublemaId": "frente-amplio-orsi-martinez-yamandu-ramon-sl-por-el-uruguay-que-queremos-construir",
+     "grupoId": "frente-amplio-orsi-martinez-yamandu-ramon-sl-por-el-uruguay-que-queremos-construir"
     },
     {
      "clase": "hoja",
@@ -382,7 +563,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon",
+     "sublemaId": "frente-amplio-orsi-martinez-yamandu-ramon-sl-no-te-rindas",
+     "grupoId": "frente-amplio-orsi-martinez-yamandu-ramon-sl-no-te-rindas"
     },
     {
      "clase": "hoja",
@@ -400,7 +583,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina",
+     "sublemaId": "frente-amplio-cosse-garrido-ana-carolina-sl-sumemos",
+     "grupoId": "frente-amplio-cosse-garrido-ana-carolina-sl-sumemos"
     },
     {
      "clase": "hoja",
@@ -409,7 +594,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "frente-amplio-lima-proserpio-andres-pablo"
+     "precandidatoId": "frente-amplio-lima-proserpio-andres-pablo",
+     "sublemaId": "frente-amplio-lima-proserpio-andres-pablo-sl-encuentro-federal-artiguista",
+     "grupoId": "frente-amplio-lima-proserpio-andres-pablo-sl-encuentro-federal-artiguista"
     },
     {
      "clase": "hoja",
@@ -427,7 +614,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina",
+     "sublemaId": "frente-amplio-cosse-garrido-ana-carolina-sl-espacio-democratico-avanzado",
+     "grupoId": "frente-amplio-cosse-garrido-ana-carolina-sl-espacio-democratico-avanzado"
     },
     {
      "clase": "hoja",
@@ -436,7 +625,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina",
+     "sublemaId": "frente-amplio-cosse-garrido-ana-carolina-sl-sumemos",
+     "grupoId": "frente-amplio-cosse-garrido-ana-carolina-sl-sumemos"
     },
     {
      "clase": "hoja",
@@ -445,7 +636,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon",
+     "sublemaId": "frente-amplio-orsi-martinez-yamandu-ramon-sl-el-abrazo-crece",
+     "grupoId": "frente-amplio-orsi-martinez-yamandu-ramon-sl-el-abrazo-crece"
     },
     {
      "clase": "hoja",
@@ -454,7 +647,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina",
+     "sublemaId": "frente-amplio-cosse-garrido-ana-carolina-sl-sumemos",
+     "grupoId": "frente-amplio-cosse-garrido-ana-carolina-sl-sumemos"
     },
     {
      "clase": "hoja",
@@ -463,7 +658,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon",
+     "sublemaId": "frente-amplio-orsi-martinez-yamandu-ramon-sl-progresistas",
+     "grupoId": "frente-amplio-orsi-martinez-yamandu-ramon-sl-progresistas"
     },
     {
      "clase": "hoja",
@@ -499,7 +696,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "colorado-ojeda-spitz-andres"
+     "precandidatoId": "colorado-ojeda-spitz-andres",
+     "sublemaId": "colorado-ojeda-spitz-andres-sl-unir-para-ganar",
+     "grupoId": "colorado-ojeda-spitz-andres-sl-unir-para-ganar"
     },
     {
      "clase": "hoja",
@@ -508,7 +707,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "colorado-ojeda-spitz-andres"
+     "precandidatoId": "colorado-ojeda-spitz-andres",
+     "sublemaId": "colorado-ojeda-spitz-andres-sl-unir-para-ganar",
+     "grupoId": "colorado-ojeda-spitz-andres-sl-unir-para-ganar"
     },
     {
      "clase": "hoja",
@@ -517,7 +718,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "colorado-ojeda-spitz-andres"
+     "precandidatoId": "colorado-ojeda-spitz-andres",
+     "sublemaId": "colorado-ojeda-spitz-andres-sl-tercera-via",
+     "grupoId": "colorado-ojeda-spitz-andres-sl-tercera-via"
     },
     {
      "clase": "hoja",
@@ -526,7 +729,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "colorado-silva-garcia-robert"
+     "precandidatoId": "colorado-silva-garcia-robert",
+     "sublemaId": "colorado-silva-garcia-robert-sl-crece",
+     "grupoId": "colorado-silva-garcia-robert-sl-crece"
     },
     {
      "clase": "hoja",
@@ -535,7 +740,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "colorado-silva-garcia-robert"
+     "precandidatoId": "colorado-silva-garcia-robert",
+     "sublemaId": "colorado-silva-garcia-robert-sl-crece",
+     "grupoId": "colorado-silva-garcia-robert-sl-crece"
     },
     {
      "clase": "hoja",
@@ -544,7 +751,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "colorado-viera-duarte-tabare"
+     "precandidatoId": "colorado-viera-duarte-tabare",
+     "sublemaId": "colorado-viera-duarte-tabare-sl-batllistas-unidos",
+     "grupoId": "colorado-viera-duarte-tabare-sl-batllistas-unidos"
     },
     {
      "clase": "hoja",
@@ -562,7 +771,9 @@
      "partidoId": "identidad-soberana",
      "contienda": "odn",
      "lemaId": "identidad-soberana",
-     "precandidatoId": "identidad-soberana-salle-lorier-gustavo-alberto"
+     "precandidatoId": "identidad-soberana-salle-lorier-gustavo-alberto",
+     "sublemaId": "identidad-soberana-salle-lorier-gustavo-alberto-sl-nosotros-mismos",
+     "grupoId": "identidad-soberana-salle-lorier-gustavo-alberto-sl-nosotros-mismos"
     },
     {
      "clase": "hoja",
@@ -571,7 +782,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -580,7 +793,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -589,7 +804,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -598,7 +815,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -607,7 +826,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -616,7 +837,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -625,7 +848,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -634,7 +859,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -643,7 +870,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -652,7 +881,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -661,7 +892,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -670,7 +903,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -679,7 +914,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -688,7 +925,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-gandini-astesiano-jorge-osvaldo"
+     "precandidatoId": "nacional-gandini-astesiano-jorge-osvaldo",
+     "sublemaId": "nacional-gandini-astesiano-jorge-osvaldo-sl-por-la-patria",
+     "grupoId": "nacional-gandini-astesiano-jorge-osvaldo-sl-por-la-patria"
     },
     {
      "clase": "hoja",
@@ -697,7 +936,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-raffo-degeromini-maria-laura"
+     "precandidatoId": "nacional-raffo-degeromini-maria-laura",
+     "sublemaId": "nacional-raffo-degeromini-maria-laura-sl-sumar",
+     "grupoId": "nacional-raffo-degeromini-maria-laura-sl-sumar"
     },
     {
      "clase": "hoja",
@@ -706,7 +947,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-raffo-degeromini-maria-laura"
+     "precandidatoId": "nacional-raffo-degeromini-maria-laura",
+     "sublemaId": "nacional-raffo-degeromini-maria-laura-sl-sumar",
+     "grupoId": "nacional-raffo-degeromini-maria-laura-sl-sumar"
     },
     {
      "clase": "hoja",
@@ -715,7 +958,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-raffo-degeromini-maria-laura"
+     "precandidatoId": "nacional-raffo-degeromini-maria-laura",
+     "sublemaId": "nacional-raffo-degeromini-maria-laura-sl-sumar",
+     "grupoId": "nacional-raffo-degeromini-maria-laura-sl-sumar"
     },
     {
      "clase": "hoja",
@@ -724,7 +969,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-raffo-degeromini-maria-laura"
+     "precandidatoId": "nacional-raffo-degeromini-maria-laura",
+     "sublemaId": "nacional-raffo-degeromini-maria-laura-sl-sumar",
+     "grupoId": "nacional-raffo-degeromini-maria-laura-sl-sumar"
     },
     {
      "clase": "hoja",
@@ -733,7 +980,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-raffo-degeromini-maria-laura"
+     "precandidatoId": "nacional-raffo-degeromini-maria-laura",
+     "sublemaId": "nacional-raffo-degeromini-maria-laura-sl-sumar",
+     "grupoId": "nacional-raffo-degeromini-maria-laura-sl-sumar"
     },
     {
      "clase": "hoja",
@@ -742,7 +991,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -751,7 +1002,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -760,7 +1013,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -769,7 +1024,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -778,7 +1035,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-gandini-astesiano-jorge-osvaldo"
+     "precandidatoId": "nacional-gandini-astesiano-jorge-osvaldo",
+     "sublemaId": "nacional-gandini-astesiano-jorge-osvaldo-sl-por-la-patria",
+     "grupoId": "nacional-gandini-astesiano-jorge-osvaldo-sl-por-la-patria"
     },
     {
      "clase": "hoja",
@@ -787,7 +1046,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-raffo-degeromini-maria-laura"
+     "precandidatoId": "nacional-raffo-degeromini-maria-laura",
+     "sublemaId": "nacional-raffo-degeromini-maria-laura-sl-sumar",
+     "grupoId": "nacional-raffo-degeromini-maria-laura-sl-sumar"
     },
     {
      "clase": "hoja",
@@ -796,7 +1057,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-raffo-degeromini-maria-laura"
+     "precandidatoId": "nacional-raffo-degeromini-maria-laura",
+     "sublemaId": "nacional-raffo-degeromini-maria-laura-sl-sumar",
+     "grupoId": "nacional-raffo-degeromini-maria-laura-sl-sumar"
     },
     {
      "clase": "hoja",
@@ -805,7 +1068,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -814,7 +1079,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -823,7 +1090,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -832,7 +1101,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -841,7 +1112,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -850,7 +1123,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -859,7 +1134,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -868,7 +1145,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -877,7 +1156,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -904,7 +1185,9 @@
      "partidoId": "devolucion",
      "contienda": "odn",
      "lemaId": "devolucion",
-     "precandidatoId": "devolucion-paiva-fiures-pablo-marcelo"
+     "precandidatoId": "devolucion-paiva-fiures-pablo-marcelo",
+     "sublemaId": "devolucion-paiva-fiures-pablo-marcelo-sl-liberales-por-la-gente",
+     "grupoId": "devolucion-paiva-fiures-pablo-marcelo-sl-liberales-por-la-gente"
     },
     {
      "clase": "hoja",
@@ -913,7 +1196,9 @@
      "partidoId": "cabildo-abierto",
      "contienda": "odn",
      "lemaId": "cabildo-abierto",
-     "precandidatoId": "cabildo-abierto-manini-stratta-guido"
+     "precandidatoId": "cabildo-abierto-manini-stratta-guido",
+     "sublemaId": "cabildo-abierto-manini-stratta-guido-sl-espacio-de-los-pueblos-libres",
+     "grupoId": "cabildo-abierto-manini-stratta-guido-sl-espacio-de-los-pueblos-libres"
     },
     {
      "clase": "hoja",
@@ -922,7 +1207,9 @@
      "partidoId": "cabildo-abierto",
      "contienda": "odn",
      "lemaId": "cabildo-abierto",
-     "precandidatoId": "cabildo-abierto-manini-stratta-guido"
+     "precandidatoId": "cabildo-abierto-manini-stratta-guido",
+     "sublemaId": "cabildo-abierto-manini-stratta-guido-sl-la-columna-lealtad-y-unidad",
+     "grupoId": "cabildo-abierto-manini-stratta-guido-sl-la-columna-lealtad-y-unidad"
     },
     {
      "clase": "hoja",
@@ -940,7 +1227,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina",
+     "sublemaId": "frente-amplio-cosse-garrido-ana-carolina-sl-sumemos",
+     "grupoId": "frente-amplio-cosse-garrido-ana-carolina-sl-sumemos"
     },
     {
      "clase": "hoja",
@@ -949,7 +1238,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina",
+     "sublemaId": "frente-amplio-cosse-garrido-ana-carolina-sl-sumemos",
+     "grupoId": "frente-amplio-cosse-garrido-ana-carolina-sl-sumemos"
     },
     {
      "clase": "hoja",
@@ -967,7 +1258,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon",
+     "sublemaId": "frente-amplio-orsi-martinez-yamandu-ramon-sl-legado-seregnista",
+     "grupoId": "frente-amplio-orsi-martinez-yamandu-ramon-sl-legado-seregnista"
     },
     {
      "clase": "hoja",
@@ -976,7 +1269,9 @@
      "partidoId": "colorado",
      "contienda": "odn",
      "lemaId": "colorado",
-     "precandidatoId": "colorado-gurmendez-armand-ugon-gabriel"
+     "precandidatoId": "colorado-gurmendez-armand-ugon-gabriel",
+     "sublemaId": "colorado-gurmendez-armand-ugon-gabriel-sl-viento-de-cambio-uruguay",
+     "grupoId": "colorado-gurmendez-armand-ugon-gabriel-sl-viento-de-cambio-uruguay"
     },
     {
      "clase": "hoja",
@@ -985,7 +1280,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-raffo-degeromini-maria-laura"
+     "precandidatoId": "nacional-raffo-degeromini-maria-laura",
+     "sublemaId": "nacional-raffo-degeromini-maria-laura-sl-sumar",
+     "grupoId": "nacional-raffo-degeromini-maria-laura-sl-sumar"
     },
     {
      "clase": "hoja",
@@ -994,7 +1291,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -1003,7 +1302,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina",
+     "sublemaId": "frente-amplio-cosse-garrido-ana-carolina-sl-sumemos",
+     "grupoId": "frente-amplio-cosse-garrido-ana-carolina-sl-sumemos"
     },
     {
      "clase": "hoja",
@@ -1012,7 +1313,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina",
+     "sublemaId": "frente-amplio-cosse-garrido-ana-carolina-sl-sumemos",
+     "grupoId": "frente-amplio-cosse-garrido-ana-carolina-sl-sumemos"
     },
     {
      "clase": "hoja",
@@ -1021,7 +1324,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-gandini-astesiano-jorge-osvaldo"
+     "precandidatoId": "nacional-gandini-astesiano-jorge-osvaldo",
+     "sublemaId": "nacional-gandini-astesiano-jorge-osvaldo-sl-por-la-patria",
+     "grupoId": "nacional-gandini-astesiano-jorge-osvaldo-sl-por-la-patria"
     },
     {
      "clase": "hoja",
@@ -1039,7 +1344,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-iafigliola-pimentel-carlos-alberto"
+     "precandidatoId": "nacional-iafigliola-pimentel-carlos-alberto",
+     "sublemaId": "nacional-iafigliola-pimentel-carlos-alberto-sl-por-la-vida-la-familia-y-la-patria",
+     "grupoId": "nacional-iafigliola-pimentel-carlos-alberto-sl-por-la-vida-la-familia-y-la-patria"
     },
     {
      "clase": "hoja",
@@ -1057,7 +1364,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "frente-amplio-lima-proserpio-andres-pablo"
+     "precandidatoId": "frente-amplio-lima-proserpio-andres-pablo",
+     "sublemaId": "frente-amplio-lima-proserpio-andres-pablo-sl-encuentro-federal-artiguista",
+     "grupoId": "frente-amplio-lima-proserpio-andres-pablo-sl-encuentro-federal-artiguista"
     },
     {
      "clase": "hoja",
@@ -1066,7 +1375,9 @@
      "partidoId": "frente-amplio",
      "contienda": "odn",
      "lemaId": "frente-amplio",
-     "precandidatoId": "frente-amplio-lima-proserpio-andres-pablo"
+     "precandidatoId": "frente-amplio-lima-proserpio-andres-pablo",
+     "sublemaId": "frente-amplio-lima-proserpio-andres-pablo-sl-encuentro-federal-artiguista",
+     "grupoId": "frente-amplio-lima-proserpio-andres-pablo-sl-encuentro-federal-artiguista"
     },
     {
      "clase": "hoja",
@@ -1075,7 +1386,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-uruguay-para-adelante"
     },
     {
      "clase": "hoja",
@@ -1084,7 +1397,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis",
+     "sublemaId": "nacional-delgado-ceretta-alvaro-luis-sl-unidad-nacional",
+     "grupoId": "nacional-delgado-ceretta-alvaro-luis-sl-unidad-nacional"
     },
     {
      "clase": "hoja",
@@ -1102,7 +1417,9 @@
      "partidoId": "nacional",
      "contienda": "odn",
      "lemaId": "nacional",
-     "precandidatoId": "nacional-corbran-rizzo-roxana-lilian"
+     "precandidatoId": "nacional-corbran-rizzo-roxana-lilian",
+     "sublemaId": "nacional-corbran-rizzo-roxana-lilian-sl-de-palabra",
+     "grupoId": "nacional-corbran-rizzo-roxana-lilian-sl-de-palabra"
     }
    ]
   },

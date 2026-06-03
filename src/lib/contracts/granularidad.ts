@@ -20,7 +20,7 @@ export interface EscaleraGranularidad {
  * declara su forma esperada y el ETL degrada/rotula donde el dato falte (Story 10.7/10.8).
  */
 export const ESCALERAS: readonly EscaleraGranularidad[] = [
-  { tipo: 'internas', contienda: 'odn', niveles: ['lema', 'precandidato', 'hoja'] },
+  { tipo: 'internas', contienda: 'odn', niveles: ['lema', 'precandidato', 'sublema', 'hoja'] },
   { tipo: 'internas', contienda: 'odd', niveles: ['lema', 'sublema', 'hoja'] },
   { tipo: 'nacionales', contienda: 'unica', niveles: ['lema', 'sublema', 'hoja'] },
   { tipo: 'balotaje', contienda: 'unica', niveles: ['candidato'] },
