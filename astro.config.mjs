@@ -5,6 +5,7 @@ import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 import vercelCorsHeaders from './scripts/vercel-cors-headers.mjs';
+import buildAssetsOnVercel from './scripts/build-assets-on-vercel.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -22,7 +23,9 @@ export default defineConfig({
   // vercelCorsHeaders va DESPUÉS del adapter en el orden de hooks (el adapter se
   // antepone solo), así inyecta CORS/cache en config.json una vez que el adapter
   // ya lo escribió. Ver scripts/vercel-cors-headers.mjs.
-  integrations: [vue(), sitemap(), vercelCorsHeaders()],
+  // buildAssetsOnVercel genera OG + índice de búsqueda en build:start (solo en
+  // Vercel, que corre `astro build` y no `npm run build`). Ver el script.
+  integrations: [vue(), sitemap(), buildAssetsOnVercel(), vercelCorsHeaders()],
   vite: {
     plugins: [tailwindcss()],
     server: {
