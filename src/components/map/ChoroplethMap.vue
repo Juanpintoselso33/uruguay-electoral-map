@@ -166,6 +166,7 @@ let intensidadActive = false;
 let vsWinnersMap = new Map<string, string>(); // normalizedGeoId → nombre del ganador en elección vs
 let vsZonaPct = new Map<string, Map<string, number>>(); // normGeoId → sigla → % (0..1) en la elección vs (delta Fase 2)
 let unsubComparison: (() => void) | null = null;
+let lastCmpKey: string | null = null; // última comparación aplicada (vs|a|b); evita re-aplicar (refetch) en cada commit
 /** Expresión base de opacidad del relleno (flags transparentan su zona). Reusada para restaurar tras el delta. */
 const BASE_FILL_OPACITY = ['case', ['!=', ['get', 'flagPattern'], null], 0, 0.85];
 // True cuando el nivel activo usa geometría Point (circuito) en lugar de Polygon (Story 6.3).
@@ -1862,6 +1863,7 @@ async function reloadData(eleccion: string, departamento: string, nivel: string)
     } else if (cmp.vs && cmp.vs !== eleccion) {
       void applyComparisonOverlay(cmp.vs, eleccion, departamento, nivel);
     }
+    lastCmpKey = `${cmp.vs ?? ''}|${cmp.a ?? ''}|${cmp.b ?? ''}`; // aplicado directo → que el subscribe no repita
     // Recargar overlay de circuitos si sigue activo.
     if ($circuito.get()) void loadCircuitoOverlay(eleccion, departamento);
   } catch (err) {
@@ -2138,6 +2140,11 @@ onMounted(async () => {
   // hydrateStores (llamado en after-swap y bindToLocation) ya actualiza este store.
   unsubComparison = $comparison.subscribe((cmp) => {
     if (!map.value || status.value !== 'listo') return;
+    // Un commit({zona}) (click) re-emite $comparison con el MISMO vs → no re-aplicar (eso reseteaba
+    // comparacionActiva + refetch async ~900ms = flash del render común). Solo actuar si cambió.
+    const key = `${cmp.vs ?? ''}|${cmp.a ?? ''}|${cmp.b ?? ''}`;
+    if (key === lastCmpKey) return;
+    lastCmpKey = key;
     if (cmp.a && cmp.b) {
       applyDualOpcionView(cmp.a, cmp.b);
     } else if (cmp.vs && cmp.vs !== activeEleccion) {
@@ -2298,6 +2305,8 @@ onMounted(async () => {
       } else if (initCmp.vs && initCmp.vs !== props.eleccion) {
         void applyComparisonOverlay(initCmp.vs, props.eleccion, props.departamento, activeNivel);
       }
+      lastCmpKey = `${initCmp.vs ?? ''}|${initCmp.a ?? ''}|${initCmp.b ?? ''}`; // aplicado directo en init → que el subscribe no repita
+
       // Activar overlay de circuitos si la URL ya traía ?circ=1.
       if ($circuito.get()) void loadCircuitoOverlay(props.eleccion, props.departamento);
       // Fix (Epic 15): en algunas rutas (p. ej. la vista nacional, con menos contenido sobre el
