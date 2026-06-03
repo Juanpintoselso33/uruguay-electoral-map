@@ -1,6 +1,10 @@
 /**
- * Integración Astro: inyecta headers CORS + cache en `.vercel/output/config.json`
- * (formato Build Output API).
+ * Integración Astro: configura la superficie pública de la API en
+ * `.vercel/output/config.json` (formato Build Output API):
+ *   1. Headers CORS + cache para /api/v1/** y /data/**.
+ *   2. Rewrites que desacoplan el contrato v1 del layout interno de archivos:
+ *        /api/v1/results/{elec}/{depto}/{archivo}  ->  /data/{elec}/{depto}/{archivo}
+ *        /api/v1/geo/{depto}/{archivo}             ->  /data/geo/{depto}/{archivo}
  *
  * Por qué una integración y no `vercel.json` ni un paso npm post-build:
  *   - Un `vercel.json` en la raíz rompe el deploy del adapter @astrojs/vercel en
@@ -14,8 +18,10 @@
  * Orden de ejecución: el adapter se `unshift`ea al frente de `config.integrations`
  * (astro/dist/integrations/hooks.js), de modo que su hook `astro:build:done`
  * —que escribe `config.json`— corre ANTES que esta integración. Por eso acá ya
- * existe el archivo y podemos insertar las header-routes con `continue: true`
- * justo antes del handle `filesystem` (igual que hace el propio adapter para CSP).
+ * existe el archivo y podemos insertar las routes justo antes del handle
+ * `filesystem`. Orden de inserción: headers (continue) primero para que el CORS
+ * quede adherido a la respuesta, luego los rewrites; el handle `filesystem` sirve
+ * el archivo de /data ya reescrito.
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -43,31 +49,43 @@ const HEADER_ROUTES = [
   },
 ];
 
+// Rewrites del contrato v1 -> archivos reales en /data. No llevan `continue`:
+// reescriben `dest` y el handle `filesystem` sirve el archivo resultante.
+const REWRITE_ROUTES = [
+  { src: '^/api/v1/results/(.+)$', dest: '/data/$1' },
+  { src: '^/api/v1/geo/(.+)$', dest: '/data/geo/$1' },
+];
+
+const MARKER_SRC = HEADER_ROUTES[0].src; // para idempotencia
+
 export default function vercelCorsHeaders() {
   return {
-    name: 'vercel-cors-headers',
+    name: 'vercel-api-routes',
     hooks: {
       'astro:build:done': ({ logger }) => {
         const configPath = fileURLToPath(new URL('../.vercel/output/config.json', import.meta.url));
         if (!existsSync(configPath)) {
-          logger?.warn?.('[vercel-cors] sin .vercel/output/config.json (¿adapter no-Vercel?) — no se inyectan headers.');
+          logger?.warn?.('[vercel-api] sin .vercel/output/config.json (¿adapter no-Vercel?) — no se configuran routes.');
           return;
         }
         const config = JSON.parse(readFileSync(configPath, 'utf-8'));
         if (!Array.isArray(config.routes)) config.routes = [];
 
         // Idempotencia: si ya están, no duplicar.
-        if (config.routes.some((r) => r && r.src === HEADER_ROUTES[0].src && r.continue)) {
-          logger?.info?.('[vercel-cors] header-routes ya presentes — sin cambios.');
+        if (config.routes.some((r) => r && r.src === MARKER_SRC && r.continue)) {
+          logger?.info?.('[vercel-api] routes ya presentes — sin cambios.');
           return;
         }
 
         const fsIdx = config.routes.findIndex((r) => r && r.handle === 'filesystem');
         const at = fsIdx === -1 ? config.routes.length : fsIdx;
-        config.routes.splice(at, 0, ...HEADER_ROUTES);
+        // Headers primero (CORS adherido), luego rewrites; ambos antes de filesystem.
+        config.routes.splice(at, 0, ...HEADER_ROUTES, ...REWRITE_ROUTES);
 
         writeFileSync(configPath, JSON.stringify(config, null, 2));
-        logger?.info?.(`[vercel-cors] inyectadas ${HEADER_ROUTES.length} header-routes en config.json (antes de filesystem, idx ${at}).`);
+        logger?.info?.(
+          `[vercel-api] inyectadas ${HEADER_ROUTES.length} header-routes + ${REWRITE_ROUTES.length} rewrites (antes de filesystem, idx ${at}).`
+        );
       },
     },
   };
