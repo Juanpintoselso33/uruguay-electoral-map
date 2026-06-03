@@ -122,7 +122,7 @@ function pctEmit(n: number): string {
                 <img v-if="g.flagUrl" :src="g.flagUrl" :alt="g.sigla" class="zone-sheet__swatch--sm zone-sheet__flag--sm" aria-hidden="true" />
                 <span v-else class="zone-sheet__swatch zone-sheet__swatch--sm" :style="{ background: g.color }" aria-hidden="true"></span>
                 <span class="zone-sheet__grupo-sigla">{{ g.sigla }}</span>
-                <span class="zone-sheet__grupo-nombre">{{ g.lemaNombre }}</span>
+                <span v-if="g.lemaNombre !== g.sigla" class="zone-sheet__grupo-nombre">{{ g.lemaNombre }}</span>
                 <span class="zone-sheet__grupo-pct">{{ pctValidos(g.total) }}</span>
                 <span class="zone-sheet__grupo-total">{{ fmt(g.total) }}</span>
               </div>
@@ -164,7 +164,7 @@ function pctEmit(n: number): string {
           ></span>
           <div class="zone-sheet__ganador-info">
             <span class="zone-sheet__ganador-sigla">{{ sel.sigla }}</span>
-            <span class="zone-sheet__ganador-nombre">{{ sel.nombre }}</span>
+            <span v-if="sel.nombre !== sel.sigla" class="zone-sheet__ganador-nombre">{{ sel.nombre }}</span>
           </div>
           <div class="zone-sheet__ganador-votos">
             <span class="zone-sheet__num-grande">{{ sel.pct.toFixed(1) }}%</span>
