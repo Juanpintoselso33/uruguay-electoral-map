@@ -201,6 +201,9 @@ const gnivel = ref<Nivel>('lema');
 const nivelesDisponibles = ref<Nivel[]>(['lema']);
 /** Comparación entre elecciones activa (overlay ?vs= aplicado) → muestra leyenda + nota del borde naranja. */
 const comparacionActiva = ref(false);
+/** Comparación cargando (bajando la otra elección): atenuar TODAS las banderas para no mostrarlas a full
+ *  por ~1s antes de saber qué zonas cambiaron (evita el "flash" de la vista común al cargar). */
+const comparacionPendiente = ref(false);
 /** Sub-modo de comparación: 'ganador' (flip, borde naranja) | 'delta' (Δ% de un partido, escala divergente). */
 const cmpModo = ref<'ganador' | 'delta'>('ganador');
 /** Sigla del partido cuyo Δ% se colorea en modo delta. Default = ganador de la elección base. */
@@ -764,6 +767,7 @@ function drawFlagOverlay(m: MlMap): void {
 
     // Comparación modo "cambió ganador": atenuar las banderas de las zonas que NO cambiaron
     // → las que flipearon quedan a full y saltan. Mantiene TODAS las banderas visibles.
+    const dimAll = comparacionPendiente.value; // cargando comparación → atenuar TODAS
     const flipDim = comparacionActiva.value && cmpModo.value === 'ganador';
     // Pasada 1: flags recortados a cada polígono completo (un solo drawImage por barrio)
     for (const f of feats) {
@@ -772,7 +776,7 @@ function drawFlagOverlay(m: MlMap): void {
       const img = flagImgs[props.flagPattern as string];
       if (!img) continue;
       const fname = String(props.name ?? '');
-      const dimmed = flipDim && !m.getFeatureState({ source: 'zonas', id: fname })?.vsChanged;
+      const dimmed = dimAll || (flipDim && !m.getFeatureState({ source: 'zonas', id: fname })?.vsChanged);
       const bbox = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
       tracePath(f, bbox);
       if (!Number.isFinite(bbox.minX)) continue;
@@ -1535,6 +1539,15 @@ async function applyComparisonOverlay(vs: string, baseEleccion: string, departam
   const fc = fcRef.value;
   if (!m || !fc || status.value !== 'listo') return;
   comparacionActiva.value = false; // se confirma al final si el overlay aplica
+  // Mientras baja la otra elección (~1s), atenuar TODAS las banderas (estado "cargando comparación")
+  // en vez de mostrarlas a full → sin flash. Solo en modo flip (en delta el render llega sólido).
+  if (cmpModo.value === 'ganador') {
+    comparacionPendiente.value = true;
+    setPatternVisible(true);
+    m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
+    m.setPaintProperty('zonas-fill', 'fill-opacity', ['case', ['!=', ['get', 'flagPattern'], null], 0, 0.22]);
+    drawFlagOverlay(m);
+  }
   try {
     const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -1638,6 +1651,12 @@ async function applyComparisonOverlay(vs: string, baseEleccion: string, departam
     renderComparacionFill(); // aplica relleno según el sub-modo (ganador | delta)
   } catch {
     // Degradación silenciosa: si no hay datos de comparación, el mapa sigue normal.
+  } finally {
+    // Fin del estado "cargando": dejar de atenuar-todo. En éxito ya redibujó renderComparacionFill;
+    // en fallo, redibujar para restaurar las banderas a full (la comparación no se aplicó).
+    const pend = comparacionPendiente.value;
+    comparacionPendiente.value = false;
+    if (pend && !comparacionActiva.value) { setPatternVisible(true); m.setPaintProperty('zonas-fill', 'fill-opacity', BASE_FILL_OPACITY); drawFlagOverlay(m); }
   }
 }
 
@@ -1804,6 +1823,13 @@ async function reloadData(eleccion: string, departamento: string, nivel: string)
   // Resetear modo intensidad al cambiar de departamento (AC Story 2.3).
   intensidadActive = false;
   vistaMode.value = 'ganador';
+  // Si esta carga ya trae comparación (?vs=) en modo flip, entrar en "pendiente" ANTES del render
+  // base → el render base ya dibuja atenuado (0 frames a full). applyComparisonOverlay lo mantiene
+  // durante el fetch y su finally lo limpia.
+  {
+    const cmpPre = $comparison.get();
+    comparacionPendiente.value = !!(cmpPre.vs && cmpPre.vs !== eleccion && !(cmpPre.a && cmpPre.b)) && cmpModo.value === 'ganador';
+  }
   // Epic 10: resetear caches de hojas (el catálogo/shards son por elección×depto).
   catalogoOpcMeta = null;
   catalogoNodeLabel = new Map();
@@ -2282,6 +2308,11 @@ onMounted(async () => {
       m.on('mouseenter', 'zonas-circle', () => { m.getCanvas().style.cursor = 'pointer'; });
       m.on('mouseleave', 'zonas-circle', () => { m.getCanvas().style.cursor = ''; });
 
+      // Refresh con ?vs= en modo flip: entrar en "pendiente" ANTES del render base (0 frames a full).
+      {
+        const cmpPre = $comparison.get();
+        comparacionPendiente.value = !!(cmpPre.vs && cmpPre.vs !== props.eleccion && !(cmpPre.a && cmpPre.b)) && cmpModo.value === 'ganador';
+      }
       applySelection($selection.get().zona);
       applyOpcionFilter($selection.get().opcion);
       // Epic 10: si la URL ya traía ?sel=, colorear por la selección de hojas (Story 10.4).
