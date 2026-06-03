@@ -15,6 +15,7 @@ import type { Feature, FeatureCollection, Polygon, MultiPolygon, Position } from
 import type { Topology, GeometryCollection } from 'topojson-specification';
 import { feature as topoFeature } from 'topojson-client';
 import { resolveParty } from '../../lib/party-meta';
+import { winnerAtLevel, resolveOpcionAppearance, NIVEL_LABEL, type Nivel, type OpcMeta } from '../../lib/appearance';
 import type { VotosShard, AgregadoZona } from '../../lib/contracts';
 import { $selection, $level, $comparison, $circuito, bindToLocation, commit, hydrateStores } from '../../stores/map-state';
 import { parseUrl } from '../../lib/url-state';
@@ -87,6 +88,9 @@ interface LegendEntry {
   color: string;
   votos: number;
   flagUrl?: string | null;
+  /** Coloreo-por-nivel: sub-ganadores (sublema/lista) bajo este lema, con cap "+masN". */
+  subEntradas?: { nombre: string; color: string; votos: number }[];
+  masN?: number;
 }
 /** Resultado agregado de la geografía mostrada (% de voto real, no polígonos ganados). */
 interface ResultadoEntry {
@@ -187,8 +191,20 @@ const SERIE_BARRIO_FILES: Record<string, string> = {
 const SEL_BASE = '#1d4ed8'; // azul secuencial para la escala de selección
 const seleccionActiva = ref<string[]>([]);
 const coloreoMode = ref<'ganador' | 'share' | 'heatmap'>('heatmap');
-// hojaId → {contienda, lemaId, hoja, lemaNombre} (del catalogo.json). Null = aún no cargado.
-let catalogoOpcMeta: Map<string, { contienda: string; lemaId: string; hoja: string; lemaNombre: string }> | null = null;
+/** Nivel al que se calcula/colorea el ganador en modo Ganador (coloreo-por-nivel). */
+const gnivel = ref<Nivel>('lema');
+/** Niveles agrupables de la contienda activa (deriva el selector `gnivel`). */
+const nivelesDisponibles = ref<Nivel[]>(['lema']);
+// hojaId → metadata del catálogo (del catalogo.json). Null = aún no cargado.
+// Ampliado (coloreo-por-nivel): incluye precandidatoId/sublemaId para agrupar el ganador a cualquier nivel.
+let catalogoOpcMeta: Map<string, {
+  contienda: string; lemaId: string; hoja: string; lemaNombre: string;
+  precandidatoId?: string; sublemaId?: string;
+}> | null = null;
+/** nodeId → etiqueta (de catalogo.nodos): labels de precandidato/sublema para la leyenda. */
+let catalogoNodeLabel: Map<string, string> = new Map();
+/** contienda → niveles agrupables (Nivel[]) para el selector `gnivel`. */
+let catalogoNivelesPorCont: Map<string, Nivel[]> = new Map();
 // zonaNorm → hojaId → votos (acumulado de los shards de hoja cargados).
 let hojaVotos = new Map<string, Map<string, number>>();
 let lemasCargados = new Set<string>(); // `${contienda}/${lemaId}` ya fetcheados
@@ -902,7 +918,9 @@ function ensureCatalogo(eleccion: string, departamento: string): Promise<void> {
   if (catalogoOpcMeta) return Promise.resolve();
   if (catalogoPromise) return catalogoPromise;
   catalogoPromise = (async () => {
-    const built = new Map<string, { contienda: string; lemaId: string; hoja: string; lemaNombre: string }>();
+    const built = new Map<string, { contienda: string; lemaId: string; hoja: string; lemaNombre: string; precandidatoId?: string; sublemaId?: string }>();
+    const nodeLabel = new Map<string, string>();
+    const nivPorCont = new Map<string, Nivel[]>();
     try {
       const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       const res = await fetch(`${base}/data/${eleccion}/${departamento}/catalogo.json`);
@@ -910,21 +928,32 @@ function ensureCatalogo(eleccion: string, departamento: string): Promise<void> {
         const doc = (await res.json()) as {
           contiendas: {
             contienda: string;
+            niveles: string[];
             nodos: { id: string; nivel: string; etiqueta: string }[];
-            opciones: { id: string; hoja?: string; lemaId?: string }[];
+            opciones: { id: string; hoja?: string; lemaId?: string; precandidatoId?: string; sublemaId?: string }[];
           }[];
         };
+        const NIVEL_MAP: Record<string, Nivel> = { lema: 'lema', precandidato: 'precandidato', sublema: 'sublema', hoja: 'lista', candidato: 'candidato' };
         for (const c of doc.contiendas) {
           const lemaNombre = new Map(c.nodos.filter((n) => n.nivel === 'lema').map((n) => [n.id, n.etiqueta]));
+          for (const n of c.nodos) nodeLabel.set(n.id, n.etiqueta); // lema/precandidato/sublema
+          const nivs = (c.niveles ?? []).map((n) => NIVEL_MAP[n]).filter(Boolean) as Nivel[];
+          nivPorCont.set(c.contienda, nivs.length > 1 ? nivs : ['lema']);
           for (const o of c.opciones) {
             const lemaId = o.lemaId ?? '';
-            built.set(o.id, { contienda: c.contienda, lemaId, hoja: o.hoja ?? '', lemaNombre: lemaNombre.get(lemaId) ?? lemaId });
+            built.set(o.id, {
+              contienda: c.contienda, lemaId, hoja: o.hoja ?? '',
+              lemaNombre: lemaNombre.get(lemaId) ?? lemaId,
+              precandidatoId: o.precandidatoId, sublemaId: o.sublemaId,
+            });
           }
         }
       }
     } catch {
       /* sin catálogo → la selección no colorea (se queda en ganador) */
     }
+    catalogoNodeLabel = nodeLabel;
+    catalogoNivelesPorCont = nivPorCont;
     catalogoOpcMeta = built; // asignar SOLO tras poblar (evita que un caller concurrente vea un Map vacío)
   })();
   return catalogoPromise;
@@ -1150,52 +1179,69 @@ function nombrePartidoDeOpcion(id: string): string {
   return opcNombreMap.get(id) ?? id;
 }
 
-/** Mapa opcionId→nombre de partido para la selección (pre-computado una vez por render). */
-function nombresDeSeleccion(sel: string[]): Map<string, string> {
-  return new Map(sel.map((oid) => [oid, nombrePartidoDeOpcion(oid)]));
+// ── Ganador por NIVEL (coloreo-por-nivel): generaliza el "ganador entre lo seleccionado" ──
+/** Lookup OpcMeta para el núcleo puro (desde catalogoOpcMeta; plano → solo lemaId=oid). */
+function metaOf(oid: string): OpcMeta | undefined {
+  const m = catalogoOpcMeta?.get(oid);
+  if (m) return { lemaId: m.lemaId, lemaNombre: m.lemaNombre, precandidatoId: m.precandidatoId, sublemaId: m.sublemaId, hoja: m.hoja };
+  return { lemaId: oid, lemaNombre: opcNombreMap.get(oid) ?? oid };
 }
-
-/** Partido seleccionado con más votos en una zona, sumando TODAS sus hojas/listas seleccionadas
- *  (modo "ganador entre lo seleccionado", Epic 13). Agrega por PARTIDO, no por hoja: seleccionar
- *  un lema entero compite por la suma del partido y la leyenda no se repite por cada hoja. */
-function ganadorSelDeZona(key: string, sel: string[], nombres: Map<string, string>): { nombre: string | null; votos: number } {
+/** Votos de las opciones del universo en una zona (hojaVotos si hay shard de hoja; si no, zonasVotos). */
+function votosDeZonaUniverso(key: string, universo: string[]): Map<string, number> {
   const mm = hojaVotos.get(key);
   const base = zonasVotos.get(key);
-  const porPartido = new Map<string, number>();
-  for (const oid of sel) {
+  const out = new Map<string, number>();
+  for (const oid of universo) {
     const v = mm?.get(oid) ?? base?.get(oid) ?? 0;
-    if (v <= 0) continue;
-    const nombre = nombres.get(oid) ?? oid;
-    porPartido.set(nombre, (porPartido.get(nombre) ?? 0) + v);
+    if (v > 0) out.set(oid, v);
   }
-  let nombre: string | null = null;
-  let votos = 0;
-  for (const [n, v] of porPartido) if (v > votos) { votos = v; nombre = n; }
-  return { nombre, votos };
+  return out;
+}
+/** Nombre del lema padre de un nodeId de sublema/precandidato (busca una opción que cuelgue de él). */
+function lemaNombrePorNodo(nodeId: string): string {
+  if (catalogoOpcMeta) {
+    for (const m of catalogoOpcMeta.values()) {
+      if (m.sublemaId === nodeId || m.precandidatoId === nodeId) return m.lemaNombre;
+    }
+  }
+  return catalogoNodeLabel.get(nodeId) ?? nodeId;
+}
+/** "Lista N" / "Voto al lema" para un opcionId terminal. */
+function etiquetaTerminal(oid: string): string {
+  const hoja = catalogoOpcMeta?.get(oid)?.hoja;
+  if (hoja === 'vl') return 'Voto al lema';
+  return hoja ? `Lista ${hoja}` : (opcNombreMap.get(oid) ?? oid);
+}
+/** Apariencia (color/sigla/label/pattern) de una clave ganadora al nivel actual. */
+function appearanceDeKey(key: string, nivel: Nivel): ReturnType<typeof resolveOpcionAppearance> {
+  const lemaNombre = nivel === 'lema'
+    ? (catalogoNodeLabel.get(key) ?? opcNombreMap.get(key) ?? key)
+    : (catalogoOpcMeta?.get(key)?.lemaNombre ?? lemaNombrePorNodo(key));
+  const esTerminal = nivel === 'lista' || nivel === 'candidato';
+  const terminalLabel = esTerminal ? etiquetaTerminal(key) : undefined;
+  const nodeLabel = !esTerminal && nivel !== 'lema' ? catalogoNodeLabel.get(key) : undefined;
+  return resolveOpcionAppearance(key, nivel, activeEleccion, { lemaNombre, nodeLabel, terminalLabel });
 }
 
-/** FC del modo "ganador entre lo seleccionado": cada zona toma el PARTIDO seleccionado
- *  con más votos ahí, con su color/bandera (Story 13.2). */
-function buildSeleccionGanadorFC(fc: FeatureCollection, sel: string[]): FeatureCollection {
-  const nombres = nombresDeSeleccion(sel);
+/** FC del modo "ganador" al nivel actual: cada zona toma el grupo ganador del universo (sel || todas). */
+function buildSeleccionGanadorFC(fc: FeatureCollection, universo: string[]): FeatureCollection {
+  const nivel = gnivel.value;
   return {
     ...fc,
     features: fc.features.map((f) => {
       const key = norm(String((f.properties as { name: string }).name));
       const validos = zonasValidos.get(key) ?? 0;
-      const { nombre, votos } = ganadorSelDeZona(key, sel, nombres);
-      if (!nombre || votos <= 0) {
-        // Sin votos de la selección: base claro si hay urna, gris si no.
+      const { key: ganKey, votos } = winnerAtLevel(votosDeZonaUniverso(key, universo), metaOf, nivel);
+      if (!ganKey || votos <= 0) {
         const color = validos > 0 ? interpolateHex(INTENSIDAD_LIGHT, SEL_BASE, 0.12) : COLOR_SIN_DATOS;
         return { ...f, properties: { ...f.properties, color, sigla: '', flagPattern: null, selVal: 0, selPct: 0 } };
       }
-      const meta = resolveParty(nombre, activeEleccion);
-      const flagPattern = meta.flagUrl ? `flag-${meta.sigla.toLowerCase()}` : null;
+      const ap = appearanceDeKey(ganKey, nivel);
       return {
         ...f,
         properties: {
           ...f.properties,
-          color: meta.color, sigla: meta.sigla, flagPattern,
+          color: ap.color, sigla: ap.sigla, flagPattern: ap.pattern ? ap.pattern.id : null,
           selVal: votos, selPct: validos > 0 ? votos / validos : 0,
         },
       };
@@ -1203,21 +1249,39 @@ function buildSeleccionGanadorFC(fc: FeatureCollection, sel: string[]): FeatureC
   } as FeatureCollection;
 }
 
-/** Leyenda del modo ganador-selección: un renglón por PARTIDO que lidera al menos una zona. */
-function buildSeleccionGanadorLegend(fc: FeatureCollection, sel: string[]): LegendEntry[] {
-  const nombres = nombresDeSeleccion(sel);
-  const wins = new Map<string, number>(); // keyed por nombre de partido → zonas ganadas
+/** Leyenda del modo ganador-por-nivel. nivel 'lema' → un renglón por lema (como antes).
+ *  Sub-nivel → agrupado por lema con sub-entradas (cap top-6 + "+N más") para no saturar. */
+function buildSeleccionGanadorLegend(fc: FeatureCollection, universo: string[]): LegendEntry[] {
+  const nivel = gnivel.value;
+  const winsPorClave = new Map<string, number>(); // claveGanadora → nº zonas
   for (const f of fc.features) {
     const key = norm(String((f.properties as { name: string }).name));
-    const { nombre, votos } = ganadorSelDeZona(key, sel, nombres);
-    if (nombre && votos > 0) wins.set(nombre, (wins.get(nombre) ?? 0) + 1);
+    const { key: ganKey, votos } = winnerAtLevel(votosDeZonaUniverso(key, universo), metaOf, nivel);
+    if (ganKey && votos > 0) winsPorClave.set(ganKey, (winsPorClave.get(ganKey) ?? 0) + 1);
   }
-  return [...wins.entries()]
-    .map(([nombre, n]) => {
-      const meta = resolveParty(nombre, activeEleccion);
-      return { sigla: meta.sigla, nombre, color: meta.color, votos: n, flagUrl: meta.flagUrl };
-    })
-    .sort((a, b) => b.votos - a.votos);
+  if (nivel === 'lema') {
+    return [...winsPorClave.entries()]
+      .map(([k, n]) => { const ap = appearanceDeKey(k, nivel); return { sigla: ap.sigla, nombre: ap.label, color: ap.color, votos: n, flagUrl: ap.pattern?.url ?? null }; })
+      .sort((a, b) => b.votos - a.votos);
+  }
+  // Sub-nivel: agrupar por sigla de lema → sub-entradas.
+  const porLema = new Map<string, { sigla: string; color: string; flagUrl: string | null; total: number; subs: { nombre: string; color: string; votos: number }[] }>();
+  for (const [k, n] of winsPorClave) {
+    const ap = appearanceDeKey(k, nivel);
+    let e = porLema.get(ap.sigla);
+    if (!e) {
+      const lemaId = catalogoOpcMeta?.get(k)?.lemaId ?? k;
+      const lap = appearanceDeKey(lemaId, 'lema');
+      e = { sigla: ap.sigla, color: lap.color, flagUrl: lap.pattern?.url ?? null, total: 0, subs: [] };
+      porLema.set(ap.sigla, e);
+    }
+    e.total += n; e.subs.push({ nombre: ap.label, color: ap.color, votos: n });
+  }
+  return [...porLema.values()].sort((a, b) => b.total - a.total).map((e) => {
+    const subs = e.subs.sort((a, b) => b.votos - a.votos);
+    const top = subs.slice(0, 6);
+    return { sigla: e.sigla, nombre: '', color: e.color, votos: e.total, flagUrl: e.flagUrl, subEntradas: top, masN: subs.length - top.length };
+  });
 }
 
 /** Restaura el modo ganador desde un FC de selección (síncrono). */
@@ -1247,6 +1311,7 @@ async function applySeleccion(): Promise<void> {
   const myGen = ++seleccionGen;
   await ensureHojaShards(activeEleccion, activeDepartamento, sel);
   if (myGen !== seleccionGen) return; // una llamada más nueva la dejó obsoleta
+  syncNivelesDisponibles(); // el catálogo ya cargó → fija niveles del selector y clampa gnivel
   const modo = coloreoMode.value;
   const zonaSel = $selection.get().zona;
   // setData resetea los feature-state: re-aplicar el resaltado de la zona seleccionada + ficha.
@@ -1285,6 +1350,49 @@ async function applySeleccion(): Promise<void> {
 function setColoreo(modo: 'ganador' | 'share' | 'heatmap'): void {
   coloreoMode.value = modo;
   commit({ modo });
+}
+
+const NIVELES_GANADOR: readonly Nivel[] = ['lema', 'precandidato', 'sublema', 'lista', 'candidato'];
+const esNivel = (v: string | null): v is Nivel => v !== null && (NIVELES_GANADOR as readonly string[]).includes(v);
+
+/** Recalcula los niveles del selector según la contienda activa y clampa `gnivel` si no aplica.
+ *  No toca nada hasta que el catálogo cargó (catalogoNivelesPorCont vacío = aún no sabemos). */
+function syncNivelesDisponibles(): void {
+  if (catalogoNivelesPorCont.size === 0) return;
+  const cont = $selection.get().contienda ?? [...catalogoNivelesPorCont.keys()][0];
+  nivelesDisponibles.value = (cont && catalogoNivelesPorCont.get(cont)) || ['lema'];
+  if (!nivelesDisponibles.value.includes(gnivel.value)) gnivel.value = 'lema';
+}
+
+/** Cambia el nivel del ganador (escribe la URL; el subscribe re-aplica el coloreo). */
+function setGnivel(nivel: Nivel): void {
+  gnivel.value = nivel;
+  commit({ gnivel: nivel });
+}
+
+/** Sin selección: colorea por el ganador ABSOLUTO al nivel actual. 'lema' → FC base (restore);
+ *  sub-nivel → carga todos los shards de hoja de la contienda y computa winnerAtLevel sobre TODAS. */
+async function aplicarGanadorAbsolutoPorNivel(): Promise<void> {
+  const m = map.value; const fc = fcRef.value;
+  if (!m || !fc || !m.getSource('zonas')) return;
+  if (gnivel.value === 'lema') { restoreGanadorDesdeSeleccion(); return; }
+  const myGen = ++seleccionGen;
+  await ensureCatalogo(activeEleccion, activeDepartamento);
+  syncNivelesDisponibles();
+  if (gnivel.value === 'lema') { restoreGanadorDesdeSeleccion(); return; } // quedó clampeado
+  const cont = $selection.get().contienda;
+  const universo = [...(catalogoOpcMeta?.entries() ?? [])]
+    .filter(([, meta]) => !cont || meta.contienda === cont)
+    .map(([id]) => id);
+  await ensureHojaShards(activeEleccion, activeDepartamento, universo); // todos los lemas de la contienda
+  if (myGen !== seleccionGen) return;
+  const selFC = buildSeleccionGanadorFC(fc, universo);
+  (m.getSource('zonas') as GeoJSONSource).setData(selFC); zonasDisplayFC = selFC;
+  m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
+  seleccionFCActive = true;
+  setPatternVisible(true);
+  rebuildMarkers(selFC);
+  legend.value = buildSeleccionGanadorLegend(fc, universo);
 }
 
 /** Aplica modo ganador (Story 2.2): zonas donde gana opcion en color, resto gris. */
@@ -1541,6 +1649,8 @@ async function reloadData(eleccion: string, departamento: string, nivel: string)
   vistaMode.value = 'ganador';
   // Epic 10: resetear caches de hojas (el catálogo/shards son por elección×depto).
   catalogoOpcMeta = null;
+  catalogoNodeLabel = new Map();
+  catalogoNivelesPorCont = new Map();
   catalogoPromise = null;
   hojaVotos = new Map();
   circuitoZonaPorGeo = new Map();   // ficha por circuito/local: limpiar dato del overlay al cambiar depto/elección
@@ -1825,9 +1935,13 @@ const unsubSelection = $selection.subscribe((s) => {
   opcionActiva.value = s.opcion;
   seleccionActiva.value = [...s.seleccion];
   if (s.modo === 'ganador' || s.modo === 'share' || s.modo === 'heatmap') coloreoMode.value = s.modo;
+  gnivel.value = esNivel(s.gnivel) ? s.gnivel : 'lema';
+  syncNivelesDisponibles();
   applySelection(s.zona);
   if (s.seleccion.length > 0) {
-    void applySeleccion(); // Epic 10: coloreo por selección múltiple de hojas
+    void applySeleccion(); // Epic 10: coloreo por selección múltiple de hojas (usa gnivel)
+  } else if (gnivel.value !== 'lema' && coloreoMode.value === 'ganador') {
+    void aplicarGanadorAbsolutoPorNivel(); // sin selección, sub-nivel → ganador absoluto del nivel
   } else {
     if (seleccionFCActive) restoreGanadorDesdeSeleccion(); // restaurar desde el FC de selección
     applyOpcionFilter(s.opcion);
@@ -1998,7 +2112,9 @@ onMounted(async () => {
         const initSel = $selection.get();
         seleccionActiva.value = [...initSel.seleccion];
         if (initSel.modo === 'ganador' || initSel.modo === 'share' || initSel.modo === 'heatmap') coloreoMode.value = initSel.modo;
+        gnivel.value = esNivel(initSel.gnivel) ? initSel.gnivel : 'lema';
         if (initSel.seleccion.length > 0) void applySeleccion();
+        else if (gnivel.value !== 'lema' && coloreoMode.value === 'ganador') void aplicarGanadorAbsolutoPorNivel();
       }
       status.value = 'listo';
       readResultadoCtx(); // contexto inicial (elección · depto) del masthead
@@ -2069,7 +2185,7 @@ onUnmounted(() => {
          coloreo y del RESULTADO. Solo aporta en modos selección/filtro/intensidad (escala)
          o si hay nota de votos sin ubicación; en el modo ganador base duplica a RESULTADO. -->
     <MapLegend
-      v-if="opcionActiva || seleccionActiva.length > 0 || votosSinUbicacion > 0"
+      v-if="opcionActiva || seleccionActiva.length > 0 || votosSinUbicacion > 0 || gnivel !== 'lema'"
       :entradas="legend" :sin-datos="sinDatos" :votos-sin-ubicacion="votosSinUbicacion" :zonas-sin-ubicacion="zonasSinUbicacion" />
 
     <!-- Toggle Ganador / Intensidad — sólo visible cuando hay opción activa (Story 2.3) -->
@@ -2101,6 +2217,23 @@ onUnmounted(() => {
         type="button"
         @click="setColoreo(mo)"
       >{{ mo === 'ganador' ? 'Ganador' : mo === 'share' ? 'Share %' : 'Heatmap' }}</button>
+    </div>
+
+    <!-- Selector de nivel del ganador (coloreo-por-nivel): solo en modo Ganador y si la contienda
+         tiene >1 nivel agrupable. No depende de la selección (sin selección = ganador absoluto). -->
+    <div
+      v-if="coloreoMode === 'ganador' && nivelesDisponibles.length > 1"
+      class="gnivel" role="group" aria-label="Nivel del ganador"
+    >
+      <span class="gnivel__lbl">Ganador por:</span>
+      <button
+        v-for="nv in nivelesDisponibles" :key="nv"
+        type="button"
+        class="gnivel__btn"
+        :class="{ 'gnivel__btn--activo': gnivel === nv }"
+        :aria-pressed="gnivel === nv"
+        @click="setGnivel(nv)"
+      >{{ NIVEL_LABEL[nv] }}</button>
     </div>
 
     <ResultadoGlobal
@@ -2161,6 +2294,12 @@ onUnmounted(() => {
   padding: 0.5rem 0.75rem;
   border-top: 1px solid var(--color-border);
 }
+/* Selector de nivel del ganador (coloreo-por-nivel) */
+.gnivel { display: flex; flex-wrap: wrap; align-items: center; gap: 0.375rem; padding: 0.25rem 0.75rem 0.5rem; font-size: 0.75rem; }
+.gnivel__lbl { color: var(--color-ink-muted); font-weight: 600; }
+.gnivel__btn { padding: 0.2rem 0.55rem; border: 1px solid var(--color-border-strong); border-radius: 9999px; background: var(--color-surface-1); color: var(--color-ink-soft); cursor: pointer; min-height: 30px; }
+.gnivel__btn--activo { background: var(--color-ink); color: var(--color-paper); border-color: var(--color-ink); }
+.gnivel__btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
 .vista-toggle__btn {
   flex: 1;
   padding: 0.375rem 0.5rem;

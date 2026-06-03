@@ -10,6 +10,9 @@ interface Entrada {
   readonly color: string;
   readonly votos: number;
   readonly flagUrl?: string | null;
+  /** Coloreo-por-nivel: sub-ganadores (sublema/lista) bajo este lema + cap "+masN". */
+  readonly subEntradas?: { nombre: string; color: string; votos: number }[];
+  readonly masN?: number;
 }
 const props = defineProps<{
   entradas: Entrada[];
@@ -23,29 +26,31 @@ const fmt = (n: number): string => n.toLocaleString('es-UY');
 
 <template>
   <div class="legend" role="list" aria-label="Leyenda: partidos por color">
-    <div
-      v-for="e in entradas"
-      :key="e.sigla + e.nombre"
-      class="legend__item"
-      role="listitem"
-    >
-      <!-- Bandera si existe, swatch de color si no -->
-      <img
-        v-if="e.flagUrl"
-        :src="e.flagUrl"
-        :alt="e.sigla"
-        class="legend__flag"
-        aria-hidden="true"
-      />
-      <span
-        v-else
-        class="legend__swatch"
-        :style="{ background: e.color }"
-        aria-hidden="true"
-      ></span>
-      <span class="legend__sigla">{{ e.sigla }}</span>
-      <span v-if="e.nombre !== e.sigla" class="legend__nombre">{{ e.nombre }}</span>
-    </div>
+    <template v-for="e in entradas" :key="e.sigla + e.nombre">
+      <!-- Coloreo-por-nivel (sub-nivel): bloque agrupado por lema con sub-ganadores -->
+      <div v-if="e.subEntradas && e.subEntradas.length" class="legend__grupo" role="listitem">
+        <div class="legend__grupo-head">
+          <img v-if="e.flagUrl" :src="e.flagUrl" :alt="e.sigla" class="legend__flag" aria-hidden="true" />
+          <span v-else class="legend__swatch" :style="{ background: e.color }" aria-hidden="true"></span>
+          <span class="legend__sigla">{{ e.sigla }}</span>
+          <span class="legend__grupo-n">{{ e.votos }}</span>
+        </div>
+        <div class="legend__subs">
+          <span v-for="s in e.subEntradas" :key="s.nombre" class="legend__sub">
+            <span class="legend__swatch" :style="{ background: s.color }" aria-hidden="true"></span>
+            {{ s.nombre }} <span class="legend__subn">{{ s.votos }}</span>
+          </span>
+          <span v-if="e.masN" class="legend__mas">+{{ e.masN }} más</span>
+        </div>
+      </div>
+      <!-- Nivel lema: chip inline (comportamiento base) -->
+      <div v-else class="legend__item" role="listitem">
+        <img v-if="e.flagUrl" :src="e.flagUrl" :alt="e.sigla" class="legend__flag" aria-hidden="true" />
+        <span v-else class="legend__swatch" :style="{ background: e.color }" aria-hidden="true"></span>
+        <span class="legend__sigla">{{ e.sigla }}</span>
+        <span v-if="e.nombre !== e.sigla" class="legend__nombre">{{ e.nombre }}</span>
+      </div>
+    </template>
     <div v-if="sinDatos > 0" class="legend__item legend__item--muted" role="listitem">
       <span class="legend__swatch legend__swatch--empty" aria-hidden="true"></span>
       <span class="legend__sigla">—</span>
@@ -76,6 +81,14 @@ const fmt = (n: number): string => n.toLocaleString('es-UY');
 .legend__item--muted {
   opacity: 0.7;
 }
+/* Coloreo-por-nivel: bloque agrupado por lema (ocupa toda la fila) */
+.legend__grupo { flex-basis: 100%; display: flex; flex-direction: column; gap: 0.25rem; align-items: flex-start; }
+.legend__grupo-head { display: inline-flex; align-items: center; gap: 0.375rem; font-weight: 700; }
+.legend__grupo-n { font-weight: 400; color: var(--color-ink-muted); }
+.legend__subs { display: flex; flex-wrap: wrap; gap: 0.25rem 0.625rem; padding-left: 1.5rem; }
+.legend__sub { display: inline-flex; align-items: center; gap: 0.25rem; color: var(--color-ink-soft); }
+.legend__subn { color: var(--color-ink-muted); }
+.legend__mas { color: var(--color-ink-faint); font-style: italic; }
 .legend__swatch {
   width: 0.875rem;
   height: 0.875rem;
