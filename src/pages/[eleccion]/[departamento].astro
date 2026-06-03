@@ -110,6 +110,7 @@ const canonicalPath = `/${eleccion}/${departamento}`;
       </p>
     )}
     <!-- Selector de departamento — links Astro (ClientRouter navega sin reinicializar el mapa) -->
+    <div class="dept-nav-wrap">
     <nav class="dept-nav" aria-label="Departamentos">
       {existsSync(`public/data/${eleccion}/_nacional/votes.json`) && (
         <a href={`/${eleccion}`} class="dept-nav__link dept-nav__link--nacional">🇺🇾 Nacional</a>
@@ -121,6 +122,7 @@ const canonicalPath = `/${eleccion}/${departamento}`;
         >{dept.label}</a>
       ))}
     </nav>
+    </div>
     <!-- Selector de elección (Story 4.2) — siempre visible; muestra todas las elecciones, bloqueando las sin datos -->
     <EleccionSelector
       client:idle
@@ -164,6 +166,16 @@ const canonicalPath = `/${eleccion}/${departamento}`;
 document.addEventListener('astro:page-load', () => {
   const nav = document.querySelector<HTMLElement>('.dept-nav');
   if (!nav) return;
+  const wrap = nav.closest<HTMLElement>('.dept-nav-wrap');
+
+  // Fades de borde: señalan que hay más departamentos para scrollear.
+  const updateFades = () => {
+    if (!wrap) return;
+    wrap.classList.toggle('can-left', nav.scrollLeft > 4);
+    wrap.classList.toggle('can-right', nav.scrollLeft < nav.scrollWidth - nav.clientWidth - 4);
+  };
+  nav.addEventListener('scroll', updateFades, { passive: true });
+  window.addEventListener('resize', updateFades);
 
   let startX = 0, startScroll = 0, dragging = false;
   nav.addEventListener('mousedown', (e) => { dragging = true; startX = e.pageX; startScroll = nav.scrollLeft; nav.style.cursor = 'grabbing'; e.preventDefault(); });
@@ -171,11 +183,13 @@ document.addEventListener('astro:page-load', () => {
   window.addEventListener('mouseup', () => { dragging = false; nav.style.cursor = ''; });
 
   const active = nav.querySelector<HTMLElement>('.dept-nav__link--activo');
-  if (!active) return;
-  const navRect = nav.getBoundingClientRect();
-  const activeRect = active.getBoundingClientRect();
-  const relativeLeft = (activeRect.left - navRect.left) + nav.scrollLeft;
-  const offset = relativeLeft - nav.clientWidth / 2 + active.offsetWidth / 2;
-  nav.scrollLeft = Math.max(0, offset);
+  if (active) {
+    const navRect = nav.getBoundingClientRect();
+    const activeRect = active.getBoundingClientRect();
+    const relativeLeft = (activeRect.left - navRect.left) + nav.scrollLeft;
+    const offset = relativeLeft - nav.clientWidth / 2 + active.offsetWidth / 2;
+    nav.scrollLeft = Math.max(0, offset);
+  }
+  updateFades();
 });
 </script>

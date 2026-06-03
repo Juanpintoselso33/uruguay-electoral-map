@@ -64,6 +64,18 @@ for (const e of ALL_IDS) {
 }
 
 const scrollRef = ref<HTMLElement | null>(null);
+// Indicadores de scroll: hay más contenido a izquierda/derecha (fades + flechas).
+const canLeft = ref(false);
+const canRight = ref(false);
+function updateScrollState() {
+  const el = scrollRef.value;
+  if (!el) return;
+  canLeft.value = el.scrollLeft > 4;
+  canRight.value = el.scrollLeft < el.scrollWidth - el.clientWidth - 4;
+}
+function nudge(dir: number) {
+  scrollRef.value?.scrollBy({ left: dir * 240, behavior: 'smooth' });
+}
 
 let dragStartX = 0, dragStartScroll = 0, isDragging = false, hasMoved = false;
 
@@ -103,17 +115,25 @@ onMounted(() => {
   const relativeLeft = (itemRect.left - elRect.left) + el.scrollLeft;
   const offset = relativeLeft - el.clientWidth / 2 + itemEl.offsetWidth / 2;
   el.scrollLeft = Math.max(0, offset);
+  updateScrollState();
+  window.addEventListener('resize', updateScrollState);
 });
 
 onUnmounted(() => {
   window.removeEventListener('mousemove', onDragMove);
   window.removeEventListener('mouseup', onDragEnd);
+  window.removeEventListener('resize', updateScrollState);
 });
 </script>
 
 <template>
   <nav class="esel" aria-label="Seleccionar elección">
-    <div ref="scrollRef" class="esel__scroll" @mousedown="onDragStart" @click.capture="onClickCapture">
+    <div class="esel__viewport">
+    <span class="esel__fade esel__fade--left" :class="{ 'is-on': canLeft }" aria-hidden="true" />
+    <span class="esel__fade esel__fade--right" :class="{ 'is-on': canRight }" aria-hidden="true" />
+    <button v-show="canLeft" type="button" class="esel__nav esel__nav--left" aria-label="Ver elecciones anteriores" @click="nudge(-1)">‹</button>
+    <button v-show="canRight" type="button" class="esel__nav esel__nav--right" aria-label="Ver elecciones siguientes" @click="nudge(1)">›</button>
+    <div ref="scrollRef" class="esel__scroll" @mousedown="onDragStart" @click.capture="onClickCapture" @scroll="updateScrollState">
       <div class="esel__track">
         <div v-for="g in grupos" :key="g.año" class="esel__grupo">
           <span class="esel__year">{{ g.año }}</span>
@@ -151,6 +171,7 @@ onUnmounted(() => {
         </div>
       </div>
     </div>
+    </div>
     <!-- Leyenda de formas por tipo de elección -->
     <ul class="esel__leyenda" aria-label="Referencia de formas">
       <li><span class="esel__shape esel__shape--circle" aria-hidden="true" /> Internas · Nacionales · Departamentales</li>
@@ -166,6 +187,8 @@ onUnmounted(() => {
   background: var(--color-paper);
 }
 
+.esel__viewport { position: relative; }
+
 .esel__scroll {
   overflow-x: auto;
   scrollbar-width: none;
@@ -173,6 +196,28 @@ onUnmounted(() => {
   cursor: grab;
 }
 .esel__scroll::-webkit-scrollbar { display: none; }
+
+/* Fades de borde: señalan que hay más para scrollear */
+.esel__fade {
+  position: absolute; top: 0; bottom: 0; width: 2.5rem; z-index: 2;
+  pointer-events: none; opacity: 0; transition: opacity 0.15s;
+}
+.esel__fade.is-on { opacity: 1; }
+.esel__fade--left  { left: 0;  background: linear-gradient(to right, var(--color-paper), transparent); }
+.esel__fade--right { right: 0; background: linear-gradient(to left,  var(--color-paper), transparent); }
+
+/* Flechas de scroll (aparecen solo cuando hay overflow) */
+.esel__nav {
+  position: absolute; top: 1.1rem; z-index: 3;
+  width: 28px; height: 28px; border-radius: 9999px;
+  border: 1px solid var(--color-border-strong); background: var(--color-paper); color: var(--color-ink);
+  display: grid; place-items: center; cursor: pointer; font-size: 1.1rem; line-height: 1;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+.esel__nav:hover { background: var(--color-surface-2); }
+.esel__nav:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.esel__nav--left  { left: 0.375rem; }
+.esel__nav--right { right: 0.375rem; }
 
 .esel__track {
   display: flex;

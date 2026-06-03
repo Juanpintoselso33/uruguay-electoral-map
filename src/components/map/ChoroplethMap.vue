@@ -1868,6 +1868,8 @@ onMounted(async () => {
     });
     map.value = m;
     if (import.meta.env.DEV) (window as unknown as { __mlMap?: MlMap }).__mlMap = m; // debug/QA only
+    // Controles de zoom visibles (el zoom revela el detalle por circuito/local).
+    m.addControl(new mlLib.NavigationControl({ showCompass: false, showZoom: true, visualizePitch: false }), 'top-right');
 
     m.on('load', () => { void (async () => {
       await loadFlagImages();

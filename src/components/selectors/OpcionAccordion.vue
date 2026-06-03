@@ -380,6 +380,16 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
       </select>
     </div>
 
+    <!-- Acciones: botones claros (antes eran links de texto poco visibles) -->
+    <div v-if="contienda && !esPlano" class="acc__acciones">
+      <button class="acc__btn" type="button" @click="seleccionarTodasVisibles">
+        <span aria-hidden="true">☑</span> Seleccionar todas
+      </button>
+      <button class="acc__btn acc__btn--ghost" type="button" :disabled="seleccion.size === 0" @click="limpiarTodo">
+        <span aria-hidden="true">✕</span> Limpiar<span v-if="seleccion.size"> ({{ seleccion.size }})</span>
+      </button>
+    </div>
+
     <!-- Chips de filtros/selección activos -->
     <div v-if="seleccion.size > 0 || filtroPartido || busqueda" class="acc__chips" aria-live="polite">
       <span v-if="filtroPartido" class="acc__chip">
@@ -393,11 +403,6 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
       <span v-if="seleccion.size > 0" class="acc__chip acc__chip--sel">
         {{ seleccion.size }} {{ seleccion.size === 1 ? 'lista' : 'listas' }} seleccionada{{ seleccion.size === 1 ? '' : 's' }}
       </span>
-      <button class="acc__limpiar" type="button" @click="limpiarTodo">Limpiar todo</button>
-    </div>
-
-    <div v-if="contienda && !esPlano" class="acc__acciones">
-      <button class="acc__link" type="button" @click="seleccionarTodasVisibles">Seleccionar todas</button>
     </div>
 
     <!-- Rótulo de degradación: escalera sin nivel sublema por falta de dato (AC2, Story 10.7) -->
@@ -416,13 +421,19 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
             :aria-label="`Seleccionar todas las listas de ${l.etiqueta}`"
             @click="toggleSet(hojasDeLema(l.id))"
           ><span aria-hidden="true">{{ tri(hojasDeLema(l.id)) === 'full' ? '✓' : tri(hojasDeLema(l.id)) === 'partial' ? '–' : '' }}</span></button>
-          <button type="button" class="acc__chevron" :aria-label="`Expandir ${l.etiqueta}`" @click="toggleExpand(l.id)">
-            {{ expandidos.has(l.id) ? '▼' : '▸' }}
+          <button
+            type="button"
+            class="acc__expand"
+            :aria-expanded="expandidos.has(l.id)"
+            :aria-label="`${expandidos.has(l.id) ? 'Contraer' : 'Ver listas de'} ${l.etiqueta}`"
+            @click="toggleExpand(l.id)"
+          >
+            <span class="acc__chevron" aria-hidden="true">{{ expandidos.has(l.id) ? '▾' : '▸' }}</span>
+            <img v-if="flagLema(l)" :src="flagLema(l)!" :alt="siglaLema(l)" class="acc__flag" aria-hidden="true" />
+            <span v-else class="acc__swatch" :style="{ background: colorLema(l) }" aria-hidden="true"></span>
+            <span class="acc__sigla">{{ siglaLema(l) }}</span>
+            <span class="acc__etiqueta">{{ l.etiqueta }}</span>
           </button>
-          <img v-if="flagLema(l)" :src="flagLema(l)!" :alt="siglaLema(l)" class="acc__flag" aria-hidden="true" />
-          <span v-else class="acc__swatch" :style="{ background: colorLema(l) }" aria-hidden="true"></span>
-          <span class="acc__sigla">{{ siglaLema(l) }}</span>
-          <span class="acc__etiqueta">{{ l.etiqueta }}</span>
         </div>
 
         <ul v-if="expandidos.has(l.id)" class="acc__children" role="group">
@@ -436,10 +447,16 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
                 :aria-label="`Seleccionar todas las opciones de ${g.etiqueta}`"
                 @click="toggleSet(idsDeGrupo(g.id))"
               ><span aria-hidden="true">{{ tri(idsDeGrupo(g.id)) === 'full' ? '✓' : tri(idsDeGrupo(g.id)) === 'partial' ? '–' : '' }}</span></button>
-              <button type="button" class="acc__chevron" :aria-label="`Expandir ${g.etiqueta}`" @click="toggleExpand(g.id)">
-                {{ expandidos.has(g.id) ? '▼' : '▸' }}
+              <button
+                type="button"
+                class="acc__expand"
+                :aria-expanded="expandidos.has(g.id)"
+                :aria-label="`${expandidos.has(g.id) ? 'Contraer' : 'Ver listas de'} ${g.etiqueta}`"
+                @click="toggleExpand(g.id)"
+              >
+                <span class="acc__chevron" aria-hidden="true">{{ expandidos.has(g.id) ? '▾' : '▸' }}</span>
+                <span class="acc__etiqueta acc__etiqueta--precand">{{ g.etiqueta }}</span>
               </button>
-              <span class="acc__etiqueta acc__etiqueta--precand">{{ g.etiqueta }}</span>
             </div>
             <ul v-if="expandidos.has(g.id)" class="acc__children" role="group">
               <li v-for="h in opcionesDeGrupo(g.id)" :key="h.id" class="acc__hoja" role="treeitem">
@@ -506,18 +523,28 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
 .acc__contienda--activa { background: var(--color-ink); color: var(--color-paper); border-color: var(--color-ink); }
 .acc__contienda:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
 
-.acc__controles { display: flex; gap: 0.375rem; margin-bottom: 0.375rem; }
-.acc__busqueda { flex: 1; min-width: 0; padding: 0.375rem 0.5rem; border: 1px solid var(--color-border); border-radius: 0.25rem; min-height: 36px; }
-.acc__filtro { padding: 0.375rem 0.5rem; border: 1px solid var(--color-border); border-radius: 0.25rem; max-width: 11rem; min-height: 36px; }
+.acc__controles { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-bottom: 0.375rem; }
+.acc__busqueda { flex: 1 1 9rem; min-width: 9rem; padding: 0.375rem 0.5rem; border: 1px solid var(--color-border); border-radius: 0.25rem; min-height: 36px; }
+.acc__filtro { flex: 1 1 9rem; padding: 0.375rem 0.5rem; border: 1px solid var(--color-border); border-radius: 0.25rem; min-height: 36px; }
 
 .acc__chips { display: flex; flex-wrap: wrap; align-items: center; gap: 0.375rem; margin-bottom: 0.375rem; font-size: 0.75rem; }
 .acc__chip { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; border: 1px solid var(--color-border-strong); border-radius: 9999px; background: var(--color-surface-1); }
 .acc__chip--sel { font-weight: 700; }
 .acc__chip button { background: none; border: none; cursor: pointer; color: var(--color-ink-muted); padding: 0 0.125rem; }
-.acc__limpiar { background: none; border: none; cursor: pointer; color: var(--color-accent); text-decoration: underline; font-size: 0.75rem; }
 
-.acc__acciones { margin-bottom: 0.25rem; }
-.acc__link { background: none; border: none; cursor: pointer; color: var(--color-accent); text-decoration: underline; font-size: 0.75rem; padding: 0; }
+/* Acciones como botones claros (antes links de texto poco visibles) */
+.acc__acciones { display: flex; gap: 0.375rem; margin-bottom: 0.375rem; }
+.acc__btn {
+  display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.625rem;
+  border: 1px solid var(--color-border-strong); border-radius: 0.375rem;
+  background: var(--color-surface-1); color: var(--color-ink); font-size: 0.75rem; font-weight: 600;
+  cursor: pointer; min-height: 34px;
+}
+.acc__btn:hover { background: var(--color-surface-2); }
+.acc__btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.acc__btn--ghost { background: none; color: var(--color-ink-soft); }
+.acc__btn:disabled { opacity: 0.45; cursor: default; }
+.acc__btn:disabled:hover { background: none; }
 
 .acc__tree { list-style: none; margin: 0; padding: 0; max-height: 22rem; overflow-y: auto; border: 1px solid var(--color-border); border-radius: 0.375rem; }
 .acc__children { list-style: none; margin: 0; padding: 0; }
@@ -536,8 +563,15 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
 .acc__cb--partial { background: var(--color-ink-soft); border-color: var(--color-ink-soft); }
 .acc__cb:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
 
-.acc__chevron { background: none; border: none; cursor: pointer; color: var(--color-ink-soft); width: 22px; height: 40px; flex-shrink: 0; font-size: 0.7rem; }
-.acc__chevron:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
+/* Rótulo del lema/grupo: toda la fila (chevron + bandera + nombre) abre el desglose */
+.acc__expand {
+  display: flex; align-items: center; gap: 0.375rem; flex: 1; min-width: 0;
+  background: none; border: none; cursor: pointer; text-align: left;
+  min-height: 40px; padding: 0 0.25rem; border-radius: 0.25rem; color: inherit; font: inherit;
+}
+.acc__expand:hover { background: var(--color-surface-2); }
+.acc__expand:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
+.acc__chevron { width: 0.9rem; flex-shrink: 0; color: var(--color-ink-soft); font-size: 0.7rem; }
 
 .acc__swatch { width: 0.75rem; height: 0.75rem; border-radius: 0.125rem; flex-shrink: 0; border: 1px solid rgba(0,0,0,.1); }
 .acc__flag  { width: 1.25rem; height: 0.8125rem; border-radius: 0.125rem; flex-shrink: 0; border: 1px solid rgba(0,0,0,.15); object-fit: cover; }
