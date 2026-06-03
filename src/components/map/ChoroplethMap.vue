@@ -9,7 +9,7 @@
  * entre departamentos. En `astro:after-swap` recarga datos sin re-inicializar MapLibre
  * (NFR1 anti-jank). La URL es la fuente de verdad; nanostores espejan.
  */
-import { onMounted, onUnmounted, ref, shallowRef } from 'vue';
+import { onMounted, onUnmounted, ref, shallowRef, computed } from 'vue';
 import type { Map as MlMap, Marker as MlMarker, LngLatBoundsLike, GeoJSONSource } from 'maplibre-gl';
 import type { Feature, FeatureCollection, Polygon, MultiPolygon, Position } from 'geojson';
 import type { Topology, GeometryCollection } from 'topojson-specification';
@@ -164,7 +164,10 @@ let ciudadesGrandesSet = new Set<string>();
 let intensidadActive = false;
 // Comparación dual (Story 4.3): ganador por zona de la elección de comparación.
 let vsWinnersMap = new Map<string, string>(); // normalizedGeoId → nombre del ganador en elección vs
+let vsZonaPct = new Map<string, Map<string, number>>(); // normGeoId → sigla → % (0..1) en la elección vs (delta Fase 2)
 let unsubComparison: (() => void) | null = null;
+/** Expresión base de opacidad del relleno (flags transparentan su zona). Reusada para restaurar tras el delta. */
+const BASE_FILL_OPACITY = ['case', ['!=', ['get', 'flagPattern'], null], 0, 0.85];
 // True cuando el nivel activo usa geometría Point (circuito) en lugar de Polygon (Story 6.3).
 let isPointNivel = false;
 // Unsub del overlay de circuitos.
@@ -197,6 +200,18 @@ const gnivel = ref<Nivel>('lema');
 const nivelesDisponibles = ref<Nivel[]>(['lema']);
 /** Comparación entre elecciones activa (overlay ?vs= aplicado) → muestra leyenda + nota del borde naranja. */
 const comparacionActiva = ref(false);
+/** Sub-modo de comparación: 'ganador' (flip, borde naranja) | 'delta' (Δ% de un partido, escala divergente). */
+const cmpModo = ref<'ganador' | 'delta'>('ganador');
+/** Sigla del partido cuyo Δ% se colorea en modo delta. Default = ganador de la elección base. */
+const cmpDeltaSigla = ref('');
+/** Clamp del gradiente divergente del delta (±15 puntos porcentuales; deltas reales son chicos). */
+const DELTA_CLAMP = 0.15;
+/** Partidos seleccionables para el delta (siglas presentes en la base, dedup, con color). */
+const siglasComparables = computed(() => {
+  const seen = new Map<string, { sigla: string; nombre: string; color: string }>();
+  for (const e of resultadoGlobal.value) if (!seen.has(e.sigla)) seen.set(e.sigla, { sigla: e.sigla, nombre: e.nombre, color: e.color });
+  return [...seen.values()];
+});
 // hojaId → metadata del catálogo (del catalogo.json). Null = aún no cargado.
 // Ampliado (coloreo-por-nivel): incluye precandidatoId/sublemaId para agrupar el ganador a cualquier nivel.
 let catalogoOpcMeta: Map<string, {
@@ -1556,6 +1571,8 @@ async function applyComparisonOverlay(vs: string, baseEleccion: string, departam
     vsWinnersMap = new Map();
     // vsSiglaMap: geoId normalizado → sigla canónica del ganador en la elección vs
     const vsSiglaMap = new Map<string, string>();
+    // vsZonaPct: geoId normalizado → sigla → % (0..1) en la elección vs (para el delta Fase 2).
+    vsZonaPct = new Map();
     for (const z of votes.zonas) {
       if (z.porOpcion.length > 0) {
         const vsNombre = vsNombrePorOpcion.get(z.ganadorOpcionId) ?? z.ganadorOpcionId;
@@ -1563,6 +1580,18 @@ async function applyComparisonOverlay(vs: string, baseEleccion: string, departam
         // Sigla: desde la tabla de equiv si existe, sino desde resolveParty
         const sigla = siglaFromBId.get(z.ganadorOpcionId) ?? resolveParty(vsNombre).sigla;
         vsSiglaMap.set(norm(z.geoId), sigla);
+        // % por sigla en esta zona (delta). Agrega por sigla canónica; share sobre válidos.
+        if (z.validos > 0) {
+          const porSigla = new Map<string, number>();
+          for (const o of z.porOpcion) {
+            const nombre = vsNombrePorOpcion.get(o.opcionId) ?? o.opcionId;
+            const s = siglaFromBId.get(o.opcionId) ?? resolveParty(nombre).sigla;
+            porSigla.set(s, (porSigla.get(s) ?? 0) + o.votos);
+          }
+          const pctMap = new Map<string, number>();
+          for (const [s, v] of porSigla) pctMap.set(s, v / z.validos);
+          vsZonaPct.set(norm(z.geoId), pctMap);
+        }
       }
     }
 
@@ -1595,10 +1624,77 @@ async function applyComparisonOverlay(vs: string, baseEleccion: string, departam
       return vsSiglas.has(entrySigla) ? entry : { ...entry, nombre: `${entry.nombre} (solo ${year})` };
     });
     comparacionActiva.value = true; // overlay aplicado → leyenda + nota del borde naranja
+    if (!cmpDeltaSigla.value || !siglasComparables.value.some((s) => s.sigla === cmpDeltaSigla.value)) {
+      cmpDeltaSigla.value = resultadoGlobal.value[0]?.sigla ?? ''; // default = ganador de la base
+    }
+    renderComparacionFill(); // aplica relleno según el sub-modo (ganador | delta)
   } catch {
     // Degradación silenciosa: si no hay datos de comparación, el mapa sigue normal.
   }
 }
+
+/** % (0..1) de una sigla en una zona de la elección BASE (sobre válidos). null si no hay datos. */
+function basePctSiglaEnZona(key: string, sigla: string): number | null {
+  const validos = zonasValidos.get(key) ?? 0;
+  if (validos <= 0) return null;
+  const vm = zonasVotos.get(key);
+  if (!vm) return null;
+  let s = 0;
+  for (const [oid, v] of vm) if (resolveParty(opcNombreMap.get(oid) ?? oid, activeEleccion).sigla === sigla) s += v;
+  return s / validos;
+}
+
+/**
+ * Aplica el relleno del mapa según el sub-modo de comparación (Fase 2).
+ * - 'ganador': relleno base (colores de partido + banderas), con el borde naranja del flip.
+ * - 'delta':   relleno divergente por Δ% (base − vs) del partido `cmpDeltaSigla`; zonas sin dato
+ *              comparable van GRISES (nunca delta-contra-cero → evita falsos extremos).
+ */
+function renderComparacionFill(): void {
+  const m = map.value;
+  const fc = fcRef.value;
+  if (!m || !fc) return;
+  if (cmpModo.value !== 'delta' || !cmpDeltaSigla.value) {
+    for (const f of fc.features) {
+      const name = String((f.properties as { name: string }).name);
+      m.setFeatureState({ source: 'zonas', id: name }, { delta: 0, deltaNA: false });
+    }
+    m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
+    m.setPaintProperty('zonas-fill', 'fill-opacity', BASE_FILL_OPACITY);
+    setPatternVisible(true);
+    if (m.getLayer('zonas-vs-changed')) m.setLayoutProperty('zonas-vs-changed', 'visibility', 'visible'); // borde naranja del flip
+    return;
+  }
+  const sigla = cmpDeltaSigla.value;
+  for (const f of fc.features) {
+    const name = String((f.properties as { name: string }).name);
+    const key = norm(name);
+    const basePct = basePctSiglaEnZona(key, sigla);
+    const vsPct = vsZonaPct.get(key)?.get(sigla);
+    if (basePct === null || vsPct === undefined) {
+      m.setFeatureState({ source: 'zonas', id: name }, { deltaNA: true, delta: 0 }); // sin dato comparable → gris
+      continue;
+    }
+    const d = Math.max(-DELTA_CLAMP, Math.min(DELTA_CLAMP, basePct - vsPct));
+    m.setFeatureState({ source: 'zonas', id: name }, { delta: d, deltaNA: false });
+  }
+  // Relleno sólido (sin banderas) + escala divergente rojo(cae) ↔ blanco ↔ verde(sube).
+  // En delta ocultamos el borde naranja del flip → el mapa habla solo de magnitud.
+  setPatternVisible(false);
+  if (m.getLayer('zonas-vs-changed')) m.setLayoutProperty('zonas-vs-changed', 'visibility', 'none');
+  m.setPaintProperty('zonas-fill', 'fill-opacity', 0.85);
+  m.setPaintProperty('zonas-fill', 'fill-color', [
+    'case',
+    ['boolean', ['feature-state', 'deltaNA'], false], '#d4d4d8',
+    ['interpolate', ['linear'], ['to-number', ['feature-state', 'delta'], 0],
+      -0.15, '#b91c1c', -0.05, '#fca5a5', 0, '#f4f4f5', 0.05, '#86efac', 0.15, '#15803d'],
+  ]);
+}
+
+/** Cambia el sub-modo de comparación (ganador | delta) y re-renderiza el relleno. */
+function setCmpModo(modo: 'ganador' | 'delta'): void { cmpModo.value = modo; renderComparacionFill(); }
+/** Cambia el partido seguido por el delta y re-renderiza. */
+function setCmpDeltaSigla(sigla: string): void { cmpDeltaSigla.value = sigla; renderComparacionFill(); }
 
 /** Limpia el overlay de comparación: restaura feature-states y leyenda original (Story 4.3). */
 function clearComparisonOverlay(): void {
@@ -1607,11 +1703,18 @@ function clearComparisonOverlay(): void {
   if (!m || !fc) return;
   for (const f of fc.features) {
     const name = String((f.properties as { name: string }).name);
-    m.setFeatureState({ source: 'zonas', id: name }, { vsChanged: false });
+    m.setFeatureState({ source: 'zonas', id: name }, { vsChanged: false, deltaNA: false, delta: 0 });
   }
+  // Si el delta había cambiado el relleno/opacidad, restaurar la vista base.
+  m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
+  m.setPaintProperty('zonas-fill', 'fill-opacity', BASE_FILL_OPACITY);
+  setPatternVisible(true);
+  if (m.getLayer('zonas-vs-changed')) m.setLayoutProperty('zonas-vs-changed', 'visibility', 'visible');
   vsWinnersMap = new Map();
+  vsZonaPct = new Map();
   legend.value = origLegend;
   comparacionActiva.value = false;
+  cmpModo.value = 'ganador';
 }
 
 /**
@@ -2229,7 +2332,31 @@ onUnmounted(() => {
     <MapLegend
       v-if="opcionActiva || seleccionActiva.length > 0 || votosSinUbicacion > 0 || gnivel !== 'lema' || comparacionActiva"
       :entradas="legend" :sin-datos="sinDatos" :votos-sin-ubicacion="votosSinUbicacion" :zonas-sin-ubicacion="zonasSinUbicacion"
-      :comparacion-nota="comparacionActiva ? 'Borde naranja: zonas donde cambió el partido ganador entre las dos elecciones.' : null" />
+      :comparacion-nota="comparacionActiva && cmpModo === 'ganador' ? 'Borde naranja: zonas donde cambió el partido ganador entre las dos elecciones.' : null" />
+
+    <!-- Comparación entre elecciones (Fase 2): cómo ver el contraste. Va DEBAJO del mapa (junto a la
+         leyenda) para no re-saturar arriba. 'Cambió ganador' = flip (borde naranja); 'Δ %' = magnitud
+         del cambio de un partido (escala divergente). El selector de partido vive acá, no arriba. -->
+    <div v-if="comparacionActiva" class="cmp-view">
+      <div class="cmp-view__modos" role="group" aria-label="Modo de comparación">
+        <button type="button" class="cmp-view__btn" :class="{ 'cmp-view__btn--activo': cmpModo === 'ganador' }"
+          :aria-pressed="cmpModo === 'ganador'" @click="setCmpModo('ganador')">Cambió ganador</button>
+        <button type="button" class="cmp-view__btn" :class="{ 'cmp-view__btn--activo': cmpModo === 'delta' }"
+          :aria-pressed="cmpModo === 'delta'" @click="setCmpModo('delta')">Δ % de un partido</button>
+      </div>
+      <div v-if="cmpModo === 'delta'" class="cmp-view__delta">
+        <label class="cmp-view__lbl">Partido:
+          <select class="cmp-view__sel" :value="cmpDeltaSigla"
+            @change="setCmpDeltaSigla(($event.target as HTMLSelectElement).value)" aria-label="Partido para el delta">
+            <option v-for="s in siglasComparables" :key="s.sigla" :value="s.sigla">{{ s.sigla }} — {{ s.nombre }}</option>
+          </select>
+        </label>
+        <div class="cmp-view__grad" aria-hidden="true">
+          <span>−15pp</span><span class="cmp-view__gradbar"></span><span>+15pp</span>
+        </div>
+        <p class="cmp-view__cap">Δ <strong>{{ cmpDeltaSigla }}</strong> = esta elección − la otra · <span class="cmp-view__rojo">rojo cayó</span> / <span class="cmp-view__verde">verde subió</span> · gris = sin dato comparable. Escala recortada a ±15 puntos.</p>
+      </div>
+    </div>
 
     <!-- Toggle Ganador / Intensidad — sólo visible cuando hay opción activa (Story 2.3) -->
     <div v-if="opcionActiva" class="vista-toggle" role="group" aria-label="Tipo de vista del mapa">
@@ -2378,5 +2505,44 @@ onUnmounted(() => {
   font-weight: 700;
   border-color: #1d4ed8;
 }
+
+/* Comparación Fase 2: controles de "cómo ver el contraste", debajo del mapa (no re-satura arriba). */
+.cmp-view {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-top: 1px solid var(--color-border);
+}
+.cmp-view__modos { display: flex; gap: 0; }
+.cmp-view__btn {
+  flex: 1;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.75rem;
+  background: var(--color-surface-1);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  min-height: 36px;
+}
+.cmp-view__btn:first-child { border-radius: 0.25rem 0 0 0.25rem; }
+.cmp-view__btn:last-child { border-radius: 0 0.25rem 0.25rem 0; border-left: none; }
+.cmp-view__btn--activo { background: #1d4ed8; color: #fff; font-weight: 700; border-color: #1d4ed8; }
+.cmp-view__delta { display: flex; flex-direction: column; gap: 0.375rem; }
+.cmp-view__lbl { font-size: 0.75rem; color: var(--color-ink-soft); display: flex; align-items: center; gap: 0.375rem; }
+.cmp-view__sel {
+  font-size: 0.75rem; padding: 0.2rem 0.4rem;
+  border: 1px solid var(--color-border-strong); border-radius: 0.25rem;
+  background: var(--color-paper); color: var(--color-ink); cursor: pointer;
+}
+.cmp-view__grad { display: flex; align-items: center; gap: 0.5rem; font-size: 0.6875rem; color: var(--color-ink-muted); }
+.cmp-view__gradbar {
+  flex: 1; height: 0.625rem; border-radius: 0.3125rem;
+  background: linear-gradient(90deg, #b91c1c, #fca5a5, #f4f4f5, #86efac, #15803d);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+.cmp-view__cap { margin: 0; font-size: 0.6875rem; line-height: 1.4; color: var(--color-ink-faint); }
+.cmp-view__rojo { color: #b91c1c; font-weight: 600; }
+.cmp-view__verde { color: #15803d; font-weight: 600; }
 
 </style>
