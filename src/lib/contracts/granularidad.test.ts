@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ESCALERAS, escaleraDe } from './granularidad';
+import { ESCALERAS, escaleraDe, slugContrato, opcionIdHoja } from './granularidad';
 import type { EleccionTipo } from './election';
 
 describe('ESCALERAS (catálogo de escaleras)', () => {
@@ -39,5 +39,19 @@ describe('escaleraDe', () => {
 
   it('(tipo, contienda) no declarado → undefined', () => {
     expect(escaleraDe('balotaje', 'odn')).toBeUndefined();
+  });
+});
+
+describe('slugContrato', () => {
+  it('NFD + minúsculas + no-alfanumérico→guion', () => {
+    expect(slugContrato('Coalición Republicana')).toBe('coalicion-republicana');
+    expect(slugContrato('Frente Amplio')).toBe('frente-amplio');
+  });
+});
+
+describe('opcionIdHoja (clave de join catálogo↔shard)', () => {
+  it('compone contienda-slug(lema)-hoja', () => {
+    expect(opcionIdHoja('odd', 'Frente Amplio', '609')).toBe('odd-frente-amplio-609');
+    expect(opcionIdHoja('odn', 'nacional', '5')).toBe('odn-nacional-5');
   });
 });
