@@ -147,7 +147,7 @@ const canonicalPath = `/${eleccion}/${departamento}`;
     <OpcionAccordion client:idle eleccion={eleccion} departamento={departamento} />
     <!-- Tabla accesible por CADA nivel geográfico disponible (serie/localidad/barrio/circuito/local) -->
     {availableLevels.map((lvl) => (
-      <DataTable eleccion={eleccion} departamento={departamento} shard={shardDeNivel(lvl)} />
+      <DataTable eleccion={eleccion} departamento={departamento} shard={shardDeNivel(lvl)} eleccionLabel={eleccionLabel} deptLabel={deptLabel} />
     ))}
     <div class="share-actions">
       <ExportButton client:idle eleccion={eleccion} departamento={departamento} />

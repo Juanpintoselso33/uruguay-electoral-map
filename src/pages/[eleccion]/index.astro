@@ -113,7 +113,7 @@ const canonicalPath = `/${eleccion}`;
     </div>
     <!-- Selector de opción (listas) — debajo del mapa -->
     <OpcionAccordion client:idle eleccion={eleccion} departamento="_nacional" />
-    <DataTable eleccion={eleccion} departamento="_nacional" />
+    <DataTable eleccion={eleccion} departamento="_nacional" eleccionLabel={eleccionLabel} deptLabel="Uruguay" />
     <Sello eleccion={eleccion} departamento="_nacional" />
   </main>
 </Base>
