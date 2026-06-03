@@ -97,10 +97,10 @@ const canonicalPath = `/${eleccion}`;
       eleccionActual={eleccion}
       departamento="_nacional"
     />
-    <OpcionAccordion client:idle eleccion={eleccion} departamento="_nacional" />
-    <!-- Toggle de granularidad departamental ↔ zona (Story 15.4) -->
-    <GranularitySelector client:idle />
-    <div id="map-persist" transition:persist>
+    <!-- Map-first: el mapa va antes que los selectores para quedar visible sin scrollear.
+         persist con nombre propio ("map-nacional") → persiste entre elecciones nacionales pero
+         NO cruza con la vista por-depto (que debe re-inicializar). -->
+    <div id="map-persist" transition:persist="map-nacional">
       <ChoroplethMap
         client:load
         eleccion={eleccion}
@@ -109,6 +109,10 @@ const canonicalPath = `/${eleccion}`;
         defaultNivel="departamento"
       />
     </div>
+    <!-- Controles de refinamiento, debajo del mapa -->
+    <OpcionAccordion client:idle eleccion={eleccion} departamento="_nacional" />
+    <!-- Toggle de granularidad departamental ↔ zona (Story 15.4) -->
+    <GranularitySelector client:idle />
     <DataTable eleccion={eleccion} departamento="_nacional" />
     <Sello eleccion={eleccion} departamento="_nacional" />
   </main>

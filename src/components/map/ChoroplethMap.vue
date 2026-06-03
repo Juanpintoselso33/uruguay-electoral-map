@@ -440,6 +440,7 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
 function rebuildMarkers(_fc?: FeatureCollection, _filterOpcionId?: string | null): void {
   markers.forEach((mk) => mk.remove());
   markers.length = 0;
+  selMarkerState = null;
 }
 
 // Canvas overlay: una bandera centrada y escalada por polígono, recortada al contorno de la zona.
@@ -1064,20 +1065,47 @@ function buildSeleccionFC(fc: FeatureCollection, sel: string[], modo: 'share' | 
   } as FeatureCollection;
 }
 
-/** Markers de valor (votos o %) por zona en modo selección — cumple "nunca solo por color". */
+// Estado del modo selección para re-declusterizar los labels en cada zoomend (al acercar reaparecen).
+let selMarkerState: { fc: FeatureCollection; modo: 'share' | 'heatmap' } | null = null;
+
+/** Markers de valor (votos o %) por zona en modo selección — cumple "nunca solo por color".
+ *  De-clustering: en pantallas densas (bajo zoom) los labels se pisaban; se colocan por PRIORIDAD
+ *  (mayor valor primero) descartando los que caen a < MIN_PX de uno ya puesto o fuera de pantalla.
+ *  Se re-ejecuta en zoomend → al acercar, los labels antes ocultos aparecen. */
 function rebuildSelMarkers(fc: FeatureCollection, modo: 'share' | 'heatmap'): void {
   if (!mlLib || !map.value || isPointNivel) return;
+  const m = map.value;
   markers.forEach((mk) => mk.remove());
   markers.length = 0;
-  for (const f of fc.features) {
-    const p = f.properties as { selVal?: number; selPct?: number };
-    if (!p.selVal || p.selVal <= 0) continue;
-    const [lng, lat] = centroid(f.geometry as Polygon | MultiPolygon);
+  selMarkerState = { fc, modo };
+  const W = m.getCanvas().clientWidth, H = m.getCanvas().clientHeight;
+  const MIN_PX = 36;        // separación mínima entre labels
+  const MARGIN = 24;        // descartar labels fuera del viewport (con margen)
+  // Candidatos con valor > 0, proyectados, ordenados por importancia (los grandes nunca se ocultan).
+  const cands = fc.features
+    .map((f) => {
+      const p = f.properties as { selVal?: number; selPct?: number };
+      if (!p.selVal || p.selVal <= 0) return null;
+      const [lng, lat] = centroid(f.geometry as Polygon | MultiPolygon);
+      const pt = m.project([lng, lat]);
+      return { lng, lat, x: pt.x, y: pt.y, selVal: p.selVal, selPct: p.selPct ?? 0 };
+    })
+    .filter((c): c is NonNullable<typeof c> => c !== null)
+    .sort((a, b) => b.selVal - a.selVal);
+  const placed: { x: number; y: number }[] = [];
+  for (const c of cands) {
+    if (c.x < -MARGIN || c.x > W + MARGIN || c.y < -MARGIN || c.y > H + MARGIN) continue;
+    let clear = true;
+    for (const q of placed) {
+      if (Math.abs(c.x - q.x) < MIN_PX && Math.abs(c.y - q.y) < MIN_PX) { clear = false; break; }
+    }
+    if (!clear) continue;
+    placed.push({ x: c.x, y: c.y });
     const el = document.createElement('span');
     el.className = 'zona-sigla';
     el.setAttribute('aria-hidden', 'true');
-    el.textContent = modo === 'share' ? `${Math.round((p.selPct ?? 0) * 100)}%` : String(p.selVal);
-    markers.push(new mlLib!.Marker({ element: el }).setLngLat([lng, lat]).addTo(map.value!));
+    el.textContent = modo === 'share' ? `${Math.round(c.selPct * 100)}%` : String(c.selVal);
+    markers.push(new mlLib!.Marker({ element: el }).setLngLat([c.lng, c.lat]).addTo(m));
   }
 }
 
@@ -1276,6 +1304,7 @@ function applyIntensidadMode(opcionId: string, m: MlMap, fc: FeatureCollection):
   setPatternVisible(false);
   markers.forEach((mk) => mk.remove());
   markers.length = 0;
+  selMarkerState = null;
   legend.value = buildIntensidadLegend(nombre, meta);
 }
 
@@ -1458,6 +1487,7 @@ function applyDualOpcionView(aId: string, bId: string): void {
   }
   markers.forEach((mk) => mk.remove());
   markers.length = 0;
+  selMarkerState = null;
   setPatternVisible(false);
   legend.value = [
     { sigla: aMeta.sigla, nombre: aNombre, color: aMeta.color, votos: 0 },
@@ -1879,7 +1909,10 @@ onMounted(async () => {
       m.addLayer({ id: 'zonas-line', type: 'line', source: 'zonas', paint: { 'line-color': 'rgba(20,20,35,0.85)', 'line-width': 1.8 } });
       m.on('render', () => drawFlagOverlay(m));
       m.on('movestart', () => { isMapMoving = true; });
-      m.on('moveend',   () => { isMapMoving = false; drawFlagOverlay(m); });
+      m.on('moveend',   () => { isMapMoving = false; drawFlagOverlay(m);
+        // Re-declusterizar los labels de valor para el nuevo zoom/encuadre (modo selección).
+        if (selMarkerState) rebuildSelMarkers(selMarkerState.fc, selMarkerState.modo);
+      });
       m.on('zoomstart', () => { isMapMoving = true; });
       m.on('zoomend',   () => { isMapMoving = false; drawFlagOverlay(m); });
       // Overlay de comparación (Story 4.3): borde naranja en zonas que cambiaron ganador.

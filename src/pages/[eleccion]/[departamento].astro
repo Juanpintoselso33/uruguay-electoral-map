@@ -130,12 +130,10 @@ const canonicalPath = `/${eleccion}/${departamento}`;
       eleccionActual={eleccion}
       departamento={departamento}
     />
-    <!-- Selector de opción — isla fuera de transition:persist, se re-monta en navegación (Story 2.2) -->
-    <OpcionAccordion client:idle eleccion={eleccion} departamento={departamento} />
-    <!-- Selector de nivel geográfico (Story 2.5) -->
-    <LevelSelector client:idle availableLevels={availableLevels} />
-    <!-- transition:persist: el island MapLibre sobrevive la navegación entre departamentos (NFR1) -->
-    <div id="map-persist" transition:persist>
+    <!-- Map-first: el mapa (héroe) va antes que los selectores para quedar visible sin scrollear.
+         transition:persist con nombre ESTABLE ("map") → el island MapLibre sobrevive la navegación
+         entre departamentos aunque ahora vaya antes en el DOM (NFR1). -->
+    <div id="map-persist" transition:persist="map">
       <ChoroplethMap
         client:load
         eleccion={eleccion}
@@ -143,6 +141,11 @@ const canonicalPath = `/${eleccion}/${departamento}`;
         availableLevels={availableLevels}
       />
     </div>
+    <!-- Controles de refinamiento, debajo del mapa -->
+    <!-- Selector de opción — isla fuera de transition:persist, se re-monta en navegación (Story 2.2) -->
+    <OpcionAccordion client:idle eleccion={eleccion} departamento={departamento} />
+    <!-- Selector de nivel geográfico (Story 2.5) -->
+    <LevelSelector client:idle availableLevels={availableLevels} />
     <!-- Tabla accesible por CADA nivel geográfico disponible (serie/localidad/barrio/circuito/local) -->
     {availableLevels.map((lvl) => (
       <DataTable eleccion={eleccion} departamento={departamento} shard={shardDeNivel(lvl)} />
