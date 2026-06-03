@@ -114,6 +114,15 @@ const zonasSinUbicacion = ref(0);
 // Resultado agregado (% de voto) de la geografía mostrada — independiente de la selección.
 const resultadoGlobal = ref<ResultadoEntry[]>([]);
 const resultadoValidos = ref(0);
+// Contexto del resultado (elección · departamento) para aclarar de qué es. Leído del masthead, que
+// es la fuente que SÍ se actualiza al navegar (los props del island quedan congelados por persist).
+const resultadoCtx = ref('');
+function readResultadoCtx(): void {
+  // El masthead nacional agrega "— mapa nacional" (redundante con "Resultado nacional") → se recorta.
+  const ele = (document.querySelector('.masthead__eleccion')?.textContent ?? '').split('—')[0].trim();
+  const dep = document.querySelector('.masthead__dept')?.textContent?.trim() ?? '';
+  resultadoCtx.value = activeDepartamento === '_nacional' ? ele : [ele, dep].filter(Boolean).join(' · ');
+}
 const selected = ref<SelInfo | null>(null);
 const map = shallowRef<MlMap | null>(null);
 const fcRef = shallowRef<FeatureCollection | null>(null);
@@ -1987,6 +1996,7 @@ onMounted(async () => {
         if (initSel.seleccion.length > 0) void applySeleccion();
       }
       status.value = 'listo';
+      readResultadoCtx(); // contexto inicial (elección · depto) del masthead
       // Aplicar modo comparación si la URL ya traía ?vs= o ?a=&b= (Stories 4.3/4.4).
       const initCmp = $comparison.get();
       if (initCmp.a && initCmp.b) {
@@ -2018,6 +2028,7 @@ onMounted(async () => {
     if (view.eleccion !== activeEleccion || view.departamento !== activeDepartamento) {
       activeEleccion = view.eleccion;
       activeDepartamento = view.departamento;
+      readResultadoCtx(); // el masthead nuevo ya está en el DOM tras el swap
       const newNivel = resolveNivel(view.level, view.departamento);
       activeNivel = newNivel;
       if (newNivel !== view.level) commit({ level: newNivel });
@@ -2090,6 +2101,7 @@ onUnmounted(() => {
       :entradas="resultadoGlobal"
       :validos="resultadoValidos"
       :titulo="departamento === '_nacional' ? 'Resultado nacional' : 'Resultado'"
+      :contexto="resultadoCtx"
     />
 
     <!-- La leyenda solo aporta en modos selección/filtro/intensidad (escala) o si hay nota de

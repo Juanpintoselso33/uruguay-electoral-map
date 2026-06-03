@@ -23,6 +23,8 @@ const props = defineProps<{
   validos: number;
   /** 'Resultado nacional' en la vista país; 'Resultado' en una página de departamento. */
   titulo: string;
+  /** Contexto (elección · departamento) para aclarar de qué es el resultado. */
+  contexto?: string;
   /** Cuántas filas mostrar antes de colapsar el resto en "otros". */
   maxFilas?: number;
 }>();
@@ -44,7 +46,9 @@ const otros = computed(() => {
 
 <template>
   <div v-if="entradas.length > 0" class="resultado" aria-label="Resultado agregado">
-    <h2 class="resultado__titulo">{{ titulo }}</h2>
+    <h2 class="resultado__titulo">
+      {{ titulo }}<span v-if="contexto" class="resultado__contexto"> · {{ contexto }}</span>
+    </h2>
     <ul class="resultado__lista">
       <li v-for="e in visibles" :key="e.opcionId" class="resultado__fila">
         <img
@@ -93,6 +97,7 @@ const otros = computed(() => {
   color: var(--color-ink-muted);
   margin: 0 0 0.5rem;
 }
+.resultado__contexto { font-weight: 600; color: var(--color-ink-soft); text-transform: none; letter-spacing: 0; }
 .resultado__lista {
   list-style: none;
   margin: 0;
