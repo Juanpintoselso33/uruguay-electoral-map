@@ -36,7 +36,7 @@ beforeEach(() => {
   // El path de la URL (que commit()→pushState arma) sale de $context, no de los props → setearlo
   // o pushState recibe "//" y jsdom lanza SecurityError. Parte del patrón de montaje.
   $context.set({ eleccion: 'internas-2024', departamento: 'montevideo' });
-  $selection.set({ zona: null, opcion: null, contienda: null, seleccion: [], modo: null });
+  $selection.set({ zona: null, opcion: null, contienda: null, seleccion: [], modo: null, gnivel: null });
   vi.stubGlobal('fetch', vi.fn(async (url: string) => {
     if (url.includes('/catalogo.json')) return new Response(JSON.stringify(CATALOGO), { status: 200 });
     // votes.json y los shards de hoja lazy: zonas vacías (no afectan la estructura del árbol).

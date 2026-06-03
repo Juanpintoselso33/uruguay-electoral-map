@@ -5,7 +5,7 @@ const base: MapView = {
   eleccion: 'internas-2024', departamento: 'montevideo',
   zona: null, opcion: null, level: 'zona',
   vs: null, a: null, b: null,
-  contienda: null, seleccion: [], modo: null, circ: false,
+  contienda: null, seleccion: [], modo: null, gnivel: null, circ: false,
 };
 
 describe('parseUrl', () => {

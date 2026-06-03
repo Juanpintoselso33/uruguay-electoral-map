@@ -31,6 +31,8 @@ export interface MapView {
   readonly seleccion: readonly string[];
   /** Modo de coloreo del mapa para la selección (`?modo=`, Epic 10): share/votos/heatmap (default ganador). */
   readonly modo: string | null;
+  /** Nivel del ganador en el modo Ganador (`?gnivel=`): lema|precandidato|sublema|lista. Default lema. */
+  readonly gnivel: string | null;
   /** Overlay de circuitos sobre el mapa base (`?circ=1`). */
   readonly circ: boolean;
 }
@@ -85,6 +87,7 @@ export function parseUrl(pathname: string, search: string): MapView {
     contienda: orNull(params.get('cont')),
     seleccion,
     modo: orNull(params.get('modo')),
+    gnivel: orNull(params.get('gnivel')),
     circ,
   };
 }
@@ -108,6 +111,7 @@ export function toUrl(view: MapView): { pathname: string; search: string } {
   if (view.contienda) params.set('cont', view.contienda);
   if (view.seleccion.length > 0) params.set('sel', view.seleccion.join(','));
   if (view.modo) params.set('modo', view.modo);
+  if (view.gnivel && view.gnivel !== 'lema') params.set('gnivel', view.gnivel); // lema = default, se omite
   if (view.circ) params.set('circ', '1');
   const search = params.toString();
   return { pathname, search: search ? `?${search}` : '' };

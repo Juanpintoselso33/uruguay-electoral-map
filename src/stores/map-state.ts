@@ -22,6 +22,8 @@ export interface Seleccion {
   readonly seleccion: readonly string[];
   /** Modo de coloreo del mapa para la selección (Epic 10). */
   readonly modo: string | null;
+  /** Nivel del ganador en el modo Ganador (Epic coloreo-por-nivel): lema|precandidato|sublema|lista. */
+  readonly gnivel: string | null;
 }
 export interface Comparacion {
   readonly vs: string | null;
@@ -30,7 +32,7 @@ export interface Comparacion {
 }
 
 export const $context = atom<Contexto>({ eleccion: '', departamento: '' });
-export const $selection = atom<Seleccion>({ zona: null, opcion: null, contienda: null, seleccion: [], modo: null });
+export const $selection = atom<Seleccion>({ zona: null, opcion: null, contienda: null, seleccion: [], modo: null, gnivel: null });
 export const $level = atom<NivelGeografico>('zona');
 export const $comparison = atom<Comparacion>({ vs: null, a: null, b: null });
 /** Overlay de circuitos sobre el mapa base (Story 9.x). */
@@ -39,7 +41,7 @@ export const $circuito = atom<boolean>(false);
 /** Vuelca una `MapView` (parseada de la URL) a los stores. Puro respecto al DOM. */
 export function hydrateStores(view: MapView): void {
   $context.set({ eleccion: view.eleccion, departamento: view.departamento });
-  $selection.set({ zona: view.zona, opcion: view.opcion, contienda: view.contienda, seleccion: view.seleccion, modo: view.modo });
+  $selection.set({ zona: view.zona, opcion: view.opcion, contienda: view.contienda, seleccion: view.seleccion, modo: view.modo, gnivel: view.gnivel });
   $level.set(view.level);
   $comparison.set({ vs: view.vs, a: view.a, b: view.b });
   $circuito.set(view.circ);
@@ -62,6 +64,7 @@ export function currentView(): MapView {
     contienda: sel.contienda,
     seleccion: sel.seleccion,
     modo: sel.modo,
+    gnivel: sel.gnivel,
     circ: $circuito.get(),
   };
 }
