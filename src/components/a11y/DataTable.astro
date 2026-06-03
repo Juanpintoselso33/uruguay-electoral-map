@@ -36,7 +36,10 @@ const filas = votes.zonas
     const meta = resolveParty(nombre);
     const ganadorVotos = z.porOpcion.find((o) => o.opcionId === z.ganadorOpcionId)?.votos ?? 0;
     const pct = z.validos > 0 ? (ganadorVotos / z.validos) * 100 : 0;
-    return { zona: z.geoId, sigla: meta.sigla, nombre, ganadorVotos, validos: z.validos, pct };
+    // Nivel local: el geoId es un id crudo ("montevideo-L001") → mostrar el nombre del local.
+    const local = (z as { local?: { nombre?: string } }).local;
+    const zona = local?.nombre ?? z.geoId;
+    return { zona, sigla: meta.sigla, nombre, ganadorVotos, validos: z.validos, pct };
   })
   .sort((a, b) => a.zona.localeCompare(b.zona, 'es'));
 
