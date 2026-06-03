@@ -20,6 +20,8 @@ const props = defineProps<{
   /** Epic 16: votos cuyo geoId no tiene polígono (series especiales/observados sin ubicación). */
   votosSinUbicacion?: number;
   zonasSinUbicacion?: number;
+  /** Comparación entre elecciones: explica qué significa el borde naranja (Story 4.3 · prototipo). */
+  comparacionNota?: string | null;
 }>();
 const fmt = (n: number): string => n.toLocaleString('es-UY');
 </script>
@@ -57,6 +59,8 @@ const fmt = (n: number): string => n.toLocaleString('es-UY');
       <span class="legend__nombre">{{ sinDatos }} zona(s) sin datos</span>
     </div>
   </div>
+  <!-- Comparación entre elecciones: explica el realce-por-contraste del modo "cambió ganador" -->
+  <p v-if="props.comparacionNota" class="legend__nota legend__nota--cmp">{{ props.comparacionNota }}</p>
   <!-- Epic 16: limitación documentada — votos sin ubicación geográfica (series especiales/observados) -->
   <p v-if="(props.votosSinUbicacion ?? 0) > 0" class="legend__nota">
     ⚠ {{ fmt(props.votosSinUbicacion!) }} votos en {{ props.zonasSinUbicacion }} serie(s) sin ubicación geográfica
@@ -120,5 +124,20 @@ const fmt = (n: number): string => n.toLocaleString('es-UY');
   font-size: 0.6875rem;
   line-height: 1.4;
   color: var(--color-ink-faint);
+}
+.legend__nota--cmp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  color: var(--color-ink-muted);
+}
+.legend__cmp-swatch {
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 0.1875rem;
+  flex: none;
+  background: transparent;
+  border: 2px dashed #f97316; /* coincide con el borde punteado naranja de zonas-vs-changed */
 }
 </style>

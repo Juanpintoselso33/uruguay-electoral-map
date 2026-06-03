@@ -39,3 +39,6 @@ docs/bmad-output/
 scripts/__pycache__/
 __pycache__/
 *.pyc
+
+# Brainstorm visual companion (superpowers)
+.superpowers/
