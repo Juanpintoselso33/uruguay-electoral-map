@@ -2197,7 +2197,14 @@ onMounted(async () => {
         source: 'zonas',
         paint: {
           'line-color': '#f97316',
-          'line-width': ['case', ['boolean', ['feature-state', 'vsChanged'], false], 3, 0],
+          // Grueso + punteado para que se distinga de los bordes negros de base y resalte sobre
+          // los rellenos de bandera. Ancho responsivo al zoom (zoom debe ser input top-level del
+          // interpolate; el case por feature-state va en los STOPS, no envolviendo al zoom).
+          'line-width': ['interpolate', ['linear'], ['zoom'],
+            4, ['case', ['boolean', ['feature-state', 'vsChanged'], false], 4, 0],
+            9, ['case', ['boolean', ['feature-state', 'vsChanged'], false], 7, 0]],
+          'line-dasharray': [2, 1.1],
+          'line-opacity': ['case', ['boolean', ['feature-state', 'vsChanged'], false], 1, 0],
         },
       });
       m.addLayer({

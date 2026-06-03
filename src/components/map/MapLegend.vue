@@ -140,6 +140,6 @@ const fmt = (n: number): string => n.toLocaleString('es-UY');
   border-radius: 0.1875rem;
   flex: none;
   background: transparent;
-  box-shadow: inset 0 0 0 2px #f97316; /* mismo naranja del borde zonas-vs-changed */
+  border: 2px dashed #f97316; /* coincide con el borde punteado naranja de zonas-vs-changed */
 }
 </style>

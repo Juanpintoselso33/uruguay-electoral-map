@@ -86,6 +86,7 @@ function exitCompare(): void { commit({ vs: null }); expanded.value = false; }
 .cmp {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   padding: 0.25rem 1rem;
   font-size: 0.75rem;
