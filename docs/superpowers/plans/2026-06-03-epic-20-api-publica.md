@@ -651,6 +651,39 @@ git commit -m "feat(api): recurso candidate-centric para opciones modeladas (Epi
 
 ---
 
+### Task 9: Enlace a la API en el footer del app (descubrimiento desde la UI)
+
+**Files:**
+- Modify: `src/components/ui/Sello.astro` (footer `<footer class="sello">`, usado en `[eleccion]/index.astro` y `[eleccion]/[departamento].astro`)
+
+El footer ya tiene "Fuente: Corte Electoral · Escrutinio … · by juanpintoselso33 · LinkedIn". Se agrega un enlace **"API"** que abre la doc (`/api/v1/docs`, Task 4) — punto de entrada visible "al final" de la página, sin saturar la UI del mapa.
+
+- [ ] **Step 1: Agregar el enlace en el footer**
+
+En `src/components/ui/Sello.astro`, dentro del `<footer class="sello">`, después del enlace de LinkedIn (línea ~30), agregar un separador + enlace (mismo estilo `sello__link`):
+
+```astro
+    &nbsp;·&nbsp;<a class="sello__link" href="/api/v1/docs">API</a>
+```
+
+(Es un enlace interno a la página de docs; no `target="_blank"`. Si se prefiere abrir en pestaña nueva, agregar `target="_blank" rel="noopener"` como los otros.)
+
+- [ ] **Step 2: Verificar**
+
+Run: `npm run check`
+Expected: 0 errores.
+
+Run (dev): `npm run dev`, abrir cualquier vista y confirmar que el footer muestra "… · LinkedIn · API" y que el enlace **API** navega a `/api/v1/docs` (la página de Scalar del Task 4).
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add src/components/ui/Sello.astro
+git commit -m "feat(api): enlace 'API' en el footer → /api/v1/docs (Epic 20.7)"
+```
+
+---
+
 ## Notas de cierre
 
 - **Integrar generadores al build:** agregar `etl:api-index` + `etl:api-dumps` + `gate:api` a la cadena de `npm run build` (o a un `etl:api` agregador) para que el contrato se regenere y valide en cada deploy.
