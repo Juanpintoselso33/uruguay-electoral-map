@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+"""Parsea la Integración de hojas de votación → public/data/personas/personas-hoja.{eleccion}.json:
+un registro por (persona × hoja × cargo). id de persona = credencial (estable cross-elección).
+Uso: python scripts/build-personas-hoja.py nacionales-2024
+"""
+import csv, json, os, sys, unicodedata
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CODE_DEPT = {"AR":"artigas","CA":"canelones","CL":"cerro_largo","CO":"colonia","DU":"durazno",
+    "FD":"florida","FS":"flores","LA":"lavalleja","MA":"maldonado","MO":"montevideo","PA":"paysandu",
+    "RN":"rio_negro","RO":"rocha","RV":"rivera","SA":"salto","SJ":"san_jose","SO":"soriano",
+    "TA":"tacuarembo","TT":"treinta_y_tres"}
+
+# Valores que indican "sin dato" — cubren: vacío, "NO APLICA" (con/sin punto),
+# "SIN SUBLEMA" y "SIN AGRUPACIÓN" / "SIN AGRUPACION" (con o sin tilde).
+VACIO = {"", "NO APLICA", "NO APLICA.", "N/A", "SIN SUBLEMA", "SIN AGRUPACION", "SIN AGRUPACIÓN"}
+
+
+def clean(s):
+    return (s or "").strip()
+
+
+def norm_upper(s):
+    """Normaliza a mayúsculas quitando tildes (para comparar contra VACIO)."""
+    s = unicodedata.normalize("NFD", s or "")
+    s = "".join(c for c in s if unicodedata.category(c) != "Mn")
+    return s.upper().strip()
+
+
+def persona_id(serie, numero):
+    return f"{clean(serie).upper()}-{clean(numero)}"
+
+
+def read_rows(eleccion):
+    base = os.path.join(ROOT, "data/raw/electoral", eleccion)
+    csv_path = os.path.join(base, "nominas-integracion.csv")
+    if os.path.exists(csv_path) and os.path.getsize(csv_path) > 1024:
+        for enc in ("utf-8-sig", "utf-8", "latin-1"):
+            try:
+                with open(csv_path, encoding=enc) as f:
+                    return list(csv.DictReader(f))
+            except UnicodeDecodeError:
+                continue
+    xlsx = os.path.join(base, "nominas-integracion.xlsx")
+    if os.path.exists(xlsx):
+        from openpyxl import load_workbook
+        ws = load_workbook(xlsx, read_only=True).worksheets[0]
+        it = ws.iter_rows(values_only=True)
+        header = [str(c).strip() if c is not None else "" for c in next(it)]
+        return [dict(zip(header, [("" if v is None else str(v)) for v in row])) for row in it]
+    raise SystemExit(f"no hay integración para {eleccion} (corré etl:nominas-fetch)")
+
+
+def main():
+    if len(sys.argv) < 2:
+        raise SystemExit("uso: build-personas-hoja.py <eleccion>")
+    eleccion = sys.argv[1]
+    rows = read_rows(eleccion)
+    out = []
+    for r in rows:
+        cod = clean(r.get("Departamento")).upper()
+        sub_raw = clean(r.get("Sublema"))
+        agr_raw = clean(r.get("Agrupacion"))
+        rec = {
+            "personaId": persona_id(r.get("CredencialSerie"), r.get("CredencialNumero")),
+            "nombre": clean(r.get("Nombre")),
+            "sexo": clean(r.get("Sexo")) or None,
+            "departamento": CODE_DEPT.get(cod, cod.lower()),
+            "hoja": clean(r.get("Numero")),
+            "partido": clean(r.get("PartidoPolitico")),
+            "agrupacion": agr_raw if norm_upper(agr_raw) not in VACIO else None,
+            "sublema": sub_raw if norm_upper(sub_raw) not in VACIO else None,
+            "cargo": clean(r.get("Candidatura")),
+            "ordinal": clean(r.get("Ordinal")) or None,
+            "titularSuplente": clean(r.get("TitularSuplente")) or None,
+        }
+        out.append(rec)
+    destdir = os.path.join(ROOT, "public/data/personas")
+    os.makedirs(destdir, exist_ok=True)
+    dest = os.path.join(destdir, f"personas-hoja.{eleccion}.json")
+    with open(dest, "w", encoding="utf-8") as f:
+        json.dump({"eleccion": eleccion, "registros": out}, f, ensure_ascii=False)
+    from collections import Counter
+    cargos = Counter(r["cargo"] for r in out)
+    print(f"{eleccion}: {len(out)} registros, {len({r['personaId'] for r in out})} personas únicas")
+    print(f"cargos: {dict(cargos.most_common())}")
+    size_mb = os.path.getsize(dest) / 1024 / 1024
+    print(f"tamaño: {size_mb:.2f} MB → {dest}")
+
+
+if __name__ == "__main__":
+    main()
