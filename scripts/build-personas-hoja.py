@@ -33,10 +33,11 @@ def persona_id(serie, numero):
 
 def read_rows(eleccion):
     base = os.path.join(ROOT, "data/raw/electoral", eleccion)
-    # Candidatos de nombres canónicos (preferidos) y alternativos ya en disco
+    # Candidatos de nombre para CSV: el full se prueba ANTES del canónico para evitar
+    # que un nominas-integracion.csv truncado (dep-2025: solo Artigas) tape al completo.
     csv_candidates = [
+        "integracion-de-hojas-full.csv",   # departamentales-2025 full (19 deptos) — prioritario
         "nominas-integracion.csv",
-        "integracion-de-hojas-full.csv",   # departamentales-2025 full (19 deptos)
         "integracion-de-hojas.csv",
     ]
     xlsx_candidates = [

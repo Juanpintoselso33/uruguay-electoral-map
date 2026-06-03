@@ -70,7 +70,7 @@ Construye una dimensión de personas indexada por credencial cívica, que une al
 | Elección | Credencial disponible | Notas |
 |---|---|---|
 | `nacionales-2024` | Sí (`CredencialSerie` + `CredencialNumero`) | CSV utf-8 |
-| `departamentales-2025` | Sí | CSV utf-8; usar `integracion-de-hojas-full.csv` (19 deptos); el CSV truncado solo llega a Artigas |
+| `departamentales-2025` | Sí | XLSX (19 deptos); el CSV de CKAN está truncado a Artigas — el fetch usa XLSX automáticamente (`PREFER_XLSX`) |
 | `internas-2024` | Sí | XLSX; columna `TipoHoja` en lugar de `Candidatura` |
 | `nacionales-2019` | **No** | El recurso de integración existe pero no incluye la columna de credencial (esquema anterior a 2024) |
 | `nacionales-2014` | **No** | El dataset de nacionales-2014 no publica recurso de integración de hojas |
@@ -87,7 +87,7 @@ Para agregar más elecciones (internas/departamentales pasadas): verificar que e
 | `gate-personas.py` | `npm run gate:personas` | Valida: campos obligatorios presentes, cargos SENADOR/REPRESENTANTE en nacionales, tasa de hojas huérfanas <10%. |
 | `query-persona.py` | — | Verificación standalone: dado un nombre o credencial, imprime hojas, votos de cada lista y ranking departamental. Los votos se leen de **`hoja-local.json`** (no `votes.json`, que es solo a nivel lema/partido). |
 
-**Salidas:** `public/data/personas/personas-hoja.*.json` y `personas.json` (~160 MB total, 3 elecciones). Están **gitignoreadas** (intermedios de build pesado).
+**Salidas:** `public/data/personas/personas-hoja.*.json` y `personas.json` (~340 MB total, 3 elecciones). Están **gitignoreadas** (intermedios de build pesado).
 
 **Flujo:**
 ```bash

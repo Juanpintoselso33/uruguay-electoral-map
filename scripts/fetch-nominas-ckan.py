@@ -17,6 +17,8 @@ TARGETS = {
     'internas-2024':         'corte-electoral-elecciones-internas-de-los-partidos-politicos-2024',
     'departamentales-2025':  'corte-electoral-elecciones_departamentales_y_municipales_2025',
 }
+# Elecciones cuyo CSV de CKAN está truncado; se prefiere el XLSX (completo).
+PREFER_XLSX = {'departamentales-2025'}
 RES_SUB = 'integraci'  # matchea "Integración de hojas de votación"
 
 def ckan(action, **params):
@@ -33,7 +35,9 @@ def resolve(dataset, fmt):
 def fetch_one(eleccion, dataset):
     destdir = os.path.join(ROOT, 'data/raw/electoral', eleccion)
     os.makedirs(destdir, exist_ok=True)
-    for fmt, ext in (('CSV', 'csv'), ('XLSX', 'xlsx')):
+    # Orden CSV→XLSX por defecto; PREFER_XLSX invierte: XLSX→CSV para datasets con CSV truncado.
+    fmts = (('XLSX', 'xlsx'), ('CSV', 'csv')) if eleccion in PREFER_XLSX else (('CSV', 'csv'), ('XLSX', 'xlsx'))
+    for fmt, ext in fmts:
         url = resolve(dataset, fmt)
         if not url:
             continue
@@ -46,7 +50,7 @@ def fetch_one(eleccion, dataset):
         with open(dest, 'wb') as f:
             f.write(data)
         print(f"  {eleccion}: bajado {len(data)//1024} KB → {dest}"); return
-    raise SystemExit(f"no encontré recurso de integración para {eleccion}")
+    print(f"  AVISO: no encontré recurso de integración para {eleccion} (elección sin nóminas, skip)")
 
 def main():
     sel = sys.argv[1:] or list(TARGETS)
