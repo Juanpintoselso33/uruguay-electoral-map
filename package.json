@@ -85,6 +85,7 @@
     "etl:no-partidarios": "python scripts/build-no-partidarios.py",
     "gate:grises": "python scripts/gate-grises.py",
     "gate:no-partidarios": "python scripts/gate-no-partidarios.py",
+    "gate:personas": "python scripts/gate-personas.py",
     "gate:api": "node scripts/gate-api-contract.mjs",
     "etl:api-index": "python scripts/build-api-index.py",
     "etl:api-dumps": "python scripts/build-api-dumps.py",
