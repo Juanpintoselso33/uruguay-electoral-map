@@ -5,13 +5,16 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "node scripts/generate-og.mjs && node scripts/generate-search-index.mjs && node scripts/gate-data.mjs && npx tsx scripts/gate-escaleras.ts && astro build",
+    "build": "node scripts/generate-og.mjs && node scripts/generate-search-index.mjs && node scripts/gate-data.mjs && npx tsx scripts/gate-escaleras.ts && vitest run && astro build",
     "generate:og": "node scripts/generate-og.mjs",
     "generate:search": "node scripts/generate-search-index.mjs",
     "gate:data": "node scripts/gate-data.mjs",
     "gate:escaleras": "npx tsx scripts/gate-escaleras.ts",
     "preview": "astro preview",
     "check": "astro check",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "astro": "astro",
     "gate:perf": "node scripts/perf-budget.mjs",
     "gate:a11y": "node scripts/a11y-check.mjs",
@@ -105,10 +108,13 @@
     "@types/topojson-client": "^3.1.5",
     "@types/topojson-server": "^3.0.4",
     "@types/topojson-simplify": "^3.0.3",
+    "@vue/test-utils": "^2.4.10",
+    "jsdom": "^28.1.0",
     "playwright": "^1.60.0",
     "tailwindcss": "^4.1.13",
     "topojson-server": "^3.0.1",
     "topojson-simplify": "^3.0.3",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.8"
   }
 }

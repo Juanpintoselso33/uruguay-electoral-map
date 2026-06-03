@@ -31,3 +31,18 @@ Aplicación **Astro 5** con **islas Vue 3.5**. Astro genera páginas estáticas;
 ## Carga de datos
 
 El frontend **no** procesa datos crudos: consume los shards JSON pre-agregados de [`public/data/`](../public/data/README.md), cargando solo lo necesario para la elección y el departamento activos. La pesada lógica de agregación vive en [`etl/`](../etl/README.md).
+
+## Tests (Epic 18)
+
+Tres niveles de verificación, con responsabilidades distintas:
+
+| Herramienta | Qué prueba | Comando |
+|-------------|-----------|---------|
+| **Vitest** (`*.test.ts` junto al archivo) | **Lógica pura** (`src/lib/**`) y **componentes Vue** (`@vue/test-utils` + jsdom). | `npm test` · `npm run test:watch` |
+| **`gate-*`** (`scripts/`) | **Integridad de los DATOS generados** (shards): `gate:data`, `gate:escaleras`, `gate:grises`, `gate:no-partidarios`. | `npm run gate:*` |
+| **Playwright** | **E2E / visual** en el navegador (no lo reemplaza Vitest). | (sesión manual) |
+
+- **Regla:** función pura → Vitest; integridad de un shard en disco → `gate-*`; flujo de usuario en el browser → Playwright.
+- Los **`.astro`** no se unit-testean (son SSR templates) → quedan cubiertos por `astro build` + Playwright.
+- `vitest run` corre dentro de `npm run build` → **un test roto frena el deploy**.
+- **Montar un componente que usa `fetch` + stores** (ver `components/selectors/OpcionAccordion.test.ts`): `vi.stubGlobal('fetch', …)` ruteando por URL; setear `$context` **y** `$selection` en `beforeEach` (el path que arma `commit()→pushState` sale de `$context`); `await flushPromises()` tras montar y tras cada click con fetch lazy.
