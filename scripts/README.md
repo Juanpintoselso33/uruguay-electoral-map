@@ -59,6 +59,46 @@ Corren en el build (`package.json → build`) y/o a demanda:
 > exacto a nivel país: ~2% nacionales, ~10% internas). Son dos productos oficiales distintos; no se fuerzan
 > a reconciliar. Spec: [`docs/superpowers/specs/2026-06-02-votos-no-partidarios-design.md`](../docs/superpowers/specs/2026-06-02-votos-no-partidarios-design.md).
 
+## Dimensión personas (candidatos × hoja × credencial)
+
+Construye una dimensión de personas indexada por credencial cívica, que une al mismo individuo a través de distintas elecciones. La métrica de cada persona es el **voto a su lista (hoja)**, no un voto personal — así funciona el voto legislativo en Uruguay.
+
+**Fuente:** recurso "Integración de hojas de votación" de la Corte Electoral, disponible en el [Catálogo de Datos Abiertos](https://catalogodatos.gub.uy/) por dataset de elección.
+
+**Cobertura por elección:**
+
+| Elección | Credencial disponible | Notas |
+|---|---|---|
+| `nacionales-2024` | Sí (`CredencialSerie` + `CredencialNumero`) | CSV utf-8 |
+| `departamentales-2025` | Sí | CSV utf-8; usar `integracion-de-hojas-full.csv` (19 deptos); el CSV truncado solo llega a Artigas |
+| `internas-2024` | Sí | XLSX; columna `TipoHoja` en lugar de `Candidatura` |
+| `nacionales-2019` | **No** | El recurso de integración existe pero no incluye la columna de credencial (esquema anterior a 2024) |
+| `nacionales-2014` | **No** | El dataset de nacionales-2014 no publica recurso de integración de hojas |
+
+Para agregar más elecciones (internas/departamentales pasadas): verificar que el recurso incluya `CredencialSerie`/`CredencialNumero`, agregar el slug y dataset-id a `TARGETS` en `fetch-nominas-ckan.py`. El cargo resultante será EDIL/INTENDENTE/ODN/ODD — **no SENADOR/REPRESENTANTE** — y el chequeo de cargos del gate aplica solo a slugs `nacionales-*`.
+
+**Scripts:**
+
+| Script | Comando | Función |
+|--------|---------|---------|
+| `fetch-nominas-ckan.py` | `npm run etl:nominas-fetch` | Baja el recurso "Integración de hojas" de CKAN para cada elección declarada en `TARGETS`. Idempotente. |
+| `build-personas-hoja.py` | `npm run etl:personas-hoja <eleccion>` | Parsea la integración → `personas-hoja.{eleccion}.json`: un registro por persona × hoja × cargo. `personaId = CredencialSerie-CredencialNumero` (estable entre elecciones). |
+| `build-personas-canonical.py` | `npm run etl:personas-canonical` | Consolida todos los shards → `personas.json`: una persona por credencial con sus apariciones cross-elección. Reporta M = personas en >1 elección (validación del join). |
+| `gate-personas.py` | `npm run gate:personas` | Valida: campos obligatorios presentes, cargos SENADOR/REPRESENTANTE en nacionales, tasa de hojas huérfanas <10%. |
+| `query-persona.py` | — | Verificación standalone: dado un nombre o credencial, imprime hojas, votos de cada lista y ranking departamental. Los votos se leen de **`hoja-local.json`** (no `votes.json`, que es solo a nivel lema/partido). |
+
+**Salidas:** `public/data/personas/personas-hoja.*.json` y `personas.json` (~160 MB total, 3 elecciones). Están **gitignoreadas** (intermedios de build pesado).
+
+**Flujo:**
+```bash
+npm run etl:nominas-fetch
+npm run etl:personas-hoja -- nacionales-2024
+npm run etl:personas-hoja -- internas-2024
+npm run etl:personas-hoja -- departamentales-2025
+npm run etl:personas
+npm run gate:personas
+```
+
 ## Utilidades y auditoría
 
 - `extract-vivir-sin-miedo.py` — extrae el Sí/No del plebiscito 2019 desde el PDF oficial, circuito por circuito.

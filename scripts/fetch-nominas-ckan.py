@@ -11,9 +11,11 @@ UA = {'User-Agent': 'uruguay-electoral-map/1.0 (nominas fetch)'}
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 TARGETS = {
-    'nacionales-2024': 'corte-electoral-elecciones-nacionales-2024',
-    'nacionales-2019': 'corte-electoral-elecciones-nacionales-2019',
-    'nacionales-2014': 'corte-electoral-elecciones_nacionales_2014',
+    'nacionales-2024':       'corte-electoral-elecciones-nacionales-2024',
+    'nacionales-2019':       'corte-electoral-elecciones-nacionales-2019',
+    'nacionales-2014':       'corte-electoral-elecciones_nacionales_2014',
+    'internas-2024':         'corte-electoral-elecciones-internas-de-los-partidos-politicos-2024',
+    'departamentales-2025':  'corte-electoral-elecciones_departamentales_y_municipales_2025',
 }
 RES_SUB = 'integraci'  # matchea "Integración de hojas de votación"
 
