@@ -2065,6 +2065,13 @@ onUnmounted(() => {
     <p v-if="status === 'cargando'" class="map-status">Cargando mapa…</p>
     <p v-else-if="status === 'error'" class="map-status map-status--error">Error: {{ errorMsg }}</p>
 
+    <!-- Leyenda: explica los colores del mapa → va PEGADA al mapa, arriba del toggle de
+         coloreo y del RESULTADO. Solo aporta en modos selección/filtro/intensidad (escala)
+         o si hay nota de votos sin ubicación; en el modo ganador base duplica a RESULTADO. -->
+    <MapLegend
+      v-if="opcionActiva || seleccionActiva.length > 0 || votosSinUbicacion > 0"
+      :entradas="legend" :sin-datos="sinDatos" :votos-sin-ubicacion="votosSinUbicacion" :zonas-sin-ubicacion="zonasSinUbicacion" />
+
     <!-- Toggle Ganador / Intensidad — sólo visible cuando hay opción activa (Story 2.3) -->
     <div v-if="opcionActiva" class="vista-toggle" role="group" aria-label="Tipo de vista del mapa">
       <button
@@ -2103,14 +2110,8 @@ onUnmounted(() => {
       :contexto="resultadoCtx"
     />
 
-    <!-- La leyenda solo aporta en modos selección/filtro/intensidad (escala) o si hay nota de
-         votos sin ubicación. En el modo ganador base duplica a RESULTADO → se oculta. -->
-    <MapLegend
-      v-if="opcionActiva || seleccionActiva.length > 0 || votosSinUbicacion > 0"
-      :entradas="legend" :sin-datos="sinDatos" :votos-sin-ubicacion="votosSinUbicacion" :zonas-sin-ubicacion="zonasSinUbicacion" />
-
     <!-- Ficha de zona (detalle on-demand): va AL FINAL para no separar el mapa de sus
-         controles (toggle de coloreo + RESULTADO + leyenda). El highlight en el mapa ya da
+         controles (leyenda + toggle de coloreo + RESULTADO). El highlight en el mapa ya da
          feedback inmediato al clickear; la ficha se lee al hacer scroll. -->
     <ZoneSheet
       :sel="selected"
