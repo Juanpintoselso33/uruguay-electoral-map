@@ -1,1 +1,1691 @@
-{"eleccionId":"internas-2024","departamento":"soriano","contiendas":[{"contienda":"odn","niveles":["lema","precandidato","hoja"],"nodos":[{"id":"frente-amplio","nivel":"lema","etiqueta":"Frente Amplio","partidoId":"frente-amplio"},{"id":"colorado","nivel":"lema","etiqueta":"Partido Colorado","partidoId":"colorado"},{"id":"nacional","nivel":"lema","etiqueta":"Partido Nacional","partidoId":"nacional"},{"id":"cabildo-abierto","nivel":"lema","etiqueta":"Cabildo Abierto","partidoId":"cabildo-abierto"},{"id":"independiente","nivel":"lema","etiqueta":"Partido Independiente","partidoId":"independiente"},{"id":"asamblea-popular","nivel":"lema","etiqueta":"Asamblea Popular","partidoId":"asamblea-popular"},{"id":"identidad-soberana","nivel":"lema","etiqueta":"Identidad Soberana","partidoId":"identidad-soberana"},{"id":"ecologista-radical-intransigente","nivel":"lema","etiqueta":"Partido Ecologista Radical Intransigente","partidoId":"ecologista-radical-intransigente"},{"id":"devolucion","nivel":"lema","etiqueta":"Partido Devolución","partidoId":"devolucion"},{"id":"por-los-cambios-necesarios-pcn","nivel":"lema","etiqueta":"Por los Cambios Necesarios (PCN)","partidoId":"por-los-cambios-necesarios-pcn"},{"id":"basta-ya","nivel":"lema","etiqueta":"Partido Basta Ya","partidoId":"basta-ya"},{"id":"avanzar-republicano","nivel":"lema","etiqueta":"Partido Avanzar Republicano","partidoId":"avanzar-republicano"},{"id":"frente-amplio-cosse-garrido-ana-carolina","nivel":"precandidato","etiqueta":"Ana Carolina Cosse Garrido","parentId":"frente-amplio","partidoId":"frente-amplio"},{"id":"frente-amplio-orsi-martinez-yamandu-ramon","nivel":"precandidato","etiqueta":"Yamandu Ramon Orsi Martinez","parentId":"frente-amplio","partidoId":"frente-amplio"},{"id":"colorado-gurmendez-armand-ugon-gabriel","nivel":"precandidato","etiqueta":"Gabriel Gurmendez Armand Ugon","parentId":"colorado","partidoId":"colorado"},{"id":"colorado-ojeda-spitz-andres","nivel":"precandidato","etiqueta":"Andres Ojeda Spitz","parentId":"colorado","partidoId":"colorado"},{"id":"colorado-silva-garcia-robert","nivel":"precandidato","etiqueta":"Robert Silva Garcia","parentId":"colorado","partidoId":"colorado"},{"id":"nacional-delgado-ceretta-alvaro-luis","nivel":"precandidato","etiqueta":"Alvaro Luis Delgado Ceretta","parentId":"nacional","partidoId":"nacional"},{"id":"nacional-gandini-astesiano-jorge-osvaldo","nivel":"precandidato","etiqueta":"Jorge Osvaldo Gandini Astesiano","parentId":"nacional","partidoId":"nacional"},{"id":"nacional-raffo-degeromini-maria-laura","nivel":"precandidato","etiqueta":"Maria Laura Raffo Degeromini","parentId":"nacional","partidoId":"nacional"},{"id":"cabildo-abierto-manini-stratta-guido","nivel":"precandidato","etiqueta":"Guido Manini Stratta","parentId":"cabildo-abierto","partidoId":"cabildo-abierto"},{"id":"colorado-viera-duarte-tabare","nivel":"precandidato","etiqueta":"Tabare Viera Duarte","parentId":"colorado","partidoId":"colorado"},{"id":"independiente-mieres-gomez-pablo-andres","nivel":"precandidato","etiqueta":"Pablo Andres Mieres Gomez","parentId":"independiente","partidoId":"independiente"},{"id":"asamblea-popular-martinez-maruca-walter-gonzalo","nivel":"precandidato","etiqueta":"Walter Gonzalo Martínez Maruca","parentId":"asamblea-popular","partidoId":"asamblea-popular"},{"id":"frente-amplio-lima-proserpio-andres-pablo","nivel":"precandidato","etiqueta":"Andrés Pablo Lima Proserpio","parentId":"frente-amplio","partidoId":"frente-amplio"},{"id":"identidad-soberana-salle-lorier-gustavo-alberto","nivel":"precandidato","etiqueta":"Gustavo Alberto Salle Lorier","parentId":"identidad-soberana","partidoId":"identidad-soberana"},{"id":"ecologista-radical-intransigente-vega-erramuspe-cesar-enrique","nivel":"precandidato","etiqueta":"Cesar Enrique Vega Erramuspe","parentId":"ecologista-radical-intransigente","partidoId":"ecologista-radical-intransigente"},{"id":"devolucion-paiva-fiures-pablo-marcelo","nivel":"precandidato","etiqueta":"Pablo Marcelo Paiva Fiures","parentId":"devolucion","partidoId":"devolucion"},{"id":"por-los-cambios-necesarios-pcn-franchi-soria-guillermo-anibal","nivel":"precandidato","etiqueta":"Guillermo Anibal Franchi Soria","parentId":"por-los-cambios-necesarios-pcn","partidoId":"por-los-cambios-necesarios-pcn"},{"id":"basta-ya-bonica-sierra-jorge-enrique","nivel":"precandidato","etiqueta":"Jorge Enrique Bonica Sierra","parentId":"basta-ya","partidoId":"basta-ya"},{"id":"colorado-ache-batlle-carolina","nivel":"precandidato","etiqueta":"Carolina Ache Batlle","parentId":"colorado","partidoId":"colorado"},{"id":"nacional-iafigliola-pimentel-carlos-alberto","nivel":"precandidato","etiqueta":"Carlos Alberto Iafigliola Pimentel","parentId":"nacional","partidoId":"nacional"},{"id":"nacional-corbran-rizzo-roxana-lilian","nivel":"precandidato","etiqueta":"Roxana Lilián Corbran Rizzo","parentId":"nacional","partidoId":"nacional"},{"id":"avanzar-republicano-perez-banchero-felipe-martin","nivel":"precandidato","etiqueta":"Felipe Martin Perez Banchero","parentId":"avanzar-republicano","partidoId":"avanzar-republicano"},{"id":"colorado-gonzalez-legnani-zaida-eloisa","nivel":"precandidato","etiqueta":"Zaida Eloisa Gonzalez Legnani","parentId":"colorado","partidoId":"colorado"}],"opciones":[{"clase":"hoja","id":"odn-frente-amplio-90","hoja":"90","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-cosse-garrido-ana-carolina"},{"clase":"hoja","id":"odn-frente-amplio-99000","hoja":"99000","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-cosse-garrido-ana-carolina"},{"clase":"hoja","id":"odn-frente-amplio-52","hoja":"52","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-orsi-martinez-yamandu-ramon"},{"clase":"hoja","id":"odn-frente-amplio-77","hoja":"77","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-orsi-martinez-yamandu-ramon"},{"clase":"hoja","id":"odn-frente-amplio-95","hoja":"95","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-orsi-martinez-yamandu-ramon"},{"clase":"hoja","id":"odn-frente-amplio-609","hoja":"609","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-orsi-martinez-yamandu-ramon"},{"clase":"hoja","id":"odn-frente-amplio-1968","hoja":"1968","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-orsi-martinez-yamandu-ramon"},{"clase":"hoja","id":"odn-frente-amplio-5005","hoja":"5005","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-cosse-garrido-ana-carolina"},{"clase":"hoja","id":"odn-frente-amplio-800","hoja":"800","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-cosse-garrido-ana-carolina"},{"clase":"hoja","id":"odn-frente-amplio-1001","hoja":"1001","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-cosse-garrido-ana-carolina"},{"clase":"hoja","id":"odn-frente-amplio-3311","hoja":"3311","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-cosse-garrido-ana-carolina"},{"clase":"hoja","id":"odn-frente-amplio-9","hoja":"9","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-orsi-martinez-yamandu-ramon"},{"clase":"hoja","id":"odn-frente-amplio-711","hoja":"711","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-orsi-martinez-yamandu-ramon"},{"clase":"hoja","id":"odn-frente-amplio-1303","hoja":"1303","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-cosse-garrido-ana-carolina"},{"clase":"hoja","id":"odn-frente-amplio-1358","hoja":"1358","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-cosse-garrido-ana-carolina"},{"clase":"hoja","id":"odn-frente-amplio-2040","hoja":"2040","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-cosse-garrido-ana-carolina"},{"clase":"hoja","id":"odn-frente-amplio-9393","hoja":"9393","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-cosse-garrido-ana-carolina"},{"clase":"hoja","id":"odn-frente-amplio-319","hoja":"319","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-lima-proserpio-andres-pablo"},{"clase":"hoja","id":"odn-frente-amplio-949","hoja":"949","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-orsi-martinez-yamandu-ramon"},{"clase":"hoja","id":"odn-frente-amplio-76","hoja":"76","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-orsi-martinez-yamandu-ramon"},{"clase":"hoja","id":"odn-frente-amplio-624","hoja":"624","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-orsi-martinez-yamandu-ramon"},{"clase":"hoja","id":"odn-frente-amplio-567","hoja":"567","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-cosse-garrido-ana-carolina"},{"clase":"hoja","id":"odn-frente-amplio-141","hoja":"141","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-orsi-martinez-yamandu-ramon"},{"clase":"hoja","id":"odn-frente-amplio-939","hoja":"939","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-orsi-martinez-yamandu-ramon"},{"clase":"hoja","id":"odn-frente-amplio-1828","hoja":"1828","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-orsi-martinez-yamandu-ramon"},{"clase":"hoja","id":"odn-frente-amplio-8811","hoja":"8811","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-orsi-martinez-yamandu-ramon"},{"clase":"hoja","id":"odn-frente-amplio-545","hoja":"545","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-cosse-garrido-ana-carolina"},{"clase":"hoja","id":"odn-frente-amplio-817","hoja":"817","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-cosse-garrido-ana-carolina"},{"clase":"hoja","id":"odn-frente-amplio-41090","hoja":"41090","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-cosse-garrido-ana-carolina"},{"clase":"hoja","id":"odn-frente-amplio-5640","hoja":"5640","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-cosse-garrido-ana-carolina"},{"clase":"hoja","id":"odn-frente-amplio-8008","hoja":"8008","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-cosse-garrido-ana-carolina"},{"clase":"hoja","id":"odn-frente-amplio-46","hoja":"46","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-orsi-martinez-yamandu-ramon"},{"clase":"hoja","id":"odn-frente-amplio-502","hoja":"502","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-orsi-martinez-yamandu-ramon"},{"clase":"hoja","id":"odn-frente-amplio-1813","hoja":"1813","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-lima-proserpio-andres-pablo"},{"clase":"hoja","id":"odn-frente-amplio-933","hoja":"933","partidoId":"frente-amplio","contienda":"odn","lemaId":"frente-amplio","precandidatoId":"frente-amplio-lima-proserpio-andres-pablo"},{"clase":"hoja","id":"odn-colorado-615","hoja":"615","partidoId":"colorado","contienda":"odn","lemaId":"colorado","precandidatoId":"colorado-gurmendez-armand-ugon-gabriel"},{"clase":"hoja","id":"odn-colorado-29000","hoja":"29000","partidoId":"colorado","contienda":"odn","lemaId":"colorado","precandidatoId":"colorado-gurmendez-armand-ugon-gabriel"},{"clase":"hoja","id":"odn-colorado-25","hoja":"25","partidoId":"colorado","contienda":"odn","lemaId":"colorado","precandidatoId":"colorado-ojeda-spitz-andres"},{"clase":"hoja","id":"odn-colorado-1010","hoja":"1010","partidoId":"colorado","contienda":"odn","lemaId":"colorado","precandidatoId":"colorado-ojeda-spitz-andres"},{"clase":"hoja","id":"odn-colorado-9007","hoja":"9007","partidoId":"colorado","contienda":"odn","lemaId":"colorado","precandidatoId":"colorado-ojeda-spitz-andres"},{"clase":"hoja","id":"odn-colorado-6","hoja":"6","partidoId":"colorado","contienda":"odn","lemaId":"colorado","precandidatoId":"colorado-silva-garcia-robert"},{"clase":"hoja","id":"odn-colorado-1600","hoja":"1600","partidoId":"colorado","contienda":"odn","lemaId":"colorado","precandidatoId":"colorado-silva-garcia-robert"},{"clase":"hoja","id":"odn-colorado-825","hoja":"825","partidoId":"colorado","contienda":"odn","lemaId":"colorado","precandidatoId":"colorado-ojeda-spitz-andres"},{"clase":"hoja","id":"odn-colorado-2000","hoja":"2000","partidoId":"colorado","contienda":"odn","lemaId":"colorado","precandidatoId":"colorado-viera-duarte-tabare"},{"clase":"hoja","id":"odn-colorado-220","hoja":"220","partidoId":"colorado","contienda":"odn","lemaId":"colorado","precandidatoId":"colorado-gurmendez-armand-ugon-gabriel"},{"clase":"hoja","id":"odn-colorado-919","hoja":"919","partidoId":"colorado","contienda":"odn","lemaId":"colorado","precandidatoId":"colorado-ache-batlle-carolina"},{"clase":"hoja","id":"odn-colorado-152000","hoja":"152000","partidoId":"colorado","contienda":"odn","lemaId":"colorado","precandidatoId":"colorado-viera-duarte-tabare"},{"clase":"hoja","id":"odn-nacional-5","hoja":"5","partidoId":"nacional","contienda":"odn","lemaId":"nacional","precandidatoId":"nacional-delgado-ceretta-alvaro-luis"},{"clase":"hoja","id":"odn-nacional-22","hoja":"22","partidoId":"nacional","contienda":"odn","lemaId":"nacional","precandidatoId":"nacional-delgado-ceretta-alvaro-luis"},{"clase":"hoja","id":"odn-nacional-404","hoja":"404","partidoId":"nacional","contienda":"odn","lemaId":"nacional","precandidatoId":"nacional-delgado-ceretta-alvaro-luis"},{"clase":"hoja","id":"odn-nacional-250","hoja":"250","partidoId":"nacional","contienda":"odn","lemaId":"nacional","precandidatoId":"nacional-gandini-astesiano-jorge-osvaldo"},{"clase":"hoja","id":"odn-nacional-1903","hoja":"1903","partidoId":"nacional","contienda":"odn","lemaId":"nacional","precandidatoId":"nacional-raffo-degeromini-maria-laura"},{"clase":"hoja","id":"odn-nacional-71","hoja":"71","partidoId":"nacional","contienda":"odn","lemaId":"nacional","precandidatoId":"nacional-raffo-degeromini-maria-laura"},{"clase":"hoja","id":"odn-nacional-97","hoja":"97","partidoId":"nacional","contienda":"odn","lemaId":"nacional","precandidatoId":"nacional-delgado-ceretta-alvaro-luis"},{"clase":"hoja","id":"odn-nacional-4040","hoja":"4040","partidoId":"nacional","contienda":"odn","lemaId":"nacional","precandidatoId":"nacional-delgado-ceretta-alvaro-luis"},{"clase":"hoja","id":"odn-nacional-200","hoja":"200","partidoId":"nacional","contienda":"odn","lemaId":"nacional","precandidatoId":"nacional-delgado-ceretta-alvaro-luis"},{"clase":"hoja","id":"odn-nacional-151","hoja":"151","partidoId":"nacional","contienda":"odn","lemaId":"nacional","precandidatoId":"nacional-delgado-ceretta-alvaro-luis"},{"clase":"hoja","id":"odn-nacional-252","hoja":"252","partidoId":"nacional","contienda":"odn","lemaId":"nacional","precandidatoId":"nacional-iafigliola-pimentel-carlos-alberto"},{"clase":"hoja","id":"odn-nacional-1007","hoja":"1007","partidoId":"nacional","contienda":"odn","lemaId":"nacional","precandidatoId":"nacional-corbran-rizzo-roxana-lilian"},{"clase":"hoja","id":"odn-cabildo-abierto-741","hoja":"741","partidoId":"cabildo-abierto","contienda":"odn","lemaId":"cabildo-abierto","precandidatoId":"cabildo-abierto-manini-stratta-guido"},{"clase":"hoja","id":"odn-cabildo-abierto-510","hoja":"510","partidoId":"cabildo-abierto","contienda":"odn","lemaId":"cabildo-abierto","precandidatoId":"cabildo-abierto-manini-stratta-guido"},{"clase":"hoja","id":"odn-cabildo-abierto-4848","hoja":"4848","partidoId":"cabildo-abierto","contienda":"odn","lemaId":"cabildo-abierto","precandidatoId":"cabildo-abierto-manini-stratta-guido"},{"clase":"hoja","id":"odn-cabildo-abierto-11820","hoja":"11820","partidoId":"cabildo-abierto","contienda":"odn","lemaId":"cabildo-abierto","precandidatoId":"cabildo-abierto-manini-stratta-guido"},{"clase":"hoja","id":"odn-cabildo-abierto-7001","hoja":"7001","partidoId":"cabildo-abierto","contienda":"odn","lemaId":"cabildo-abierto","precandidatoId":"cabildo-abierto-manini-stratta-guido"},{"clase":"hoja","id":"odn-independiente-909","hoja":"909","partidoId":"independiente","contienda":"odn","lemaId":"independiente","precandidatoId":"independiente-mieres-gomez-pablo-andres"},{"clase":"hoja","id":"odn-asamblea-popular-326","hoja":"326","partidoId":"asamblea-popular","contienda":"odn","lemaId":"asamblea-popular","precandidatoId":"asamblea-popular-martinez-maruca-walter-gonzalo"},{"clase":"hoja","id":"odn-asamblea-popular-960","hoja":"960","partidoId":"asamblea-popular","contienda":"odn","lemaId":"asamblea-popular","precandidatoId":"asamblea-popular-martinez-maruca-walter-gonzalo"},{"clase":"hoja","id":"odn-identidad-soberana-18010","hoja":"18010","partidoId":"identidad-soberana","contienda":"odn","lemaId":"identidad-soberana","precandidatoId":"identidad-soberana-salle-lorier-gustavo-alberto"},{"clase":"hoja","id":"odn-ecologista-radical-intransigente-1330","hoja":"1330","partidoId":"ecologista-radical-intransigente","contienda":"odn","lemaId":"ecologista-radical-intransigente","precandidatoId":"ecologista-radical-intransigente-vega-erramuspe-cesar-enrique"},{"clase":"hoja","id":"odn-devolucion-7005","hoja":"7005","partidoId":"devolucion","contienda":"odn","lemaId":"devolucion","precandidatoId":"devolucion-paiva-fiures-pablo-marcelo"},{"clase":"hoja","id":"odn-por-los-cambios-necesarios-pcn-2018","hoja":"2018","partidoId":"por-los-cambios-necesarios-pcn","contienda":"odn","lemaId":"por-los-cambios-necesarios-pcn","precandidatoId":"por-los-cambios-necesarios-pcn-franchi-soria-guillermo-anibal"},{"clase":"hoja","id":"odn-basta-ya-39","hoja":"39","partidoId":"basta-ya","contienda":"odn","lemaId":"basta-ya","precandidatoId":"basta-ya-bonica-sierra-jorge-enrique"},{"clase":"hoja","id":"odn-avanzar-republicano-937","hoja":"937","partidoId":"avanzar-republicano","contienda":"odn","lemaId":"avanzar-republicano","precandidatoId":"avanzar-republicano-perez-banchero-felipe-martin"},{"clase":"hoja","id":"odn-colorado-1616","hoja":"1616","partidoId":"colorado","contienda":"odn","lemaId":"colorado","precandidatoId":"colorado-gonzalez-legnani-zaida-eloisa"}]},{"contienda":"odd","niveles":["lema","hoja"],"nodos":[{"id":"frente-amplio","nivel":"lema","etiqueta":"Frente Amplio","partidoId":"frente-amplio"},{"id":"colorado","nivel":"lema","etiqueta":"Partido Colorado","partidoId":"colorado"},{"id":"nacional","nivel":"lema","etiqueta":"Partido Nacional","partidoId":"nacional"},{"id":"cabildo-abierto","nivel":"lema","etiqueta":"Cabildo Abierto","partidoId":"cabildo-abierto"},{"id":"independiente","nivel":"lema","etiqueta":"Partido Independiente","partidoId":"independiente"},{"id":"asamblea-popular","nivel":"lema","etiqueta":"Asamblea Popular","partidoId":"asamblea-popular"},{"id":"ecologista-radical-intransigente","nivel":"lema","etiqueta":"Partido Ecologista Radical Intransigente","partidoId":"ecologista-radical-intransigente"},{"id":"basta-ya","nivel":"lema","etiqueta":"Partido Basta Ya","partidoId":"basta-ya"}],"opciones":[{"clase":"hoja","id":"odd-frente-amplio-152","hoja":"152","partidoId":"frente-amplio","contienda":"odd","lemaId":"frente-amplio"},{"clase":"hoja","id":"odd-frente-amplio-190","hoja":"190","partidoId":"frente-amplio","contienda":"odd","lemaId":"frente-amplio"},{"clase":"hoja","id":"odd-frente-amplio-777","hoja":"777","partidoId":"frente-amplio","contienda":"odd","lemaId":"frente-amplio"},{"clase":"hoja","id":"odd-frente-amplio-1609","hoja":"1609","partidoId":"frente-amplio","contienda":"odd","lemaId":"frente-amplio"},{"clase":"hoja","id":"odd-frente-amplio-11968","hoja":"11968","partidoId":"frente-amplio","contienda":"odd","lemaId":"frente-amplio"},{"clase":"hoja","id":"odd-frente-amplio-199000","hoja":"199000","partidoId":"frente-amplio","contienda":"odd","lemaId":"frente-amplio"},{"clase":"hoja","id":"odd-frente-amplio-195","hoja":"195","partidoId":"frente-amplio","contienda":"odd","lemaId":"frente-amplio"},{"clase":"hoja","id":"odd-frente-amplio-119","hoja":"119","partidoId":"frente-amplio","contienda":"odd","lemaId":"frente-amplio"},{"clase":"hoja","id":"odd-frente-amplio-311","hoja":"311","partidoId":"frente-amplio","contienda":"odd","lemaId":"frente-amplio"},{"clase":"hoja","id":"odd-frente-amplio-2001","hoja":"2001","partidoId":"frente-amplio","contienda":"odd","lemaId":"frente-amplio"},{"clase":"hoja","id":"odd-frente-amplio-319000","hoja":"319000","partidoId":"frente-amplio","contienda":"odd","lemaId":"frente-amplio"},{"clase":"hoja","id":"odd-frente-amplio-1624","hoja":"1624","partidoId":"frente-amplio","contienda":"odd","lemaId":"frente-amplio"},{"clase":"hoja","id":"odd-frente-amplio-1567","hoja":"1567","partidoId":"frente-amplio","contienda":"odd","lemaId":"frente-amplio"},{"clase":"hoja","id":"odd-frente-amplio-1939","hoja":"1939","partidoId":"frente-amplio","contienda":"odd","lemaId":"frente-amplio"},{"clase":"hoja","id":"odd-frente-amplio-1764","hoja":"1764","partidoId":"frente-amplio","contienda":"odd","lemaId":"frente-amplio"},{"clase":"hoja","id":"odd-frente-amplio-11303","hoja":"11303","partidoId":"frente-amplio","contienda":"odd","lemaId":"frente-amplio"},{"clase":"hoja","id":"odd-frente-amplio-11828","hoja":"11828","partidoId":"frente-amplio","contienda":"odd","lemaId":"frente-amplio"},{"clase":"hoja","id":"odd-frente-amplio-20040","hoja":"20040","partidoId":"frente-amplio","contienda":"odd","lemaId":"frente-amplio"},{"clase":"hoja","id":"odd-frente-amplio-1949","hoja":"1949","partidoId":"frente-amplio","contienda":"odd","lemaId":"frente-amplio"},{"clase":"hoja","id":"odd-frente-amplio-1441","hoja":"1441","partidoId":"frente-amplio","contienda":"odd","lemaId":"frente-amplio"},{"clase":"hoja","id":"odd-colorado-1506","hoja":"1506","partidoId":"colorado","contienda":"odd","lemaId":"colorado"},{"clase":"hoja","id":"odd-colorado-1515","hoja":"1515","partidoId":"colorado","contienda":"odd","lemaId":"colorado"},{"clase":"hoja","id":"odd-colorado-1525","hoja":"1525","partidoId":"colorado","contienda":"odd","lemaId":"colorado"},{"clase":"hoja","id":"odd-colorado-2929","hoja":"2929","partidoId":"colorado","contienda":"odd","lemaId":"colorado"},{"clase":"hoja","id":"odd-colorado-6600","hoja":"6600","partidoId":"colorado","contienda":"odd","lemaId":"colorado"},{"clase":"hoja","id":"odd-colorado-17600","hoja":"17600","partidoId":"colorado","contienda":"odd","lemaId":"colorado"},{"clase":"hoja","id":"odd-colorado-8","hoja":"8","partidoId":"colorado","contienda":"odd","lemaId":"colorado"},{"clase":"hoja","id":"odd-colorado-31","hoja":"31","partidoId":"colorado","contienda":"odd","lemaId":"colorado"},{"clase":"hoja","id":"odd-colorado-1540","hoja":"1540","partidoId":"colorado","contienda":"odd","lemaId":"colorado"},{"clase":"hoja","id":"odd-colorado-125","hoja":"125","partidoId":"colorado","contienda":"odd","lemaId":"colorado"},{"clase":"hoja","id":"odd-colorado-1440","hoja":"1440","partidoId":"colorado","contienda":"odd","lemaId":"colorado"},{"clase":"hoja","id":"odd-colorado-101010","hoja":"101010","partidoId":"colorado","contienda":"odd","lemaId":"colorado"},{"clase":"hoja","id":"odd-nacional-2","hoja":"2","partidoId":"nacional","contienda":"odd","lemaId":"nacional"},{"clase":"hoja","id":"odd-nacional-3","hoja":"3","partidoId":"nacional","contienda":"odd","lemaId":"nacional"},{"clase":"hoja","id":"odd-nacional-522","hoja":"522","partidoId":"nacional","contienda":"odd","lemaId":"nacional"},{"clase":"hoja","id":"odd-nacional-903","hoja":"903","partidoId":"nacional","contienda":"odd","lemaId":"nacional"},{"clase":"hoja","id":"odd-nacional-9000","hoja":"9000","partidoId":"nacional","contienda":"odd","lemaId":"nacional"},{"clase":"hoja","id":"odd-nacional-23250","hoja":"23250","partidoId":"nacional","contienda":"odd","lemaId":"nacional"},{"clase":"hoja","id":"odd-nacional-897","hoja":"897","partidoId":"nacional","contienda":"odd","lemaId":"nacional"},{"clase":"hoja","id":"odd-nacional-7171","hoja":"7171","partidoId":"nacional","contienda":"odd","lemaId":"nacional"},{"clase":"hoja","id":"odd-nacional-333","hoja":"333","partidoId":"nacional","contienda":"odd","lemaId":"nacional"},{"clase":"hoja","id":"odd-nacional-433","hoja":"433","partidoId":"nacional","contienda":"odd","lemaId":"nacional"},{"clase":"hoja","id":"odd-nacional-503","hoja":"503","partidoId":"nacional","contienda":"odd","lemaId":"nacional"},{"clase":"hoja","id":"odd-nacional-913","hoja":"913","partidoId":"nacional","contienda":"odd","lemaId":"nacional"},{"clase":"hoja","id":"odd-nacional-200200","hoja":"200200","partidoId":"nacional","contienda":"odd","lemaId":"nacional"},{"clase":"hoja","id":"odd-nacional-912","hoja":"912","partidoId":"nacional","contienda":"odd","lemaId":"nacional"},{"clase":"hoja","id":"odd-nacional-206","hoja":"206","partidoId":"nacional","contienda":"odd","lemaId":"nacional"},{"clase":"hoja","id":"odd-nacional-1252","hoja":"1252","partidoId":"nacional","contienda":"odd","lemaId":"nacional"},{"clase":"hoja","id":"odd-nacional-1111","hoja":"1111","partidoId":"nacional","contienda":"odd","lemaId":"nacional"},{"clase":"hoja","id":"odd-nacional-2050","hoja":"2050","partidoId":"nacional","contienda":"odd","lemaId":"nacional"},{"clase":"hoja","id":"odd-nacional-111","hoja":"111","partidoId":"nacional","contienda":"odd","lemaId":"nacional"},{"clase":"hoja","id":"odd-cabildo-abierto-456","hoja":"456","partidoId":"cabildo-abierto","contienda":"odd","lemaId":"cabildo-abierto"},{"clase":"hoja","id":"odd-cabildo-abierto-50","hoja":"50","partidoId":"cabildo-abierto","contienda":"odd","lemaId":"cabildo-abierto"},{"clase":"hoja","id":"odd-cabildo-abierto-510510","hoja":"510510","partidoId":"cabildo-abierto","contienda":"odd","lemaId":"cabildo-abierto"},{"clase":"hoja","id":"odd-cabildo-abierto-7","hoja":"7","partidoId":"cabildo-abierto","contienda":"odd","lemaId":"cabildo-abierto"},{"clase":"hoja","id":"odd-independiente-999","hoja":"999","partidoId":"independiente","contienda":"odd","lemaId":"independiente"},{"clase":"hoja","id":"odd-asamblea-popular-1326","hoja":"1326","partidoId":"asamblea-popular","contienda":"odd","lemaId":"asamblea-popular"},{"clase":"hoja","id":"odd-ecologista-radical-intransigente-1331","hoja":"1331","partidoId":"ecologista-radical-intransigente","contienda":"odd","lemaId":"ecologista-radical-intransigente"},{"clase":"hoja","id":"odd-basta-ya-69","hoja":"69","partidoId":"basta-ya","contienda":"odd","lemaId":"basta-ya"},{"clase":"hoja","id":"odd-cabildo-abierto-1820","hoja":"1820","partidoId":"cabildo-abierto","contienda":"odd","lemaId":"cabildo-abierto"}]}]}
+{
+ "eleccionId": "internas-2024",
+ "departamento": "soriano",
+ "contiendas": [
+  {
+   "contienda": "odn",
+   "niveles": [
+    "lema",
+    "precandidato",
+    "hoja"
+   ],
+   "nodos": [
+    {
+     "id": "frente-amplio",
+     "nivel": "lema",
+     "etiqueta": "Frente Amplio",
+     "partidoId": "frente-amplio"
+    },
+    {
+     "id": "colorado",
+     "nivel": "lema",
+     "etiqueta": "Partido Colorado",
+     "partidoId": "colorado"
+    },
+    {
+     "id": "nacional",
+     "nivel": "lema",
+     "etiqueta": "Partido Nacional",
+     "partidoId": "nacional"
+    },
+    {
+     "id": "cabildo-abierto",
+     "nivel": "lema",
+     "etiqueta": "Cabildo Abierto",
+     "partidoId": "cabildo-abierto"
+    },
+    {
+     "id": "independiente",
+     "nivel": "lema",
+     "etiqueta": "Partido Independiente",
+     "partidoId": "independiente"
+    },
+    {
+     "id": "asamblea-popular",
+     "nivel": "lema",
+     "etiqueta": "Asamblea Popular",
+     "partidoId": "asamblea-popular"
+    },
+    {
+     "id": "identidad-soberana",
+     "nivel": "lema",
+     "etiqueta": "Identidad Soberana",
+     "partidoId": "identidad-soberana"
+    },
+    {
+     "id": "ecologista-radical-intransigente",
+     "nivel": "lema",
+     "etiqueta": "Partido Ecologista Radical Intransigente",
+     "partidoId": "ecologista-radical-intransigente"
+    },
+    {
+     "id": "devolucion",
+     "nivel": "lema",
+     "etiqueta": "Partido Devolución",
+     "partidoId": "devolucion"
+    },
+    {
+     "id": "por-los-cambios-necesarios-pcn",
+     "nivel": "lema",
+     "etiqueta": "Por los Cambios Necesarios (PCN)",
+     "partidoId": "por-los-cambios-necesarios-pcn"
+    },
+    {
+     "id": "basta-ya",
+     "nivel": "lema",
+     "etiqueta": "Partido Basta Ya",
+     "partidoId": "basta-ya"
+    },
+    {
+     "id": "avanzar-republicano",
+     "nivel": "lema",
+     "etiqueta": "Partido Avanzar Republicano",
+     "partidoId": "avanzar-republicano"
+    },
+    {
+     "id": "frente-amplio-cosse-garrido-ana-carolina",
+     "nivel": "precandidato",
+     "etiqueta": "Ana Carolina Cosse Garrido",
+     "parentId": "frente-amplio",
+     "partidoId": "frente-amplio"
+    },
+    {
+     "id": "frente-amplio-orsi-martinez-yamandu-ramon",
+     "nivel": "precandidato",
+     "etiqueta": "Yamandu Ramon Orsi Martinez",
+     "parentId": "frente-amplio",
+     "partidoId": "frente-amplio"
+    },
+    {
+     "id": "colorado-gurmendez-armand-ugon-gabriel",
+     "nivel": "precandidato",
+     "etiqueta": "Gabriel Gurmendez Armand Ugon",
+     "parentId": "colorado",
+     "partidoId": "colorado"
+    },
+    {
+     "id": "colorado-ojeda-spitz-andres",
+     "nivel": "precandidato",
+     "etiqueta": "Andres Ojeda Spitz",
+     "parentId": "colorado",
+     "partidoId": "colorado"
+    },
+    {
+     "id": "colorado-silva-garcia-robert",
+     "nivel": "precandidato",
+     "etiqueta": "Robert Silva Garcia",
+     "parentId": "colorado",
+     "partidoId": "colorado"
+    },
+    {
+     "id": "nacional-delgado-ceretta-alvaro-luis",
+     "nivel": "precandidato",
+     "etiqueta": "Alvaro Luis Delgado Ceretta",
+     "parentId": "nacional",
+     "partidoId": "nacional"
+    },
+    {
+     "id": "nacional-gandini-astesiano-jorge-osvaldo",
+     "nivel": "precandidato",
+     "etiqueta": "Jorge Osvaldo Gandini Astesiano",
+     "parentId": "nacional",
+     "partidoId": "nacional"
+    },
+    {
+     "id": "nacional-raffo-degeromini-maria-laura",
+     "nivel": "precandidato",
+     "etiqueta": "Maria Laura Raffo Degeromini",
+     "parentId": "nacional",
+     "partidoId": "nacional"
+    },
+    {
+     "id": "cabildo-abierto-manini-stratta-guido",
+     "nivel": "precandidato",
+     "etiqueta": "Guido Manini Stratta",
+     "parentId": "cabildo-abierto",
+     "partidoId": "cabildo-abierto"
+    },
+    {
+     "id": "colorado-viera-duarte-tabare",
+     "nivel": "precandidato",
+     "etiqueta": "Tabare Viera Duarte",
+     "parentId": "colorado",
+     "partidoId": "colorado"
+    },
+    {
+     "id": "independiente-mieres-gomez-pablo-andres",
+     "nivel": "precandidato",
+     "etiqueta": "Pablo Andres Mieres Gomez",
+     "parentId": "independiente",
+     "partidoId": "independiente"
+    },
+    {
+     "id": "asamblea-popular-martinez-maruca-walter-gonzalo",
+     "nivel": "precandidato",
+     "etiqueta": "Walter Gonzalo Martínez Maruca",
+     "parentId": "asamblea-popular",
+     "partidoId": "asamblea-popular"
+    },
+    {
+     "id": "frente-amplio-lima-proserpio-andres-pablo",
+     "nivel": "precandidato",
+     "etiqueta": "Andrés Pablo Lima Proserpio",
+     "parentId": "frente-amplio",
+     "partidoId": "frente-amplio"
+    },
+    {
+     "id": "identidad-soberana-salle-lorier-gustavo-alberto",
+     "nivel": "precandidato",
+     "etiqueta": "Gustavo Alberto Salle Lorier",
+     "parentId": "identidad-soberana",
+     "partidoId": "identidad-soberana"
+    },
+    {
+     "id": "ecologista-radical-intransigente-vega-erramuspe-cesar-enrique",
+     "nivel": "precandidato",
+     "etiqueta": "Cesar Enrique Vega Erramuspe",
+     "parentId": "ecologista-radical-intransigente",
+     "partidoId": "ecologista-radical-intransigente"
+    },
+    {
+     "id": "devolucion-paiva-fiures-pablo-marcelo",
+     "nivel": "precandidato",
+     "etiqueta": "Pablo Marcelo Paiva Fiures",
+     "parentId": "devolucion",
+     "partidoId": "devolucion"
+    },
+    {
+     "id": "por-los-cambios-necesarios-pcn-franchi-soria-guillermo-anibal",
+     "nivel": "precandidato",
+     "etiqueta": "Guillermo Anibal Franchi Soria",
+     "parentId": "por-los-cambios-necesarios-pcn",
+     "partidoId": "por-los-cambios-necesarios-pcn"
+    },
+    {
+     "id": "basta-ya-bonica-sierra-jorge-enrique",
+     "nivel": "precandidato",
+     "etiqueta": "Jorge Enrique Bonica Sierra",
+     "parentId": "basta-ya",
+     "partidoId": "basta-ya"
+    },
+    {
+     "id": "colorado-ache-batlle-carolina",
+     "nivel": "precandidato",
+     "etiqueta": "Carolina Ache Batlle",
+     "parentId": "colorado",
+     "partidoId": "colorado"
+    },
+    {
+     "id": "nacional-iafigliola-pimentel-carlos-alberto",
+     "nivel": "precandidato",
+     "etiqueta": "Carlos Alberto Iafigliola Pimentel",
+     "parentId": "nacional",
+     "partidoId": "nacional"
+    },
+    {
+     "id": "nacional-corbran-rizzo-roxana-lilian",
+     "nivel": "precandidato",
+     "etiqueta": "Roxana Lilián Corbran Rizzo",
+     "parentId": "nacional",
+     "partidoId": "nacional"
+    },
+    {
+     "id": "avanzar-republicano-perez-banchero-felipe-martin",
+     "nivel": "precandidato",
+     "etiqueta": "Felipe Martin Perez Banchero",
+     "parentId": "avanzar-republicano",
+     "partidoId": "avanzar-republicano"
+    },
+    {
+     "id": "colorado-gonzalez-legnani-zaida-eloisa",
+     "nivel": "precandidato",
+     "etiqueta": "Zaida Eloisa Gonzalez Legnani",
+     "parentId": "colorado",
+     "partidoId": "colorado"
+    }
+   ],
+   "opciones": [
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-90",
+     "hoja": "90",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-99000",
+     "hoja": "99000",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-52",
+     "hoja": "52",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-77",
+     "hoja": "77",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-95",
+     "hoja": "95",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-609",
+     "hoja": "609",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-1968",
+     "hoja": "1968",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-5005",
+     "hoja": "5005",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-800",
+     "hoja": "800",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-1001",
+     "hoja": "1001",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-3311",
+     "hoja": "3311",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-9",
+     "hoja": "9",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-711",
+     "hoja": "711",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-1303",
+     "hoja": "1303",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-1358",
+     "hoja": "1358",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-2040",
+     "hoja": "2040",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-9393",
+     "hoja": "9393",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-319",
+     "hoja": "319",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-lima-proserpio-andres-pablo"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-949",
+     "hoja": "949",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-76",
+     "hoja": "76",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-624",
+     "hoja": "624",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-567",
+     "hoja": "567",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-141",
+     "hoja": "141",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-939",
+     "hoja": "939",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-1828",
+     "hoja": "1828",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-8811",
+     "hoja": "8811",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-545",
+     "hoja": "545",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-817",
+     "hoja": "817",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-41090",
+     "hoja": "41090",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-5640",
+     "hoja": "5640",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-8008",
+     "hoja": "8008",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-cosse-garrido-ana-carolina"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-46",
+     "hoja": "46",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-502",
+     "hoja": "502",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-orsi-martinez-yamandu-ramon"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-1813",
+     "hoja": "1813",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-lima-proserpio-andres-pablo"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-frente-amplio-933",
+     "hoja": "933",
+     "partidoId": "frente-amplio",
+     "contienda": "odn",
+     "lemaId": "frente-amplio",
+     "precandidatoId": "frente-amplio-lima-proserpio-andres-pablo"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-colorado-615",
+     "hoja": "615",
+     "partidoId": "colorado",
+     "contienda": "odn",
+     "lemaId": "colorado",
+     "precandidatoId": "colorado-gurmendez-armand-ugon-gabriel"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-colorado-29000",
+     "hoja": "29000",
+     "partidoId": "colorado",
+     "contienda": "odn",
+     "lemaId": "colorado",
+     "precandidatoId": "colorado-gurmendez-armand-ugon-gabriel"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-colorado-25",
+     "hoja": "25",
+     "partidoId": "colorado",
+     "contienda": "odn",
+     "lemaId": "colorado",
+     "precandidatoId": "colorado-ojeda-spitz-andres"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-colorado-1010",
+     "hoja": "1010",
+     "partidoId": "colorado",
+     "contienda": "odn",
+     "lemaId": "colorado",
+     "precandidatoId": "colorado-ojeda-spitz-andres"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-colorado-9007",
+     "hoja": "9007",
+     "partidoId": "colorado",
+     "contienda": "odn",
+     "lemaId": "colorado",
+     "precandidatoId": "colorado-ojeda-spitz-andres"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-colorado-6",
+     "hoja": "6",
+     "partidoId": "colorado",
+     "contienda": "odn",
+     "lemaId": "colorado",
+     "precandidatoId": "colorado-silva-garcia-robert"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-colorado-1600",
+     "hoja": "1600",
+     "partidoId": "colorado",
+     "contienda": "odn",
+     "lemaId": "colorado",
+     "precandidatoId": "colorado-silva-garcia-robert"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-colorado-825",
+     "hoja": "825",
+     "partidoId": "colorado",
+     "contienda": "odn",
+     "lemaId": "colorado",
+     "precandidatoId": "colorado-ojeda-spitz-andres"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-colorado-2000",
+     "hoja": "2000",
+     "partidoId": "colorado",
+     "contienda": "odn",
+     "lemaId": "colorado",
+     "precandidatoId": "colorado-viera-duarte-tabare"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-colorado-220",
+     "hoja": "220",
+     "partidoId": "colorado",
+     "contienda": "odn",
+     "lemaId": "colorado",
+     "precandidatoId": "colorado-gurmendez-armand-ugon-gabriel"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-colorado-919",
+     "hoja": "919",
+     "partidoId": "colorado",
+     "contienda": "odn",
+     "lemaId": "colorado",
+     "precandidatoId": "colorado-ache-batlle-carolina"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-colorado-152000",
+     "hoja": "152000",
+     "partidoId": "colorado",
+     "contienda": "odn",
+     "lemaId": "colorado",
+     "precandidatoId": "colorado-viera-duarte-tabare"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-nacional-5",
+     "hoja": "5",
+     "partidoId": "nacional",
+     "contienda": "odn",
+     "lemaId": "nacional",
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-nacional-22",
+     "hoja": "22",
+     "partidoId": "nacional",
+     "contienda": "odn",
+     "lemaId": "nacional",
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-nacional-404",
+     "hoja": "404",
+     "partidoId": "nacional",
+     "contienda": "odn",
+     "lemaId": "nacional",
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-nacional-250",
+     "hoja": "250",
+     "partidoId": "nacional",
+     "contienda": "odn",
+     "lemaId": "nacional",
+     "precandidatoId": "nacional-gandini-astesiano-jorge-osvaldo"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-nacional-1903",
+     "hoja": "1903",
+     "partidoId": "nacional",
+     "contienda": "odn",
+     "lemaId": "nacional",
+     "precandidatoId": "nacional-raffo-degeromini-maria-laura"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-nacional-71",
+     "hoja": "71",
+     "partidoId": "nacional",
+     "contienda": "odn",
+     "lemaId": "nacional",
+     "precandidatoId": "nacional-raffo-degeromini-maria-laura"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-nacional-97",
+     "hoja": "97",
+     "partidoId": "nacional",
+     "contienda": "odn",
+     "lemaId": "nacional",
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-nacional-4040",
+     "hoja": "4040",
+     "partidoId": "nacional",
+     "contienda": "odn",
+     "lemaId": "nacional",
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-nacional-200",
+     "hoja": "200",
+     "partidoId": "nacional",
+     "contienda": "odn",
+     "lemaId": "nacional",
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-nacional-151",
+     "hoja": "151",
+     "partidoId": "nacional",
+     "contienda": "odn",
+     "lemaId": "nacional",
+     "precandidatoId": "nacional-delgado-ceretta-alvaro-luis"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-nacional-252",
+     "hoja": "252",
+     "partidoId": "nacional",
+     "contienda": "odn",
+     "lemaId": "nacional",
+     "precandidatoId": "nacional-iafigliola-pimentel-carlos-alberto"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-nacional-1007",
+     "hoja": "1007",
+     "partidoId": "nacional",
+     "contienda": "odn",
+     "lemaId": "nacional",
+     "precandidatoId": "nacional-corbran-rizzo-roxana-lilian"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-cabildo-abierto-741",
+     "hoja": "741",
+     "partidoId": "cabildo-abierto",
+     "contienda": "odn",
+     "lemaId": "cabildo-abierto",
+     "precandidatoId": "cabildo-abierto-manini-stratta-guido"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-cabildo-abierto-510",
+     "hoja": "510",
+     "partidoId": "cabildo-abierto",
+     "contienda": "odn",
+     "lemaId": "cabildo-abierto",
+     "precandidatoId": "cabildo-abierto-manini-stratta-guido"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-cabildo-abierto-4848",
+     "hoja": "4848",
+     "partidoId": "cabildo-abierto",
+     "contienda": "odn",
+     "lemaId": "cabildo-abierto",
+     "precandidatoId": "cabildo-abierto-manini-stratta-guido"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-cabildo-abierto-11820",
+     "hoja": "11820",
+     "partidoId": "cabildo-abierto",
+     "contienda": "odn",
+     "lemaId": "cabildo-abierto",
+     "precandidatoId": "cabildo-abierto-manini-stratta-guido"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-cabildo-abierto-7001",
+     "hoja": "7001",
+     "partidoId": "cabildo-abierto",
+     "contienda": "odn",
+     "lemaId": "cabildo-abierto",
+     "precandidatoId": "cabildo-abierto-manini-stratta-guido"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-independiente-909",
+     "hoja": "909",
+     "partidoId": "independiente",
+     "contienda": "odn",
+     "lemaId": "independiente",
+     "precandidatoId": "independiente-mieres-gomez-pablo-andres"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-asamblea-popular-326",
+     "hoja": "326",
+     "partidoId": "asamblea-popular",
+     "contienda": "odn",
+     "lemaId": "asamblea-popular",
+     "precandidatoId": "asamblea-popular-martinez-maruca-walter-gonzalo"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-asamblea-popular-960",
+     "hoja": "960",
+     "partidoId": "asamblea-popular",
+     "contienda": "odn",
+     "lemaId": "asamblea-popular",
+     "precandidatoId": "asamblea-popular-martinez-maruca-walter-gonzalo"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-identidad-soberana-18010",
+     "hoja": "18010",
+     "partidoId": "identidad-soberana",
+     "contienda": "odn",
+     "lemaId": "identidad-soberana",
+     "precandidatoId": "identidad-soberana-salle-lorier-gustavo-alberto"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-ecologista-radical-intransigente-1330",
+     "hoja": "1330",
+     "partidoId": "ecologista-radical-intransigente",
+     "contienda": "odn",
+     "lemaId": "ecologista-radical-intransigente",
+     "precandidatoId": "ecologista-radical-intransigente-vega-erramuspe-cesar-enrique"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-devolucion-7005",
+     "hoja": "7005",
+     "partidoId": "devolucion",
+     "contienda": "odn",
+     "lemaId": "devolucion",
+     "precandidatoId": "devolucion-paiva-fiures-pablo-marcelo"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-por-los-cambios-necesarios-pcn-2018",
+     "hoja": "2018",
+     "partidoId": "por-los-cambios-necesarios-pcn",
+     "contienda": "odn",
+     "lemaId": "por-los-cambios-necesarios-pcn",
+     "precandidatoId": "por-los-cambios-necesarios-pcn-franchi-soria-guillermo-anibal"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-basta-ya-39",
+     "hoja": "39",
+     "partidoId": "basta-ya",
+     "contienda": "odn",
+     "lemaId": "basta-ya",
+     "precandidatoId": "basta-ya-bonica-sierra-jorge-enrique"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-avanzar-republicano-937",
+     "hoja": "937",
+     "partidoId": "avanzar-republicano",
+     "contienda": "odn",
+     "lemaId": "avanzar-republicano",
+     "precandidatoId": "avanzar-republicano-perez-banchero-felipe-martin"
+    },
+    {
+     "clase": "hoja",
+     "id": "odn-colorado-1616",
+     "hoja": "1616",
+     "partidoId": "colorado",
+     "contienda": "odn",
+     "lemaId": "colorado",
+     "precandidatoId": "colorado-gonzalez-legnani-zaida-eloisa"
+    }
+   ]
+  },
+  {
+   "contienda": "odd",
+   "niveles": [
+    "lema",
+    "sublema",
+    "hoja"
+   ],
+   "nodos": [
+    {
+     "id": "frente-amplio",
+     "nivel": "lema",
+     "etiqueta": "Frente Amplio",
+     "partidoId": "frente-amplio"
+    },
+    {
+     "id": "colorado",
+     "nivel": "lema",
+     "etiqueta": "Partido Colorado",
+     "partidoId": "colorado"
+    },
+    {
+     "id": "nacional",
+     "nivel": "lema",
+     "etiqueta": "Partido Nacional",
+     "partidoId": "nacional"
+    },
+    {
+     "id": "cabildo-abierto",
+     "nivel": "lema",
+     "etiqueta": "Cabildo Abierto",
+     "partidoId": "cabildo-abierto"
+    },
+    {
+     "id": "independiente",
+     "nivel": "lema",
+     "etiqueta": "Partido Independiente",
+     "partidoId": "independiente"
+    },
+    {
+     "id": "asamblea-popular",
+     "nivel": "lema",
+     "etiqueta": "Asamblea Popular",
+     "partidoId": "asamblea-popular"
+    },
+    {
+     "id": "ecologista-radical-intransigente",
+     "nivel": "lema",
+     "etiqueta": "Partido Ecologista Radical Intransigente",
+     "partidoId": "ecologista-radical-intransigente"
+    },
+    {
+     "id": "basta-ya",
+     "nivel": "lema",
+     "etiqueta": "Partido Basta Ya",
+     "partidoId": "basta-ya"
+    },
+    {
+     "id": "frente-amplio-sl-no-te-rindas",
+     "nivel": "sublema",
+     "etiqueta": "NO TE RINDAS",
+     "parentId": "frente-amplio"
+    },
+    {
+     "id": "frente-amplio-sl-espacio-socialdemocrata-amplio",
+     "nivel": "sublema",
+     "etiqueta": "ESPACIO SOCIALDEMOCRATA AMPLIO",
+     "parentId": "frente-amplio"
+    },
+    {
+     "id": "frente-amplio-sl-arriba-los-que-luchan",
+     "nivel": "sublema",
+     "etiqueta": "ARRIBA LOS QUE LUCHAN",
+     "parentId": "frente-amplio"
+    },
+    {
+     "id": "frente-amplio-sl-union-frenteamplista-de-soriano",
+     "nivel": "sublema",
+     "etiqueta": "UNIÓN FRENTEAMPLISTA DE SORIANO",
+     "parentId": "frente-amplio"
+    },
+    {
+     "id": "frente-amplio-sl-el-abrazo-crece",
+     "nivel": "sublema",
+     "etiqueta": "EL ABRAZO CRECE",
+     "parentId": "frente-amplio"
+    },
+    {
+     "id": "frente-amplio-sl-legado-seregnista",
+     "nivel": "sublema",
+     "etiqueta": "LEGADO SEREGNISTA",
+     "parentId": "frente-amplio"
+    },
+    {
+     "id": "colorado-sl-somos-soriano",
+     "nivel": "sublema",
+     "etiqueta": "SOMOS SORIANO",
+     "parentId": "colorado"
+    },
+    {
+     "id": "colorado-sl-unir-para-ganar",
+     "nivel": "sublema",
+     "etiqueta": "UNIR PARA GANAR",
+     "parentId": "colorado"
+    },
+    {
+     "id": "colorado-sl-crece",
+     "nivel": "sublema",
+     "etiqueta": "CRECE",
+     "parentId": "colorado"
+    },
+    {
+     "id": "colorado-sl-batllistas-unidos",
+     "nivel": "sublema",
+     "etiqueta": "BATLLISTAS UNIDOS",
+     "parentId": "colorado"
+    },
+    {
+     "id": "nacional-sl-juntos-por-soriano",
+     "nivel": "sublema",
+     "etiqueta": "JUNTOS POR SORIANO",
+     "parentId": "nacional"
+    },
+    {
+     "id": "nacional-sl-donde-nacio-la-patria",
+     "nivel": "sublema",
+     "etiqueta": "DONDE NACIÓ LA PATRIA",
+     "parentId": "nacional"
+    },
+    {
+     "id": "nacional-sl-fuerza-celeste-y-blanca",
+     "nivel": "sublema",
+     "etiqueta": "FUERZA CELESTE Y BLANCA",
+     "parentId": "nacional"
+    },
+    {
+     "id": "nacional-sl-renovacion-y-victoria",
+     "nivel": "sublema",
+     "etiqueta": "RENOVACIÓN Y VICTORIA",
+     "parentId": "nacional"
+    },
+    {
+     "id": "nacional-sl-por-un-solo-soriano",
+     "nivel": "sublema",
+     "etiqueta": "POR UN SOLO SORIANO",
+     "parentId": "nacional"
+    },
+    {
+     "id": "nacional-sl-el-mejor-equipo-por-soriano",
+     "nivel": "sublema",
+     "etiqueta": "EL MEJOR EQUIPO POR SORIANO",
+     "parentId": "nacional"
+    },
+    {
+     "id": "nacional-sl-impulsar-soriano",
+     "nivel": "sublema",
+     "etiqueta": "IMPULSAR SORIANO",
+     "parentId": "nacional"
+    },
+    {
+     "id": "nacional-sl-por-la-vida-la-familia-y-la-patria",
+     "nivel": "sublema",
+     "etiqueta": "POR LA VIDA, LA FAMILIA Y LA PATRIA",
+     "parentId": "nacional"
+    },
+    {
+     "id": "nacional-sl-sabremos-cumplir",
+     "nivel": "sublema",
+     "etiqueta": "SABREMOS CUMPLIR",
+     "parentId": "nacional"
+    },
+    {
+     "id": "cabildo-abierto-sl-la-columna-lealtad-y-unidad",
+     "nivel": "sublema",
+     "etiqueta": "LA COLUMNA LEALTAD Y UNIDAD",
+     "parentId": "cabildo-abierto"
+    },
+    {
+     "id": "cabildo-abierto-sl-uruguay-en-orden",
+     "nivel": "sublema",
+     "etiqueta": "URUGUAY EN ORDEN",
+     "parentId": "cabildo-abierto"
+    },
+    {
+     "id": "cabildo-abierto-sl-encuentro-nacional-cristiano",
+     "nivel": "sublema",
+     "etiqueta": "ENCUENTRO NACIONAL CRISTIANO",
+     "parentId": "cabildo-abierto"
+    },
+    {
+     "id": "asamblea-popular-sl-en-lucha-por-la-soberania",
+     "nivel": "sublema",
+     "etiqueta": "EN LUCHA POR LA SOBERANÍA",
+     "parentId": "asamblea-popular"
+    },
+    {
+     "id": "basta-ya-sl-basta-ya-soriano",
+     "nivel": "sublema",
+     "etiqueta": "BASTA YA SORIANO",
+     "parentId": "basta-ya"
+    },
+    {
+     "id": "cabildo-abierto-sl-espacio-de-los-pueblos-libres",
+     "nivel": "sublema",
+     "etiqueta": "ESPACIO DE LOS PUEBLOS LIBRES",
+     "parentId": "cabildo-abierto"
+    }
+   ],
+   "opciones": [
+    {
+     "clase": "hoja",
+     "id": "odd-frente-amplio-152",
+     "hoja": "152",
+     "partidoId": "frente-amplio",
+     "contienda": "odd",
+     "lemaId": "frente-amplio",
+     "sublemaId": "frente-amplio-sl-no-te-rindas",
+     "grupoId": "frente-amplio-sl-no-te-rindas"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-frente-amplio-190",
+     "hoja": "190",
+     "partidoId": "frente-amplio",
+     "contienda": "odd",
+     "lemaId": "frente-amplio"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-frente-amplio-777",
+     "hoja": "777",
+     "partidoId": "frente-amplio",
+     "contienda": "odd",
+     "lemaId": "frente-amplio"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-frente-amplio-1609",
+     "hoja": "1609",
+     "partidoId": "frente-amplio",
+     "contienda": "odd",
+     "lemaId": "frente-amplio"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-frente-amplio-11968",
+     "hoja": "11968",
+     "partidoId": "frente-amplio",
+     "contienda": "odd",
+     "lemaId": "frente-amplio"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-frente-amplio-199000",
+     "hoja": "199000",
+     "partidoId": "frente-amplio",
+     "contienda": "odd",
+     "lemaId": "frente-amplio",
+     "sublemaId": "frente-amplio-sl-espacio-socialdemocrata-amplio",
+     "grupoId": "frente-amplio-sl-espacio-socialdemocrata-amplio"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-frente-amplio-195",
+     "hoja": "195",
+     "partidoId": "frente-amplio",
+     "contienda": "odd",
+     "lemaId": "frente-amplio"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-frente-amplio-119",
+     "hoja": "119",
+     "partidoId": "frente-amplio",
+     "contienda": "odd",
+     "lemaId": "frente-amplio"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-frente-amplio-311",
+     "hoja": "311",
+     "partidoId": "frente-amplio",
+     "contienda": "odd",
+     "lemaId": "frente-amplio",
+     "sublemaId": "frente-amplio-sl-arriba-los-que-luchan",
+     "grupoId": "frente-amplio-sl-arriba-los-que-luchan"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-frente-amplio-2001",
+     "hoja": "2001",
+     "partidoId": "frente-amplio",
+     "contienda": "odd",
+     "lemaId": "frente-amplio"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-frente-amplio-319000",
+     "hoja": "319000",
+     "partidoId": "frente-amplio",
+     "contienda": "odd",
+     "lemaId": "frente-amplio"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-frente-amplio-1624",
+     "hoja": "1624",
+     "partidoId": "frente-amplio",
+     "contienda": "odd",
+     "lemaId": "frente-amplio"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-frente-amplio-1567",
+     "hoja": "1567",
+     "partidoId": "frente-amplio",
+     "contienda": "odd",
+     "lemaId": "frente-amplio",
+     "sublemaId": "frente-amplio-sl-arriba-los-que-luchan",
+     "grupoId": "frente-amplio-sl-arriba-los-que-luchan"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-frente-amplio-1939",
+     "hoja": "1939",
+     "partidoId": "frente-amplio",
+     "contienda": "odd",
+     "lemaId": "frente-amplio"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-frente-amplio-1764",
+     "hoja": "1764",
+     "partidoId": "frente-amplio",
+     "contienda": "odd",
+     "lemaId": "frente-amplio",
+     "sublemaId": "frente-amplio-sl-union-frenteamplista-de-soriano",
+     "grupoId": "frente-amplio-sl-union-frenteamplista-de-soriano"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-frente-amplio-11303",
+     "hoja": "11303",
+     "partidoId": "frente-amplio",
+     "contienda": "odd",
+     "lemaId": "frente-amplio",
+     "sublemaId": "frente-amplio-sl-arriba-los-que-luchan",
+     "grupoId": "frente-amplio-sl-arriba-los-que-luchan"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-frente-amplio-11828",
+     "hoja": "11828",
+     "partidoId": "frente-amplio",
+     "contienda": "odd",
+     "lemaId": "frente-amplio"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-frente-amplio-20040",
+     "hoja": "20040",
+     "partidoId": "frente-amplio",
+     "contienda": "odd",
+     "lemaId": "frente-amplio"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-frente-amplio-1949",
+     "hoja": "1949",
+     "partidoId": "frente-amplio",
+     "contienda": "odd",
+     "lemaId": "frente-amplio",
+     "sublemaId": "frente-amplio-sl-el-abrazo-crece",
+     "grupoId": "frente-amplio-sl-el-abrazo-crece"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-frente-amplio-1441",
+     "hoja": "1441",
+     "partidoId": "frente-amplio",
+     "contienda": "odd",
+     "lemaId": "frente-amplio",
+     "sublemaId": "frente-amplio-sl-legado-seregnista",
+     "grupoId": "frente-amplio-sl-legado-seregnista"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-colorado-1506",
+     "hoja": "1506",
+     "partidoId": "colorado",
+     "contienda": "odd",
+     "lemaId": "colorado",
+     "sublemaId": "colorado-sl-somos-soriano",
+     "grupoId": "colorado-sl-somos-soriano"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-colorado-1515",
+     "hoja": "1515",
+     "partidoId": "colorado",
+     "contienda": "odd",
+     "lemaId": "colorado"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-colorado-1525",
+     "hoja": "1525",
+     "partidoId": "colorado",
+     "contienda": "odd",
+     "lemaId": "colorado",
+     "sublemaId": "colorado-sl-unir-para-ganar",
+     "grupoId": "colorado-sl-unir-para-ganar"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-colorado-2929",
+     "hoja": "2929",
+     "partidoId": "colorado",
+     "contienda": "odd",
+     "lemaId": "colorado"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-colorado-6600",
+     "hoja": "6600",
+     "partidoId": "colorado",
+     "contienda": "odd",
+     "lemaId": "colorado",
+     "sublemaId": "colorado-sl-crece",
+     "grupoId": "colorado-sl-crece"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-colorado-17600",
+     "hoja": "17600",
+     "partidoId": "colorado",
+     "contienda": "odd",
+     "lemaId": "colorado",
+     "sublemaId": "colorado-sl-crece",
+     "grupoId": "colorado-sl-crece"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-colorado-8",
+     "hoja": "8",
+     "partidoId": "colorado",
+     "contienda": "odd",
+     "lemaId": "colorado",
+     "sublemaId": "colorado-sl-unir-para-ganar",
+     "grupoId": "colorado-sl-unir-para-ganar"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-colorado-31",
+     "hoja": "31",
+     "partidoId": "colorado",
+     "contienda": "odd",
+     "lemaId": "colorado",
+     "sublemaId": "colorado-sl-batllistas-unidos",
+     "grupoId": "colorado-sl-batllistas-unidos"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-colorado-1540",
+     "hoja": "1540",
+     "partidoId": "colorado",
+     "contienda": "odd",
+     "lemaId": "colorado",
+     "sublemaId": "colorado-sl-somos-soriano",
+     "grupoId": "colorado-sl-somos-soriano"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-colorado-125",
+     "hoja": "125",
+     "partidoId": "colorado",
+     "contienda": "odd",
+     "lemaId": "colorado",
+     "sublemaId": "colorado-sl-somos-soriano",
+     "grupoId": "colorado-sl-somos-soriano"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-colorado-1440",
+     "hoja": "1440",
+     "partidoId": "colorado",
+     "contienda": "odd",
+     "lemaId": "colorado",
+     "sublemaId": "colorado-sl-somos-soriano",
+     "grupoId": "colorado-sl-somos-soriano"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-colorado-101010",
+     "hoja": "101010",
+     "partidoId": "colorado",
+     "contienda": "odd",
+     "lemaId": "colorado",
+     "sublemaId": "colorado-sl-somos-soriano",
+     "grupoId": "colorado-sl-somos-soriano"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-nacional-2",
+     "hoja": "2",
+     "partidoId": "nacional",
+     "contienda": "odd",
+     "lemaId": "nacional",
+     "sublemaId": "nacional-sl-juntos-por-soriano",
+     "grupoId": "nacional-sl-juntos-por-soriano"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-nacional-3",
+     "hoja": "3",
+     "partidoId": "nacional",
+     "contienda": "odd",
+     "lemaId": "nacional",
+     "sublemaId": "nacional-sl-donde-nacio-la-patria",
+     "grupoId": "nacional-sl-donde-nacio-la-patria"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-nacional-522",
+     "hoja": "522",
+     "partidoId": "nacional",
+     "contienda": "odd",
+     "lemaId": "nacional",
+     "sublemaId": "nacional-sl-juntos-por-soriano",
+     "grupoId": "nacional-sl-juntos-por-soriano"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-nacional-903",
+     "hoja": "903",
+     "partidoId": "nacional",
+     "contienda": "odd",
+     "lemaId": "nacional",
+     "sublemaId": "nacional-sl-donde-nacio-la-patria",
+     "grupoId": "nacional-sl-donde-nacio-la-patria"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-nacional-9000",
+     "hoja": "9000",
+     "partidoId": "nacional",
+     "contienda": "odd",
+     "lemaId": "nacional"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-nacional-23250",
+     "hoja": "23250",
+     "partidoId": "nacional",
+     "contienda": "odd",
+     "lemaId": "nacional",
+     "sublemaId": "nacional-sl-fuerza-celeste-y-blanca",
+     "grupoId": "nacional-sl-fuerza-celeste-y-blanca"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-nacional-897",
+     "hoja": "897",
+     "partidoId": "nacional",
+     "contienda": "odd",
+     "lemaId": "nacional",
+     "sublemaId": "nacional-sl-renovacion-y-victoria",
+     "grupoId": "nacional-sl-renovacion-y-victoria"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-nacional-7171",
+     "hoja": "7171",
+     "partidoId": "nacional",
+     "contienda": "odd",
+     "lemaId": "nacional",
+     "sublemaId": "nacional-sl-por-un-solo-soriano",
+     "grupoId": "nacional-sl-por-un-solo-soriano"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-nacional-333",
+     "hoja": "333",
+     "partidoId": "nacional",
+     "contienda": "odd",
+     "lemaId": "nacional",
+     "sublemaId": "nacional-sl-donde-nacio-la-patria",
+     "grupoId": "nacional-sl-donde-nacio-la-patria"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-nacional-433",
+     "hoja": "433",
+     "partidoId": "nacional",
+     "contienda": "odd",
+     "lemaId": "nacional",
+     "sublemaId": "nacional-sl-el-mejor-equipo-por-soriano",
+     "grupoId": "nacional-sl-el-mejor-equipo-por-soriano"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-nacional-503",
+     "hoja": "503",
+     "partidoId": "nacional",
+     "contienda": "odd",
+     "lemaId": "nacional",
+     "sublemaId": "nacional-sl-donde-nacio-la-patria",
+     "grupoId": "nacional-sl-donde-nacio-la-patria"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-nacional-913",
+     "hoja": "913",
+     "partidoId": "nacional",
+     "contienda": "odd",
+     "lemaId": "nacional",
+     "sublemaId": "nacional-sl-el-mejor-equipo-por-soriano",
+     "grupoId": "nacional-sl-el-mejor-equipo-por-soriano"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-nacional-200200",
+     "hoja": "200200",
+     "partidoId": "nacional",
+     "contienda": "odd",
+     "lemaId": "nacional",
+     "sublemaId": "nacional-sl-impulsar-soriano",
+     "grupoId": "nacional-sl-impulsar-soriano"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-nacional-912",
+     "hoja": "912",
+     "partidoId": "nacional",
+     "contienda": "odd",
+     "lemaId": "nacional",
+     "sublemaId": "nacional-sl-impulsar-soriano",
+     "grupoId": "nacional-sl-impulsar-soriano"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-nacional-206",
+     "hoja": "206",
+     "partidoId": "nacional",
+     "contienda": "odd",
+     "lemaId": "nacional",
+     "sublemaId": "nacional-sl-fuerza-celeste-y-blanca",
+     "grupoId": "nacional-sl-fuerza-celeste-y-blanca"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-nacional-1252",
+     "hoja": "1252",
+     "partidoId": "nacional",
+     "contienda": "odd",
+     "lemaId": "nacional",
+     "sublemaId": "nacional-sl-por-la-vida-la-familia-y-la-patria",
+     "grupoId": "nacional-sl-por-la-vida-la-familia-y-la-patria"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-nacional-1111",
+     "hoja": "1111",
+     "partidoId": "nacional",
+     "contienda": "odd",
+     "lemaId": "nacional",
+     "sublemaId": "nacional-sl-fuerza-celeste-y-blanca",
+     "grupoId": "nacional-sl-fuerza-celeste-y-blanca"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-nacional-2050",
+     "hoja": "2050",
+     "partidoId": "nacional",
+     "contienda": "odd",
+     "lemaId": "nacional",
+     "sublemaId": "nacional-sl-sabremos-cumplir",
+     "grupoId": "nacional-sl-sabremos-cumplir"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-nacional-111",
+     "hoja": "111",
+     "partidoId": "nacional",
+     "contienda": "odd",
+     "lemaId": "nacional",
+     "sublemaId": "nacional-sl-impulsar-soriano",
+     "grupoId": "nacional-sl-impulsar-soriano"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-cabildo-abierto-456",
+     "hoja": "456",
+     "partidoId": "cabildo-abierto",
+     "contienda": "odd",
+     "lemaId": "cabildo-abierto",
+     "sublemaId": "cabildo-abierto-sl-la-columna-lealtad-y-unidad",
+     "grupoId": "cabildo-abierto-sl-la-columna-lealtad-y-unidad"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-cabildo-abierto-50",
+     "hoja": "50",
+     "partidoId": "cabildo-abierto",
+     "contienda": "odd",
+     "lemaId": "cabildo-abierto"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-cabildo-abierto-510510",
+     "hoja": "510510",
+     "partidoId": "cabildo-abierto",
+     "contienda": "odd",
+     "lemaId": "cabildo-abierto",
+     "sublemaId": "cabildo-abierto-sl-uruguay-en-orden",
+     "grupoId": "cabildo-abierto-sl-uruguay-en-orden"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-cabildo-abierto-7",
+     "hoja": "7",
+     "partidoId": "cabildo-abierto",
+     "contienda": "odd",
+     "lemaId": "cabildo-abierto",
+     "sublemaId": "cabildo-abierto-sl-encuentro-nacional-cristiano",
+     "grupoId": "cabildo-abierto-sl-encuentro-nacional-cristiano"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-independiente-999",
+     "hoja": "999",
+     "partidoId": "independiente",
+     "contienda": "odd",
+     "lemaId": "independiente"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-asamblea-popular-1326",
+     "hoja": "1326",
+     "partidoId": "asamblea-popular",
+     "contienda": "odd",
+     "lemaId": "asamblea-popular",
+     "sublemaId": "asamblea-popular-sl-en-lucha-por-la-soberania",
+     "grupoId": "asamblea-popular-sl-en-lucha-por-la-soberania"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-ecologista-radical-intransigente-1331",
+     "hoja": "1331",
+     "partidoId": "ecologista-radical-intransigente",
+     "contienda": "odd",
+     "lemaId": "ecologista-radical-intransigente"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-basta-ya-69",
+     "hoja": "69",
+     "partidoId": "basta-ya",
+     "contienda": "odd",
+     "lemaId": "basta-ya",
+     "sublemaId": "basta-ya-sl-basta-ya-soriano",
+     "grupoId": "basta-ya-sl-basta-ya-soriano"
+    },
+    {
+     "clase": "hoja",
+     "id": "odd-cabildo-abierto-1820",
+     "hoja": "1820",
+     "partidoId": "cabildo-abierto",
+     "contienda": "odd",
+     "lemaId": "cabildo-abierto",
+     "sublemaId": "cabildo-abierto-sl-espacio-de-los-pueblos-libres",
+     "grupoId": "cabildo-abierto-sl-espacio-de-los-pueblos-libres"
+    }
+   ]
+  }
+ ]
+}

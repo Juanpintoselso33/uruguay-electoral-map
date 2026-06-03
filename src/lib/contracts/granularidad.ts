@@ -21,7 +21,7 @@ export interface EscaleraGranularidad {
  */
 export const ESCALERAS: readonly EscaleraGranularidad[] = [
   { tipo: 'internas', contienda: 'odn', niveles: ['lema', 'precandidato', 'hoja'] },
-  { tipo: 'internas', contienda: 'odd', niveles: ['lema', 'hoja'] },
+  { tipo: 'internas', contienda: 'odd', niveles: ['lema', 'sublema', 'hoja'] },
   { tipo: 'nacionales', contienda: 'unica', niveles: ['lema', 'sublema', 'hoja'] },
   { tipo: 'balotaje', contienda: 'unica', niveles: ['candidato'] },
   { tipo: 'plebiscito', contienda: 'unica', niveles: ['binaria'] },
