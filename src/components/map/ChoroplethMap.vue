@@ -1655,14 +1655,18 @@ function renderComparacionFill(): void {
   const fc = fcRef.value;
   if (!m || !fc) return;
   if (cmpModo.value !== 'delta' || !cmpDeltaSigla.value) {
+    // 'ganador' (flip) por REALCE-POR-CONTRASTE (reemplaza el contorno naranja, que no leía):
+    // las zonas que CAMBIARON de ganador quedan a todo color; las que se mantuvieron, atenuadas
+    // (fantasma). Técnica de cartografía electoral estándar — las que flipearon saltan solas.
     for (const f of fc.features) {
       const name = String((f.properties as { name: string }).name);
       m.setFeatureState({ source: 'zonas', id: name }, { delta: 0, deltaNA: false });
     }
+    setPatternVisible(false); // colores sólidos (sin banderas) para que la atenuación lea limpia
+    if (m.getLayer('zonas-vs-changed')) m.setLayoutProperty('zonas-vs-changed', 'visibility', 'none'); // contorno abandonado
     m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
-    m.setPaintProperty('zonas-fill', 'fill-opacity', BASE_FILL_OPACITY);
-    setPatternVisible(true);
-    if (m.getLayer('zonas-vs-changed')) m.setLayoutProperty('zonas-vs-changed', 'visibility', 'visible'); // borde naranja del flip
+    m.setPaintProperty('zonas-fill', 'fill-opacity',
+      ['case', ['boolean', ['feature-state', 'vsChanged'], false], 0.92, 0.14]);
     return;
   }
   const sigla = cmpDeltaSigla.value;
@@ -2339,7 +2343,7 @@ onUnmounted(() => {
     <MapLegend
       v-if="opcionActiva || seleccionActiva.length > 0 || votosSinUbicacion > 0 || gnivel !== 'lema' || comparacionActiva"
       :entradas="legend" :sin-datos="sinDatos" :votos-sin-ubicacion="votosSinUbicacion" :zonas-sin-ubicacion="zonasSinUbicacion"
-      :comparacion-nota="comparacionActiva && cmpModo === 'ganador' ? 'Borde naranja: zonas donde cambió el partido ganador entre las dos elecciones.' : null" />
+      :comparacion-nota="comparacionActiva && cmpModo === 'ganador' ? 'Zonas a todo color: cambió el partido ganador entre las dos elecciones. Las atenuadas mantuvieron el mismo ganador.' : null" />
 
     <!-- Comparación entre elecciones (Fase 2): cómo ver el contraste. Va DEBAJO del mapa (junto a la
          leyenda) para no re-saturar arriba. 'Cambió ganador' = flip (borde naranja); 'Δ %' = magnitud

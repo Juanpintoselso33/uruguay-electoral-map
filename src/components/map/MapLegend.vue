@@ -59,10 +59,8 @@ const fmt = (n: number): string => n.toLocaleString('es-UY');
       <span class="legend__nombre">{{ sinDatos }} zona(s) sin datos</span>
     </div>
   </div>
-  <!-- Comparación entre elecciones (prototipo): qué significa el borde naranja del mapa -->
-  <p v-if="props.comparacionNota" class="legend__nota legend__nota--cmp">
-    <span class="legend__cmp-swatch" aria-hidden="true"></span>{{ props.comparacionNota }}
-  </p>
+  <!-- Comparación entre elecciones: explica el realce-por-contraste del modo "cambió ganador" -->
+  <p v-if="props.comparacionNota" class="legend__nota legend__nota--cmp">{{ props.comparacionNota }}</p>
   <!-- Epic 16: limitación documentada — votos sin ubicación geográfica (series especiales/observados) -->
   <p v-if="(props.votosSinUbicacion ?? 0) > 0" class="legend__nota">
     ⚠ {{ fmt(props.votosSinUbicacion!) }} votos en {{ props.zonasSinUbicacion }} serie(s) sin ubicación geográfica
