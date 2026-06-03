@@ -17,13 +17,13 @@ def depts():
 def resources_for(eleccion, depto):
     base = os.path.join(DATA, eleccion, depto)
     files = [f for f in RESULT_FILES if os.path.exists(os.path.join(base, f))]
-    return {f.replace('.json', ''): f"/api/v1/results/{eleccion}/{depto}/{f}" for f in files}
+    return {f.replace('.json', ''): f"/data/{eleccion}/{depto}/{f}" for f in files}
 
 def geo_for(depto):
     gdir = os.path.join(DATA, 'geo', depto)
     if not os.path.isdir(gdir):
         return {}
-    return {os.path.splitext(f)[0]: f"/api/v1/geo/{depto}/{f}"
+    return {os.path.splitext(f)[0]: f"/data/geo/{depto}/{f}"
             for f in sorted(os.listdir(gdir)) if f.endswith('.json')}
 
 def main():
