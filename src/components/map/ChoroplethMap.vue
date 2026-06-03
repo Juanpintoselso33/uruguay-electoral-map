@@ -1078,6 +1078,9 @@ function rebuildSelMarkers(fc: FeatureCollection, modo: 'share' | 'heatmap'): vo
   markers.forEach((mk) => mk.remove());
   markers.length = 0;
   selMarkerState = { fc, modo };
+  // Con el overlay de circuitos prendido, los dots ya muestran el detalle por circuito/local:
+  // los labels de total por barrio se superponen y saturan → no se dibujan (reaparecen al apagarlo).
+  if ($circuito.get()) return;
   const W = m.getCanvas().clientWidth, H = m.getCanvas().clientHeight;
   const MIN_PX = 36;        // separación mínima entre labels
   const MARGIN = 24;        // descartar labels fuera del viewport (con margen)
@@ -1867,6 +1870,8 @@ onMounted(async () => {
       circuitoFCForCanvas = null;
       drawFlagOverlay(m);
     }
+    // Re-evaluar los labels de total por barrio: se ocultan con circuitos ON, reaparecen con OFF.
+    if (selMarkerState) rebuildSelMarkers(selMarkerState.fc, selMarkerState.modo);
   });
 
   try {
