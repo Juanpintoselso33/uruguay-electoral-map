@@ -2,12 +2,14 @@
 /**
  * Controles de comparación entre elecciones (Story 4.3 · prototipo Fase 1).
  *
- * `client:idle`. Permite elegir, de un dropdown, otra elección DEL MISMO TIPO contra la cual
- * comparar (nacionales↔nacionales, internas↔internas, …). Entrar → commit({ vs }). Salir → commit({ vs: null }).
- * El overlay (borde naranja en zonas donde cambió el partido ganador) lo aplica ChoroplethMap al ver `?vs=`.
+ * `client:idle`. UX de-saturada: cuando NO se está comparando, es solo un chip chico
+ * ("⇄ Comparar con otra elección") — sin banda permanente arriba del mapa. Al tocarlo se
+ * despliega un dropdown filtrado a elecciones del MISMO tipo (nacionales↔nacionales, …);
+ * al elegir una se entra en comparación (commit({ vs })). La explicación del borde naranja
+ * vive en la leyenda (debajo del mapa), no acá arriba.
  *
- * Solo elecciones del MISMO tipo son comparables: balotaje vs plebiscito tienen universos de opciones
- * disjuntos → comparar ahí daría basura. El "tipo" se deriva quitando el año del id.
+ * Solo elecciones del mismo tipo son comparables: balotaje vs plebiscito tienen universos de
+ * opciones disjuntos → comparar ahí daría basura. El "tipo" se deriva quitando el año del id.
  */
 import { onMounted, ref, computed } from 'vue';
 import { $comparison, commit } from '../../stores/map-state';
@@ -38,6 +40,7 @@ function label(e: string): string { return LABELS[e] ?? e; }
 function tipoDe(e: string): string { return e.replace(/-?\d{4}.*$/, ''); }
 
 const comparisonVs = ref<string | null>(null);
+const expanded = ref(false);
 onMounted(() => {
   $comparison.subscribe((cmp) => { comparisonVs.value = cmp.vs; });
 });
@@ -50,22 +53,32 @@ const comparables = computed<string[]>(() => {
     .sort((a, b) => (b.match(/\d{4}/)?.[0] ?? '').localeCompare(a.match(/\d{4}/)?.[0] ?? ''));
 });
 
+/** Mostrar el dropdown si ya estamos comparando o si el usuario tocó el chip. */
+const mostrarSelect = computed<boolean>(() => !!comparisonVs.value || expanded.value);
+
 function onSelect(e: Event): void {
   const val = (e.target as HTMLSelectElement).value;
   commit({ vs: val || null });
+  if (!val) expanded.value = false;
 }
-function exitCompare(): void { commit({ vs: null }); }
+function exitCompare(): void { commit({ vs: null }); expanded.value = false; }
 </script>
 
 <template>
   <div v-if="comparables.length > 0" class="cmp">
-    <span class="cmp__lbl">Comparar con:</span>
-    <select class="cmp__sel" :value="comparisonVs ?? ''" @change="onSelect" aria-label="Elegí una elección para comparar">
-      <option value="">— elegí una elección —</option>
-      <option v-for="e in comparables" :key="e" :value="e">{{ label(e) }}</option>
-    </select>
-    <button v-if="comparisonVs" class="cmp__btn" type="button" @click="exitCompare">Salir</button>
-    <span v-if="comparisonVs" class="cmp__hint">Borde naranja = cambió el partido ganador</span>
+    <!-- Inactivo: solo un chip chico (no banda permanente) -->
+    <button v-if="!mostrarSelect" class="cmp__chip" type="button" @click="expanded = true">
+      ⇄ Comparar con otra elección
+    </button>
+    <!-- Activo o desplegado: dropdown + salir -->
+    <template v-else>
+      <span class="cmp__lbl">Comparar con:</span>
+      <select class="cmp__sel" :value="comparisonVs ?? ''" @change="onSelect" aria-label="Elegí una elección para comparar">
+        <option value="">— elegí una elección —</option>
+        <option v-for="e in comparables" :key="e" :value="e">{{ label(e) }}</option>
+      </select>
+      <button class="cmp__btn" type="button" @click="exitCompare">{{ comparisonVs ? 'Salir' : 'Cancelar' }}</button>
+    </template>
   </div>
 </template>
 
@@ -73,13 +86,25 @@ function exitCompare(): void { commit({ vs: null }); }
 .cmp {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
   gap: 0.5rem;
-  padding: 0.375rem 1rem;
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-surface-1);
+  padding: 0.25rem 1rem;
   font-size: 0.75rem;
 }
+/* Chip compacto (estado inactivo): mínimo peso visual, no ocupa una banda completa. */
+.cmp__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 9999px;
+  background: var(--color-surface-1);
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  font-size: 0.7rem;
+}
+.cmp__chip:hover { color: var(--color-ink); border-color: var(--color-ink); }
+.cmp__chip:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
 .cmp__lbl { color: var(--color-ink-soft); font-weight: 600; }
 .cmp__sel {
   font-size: 0.75rem;
@@ -100,5 +125,4 @@ function exitCompare(): void { commit({ vs: null }); }
   text-decoration: underline;
 }
 .cmp__btn:hover { color: var(--color-ink); }
-.cmp__hint { color: var(--color-ink-faint); font-size: 0.6875rem; }
 </style>

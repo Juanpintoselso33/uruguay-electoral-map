@@ -195,6 +195,8 @@ const coloreoMode = ref<'ganador' | 'share' | 'heatmap'>('heatmap');
 const gnivel = ref<Nivel>('lema');
 /** Niveles agrupables de la contienda activa (deriva el selector `gnivel`). */
 const nivelesDisponibles = ref<Nivel[]>(['lema']);
+/** Comparación entre elecciones activa (overlay ?vs= aplicado) → muestra leyenda + nota del borde naranja. */
+const comparacionActiva = ref(false);
 // hojaId → metadata del catálogo (del catalogo.json). Null = aún no cargado.
 // Ampliado (coloreo-por-nivel): incluye precandidatoId/sublemaId para agrupar el ganador a cualquier nivel.
 let catalogoOpcMeta: Map<string, {
@@ -1509,6 +1511,7 @@ async function applyComparisonOverlay(vs: string, baseEleccion: string, departam
   const m = map.value;
   const fc = fcRef.value;
   if (!m || !fc || status.value !== 'listo') return;
+  comparacionActiva.value = false; // se confirma al final si el overlay aplica
   try {
     const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -1591,6 +1594,7 @@ async function applyComparisonOverlay(vs: string, baseEleccion: string, departam
       const entrySigla = resolveParty(entry.nombre).sigla;
       return vsSiglas.has(entrySigla) ? entry : { ...entry, nombre: `${entry.nombre} (solo ${year})` };
     });
+    comparacionActiva.value = true; // overlay aplicado → leyenda + nota del borde naranja
   } catch {
     // Degradación silenciosa: si no hay datos de comparación, el mapa sigue normal.
   }
@@ -1607,6 +1611,7 @@ function clearComparisonOverlay(): void {
   }
   vsWinnersMap = new Map();
   legend.value = origLegend;
+  comparacionActiva.value = false;
 }
 
 /**
@@ -2222,8 +2227,9 @@ onUnmounted(() => {
          coloreo y del RESULTADO. Solo aporta en modos selección/filtro/intensidad (escala)
          o si hay nota de votos sin ubicación; en el modo ganador base duplica a RESULTADO. -->
     <MapLegend
-      v-if="opcionActiva || seleccionActiva.length > 0 || votosSinUbicacion > 0 || gnivel !== 'lema'"
-      :entradas="legend" :sin-datos="sinDatos" :votos-sin-ubicacion="votosSinUbicacion" :zonas-sin-ubicacion="zonasSinUbicacion" />
+      v-if="opcionActiva || seleccionActiva.length > 0 || votosSinUbicacion > 0 || gnivel !== 'lema' || comparacionActiva"
+      :entradas="legend" :sin-datos="sinDatos" :votos-sin-ubicacion="votosSinUbicacion" :zonas-sin-ubicacion="zonasSinUbicacion"
+      :comparacion-nota="comparacionActiva ? 'Borde naranja: zonas donde cambió el partido ganador entre las dos elecciones.' : null" />
 
     <!-- Toggle Ganador / Intensidad — sólo visible cuando hay opción activa (Story 2.3) -->
     <div v-if="opcionActiva" class="vista-toggle" role="group" aria-label="Tipo de vista del mapa">
