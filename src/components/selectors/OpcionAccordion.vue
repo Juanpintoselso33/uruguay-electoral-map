@@ -344,6 +344,14 @@ function metaPlano(o: OpcionHojaJson): { label: string; color: string; sigla: st
 const colorLema = (l: NodoOpcion): string => resolveParty(l.etiqueta, props.eleccion).color;
 const siglaLema = (l: NodoOpcion): string => resolveParty(l.etiqueta).sigla;
 const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).flagUrl;
+
+/** % del lema sobre el total (orientación de magnitud sin expandir). null si no hay dato. */
+const totalLemaVotos = computed(() => Object.values(totalVotosLema.value).reduce((a, b) => a + b, 0));
+function pctLema(l: NodoOpcion): string | null {
+  const t = totalLemaVotos.value;
+  const v = totalVotosLema.value[l.id] ?? 0;
+  return t > 0 && v > 0 ? (v / t * 100).toFixed(1) : null;
+}
 </script>
 
 <template>
@@ -433,6 +441,7 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
             <span v-else class="acc__swatch" :style="{ background: colorLema(l) }" aria-hidden="true"></span>
             <span class="acc__sigla">{{ siglaLema(l) }}</span>
             <span class="acc__etiqueta">{{ l.etiqueta }}</span>
+            <span v-if="pctLema(l)" class="acc__pct" aria-hidden="true">{{ pctLema(l) }}%</span>
           </button>
         </div>
 
@@ -576,7 +585,8 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
 .acc__swatch { width: 0.75rem; height: 0.75rem; border-radius: 0.125rem; flex-shrink: 0; border: 1px solid rgba(0,0,0,.1); }
 .acc__flag  { width: 1.25rem; height: 0.8125rem; border-radius: 0.125rem; flex-shrink: 0; border: 1px solid rgba(0,0,0,.15); object-fit: cover; }
 .acc__sigla { font-weight: 700; min-width: 2.25rem; color: var(--color-ink); }
-.acc__etiqueta { color: var(--color-ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.acc__etiqueta { flex: 1; min-width: 0; color: var(--color-ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.acc__pct { flex-shrink: 0; margin-left: 0.5rem; color: var(--color-ink-faint); font-size: 0.75rem; font-variant-numeric: tabular-nums; font-weight: 600; }
 .acc__etiqueta--precand { font-weight: 500; color: var(--color-ink); }
 .acc__lista { color: var(--color-ink); }
 

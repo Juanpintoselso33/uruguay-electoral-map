@@ -140,32 +140,30 @@ onUnmounted(() => {
           <div class="esel__grupo-body">
             <div class="esel__rail" aria-hidden="true" />
             <div class="esel__grupo-items">
-              <div
-                v-for="item in g.items"
-                :key="item.id"
-                class="esel__item"
-                :class="[`esel__item--${item.type}`, { 'esel__item--bloqueado': !item.disponible }]"
+              <template v-for="item in g.items" :key="item.id">
+              <a
+                v-if="item.disponible"
+                :href="hrefDe(item.id)"
+                class="esel__item esel__item--link"
+                :class="[`esel__item--${item.type}`, { 'esel__item--activa': item.id === eleccionActual }]"
+                :aria-current="item.id === eleccionActual ? 'page' : undefined"
+                :aria-label="`${item.short} ${item.año}`"
+                :title="`${item.short} ${item.año}`"
               >
-                <a
-                  v-if="item.disponible"
-                  :href="hrefDe(item.id)"
-                  class="esel__dot"
-                  :class="{ 'esel__dot--activa': item.id === eleccionActual }"
-                  :aria-current="item.id === eleccionActual ? 'page' : undefined"
-                  :title="item.short + ' ' + item.año"
-                >
-                  <span class="sr-only">{{ item.short }} {{ item.año }}</span>
-                </a>
-                <span
-                  v-else
-                  class="esel__dot esel__dot--bloqueado"
-                  :title="`${item.short} ${item.año} — sin datos para este departamento`"
-                  aria-disabled="true"
-                />
-                <span class="esel__label" :class="{ 'esel__label--activa': item.id === eleccionActual }">
-                  {{ item.short }}
-                </span>
+                <span class="esel__dot" :class="{ 'esel__dot--activa': item.id === eleccionActual }" aria-hidden="true" />
+                <span class="esel__label" :class="{ 'esel__label--activa': item.id === eleccionActual }">{{ item.short }}</span>
+              </a>
+              <div
+                v-else
+                class="esel__item esel__item--bloqueado"
+                :class="`esel__item--${item.type}`"
+                :title="`${item.short} ${item.año} — sin datos para este departamento`"
+                aria-disabled="true"
+              >
+                <span class="esel__dot esel__dot--bloqueado" aria-hidden="true" />
+                <span class="esel__label">{{ item.short }}</span>
               </div>
+              </template>
             </div>
           </div>
         </div>
@@ -260,12 +258,13 @@ onUnmounted(() => {
 /* Riel horizontal por grupo (detrás de los dots) */
 .esel__rail {
   position: absolute;
-  top: 6px;
+  top: 11px;                  /* alineado al centro del dot con el nuevo padding del item */
   left: 8px;
   right: 8px;
   height: 2px;
   background: var(--color-border-strong);
   pointer-events: none;
+  z-index: 0;
 }
 
 .esel__grupo-items {
@@ -278,10 +277,20 @@ onUnmounted(() => {
   flex-direction: column;
   align-items: center;
   min-width: 64px;
-  padding: 0 6px;
+  padding: 5px 6px 7px;        /* target táctil cómodo (~46px alto) */
+  min-height: 46px;
+  border-radius: 0.5rem;
   text-align: center;
   cursor: pointer;
+  box-sizing: border-box;
 }
+.esel__item--link { text-decoration: none; color: inherit; }
+.esel__item--link:hover { background: var(--color-surface-2); }
+.esel__item--link:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
+.esel__item--link:hover .esel__dot:not(.esel__dot--activa) { transform: scale(1.3); border-color: var(--color-ink-muted); }
+.esel__item--balotaje.esel__item--link:hover .esel__dot:not(.esel__dot--activa) { transform: rotate(45deg) scale(1.25); }
+/* Elección activa: pill de fondo + dot/label destacados (más claro que solo el dot relleno) */
+.esel__item--activa { background: var(--color-card); box-shadow: inset 0 0 0 1px var(--color-border-strong); }
 .esel__item--bloqueado {
   cursor: not-allowed;
   opacity: 0.38;
