@@ -77,6 +77,17 @@ Funciones serverless (`/api/v1/results?eleccion=&departamento=&nivel=&partido=`)
 - **Integración (preview):** golpear `/api/v1/...` y verificar headers (CORS, `Cache-Control`, `ETag`) y formas de respuesta.
 - **Reusar `gate-*`** para integridad de los datos generados.
 
+## Eje candidate-centric (caso de uso externo)
+
+Surgió un consumidor real (Octavio R., sitio que centraliza info de gobernantes) pidiendo el **eje invertido**: *dado un candidato, ¿en qué departamentos sacó más votos?* — útil para legisladores. La API base es *elección → geografía → resultados*; esto pide un recurso **candidate-centric**.
+
+Se cubre en dos tiempos:
+
+- **Personas ya modeladas (sin datos nuevos):** presidenciales/balotaje (candidato = opción), precandidatos de internas (nivel del catálogo) e intendentes (departamentales). Para ellos se agrega un recurso `GET /api/v1/candidatos/{id}/resultados` que agrega por depto/elección. **Va en este epic (Story de API).**
+- **Legisladores (requiere datos nuevos):** el voto legislativo en Uruguay es **a la LISTA, no a la persona** → "votos de un candidato" = votos de su(s) **hoja(s)**. El mapeo **persona↔hoja** SÍ existe como dato abierto: la Corte publica **"nóminas de candidatos" / "integrantes de las hojas de votación"** en CKAN por elección (Nacionales 2024/2019, Internas, Departamentales 2020/2025). Sourcearlo + **normalizar la identidad de personas entre elecciones** es un subsistema de ETL propio → **Epic 21 (dimensión de candidatos/personas)**, que luego alimenta el mismo recurso `candidatos` para cubrir legisladores.
+
+Precisión de contrato: el recurso de candidato debe **explicitar la métrica** ("votos de la lista N que integra", no "votos personales") para legisladores, y manejar que una persona puede estar en **varias hojas** (titular/suplente, senado/diputados) y repetirse entre elecciones.
+
 ## Fuera de alcance (no-goals)
 
 - Base de datos / GraphQL (enfoque B).
