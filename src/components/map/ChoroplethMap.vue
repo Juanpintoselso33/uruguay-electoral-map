@@ -582,7 +582,7 @@ function circuitSelVotes(z: ZonaLocal, sel: string[], selSiglas: Set<string>): {
  *  selección + máximos de escala (heatmap/intensidad se normalizan al máximo sobre los circuitos). */
 function circuitColorCtx(): {
   sel: string[]; opcion: string | null; modo: 'ganador' | 'share' | 'heatmap';
-  intensidad: boolean; selSiglas: Set<string>; maxSelSum: number; maxPct: number;
+  intensidad: boolean; selSiglas: Set<string>; maxSelSum: number; maxPct: number; nivel: Nivel; cont: string | null;
 } {
   const sel = seleccionActiva.value;
   const opcion = opcionActiva.value;
@@ -605,7 +605,23 @@ function circuitColorCtx(): {
       }
     }
   }
-  return { sel, opcion, modo, intensidad, selSiglas, maxSelSum, maxPct };
+  return { sel, opcion, modo, intensidad, selSiglas, maxSelSum, maxPct, nivel: gnivel.value, cont: $selection.get().contienda };
+}
+
+/** Coloreo-por-nivel en un circuito/local (Epic 19.2): ganador al nivel `gnivel` sobre el desglose
+ *  por HOJA del local (`circuitHojaVotos`), reutilizando el mismo núcleo que las zonas
+ *  (`winnerAtLevel` + `appearanceDeKey`). Devuelve null si el circuito no tiene hoja-local
+ *  (→ el caller cae al coloreo por sigla/lema). El universo restringe a las hojas relevantes
+ *  (la selección, o todas las del local en el caso absoluto). */
+function circuitWinnerAtLevel(z: ZonaLocal, universo: string[], nivel: Nivel): { color: string; flagPattern: string | null } | null {
+  const hojaMap = circuitHojaVotos.get(norm(z.geoId));
+  if (!hojaMap) return null;
+  const votos = new Map<string, number>();
+  for (const oid of universo) { const v = hojaMap.get(oid) ?? 0; if (v > 0) votos.set(oid, v); }
+  const { key, votos: w } = winnerAtLevel(votos, metaOf, nivel);
+  if (!key || w <= 0) return null;
+  const ap = appearanceDeKey(key, nivel);
+  return { color: ap.color, flagPattern: ap.pattern ? ap.pattern.id : null };
 }
 
 /** Color/bandera de un dot de circuito según el modo de coloreo activo — paridad con las zonas.
@@ -622,6 +638,11 @@ function circuitStyle(z: ZonaLocal, ctx: ReturnType<typeof circuitColorCtx>): { 
   if (ctx.sel.length > 0) {
     const { sum, porPartido } = circuitSelVotes(z, ctx.sel, ctx.selSiglas);
     if (ctx.modo === 'ganador') {
+      // Sub-nivel (sublema/precandidato/lista): hereda el coloreo del mapa donde hay hoja-local.
+      if (ctx.nivel !== 'lema') {
+        const sub = circuitWinnerAtLevel(z, ctx.sel, ctx.nivel);
+        if (sub) return sub;
+      }
       let best: { votos: number; nombre: string } | null = null;
       for (const v of porPartido.values()) if (!best || v.votos > best.votos) best = v;
       return best && best.votos > 0 ? partyStyle(best.nombre) : { color: MUTED, flagPattern: null };
@@ -641,7 +662,17 @@ function circuitStyle(z: ZonaLocal, ctx: ReturnType<typeof circuitColorCtx>): { 
     }
     return z.ganadorOpcionId === ctx.opcion ? partyStyle(opcNombreMap.get(ctx.opcion) ?? ctx.opcion) : { color: COLOR_SIN_DATOS, flagPattern: null };
   }
-  // Default: ganador absoluto.
+  // Default: ganador absoluto. Sub-nivel hereda gnivel sobre las hojas del local (hoja-local),
+  // SCOPEADAS a la contienda activa: un local mezcla odn+odd, así que filtramos por contienda
+  // (idéntico al universo que arma aplicarGanadorAbsolutoPorNivel para las zonas).
+  if (ctx.nivel !== 'lema') {
+    const hojaMap = circuitHojaVotos.get(norm(z.geoId));
+    if (hojaMap) {
+      const universo = [...hojaMap.keys()].filter((oid) => !ctx.cont || catalogoOpcMeta?.get(oid)?.contienda === ctx.cont);
+      const sub = circuitWinnerAtLevel(z, universo, ctx.nivel);
+      if (sub) return sub;
+    }
+  }
   return partyStyle(opcNombreMap.get(z.ganadorOpcionId) ?? z.ganadorOpcionId);
 }
 
