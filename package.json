@@ -83,7 +83,8 @@
     "etl:totales-fetch": "python scripts/fetch-totales-ckan.py",
     "etl:no-partidarios": "python scripts/build-no-partidarios.py",
     "gate:grises": "python scripts/gate-grises.py",
-    "gate:no-partidarios": "python scripts/gate-no-partidarios.py"
+    "gate:no-partidarios": "python scripts/gate-no-partidarios.py",
+    "etl:api-index": "python scripts/build-api-index.py"
   },
   "dependencies": {
     "@nanostores/vue": "^0.11.0",

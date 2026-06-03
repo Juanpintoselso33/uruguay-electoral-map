@@ -1,0 +1,279 @@
+{
+ "id": "balotaje-2024",
+ "departamentos": [
+  {
+   "id": "artigas",
+   "results": {
+    "opciones": "/api/v1/results/balotaje-2024/artigas/opciones.json",
+    "votes": "/api/v1/results/balotaje-2024/artigas/votes.json",
+    "votes-local": "/api/v1/results/balotaje-2024/artigas/votes-local.json"
+   },
+   "geo": {
+    "barrio.topo": "/api/v1/geo/artigas/barrio.topo.json",
+    "circuito.topo": "/api/v1/geo/artigas/circuito.topo.json",
+    "local.topo": "/api/v1/geo/artigas/local.topo.json",
+    "localidad.topo": "/api/v1/geo/artigas/localidad.topo.json",
+    "serie.topo": "/api/v1/geo/artigas/serie.topo.json"
+   }
+  },
+  {
+   "id": "canelones",
+   "results": {
+    "opciones": "/api/v1/results/balotaje-2024/canelones/opciones.json",
+    "votes": "/api/v1/results/balotaje-2024/canelones/votes.json",
+    "votes-local": "/api/v1/results/balotaje-2024/canelones/votes-local.json"
+   },
+   "geo": {
+    "circuito.topo": "/api/v1/geo/canelones/circuito.topo.json",
+    "local.topo": "/api/v1/geo/canelones/local.topo.json",
+    "localidad.topo": "/api/v1/geo/canelones/localidad.topo.json",
+    "serie.topo": "/api/v1/geo/canelones/serie.topo.json"
+   }
+  },
+  {
+   "id": "cerro_largo",
+   "results": {
+    "opciones": "/api/v1/results/balotaje-2024/cerro_largo/opciones.json",
+    "votes": "/api/v1/results/balotaje-2024/cerro_largo/votes.json",
+    "votes-local": "/api/v1/results/balotaje-2024/cerro_largo/votes-local.json"
+   },
+   "geo": {
+    "barrio.topo": "/api/v1/geo/cerro_largo/barrio.topo.json",
+    "circuito.topo": "/api/v1/geo/cerro_largo/circuito.topo.json",
+    "local.topo": "/api/v1/geo/cerro_largo/local.topo.json",
+    "localidad.topo": "/api/v1/geo/cerro_largo/localidad.topo.json",
+    "serie.topo": "/api/v1/geo/cerro_largo/serie.topo.json"
+   }
+  },
+  {
+   "id": "colonia",
+   "results": {
+    "opciones": "/api/v1/results/balotaje-2024/colonia/opciones.json",
+    "votes": "/api/v1/results/balotaje-2024/colonia/votes.json",
+    "votes-local": "/api/v1/results/balotaje-2024/colonia/votes-local.json"
+   },
+   "geo": {
+    "circuito.topo": "/api/v1/geo/colonia/circuito.topo.json",
+    "local.topo": "/api/v1/geo/colonia/local.topo.json",
+    "localidad.topo": "/api/v1/geo/colonia/localidad.topo.json",
+    "serie.topo": "/api/v1/geo/colonia/serie.topo.json"
+   }
+  },
+  {
+   "id": "durazno",
+   "results": {
+    "opciones": "/api/v1/results/balotaje-2024/durazno/opciones.json",
+    "votes": "/api/v1/results/balotaje-2024/durazno/votes.json",
+    "votes-local": "/api/v1/results/balotaje-2024/durazno/votes-local.json"
+   },
+   "geo": {
+    "barrio.topo": "/api/v1/geo/durazno/barrio.topo.json",
+    "circuito.topo": "/api/v1/geo/durazno/circuito.topo.json",
+    "local.topo": "/api/v1/geo/durazno/local.topo.json",
+    "localidad.topo": "/api/v1/geo/durazno/localidad.topo.json",
+    "serie.topo": "/api/v1/geo/durazno/serie.topo.json"
+   }
+  },
+  {
+   "id": "flores",
+   "results": {
+    "opciones": "/api/v1/results/balotaje-2024/flores/opciones.json",
+    "votes": "/api/v1/results/balotaje-2024/flores/votes.json",
+    "votes-local": "/api/v1/results/balotaje-2024/flores/votes-local.json"
+   },
+   "geo": {
+    "circuito.topo": "/api/v1/geo/flores/circuito.topo.json",
+    "local.topo": "/api/v1/geo/flores/local.topo.json",
+    "localidad.topo": "/api/v1/geo/flores/localidad.topo.json",
+    "serie.topo": "/api/v1/geo/flores/serie.topo.json"
+   }
+  },
+  {
+   "id": "florida",
+   "results": {
+    "opciones": "/api/v1/results/balotaje-2024/florida/opciones.json",
+    "votes": "/api/v1/results/balotaje-2024/florida/votes.json",
+    "votes-local": "/api/v1/results/balotaje-2024/florida/votes-local.json"
+   },
+   "geo": {
+    "circuito.topo": "/api/v1/geo/florida/circuito.topo.json",
+    "local.topo": "/api/v1/geo/florida/local.topo.json",
+    "localidad.topo": "/api/v1/geo/florida/localidad.topo.json",
+    "serie.topo": "/api/v1/geo/florida/serie.topo.json"
+   }
+  },
+  {
+   "id": "lavalleja",
+   "results": {
+    "opciones": "/api/v1/results/balotaje-2024/lavalleja/opciones.json",
+    "votes": "/api/v1/results/balotaje-2024/lavalleja/votes.json",
+    "votes-local": "/api/v1/results/balotaje-2024/lavalleja/votes-local.json"
+   },
+   "geo": {
+    "circuito.topo": "/api/v1/geo/lavalleja/circuito.topo.json",
+    "local.topo": "/api/v1/geo/lavalleja/local.topo.json",
+    "localidad.topo": "/api/v1/geo/lavalleja/localidad.topo.json",
+    "serie.topo": "/api/v1/geo/lavalleja/serie.topo.json"
+   }
+  },
+  {
+   "id": "maldonado",
+   "results": {
+    "opciones": "/api/v1/results/balotaje-2024/maldonado/opciones.json",
+    "votes": "/api/v1/results/balotaje-2024/maldonado/votes.json",
+    "votes-local": "/api/v1/results/balotaje-2024/maldonado/votes-local.json"
+   },
+   "geo": {
+    "circuito.topo": "/api/v1/geo/maldonado/circuito.topo.json",
+    "local.topo": "/api/v1/geo/maldonado/local.topo.json",
+    "localidad.topo": "/api/v1/geo/maldonado/localidad.topo.json",
+    "serie.topo": "/api/v1/geo/maldonado/serie.topo.json"
+   }
+  },
+  {
+   "id": "montevideo",
+   "results": {
+    "catalogo": "/api/v1/results/balotaje-2024/montevideo/catalogo.json",
+    "opciones": "/api/v1/results/balotaje-2024/montevideo/opciones.json",
+    "votes": "/api/v1/results/balotaje-2024/montevideo/votes.json",
+    "votes-local": "/api/v1/results/balotaje-2024/montevideo/votes-local.json"
+   },
+   "geo": {
+    "circuito.topo": "/api/v1/geo/montevideo/circuito.topo.json",
+    "local.topo": "/api/v1/geo/montevideo/local.topo.json",
+    "zona.topo": "/api/v1/geo/montevideo/zona.topo.json"
+   }
+  },
+  {
+   "id": "paysandu",
+   "results": {
+    "opciones": "/api/v1/results/balotaje-2024/paysandu/opciones.json",
+    "votes": "/api/v1/results/balotaje-2024/paysandu/votes.json",
+    "votes-local": "/api/v1/results/balotaje-2024/paysandu/votes-local.json"
+   },
+   "geo": {
+    "barrio.topo": "/api/v1/geo/paysandu/barrio.topo.json",
+    "circuito.topo": "/api/v1/geo/paysandu/circuito.topo.json",
+    "local.topo": "/api/v1/geo/paysandu/local.topo.json",
+    "localidad.topo": "/api/v1/geo/paysandu/localidad.topo.json",
+    "serie.topo": "/api/v1/geo/paysandu/serie.topo.json"
+   }
+  },
+  {
+   "id": "rio_negro",
+   "results": {
+    "opciones": "/api/v1/results/balotaje-2024/rio_negro/opciones.json",
+    "votes": "/api/v1/results/balotaje-2024/rio_negro/votes.json",
+    "votes-local": "/api/v1/results/balotaje-2024/rio_negro/votes-local.json"
+   },
+   "geo": {
+    "circuito.topo": "/api/v1/geo/rio_negro/circuito.topo.json",
+    "local.topo": "/api/v1/geo/rio_negro/local.topo.json",
+    "localidad.topo": "/api/v1/geo/rio_negro/localidad.topo.json",
+    "serie.topo": "/api/v1/geo/rio_negro/serie.topo.json"
+   }
+  },
+  {
+   "id": "rivera",
+   "results": {
+    "opciones": "/api/v1/results/balotaje-2024/rivera/opciones.json",
+    "votes": "/api/v1/results/balotaje-2024/rivera/votes.json",
+    "votes-local": "/api/v1/results/balotaje-2024/rivera/votes-local.json"
+   },
+   "geo": {
+    "barrio.topo": "/api/v1/geo/rivera/barrio.topo.json",
+    "circuito.topo": "/api/v1/geo/rivera/circuito.topo.json",
+    "local.topo": "/api/v1/geo/rivera/local.topo.json",
+    "localidad.topo": "/api/v1/geo/rivera/localidad.topo.json",
+    "serie.topo": "/api/v1/geo/rivera/serie.topo.json"
+   }
+  },
+  {
+   "id": "rocha",
+   "results": {
+    "opciones": "/api/v1/results/balotaje-2024/rocha/opciones.json",
+    "votes": "/api/v1/results/balotaje-2024/rocha/votes.json",
+    "votes-local": "/api/v1/results/balotaje-2024/rocha/votes-local.json"
+   },
+   "geo": {
+    "circuito.topo": "/api/v1/geo/rocha/circuito.topo.json",
+    "local.topo": "/api/v1/geo/rocha/local.topo.json",
+    "localidad.topo": "/api/v1/geo/rocha/localidad.topo.json",
+    "serie.topo": "/api/v1/geo/rocha/serie.topo.json"
+   }
+  },
+  {
+   "id": "salto",
+   "results": {
+    "opciones": "/api/v1/results/balotaje-2024/salto/opciones.json",
+    "votes": "/api/v1/results/balotaje-2024/salto/votes.json",
+    "votes-local": "/api/v1/results/balotaje-2024/salto/votes-local.json"
+   },
+   "geo": {
+    "barrio.topo": "/api/v1/geo/salto/barrio.topo.json",
+    "circuito.topo": "/api/v1/geo/salto/circuito.topo.json",
+    "local.topo": "/api/v1/geo/salto/local.topo.json",
+    "localidad.topo": "/api/v1/geo/salto/localidad.topo.json",
+    "serie.topo": "/api/v1/geo/salto/serie.topo.json"
+   }
+  },
+  {
+   "id": "san_jose",
+   "results": {
+    "opciones": "/api/v1/results/balotaje-2024/san_jose/opciones.json",
+    "votes": "/api/v1/results/balotaje-2024/san_jose/votes.json",
+    "votes-local": "/api/v1/results/balotaje-2024/san_jose/votes-local.json"
+   },
+   "geo": {
+    "barrio.topo": "/api/v1/geo/san_jose/barrio.topo.json",
+    "circuito.topo": "/api/v1/geo/san_jose/circuito.topo.json",
+    "local.topo": "/api/v1/geo/san_jose/local.topo.json",
+    "localidad.topo": "/api/v1/geo/san_jose/localidad.topo.json",
+    "serie.topo": "/api/v1/geo/san_jose/serie.topo.json"
+   }
+  },
+  {
+   "id": "soriano",
+   "results": {
+    "opciones": "/api/v1/results/balotaje-2024/soriano/opciones.json",
+    "votes": "/api/v1/results/balotaje-2024/soriano/votes.json",
+    "votes-local": "/api/v1/results/balotaje-2024/soriano/votes-local.json"
+   },
+   "geo": {
+    "circuito.topo": "/api/v1/geo/soriano/circuito.topo.json",
+    "local.topo": "/api/v1/geo/soriano/local.topo.json",
+    "localidad.topo": "/api/v1/geo/soriano/localidad.topo.json",
+    "serie.topo": "/api/v1/geo/soriano/serie.topo.json"
+   }
+  },
+  {
+   "id": "tacuarembo",
+   "results": {
+    "opciones": "/api/v1/results/balotaje-2024/tacuarembo/opciones.json",
+    "votes": "/api/v1/results/balotaje-2024/tacuarembo/votes.json",
+    "votes-local": "/api/v1/results/balotaje-2024/tacuarembo/votes-local.json"
+   },
+   "geo": {
+    "circuito.topo": "/api/v1/geo/tacuarembo/circuito.topo.json",
+    "local.topo": "/api/v1/geo/tacuarembo/local.topo.json",
+    "localidad.topo": "/api/v1/geo/tacuarembo/localidad.topo.json",
+    "serie.topo": "/api/v1/geo/tacuarembo/serie.topo.json"
+   }
+  },
+  {
+   "id": "treinta_y_tres",
+   "results": {
+    "opciones": "/api/v1/results/balotaje-2024/treinta_y_tres/opciones.json",
+    "votes": "/api/v1/results/balotaje-2024/treinta_y_tres/votes.json",
+    "votes-local": "/api/v1/results/balotaje-2024/treinta_y_tres/votes-local.json"
+   },
+   "geo": {
+    "barrio.topo": "/api/v1/geo/treinta_y_tres/barrio.topo.json",
+    "circuito.topo": "/api/v1/geo/treinta_y_tres/circuito.topo.json",
+    "local.topo": "/api/v1/geo/treinta_y_tres/local.topo.json",
+    "localidad.topo": "/api/v1/geo/treinta_y_tres/localidad.topo.json",
+    "serie.topo": "/api/v1/geo/treinta_y_tres/serie.topo.json"
+   }
+  }
+ ]
+}
