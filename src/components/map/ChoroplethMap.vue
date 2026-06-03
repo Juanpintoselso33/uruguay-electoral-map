@@ -2212,34 +2212,39 @@ onUnmounted(() => {
       >Intensidad</button>
     </div>
 
-    <!-- Conmutador de modo para selección múltiple de hojas (Epic 10, Story 10.4) -->
-    <div v-if="seleccionActiva.length > 0" class="vista-toggle" role="group" aria-label="Modo de coloreo del mapa">
-      <button
-        v-for="mo in (['ganador', 'heatmap', 'share'] as const)"
-        :key="mo"
-        class="vista-toggle__btn"
-        :class="{ 'vista-toggle__btn--activo': coloreoMode === mo }"
-        :aria-pressed="coloreoMode === mo"
-        type="button"
-        @click="setColoreo(mo)"
-      >{{ mo === 'ganador' ? 'Ganador' : mo === 'share' ? 'Share %' : 'Heatmap' }}</button>
-    </div>
+    <!-- Cluster de controles de coloreo (Epic 19.1): el conmutador de modo y el selector de nivel
+         se leen como UN solo bloque (un borde superior), con el nivel como sub-fila tenue del modo
+         Ganador — no como dos bandas pares. v-if propio para no dejar una banda vacía (balotaje/plano). -->
+    <div v-if="seleccionActiva.length > 0 || nivelesDisponibles.length > 1" class="coloreo-cluster">
+      <!-- Conmutador de modo para selección múltiple de hojas (Epic 10, Story 10.4) -->
+      <div v-if="seleccionActiva.length > 0" class="vista-toggle" role="group" aria-label="Modo de coloreo del mapa">
+        <button
+          v-for="mo in (['ganador', 'heatmap', 'share'] as const)"
+          :key="mo"
+          class="vista-toggle__btn"
+          :class="{ 'vista-toggle__btn--activo': coloreoMode === mo }"
+          :aria-pressed="coloreoMode === mo"
+          type="button"
+          @click="setColoreo(mo)"
+        >{{ mo === 'ganador' ? 'Ganador' : mo === 'share' ? 'Share %' : 'Heatmap' }}</button>
+      </div>
 
-    <!-- Selector de nivel del ganador (coloreo-por-nivel): solo en modo Ganador y si la contienda
-         tiene >1 nivel agrupable. No depende de la selección (sin selección = ganador absoluto). -->
-    <div
-      v-if="(seleccionActiva.length === 0 || coloreoMode === 'ganador') && nivelesDisponibles.length > 1"
-      class="gnivel" role="group" aria-label="Nivel del ganador"
-    >
-      <span class="gnivel__lbl">Ganador por:</span>
-      <button
-        v-for="nv in nivelesDisponibles" :key="nv"
-        type="button"
-        class="gnivel__btn"
-        :class="{ 'gnivel__btn--activo': gnivel === nv }"
-        :aria-pressed="gnivel === nv"
-        @click="setGnivel(nv)"
-      >{{ NIVEL_LABEL[nv] }}</button>
+      <!-- Selector de nivel del ganador (coloreo-por-nivel): solo en modo Ganador y si la contienda
+           tiene >1 nivel agrupable. No depende de la selección (sin selección = ganador absoluto). -->
+      <div
+        v-if="(seleccionActiva.length === 0 || coloreoMode === 'ganador') && nivelesDisponibles.length > 1"
+        class="gnivel" role="group" aria-label="Nivel del ganador"
+      >
+        <span class="gnivel__lbl">Ganador por:</span>
+        <button
+          v-for="nv in nivelesDisponibles" :key="nv"
+          type="button"
+          class="gnivel__btn"
+          :class="{ 'gnivel__btn--activo': gnivel === nv }"
+          :aria-pressed="gnivel === nv"
+          @click="setGnivel(nv)"
+        >{{ NIVEL_LABEL[nv] }}</button>
+      </div>
     </div>
 
     <ResultadoGlobal
@@ -2300,8 +2305,15 @@ onUnmounted(() => {
   padding: 0.5rem 0.75rem;
   border-top: 1px solid var(--color-border);
 }
-/* Selector de nivel del ganador (coloreo-por-nivel) */
-.gnivel { display: flex; flex-wrap: wrap; align-items: center; gap: 0.375rem; padding: 0.25rem 0.75rem 0.5rem; font-size: 0.75rem; }
+/* Cluster de coloreo (Epic 19.1): UN solo borde superior para todo el bloque de controles.
+   Dentro del cluster el toggle pierde su borde propio (lo aporta el cluster) y el selector de
+   nivel se pega como sub-fila, evitando dos bandas pares apiladas. */
+.coloreo-cluster { border-top: 1px solid var(--color-border); }
+.coloreo-cluster .vista-toggle { border-top: none; padding-bottom: 0.375rem; }
+/* Selector de nivel del ganador (coloreo-por-nivel). Por defecto (vista base, va solo) = fila normal. */
+.gnivel { display: flex; flex-wrap: wrap; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem 0.5rem; font-size: 0.75rem; }
+/* Cuando sigue al toggle (selección + modo Ganador) se muestra como sub-fila tenue e indentada de él. */
+.coloreo-cluster .vista-toggle + .gnivel { padding: 0.125rem 0.75rem 0.5rem 0.875rem; margin: 0 0.75rem; border-left: 2px solid var(--color-border); }
 .gnivel__lbl { color: var(--color-ink-muted); font-weight: 600; }
 .gnivel__btn { padding: 0.2rem 0.55rem; border: 1px solid var(--color-border-strong); border-radius: 9999px; background: var(--color-surface-1); color: var(--color-ink-soft); cursor: pointer; min-height: 30px; }
 .gnivel__btn--activo { background: var(--color-ink); color: var(--color-paper); border-color: var(--color-ink); }
