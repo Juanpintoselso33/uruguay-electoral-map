@@ -2097,7 +2097,11 @@ const unsubSelection = $selection.subscribe((s) => {
   gnivel.value = esNivel(s.gnivel) ? s.gnivel : 'lema';
   syncNivelesDisponibles();
   applySelection(s.zona);
-  if (s.seleccion.length > 0) {
+  if (comparacionActiva.value) {
+    // Comparación activa: clickear una zona NO debe re-renderizar la vista base (eso causaba un
+    // flash del render común por un frame). Mantenemos el coloreo de comparación intacto.
+    renderComparacionFill();
+  } else if (s.seleccion.length > 0) {
     void applySeleccion(); // Epic 10: coloreo por selección múltiple de hojas (usa gnivel)
   } else if (gnivel.value !== 'lema') {
     void aplicarGanadorAbsolutoPorNivel(); // sin selección, sub-nivel → ganador absoluto del nivel (base = ganador)
