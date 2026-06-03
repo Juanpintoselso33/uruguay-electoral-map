@@ -103,7 +103,18 @@ def read_plan(path):
                 "dir": (row.get(c_dir, "") or "").strip()})
     return out
 
-# ---------- desglose con HOJA (Descripcion1) ----------
+# TIPO_REGISTRO del desglose → contienda del catálogo. Cubre los formatos vigentes:
+#   nacionales: HOJA_EN/VOTO_LEMA (contienda 'unica')
+#   internas:   HOJA_ODN/HOJA_ODD (contiendas 'odn'/'odd')  [PREC_*/SUBLEMA_*/VOTOS_PREC se ignoran]
+#   dep-2025:   HOJA_ED→junta · HOJA_EM→municipio (+ VOTO_LEMA_ED/_EM)
+TIPO_CONTIENDA = {
+    "HOJA_EN": "unica", "VOTO_LEMA": "unica",
+    "HOJA_ODN": "odn", "HOJA_ODD": "odd",
+    "HOJA_ED": "junta", "VOTO_LEMA_ED": "junta",
+    "HOJA_EM": "municipio", "VOTO_LEMA_EM": "municipio",
+}
+
+# ---------- desglose con HOJA (Descripcion1 y/o Descripcion2 según formato) ----------
 def read_desglose(path):
     enc = "utf-8-sig"
     try: open(path, encoding="utf-8-sig").readline()
@@ -118,41 +129,44 @@ def read_desglose(path):
                 if k in cols: return cols[k]
             return None
         c_tipo = col("TIPOREGISTRO"); c_dep = col("DEPARTAMENTO"); c_crv = col("CRV")
-        c_lema = col("LEMA"); c_desc = col("DESCRIPCION1", "DESCRIPCION"); c_vot = col("CANTIDADVOTOS")
+        c_lema = col("LEMA"); c_d1 = col("DESCRIPCION1", "DESCRIPCION"); c_d2 = col("DESCRIPCION2")
+        c_vot = col("CANTIDADVOTOS")
         for row in r:
             out.append({
                 "tipo": (row.get(c_tipo, "") or "").strip(),
                 "dep": (row.get(c_dep, "") or "").strip(),
                 "crv": (row.get(c_crv, "") or "").strip(),
                 "lema": (row.get(c_lema, "") or "").strip(),
-                "desc": (row.get(c_desc, "") or "").strip(),
+                "d1": (row.get(c_d1, "") or "").strip(),
+                "d2": (row.get(c_d2, "") or "").strip() if c_d2 else "",
                 "votos": (row.get(c_vot, "") or "").strip(),
             })
     return out
 
 def load_hoja_resolver(eleccion, dep):
-    """De catalogo.json: (lemaId, hoja)→opcionId, lemaId→opcionId(vl), y nombre(norm)→lemaId.
+    """De catalogo.json: (contienda, lemaId, hoja)→opcionId, (contienda, lemaId)→vl, nombre(norm)→lemaId.
        Devuelve None si no hay catálogo (elección sin hojas)."""
     path = os.path.join(ROOT, f"public/data/{eleccion}/{dep}/catalogo.json")
     if not os.path.exists(path): return None
     doc = json.load(open(path, encoding="utf-8"))
     name2lema = {}        # norm(etiqueta lema) -> lemaId (con y sin prefijo "PARTIDO ")
-    hoja2opc = {}         # (lemaId, hoja) -> opcionId
-    vl2opc = {}           # lemaId -> opcionId voto-al-lema
+    hoja2opc = {}         # (contienda, lemaId, hoja) -> opcionId
+    vl2opc = {}           # (contienda, lemaId) -> opcionId voto-al-lema
     def reg(nm, lid):
         nm = norm(nm)
         if not nm: return
         name2lema[nm] = lid
         name2lema[re.sub(r"^PARTIDO\s+", "", nm)] = lid  # "Partido Colorado" ↔ "Colorado"
     for c in doc.get("contiendas", []):
+        cont = c.get("contienda", "")
         for n in c.get("nodos", []):
             if n.get("nivel") == "lema":
                 reg(n.get("etiqueta", ""), n["id"])
         for o in c.get("opciones", []):
             lemaId = o.get("lemaId") or o.get("partidoId") or ""
             hoja = str(o.get("hoja") or "")
-            if hoja == "vl": vl2opc[lemaId] = o["id"]
-            elif hoja: hoja2opc[(lemaId, hoja)] = o["id"]
+            if hoja == "vl": vl2opc[(cont, lemaId)] = o["id"]
+            elif hoja: hoja2opc[(cont, lemaId, hoja)] = o["id"]
     return name2lema, hoja2opc, vl2opc
 
 def main():
@@ -196,16 +210,18 @@ def main():
             try: v = int(r["votos"])
             except: continue
             if v <= 0: continue
+            cont = TIPO_CONTIENDA.get(r["tipo"].upper())
+            if not cont: continue  # PREC_*/SUBLEMA_*/VOTOS_PREC/intendente: agregados, no son hojas
             lnm = norm(r["lema"])
             lemaId = name2lema.get(lnm) or name2lema.get(re.sub(r"^PARTIDO\s+", "", lnm))
             if not lemaId:
                 unknown.add(("lema", r["lema"])); continue
-            if r["tipo"] == "VOTO_LEMA":
-                op = vl2opc.get(lemaId)
-            else:  # HOJA_EN
-                op = hoja2opc.get((lemaId, r["desc"]))
+            if "VOTO_LEMA" in r["tipo"].upper():
+                op = vl2opc.get((cont, lemaId))
+            else:  # HOJA_*: el nº de hoja viene en D1 (nacionales/dep) o D2 (internas) → probar ambos
+                op = hoja2opc.get((cont, lemaId, r["d1"])) or hoja2opc.get((cont, lemaId, r["d2"]))
             if not op:
-                unknown.add((r["tipo"], lemaId, r["desc"])); continue
+                unknown.add((r["tipo"], lemaId, r["d1"], r["d2"])); continue
             circ_votes[str(r["crv"])][op] += v
 
         # agregar a local
