@@ -1,0 +1,17 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "API pública — Mapa Electoral de Uruguay",
+    "version": "1.0.0",
+    "description": "Datos electorales de Uruguay (resultados, catálogos, geometría). Read-only. Fuente: Corte Electoral. Datos abiertos con atribución.",
+    "license": { "name": "Datos abiertos con atribución a la Corte Electoral" }
+  },
+  "servers": [{ "url": "https://uruguay-electoral-map.vercel.app/api/v1" }],
+  "paths": {
+    "/index.json": { "get": { "summary": "Descubrimiento", "responses": { "200": { "description": "OK" } } } },
+    "/elections.json": { "get": { "summary": "Lista de elecciones", "responses": { "200": { "description": "OK" } } } },
+    "/elections/{eleccion}.json": { "get": { "summary": "Detalle de una elección (deptos + recursos)", "parameters": [{ "name": "eleccion", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "OK" } } } },
+    "/results/{eleccion}/{departamento}/votes.json": { "get": { "summary": "Resultados por zona", "parameters": [{ "name": "eleccion", "in": "path", "required": true, "schema": { "type": "string" } }, { "name": "departamento", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "OK" } } } },
+    "/geo/{departamento}/{nivel}.topo.json": { "get": { "summary": "Geometría TopoJSON", "parameters": [{ "name": "departamento", "in": "path", "required": true, "schema": { "type": "string" } }, { "name": "nivel", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "OK" } } } }
+  }
+}

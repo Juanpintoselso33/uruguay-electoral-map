@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://uruguay-electoral-map.vercel.app/api/v1/schema/index.schema.json",
+  "title": "Índice de descubrimiento",
+  "type": "object",
+  "required": ["version", "elecciones", "departamentos"],
+  "properties": {
+    "version": { "type": "string" },
+    "fuente": { "type": "string" },
+    "elecciones": { "type": "array", "items": { "type": "string" } },
+    "departamentos": { "type": "array", "items": { "type": "string" } }
+  }
+}

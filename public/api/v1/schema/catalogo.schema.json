@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://uruguay-electoral-map.vercel.app/api/v1/schema/catalogo.schema.json",
+  "title": "Catálogo de opciones",
+  "type": "object",
+  "required": ["contiendas"],
+  "properties": {
+    "contiendas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["contienda", "opciones"],
+        "properties": {
+          "contienda": { "type": "string" },
+          "niveles": { "type": "array", "items": { "type": "string" } },
+          "opciones": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id"],
+              "properties": {
+                "id": { "type": "string" },
+                "hoja": { "type": "string" },
+                "lemaId": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
