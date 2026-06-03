@@ -97,7 +97,9 @@ const canonicalPath = `/${eleccion}`;
       eleccionActual={eleccion}
       departamento="_nacional"
     />
-    <!-- Map-first: el mapa va antes que los selectores para quedar visible sin scrollear.
+    <!-- Toggle Departamentos/Zonas — control del mapa: va PEGADO arriba del mapa (Story 15.4). -->
+    <GranularitySelector client:idle />
+    <!-- Map-first: el mapa va arriba de los selectores para quedar visible sin scrollear.
          persist con nombre propio ("map-nacional") → persiste entre elecciones nacionales pero
          NO cruza con la vista por-depto (que debe re-inicializar). -->
     <div id="map-persist" transition:persist="map-nacional">
@@ -109,10 +111,8 @@ const canonicalPath = `/${eleccion}`;
         defaultNivel="departamento"
       />
     </div>
-    <!-- Controles de refinamiento, debajo del mapa -->
+    <!-- Selector de opción (listas) — debajo del mapa -->
     <OpcionAccordion client:idle eleccion={eleccion} departamento="_nacional" />
-    <!-- Toggle de granularidad departamental ↔ zona (Story 15.4) -->
-    <GranularitySelector client:idle />
     <DataTable eleccion={eleccion} departamento="_nacional" />
     <Sello eleccion={eleccion} departamento="_nacional" />
   </main>
