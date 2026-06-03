@@ -1652,6 +1652,9 @@ async function reloadData(eleccion: string, departamento: string, nivel: string)
   catalogoNodeLabel = new Map();
   catalogoNivelesPorCont = new Map();
   catalogoPromise = null;
+  nivelesDisponibles.value = ['lema'];
+  // Re-cargar el catálogo (eager) para repoblar los niveles del selector gnivel tras navegar.
+  void ensureCatalogo(eleccion, departamento).then(syncNivelesDisponibles);
   hojaVotos = new Map();
   circuitoZonaPorGeo = new Map();   // ficha por circuito/local: limpiar dato del overlay al cambiar depto/elección
   circuitHojaVotos = new Map();     // desglose por hoja del local: idem
@@ -1940,8 +1943,8 @@ const unsubSelection = $selection.subscribe((s) => {
   applySelection(s.zona);
   if (s.seleccion.length > 0) {
     void applySeleccion(); // Epic 10: coloreo por selección múltiple de hojas (usa gnivel)
-  } else if (gnivel.value !== 'lema' && coloreoMode.value === 'ganador') {
-    void aplicarGanadorAbsolutoPorNivel(); // sin selección, sub-nivel → ganador absoluto del nivel
+  } else if (gnivel.value !== 'lema') {
+    void aplicarGanadorAbsolutoPorNivel(); // sin selección, sub-nivel → ganador absoluto del nivel (base = ganador)
   } else {
     if (seleccionFCActive) restoreGanadorDesdeSeleccion(); // restaurar desde el FC de selección
     applyOpcionFilter(s.opcion);
@@ -2113,8 +2116,11 @@ onMounted(async () => {
         seleccionActiva.value = [...initSel.seleccion];
         if (initSel.modo === 'ganador' || initSel.modo === 'share' || initSel.modo === 'heatmap') coloreoMode.value = initSel.modo;
         gnivel.value = esNivel(initSel.gnivel) ? initSel.gnivel : 'lema';
+        // Carga eager del catálogo para conocer los niveles agrupables → el selector gnivel
+        // aparece ya en la vista base (sin esperar a una selección).
+        void ensureCatalogo(activeEleccion, activeDepartamento).then(syncNivelesDisponibles);
         if (initSel.seleccion.length > 0) void applySeleccion();
-        else if (gnivel.value !== 'lema' && coloreoMode.value === 'ganador') void aplicarGanadorAbsolutoPorNivel();
+        else if (gnivel.value !== 'lema') void aplicarGanadorAbsolutoPorNivel();
       }
       status.value = 'listo';
       readResultadoCtx(); // contexto inicial (elección · depto) del masthead
@@ -2222,7 +2228,7 @@ onUnmounted(() => {
     <!-- Selector de nivel del ganador (coloreo-por-nivel): solo en modo Ganador y si la contienda
          tiene >1 nivel agrupable. No depende de la selección (sin selección = ganador absoluto). -->
     <div
-      v-if="coloreoMode === 'ganador' && nivelesDisponibles.length > 1"
+      v-if="(seleccionActiva.length === 0 || coloreoMode === 'ganador') && nivelesDisponibles.length > 1"
       class="gnivel" role="group" aria-label="Nivel del ganador"
     >
       <span class="gnivel__lbl">Ganador por:</span>
