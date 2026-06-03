@@ -121,7 +121,12 @@ function readResultadoCtx(): void {
   // El masthead nacional agrega "— mapa nacional" (redundante con "Resultado nacional") → se recorta.
   const ele = (document.querySelector('.masthead__eleccion')?.textContent ?? '').split('—')[0].trim();
   const dep = document.querySelector('.masthead__dept')?.textContent?.trim() ?? '';
-  resultadoCtx.value = activeDepartamento === '_nacional' ? ele : [ele, dep].filter(Boolean).join(' · ');
+  // En departamentales la base (votes.json) es SIEMPRE el resultado de Intendente (= Junta a nivel
+  // lema; Municipio es otra papeleta). Se aclara para que el número no se confunda con la contienda
+  // activa del selector (que solo cambia las listas, no la base). No aplica a otras elecciones.
+  const contest = activeEleccion.includes('departamentales') ? 'Intendente' : '';
+  const partes = activeDepartamento === '_nacional' ? [ele, contest] : [ele, dep, contest];
+  resultadoCtx.value = partes.filter(Boolean).join(' · ');
 }
 const selected = ref<SelInfo | null>(null);
 const map = shallowRef<MlMap | null>(null);
