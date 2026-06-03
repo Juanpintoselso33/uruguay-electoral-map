@@ -2092,7 +2092,11 @@ onUnmounted(() => {
       :titulo="departamento === '_nacional' ? 'Resultado nacional' : 'Resultado'"
     />
 
-    <MapLegend :entradas="legend" :sin-datos="sinDatos" :votos-sin-ubicacion="votosSinUbicacion" :zonas-sin-ubicacion="zonasSinUbicacion" />
+    <!-- La leyenda solo aporta en modos selección/filtro/intensidad (escala) o si hay nota de
+         votos sin ubicación. En el modo ganador base duplica a RESULTADO → se oculta. -->
+    <MapLegend
+      v-if="opcionActiva || seleccionActiva.length > 0 || votosSinUbicacion > 0"
+      :entradas="legend" :sin-datos="sinDatos" :votos-sin-ubicacion="votosSinUbicacion" :zonas-sin-ubicacion="zonasSinUbicacion" />
   </section>
 </template>
 
