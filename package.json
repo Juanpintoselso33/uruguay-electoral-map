@@ -83,7 +83,10 @@
     "etl:totales-fetch": "python scripts/fetch-totales-ckan.py",
     "etl:no-partidarios": "python scripts/build-no-partidarios.py",
     "gate:grises": "python scripts/gate-grises.py",
-    "gate:no-partidarios": "python scripts/gate-no-partidarios.py"
+    "gate:no-partidarios": "python scripts/gate-no-partidarios.py",
+    "gate:api": "node scripts/gate-api-contract.mjs",
+    "etl:api-index": "python scripts/build-api-index.py",
+    "etl:api-dumps": "python scripts/build-api-dumps.py"
   },
   "dependencies": {
     "@nanostores/vue": "^0.11.0",
@@ -109,6 +112,7 @@
     "@types/topojson-server": "^3.0.4",
     "@types/topojson-simplify": "^3.0.3",
     "@vue/test-utils": "^2.4.10",
+    "ajv": "^8.20.0",
     "jsdom": "^28.1.0",
     "playwright": "^1.60.0",
     "tailwindcss": "^4.1.13",

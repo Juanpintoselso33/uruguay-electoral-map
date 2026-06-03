@@ -1,0 +1,18 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "API pública — Mapa Electoral de Uruguay",
+    "version": "1.0.0",
+    "description": "Datos electorales de Uruguay (resultados, catálogos, geometría). Read-only, CORS abierto, cache inmutable. El descubrimiento vive en /api/v1/index.json. Toda la superficie cuelga de /api/v1/. Fuente: Corte Electoral. Datos abiertos con atribución.",
+    "license": { "name": "Datos abiertos con atribución a la Corte Electoral" }
+  },
+  "servers": [{ "url": "https://uruguay-electoral-map.vercel.app" }],
+  "paths": {
+    "/api/v1/index.json": { "get": { "summary": "Descubrimiento (elecciones, departamentos, links)", "responses": { "200": { "description": "OK" } } } },
+    "/api/v1/elections.json": { "get": { "summary": "Lista de elecciones", "responses": { "200": { "description": "OK" } } } },
+    "/api/v1/elections/{eleccion}.json": { "get": { "summary": "Detalle de una elección (deptos + recursos)", "parameters": [{ "name": "eleccion", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "OK" } } } },
+    "/api/v1/dumps/{eleccion}.ndjson": { "get": { "summary": "Dump NDJSON por elección", "parameters": [{ "name": "eleccion", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "OK" } } } },
+    "/api/v1/results/{eleccion}/{departamento}/votes.json": { "get": { "summary": "Resultados por zona", "parameters": [{ "name": "eleccion", "in": "path", "required": true, "schema": { "type": "string" } }, { "name": "departamento", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "OK" } } } },
+    "/api/v1/geo/{departamento}/{nivel}.topo.json": { "get": { "summary": "Geometría TopoJSON", "parameters": [{ "name": "departamento", "in": "path", "required": true, "schema": { "type": "string" } }, { "name": "nivel", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "OK" } } } }
+  }
+}

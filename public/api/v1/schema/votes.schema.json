@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://uruguay-electoral-map.vercel.app/api/v1/schema/votes.schema.json",
+  "title": "Resultados por zona (votes)",
+  "type": "object",
+  "required": ["zonas"],
+  "properties": {
+    "nivel": { "type": "string" },
+    "zonas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["geoId", "validos", "porOpcion"],
+        "properties": {
+          "geoId": { "type": "string" },
+          "validos": { "type": "integer", "minimum": 0 },
+          "ganadorOpcionId": { "type": "string" },
+          "porOpcion": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["opcionId", "votos"],
+              "properties": {
+                "opcionId": { "type": "string" },
+                "votos": { "type": "integer" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
