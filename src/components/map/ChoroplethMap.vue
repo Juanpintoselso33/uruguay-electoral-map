@@ -721,6 +721,7 @@ function drawFlagOverlay(m: MlMap): void {
   if (!flagCtx || !flagCanvas) return;
   syncFlagCanvasSize(m);
   flagCtx.clearRect(0, 0, flagCanvas.width, flagCanvas.height);
+  flagCtx.globalAlpha = 1.0; // baseline; la atenuación de flip se aplica por-bandera en Pasada 1
 
   const dpr = window.devicePixelRatio || 1;
 
@@ -760,12 +761,17 @@ function drawFlagOverlay(m: MlMap): void {
       }
     };
 
+    // Comparación modo "cambió ganador": atenuar las banderas de las zonas que NO cambiaron
+    // → las que flipearon quedan a full y saltan. Mantiene TODAS las banderas visibles.
+    const flipDim = comparacionActiva.value && cmpModo.value === 'ganador';
     // Pasada 1: flags recortados a cada polígono completo (un solo drawImage por barrio)
     for (const f of feats) {
       const props = f.properties as Record<string, unknown>;
       if (!props.flagPattern || !props.hasData) continue;
       const img = flagImgs[props.flagPattern as string];
       if (!img) continue;
+      const fname = String(props.name ?? '');
+      const dimmed = flipDim && !m.getFeatureState({ source: 'zonas', id: fname })?.vsChanged;
       const bbox = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
       tracePath(f, bbox);
       if (!Number.isFinite(bbox.minX)) continue;
@@ -783,7 +789,7 @@ function drawFlagOverlay(m: MlMap): void {
       const flagAspect = img.naturalWidth / img.naturalHeight;
       let dw = bw, dh = bw / flagAspect;
       if (dh < bh) { dh = bh; dw = bh * flagAspect; }
-      flagCtx.globalAlpha = 1.0;
+      flagCtx.globalAlpha = dimmed ? 0.3 : 1.0;
       flagCtx.drawImage(img, minX + (bw - dw) / 2, minY + (bh - dh) / 2, dw, dh);
       flagCtx.restore();
     }
@@ -791,6 +797,7 @@ function drawFlagOverlay(m: MlMap): void {
     // Pasada 2: bordes encima de todos los flags + highlight de zona seleccionada
     const selectedGeoId = selected.value?.geoId ?? null;
     flagCtx.lineJoin = 'round';
+    flagCtx.globalAlpha = 1.0; // los bordes nunca se atenúan (Pasada 1 pudo dejar alpha < 1)
     for (const f of feats) {
       const fid = String((f.properties as { name?: string }).name ?? '');
       tracePath(f);
@@ -1655,18 +1662,23 @@ function renderComparacionFill(): void {
   const fc = fcRef.value;
   if (!m || !fc) return;
   if (cmpModo.value !== 'delta' || !cmpDeltaSigla.value) {
-    // 'ganador' (flip) por REALCE-POR-CONTRASTE (reemplaza el contorno naranja, que no leía):
-    // las zonas que CAMBIARON de ganador quedan a todo color; las que se mantuvieron, atenuadas
-    // (fantasma). Técnica de cartografía electoral estándar — las que flipearon saltan solas.
+    // 'ganador' (flip) por REALCE-POR-CONTRASTE, MANTENIENDO LAS BANDERAS: las zonas que cambiaron
+    // de ganador quedan a full; las que se mantuvieron, atenuadas. Las banderas (canvas) se atenúan
+    // por alpha en drawFlagOverlay; los rellenos sólidos (sin bandera) por fill-opacity acá.
     for (const f of fc.features) {
       const name = String((f.properties as { name: string }).name);
       m.setFeatureState({ source: 'zonas', id: name }, { delta: 0, deltaNA: false });
     }
-    setPatternVisible(false); // colores sólidos (sin banderas) para que la atenuación lea limpia
+    setPatternVisible(true); // banderas SIEMPRE visibles
     if (m.getLayer('zonas-vs-changed')) m.setLayoutProperty('zonas-vs-changed', 'visibility', 'none'); // contorno abandonado
     m.setPaintProperty('zonas-fill', 'fill-color', ['get', 'color']);
-    m.setPaintProperty('zonas-fill', 'fill-opacity',
-      ['case', ['boolean', ['feature-state', 'vsChanged'], false], 0.92, 0.14]);
+    m.setPaintProperty('zonas-fill', 'fill-opacity', [
+      'case',
+      ['!=', ['get', 'flagPattern'], null], 0,                              // con bandera → la dibuja el canvas
+      ['boolean', ['feature-state', 'vsChanged'], false], 0.85,             // sin bandera, cambió → full
+      0.22,                                                                 // sin bandera, se mantuvo → atenuado
+    ]);
+    drawFlagOverlay(m); // redibuja banderas con la atenuación de las que no cambiaron
     return;
   }
   const sigla = cmpDeltaSigla.value;
@@ -1719,6 +1731,7 @@ function clearComparisonOverlay(): void {
   legend.value = origLegend;
   comparacionActiva.value = false;
   cmpModo.value = 'ganador';
+  drawFlagOverlay(m); // redibuja banderas a full (sin atenuación de flip)
 }
 
 /**
