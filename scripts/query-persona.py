@@ -61,11 +61,16 @@ def hoja_opcion(cat_doc, hoja: str, partido: str | None = None) -> str | None:
         return None
     if len(candidates) == 1:
         return candidates[0]
-    # Si hay varios (improbable) intentar usar partido como desambiguador
+    # Si hay varios (improbable) intentar usar partido como desambiguador.
+    # Se prueba el slug completo ("partido-nacional") Y sin el prefijo "partido-"
+    # ("nacional"), porque los opcionId omiten ese prefijo (ej. "unica-nacional-40").
     if partido:
         partido_slug = norm(partido).lower().replace(" ", "-")
+        # quitar prefijo "partido-" si existe (ej. "partido-nacional" → "nacional")
+        slug_no_prefix = partido_slug[len("partido-"):] if partido_slug.startswith("partido-") else partido_slug
         for oid in candidates:
-            if partido_slug in oid.lower():
+            oid_lower = oid.lower()
+            if partido_slug in oid_lower or slug_no_prefix in oid_lower:
                 return oid
     return candidates[0]
 
@@ -160,10 +165,12 @@ def main() -> None:
             }
         # Si ya existe la key, simplemente ignoramos (misma lista, otro cargo)
 
-    # Sumar votos
+    # Sumar votos — agrupados por elección para no mezclar distintas instancias.
+    # Estructura: por_eleccion[eleccion][depto] += votos
+    por_eleccion: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+
     print("Detalle por elección / departamento / hoja:")
     print("-" * 70)
-    por_depto: dict[str, int] = defaultdict(int)
 
     for key, info in sorted(deduped.items()):
         eleccion, depto, oid = key
@@ -174,7 +181,7 @@ def main() -> None:
             f"  {info['eleccion']} · {info['cargo']} · hoja {info['hoja']}"
             f" · {info['depto']}: {v:,} votos de la lista{sin_dato}"
         )
-        por_depto[depto] += v
+        por_eleccion[eleccion][depto] += v
 
     if lineas_sin_desglose:
         print()
@@ -183,15 +190,17 @@ def main() -> None:
             print(l)
 
     print()
-    print("Ranking de departamentos (votos totales de las listas que integra):")
+    print("Ranking de departamentos por elección (votos totales de las listas que integra):")
     print("-" * 70)
-    grand_total = 0
-    for depto, v in sorted(por_depto.items(), key=lambda kv: -kv[1]):
-        print(f"  {depto:<20} {v:>10,}")
-        grand_total += v
-    print(f"  {'TOTAL PAÍS':<20} {grand_total:>10,}")
+    for eleccion in sorted(por_eleccion.keys()):
+        depto_votos = por_eleccion[eleccion]
+        total_eleccion = sum(depto_votos.values())
+        print(f"  [{eleccion}]")
+        for depto, v in sorted(depto_votos.items(), key=lambda kv: -kv[1]):
+            print(f"    {depto:<20} {v:>10,}")
+        print(f"    {'  TOTAL':<20} {total_eleccion:>10,}")
+        print()
 
-    print()
     print(
         "NOTA: es el voto a la LISTA (hoja), no voto personal "
         "— así funciona el voto legislativo en UY."

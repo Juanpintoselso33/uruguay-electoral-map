@@ -3,7 +3,9 @@
   - algún registro no tiene personaId (credencial) o hoja;
   - faltan cargos legislativos esperados (SENADOR / REPRESENTANTE) en nacionales;
   - la tasa de hojas huérfanas absolutas supera el umbral HUERFANAS_HARD_PCT
-    (indicaría un bug de formato/join sistémico, no candidaturas sin votos).
+    (indicaría un bug de formato/join sistémico, no candidaturas sin votos);
+  - la sonda de conteo no-cero falla: resuelve una persona legislativa real → 0 votos
+    (indicaría que el join hoja→opcionId→hoja-local está roto sin que nada lo detecte).
 
 DISEÑO DEL CHEQUEO DE FANTASMAS:
   En elecciones nacionales, una hoja puede presentarse en los 19 departamentos pero
@@ -28,12 +30,22 @@ DISEÑO DEL CHEQUEO DE FANTASMAS:
   OK del gate significa: "todas las hojas con ≥1 voto en algún depto están
   correctamente representadas en la nómina". No certifica hojas con cero votos totales.
 
+DISEÑO DE LA SONDA DE CONTEO NO-CERO:
+  Por cada shard, toma la persona con más apariciones entre los cargos legislativos
+  (SENADOR/REPRESENTANTE en nacionales, ODN/ODD en internas, JUNTA DEPARTAMENTAL en
+  departamentales). Resuelve su hoja → opcionId via catalogo.json y suma votos desde
+  hoja-local.json (misma lógica que query-persona.py). Si el total da 0, el gate falla:
+  ese resultado implica que el join produce votos, no solo que la hoja existe.
+  Si no hay hoja-local.json para la elección se omite la sonda (advertencia).
+
 Uso: python scripts/gate-personas.py
 """
 import json
 import os
 import glob
 import sys
+import unicodedata
+from collections import Counter, defaultdict
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIR = os.path.join(ROOT, "public", "data", "personas")
@@ -43,6 +55,8 @@ DIR = os.path.join(ROOT, "public", "data", "personas")
 # ---------------------------------------------------------------------------
 
 _union_cache: dict[str, set[str]] = {}
+_cat_cache: dict[str, dict] = {}
+_hl_cache: dict[str, dict[str, int]] = {}
 
 
 def hojas_union_catalogo(eleccion: str) -> set[str]:
@@ -60,6 +74,123 @@ def hojas_union_catalogo(eleccion: str) -> set[str]:
                     union.add(str(o["hoja"]))
     _union_cache[eleccion] = union
     return union
+
+
+def _get_cat(eleccion: str, depto: str) -> dict:
+    """Carga y cachea catalogo.json de una combinación eleccion+depto."""
+    key = f"{eleccion}/{depto}"
+    if key not in _cat_cache:
+        path = os.path.join(ROOT, "public", "data", eleccion, depto, "catalogo.json")
+        _cat_cache[key] = json.load(open(path, encoding="utf-8")) if os.path.exists(path) else {}
+    return _cat_cache[key]
+
+
+def _hoja_opcion(cat_doc: dict, hoja: str, partido: str | None = None) -> str | None:
+    """Resuelve hoja → opcionId. Si hay ambigüedad, desambigua por partido.
+
+    Prueba el slug completo ("partido-nacional") Y sin el prefijo "partido-"
+    ("nacional") para cubrir opcionIds que omiten dicho prefijo.
+    """
+    hoja_str = str(hoja)
+    candidates = [
+        o["id"]
+        for c in cat_doc.get("contiendas", [])
+        for o in c.get("opciones", [])
+        if str(o.get("hoja")) == hoja_str
+    ]
+    if not candidates:
+        return None
+    if len(candidates) == 1:
+        return candidates[0]
+    if partido:
+        slug = unicodedata.normalize("NFD", partido)
+        slug = "".join(ch for ch in slug if unicodedata.category(ch) != "Mn")
+        slug = slug.lower().replace(" ", "-")
+        slug_no_prefix = slug[len("partido-"):] if slug.startswith("partido-") else slug
+        for oid in candidates:
+            oid_l = oid.lower()
+            if slug in oid_l or slug_no_prefix in oid_l:
+                return oid
+    return candidates[0]
+
+
+def _oid_totals(eleccion: str, depto: str) -> dict[str, int]:
+    """Carga hoja-local.json y suma votos por opcionId (total depto). Cacheado."""
+    key = f"{eleccion}/{depto}"
+    if key not in _hl_cache:
+        hl_path = os.path.join(ROOT, "public", "data", eleccion, depto, "hoja-local.json")
+        if not os.path.exists(hl_path):
+            _hl_cache[key] = {}
+        else:
+            doc = json.load(open(hl_path, encoding="utf-8"))
+            totals: dict[str, int] = defaultdict(int)
+            for z in doc.get("zonas", []):
+                for o in z.get("porOpcion", []):
+                    totals[o["opcionId"]] += o.get("votos", 0)
+            _hl_cache[key] = dict(totals)
+    return _hl_cache[key]
+
+
+# Cargos legislativos por tipo de elección (para la sonda de conteo)
+CARGOS_SONDA: dict[str, set[str]] = {
+    "nacionales": {"SENADOR", "REPRESENTANTE"},
+    "internas": {"ODN", "ODD"},
+    "departamentales": {"JUNTA DEPARTAMENTAL"},
+}
+
+
+def sonda_conteo(eleccion: str, regs: list[dict]) -> tuple[bool, str]:
+    """Sonda: toma la persona con más apariciones en cargos legislativos y verifica
+    que su join hoja→opcionId→hoja-local produce >0 votos en al menos un depto.
+
+    Retorna (ok: bool, mensaje: str).
+    """
+    # Determinar tipo de elección para elegir cargos
+    tipo = next((t for t in CARGOS_SONDA if eleccion.startswith(t)), None)
+    if tipo is None:
+        return True, f"  sonda: elección '{eleccion}' sin cargos sonda definidos — omitida"
+
+    target_cargos = CARGOS_SONDA[tipo]
+    leg = [r for r in regs if r.get("cargo", "").upper() in target_cargos]
+    if not leg:
+        return True, f"  sonda: no hay registros con cargos {target_cargos} en {eleccion} — omitida"
+
+    # Persona con más apariciones entre los legislativos
+    cnt = Counter(r["personaId"] for r in leg)
+    probe_id, _ = cnt.most_common(1)[0]
+    probe_recs = [r for r in leg if r["personaId"] == probe_id]
+    nombre = probe_recs[0]["nombre"]
+    hoja = probe_recs[0]["hoja"]
+
+    # Deduplicar por depto para no sumar el mismo depto dos veces (persona con
+    # múltiples cargos en el mismo departamento).
+    deptos_vistos: set[str] = set()
+    total_votos = 0
+    for r in probe_recs:
+        depto = r["departamento"]
+        if depto in deptos_vistos:
+            continue
+        deptos_vistos.add(depto)
+        partido = r.get("partido", "")
+        cat_doc = _get_cat(eleccion, depto)
+        if not cat_doc:
+            continue
+        oid = _hoja_opcion(cat_doc, hoja, partido)
+        if not oid:
+            continue
+        totals = _oid_totals(eleccion, depto)
+        total_votos += totals.get(oid, 0)
+
+    msg_probe = (
+        f"  sonda [{eleccion}]: {probe_id} ({nombre}), hoja {hoja}, "
+        f"{len(deptos_vistos)} depto(s) → {total_votos:,} votos"
+    )
+    if total_votos == 0:
+        return False, (
+            f"join roto: persona {probe_id} ({nombre}) hoja {hoja} "
+            f"resolvió 0 votos en {eleccion} — verificá catalogo.json y hoja-local.json"
+        )
+    return True, msg_probe
 
 
 # ---------------------------------------------------------------------------
@@ -80,10 +211,9 @@ HUERFANAS_HARD_PCT = 10.0
 # ---------------------------------------------------------------------------
 
 def main() -> None:
-    from collections import defaultdict
-
     errs: list[str] = []
     infos: list[str] = []
+    probe_msgs: list[str] = []
 
     shards = sorted(glob.glob(os.path.join(DIR, "personas-hoja.*.json")))
     if not shards:
@@ -149,7 +279,17 @@ def main() -> None:
                 # Tasa baja → candidaturas reales sin votos (verificado en fuente) → info
                 infos.append(msg)
 
+        # 4. Sonda de conteo no-cero: verifica que el join hoja→opcionId→hoja-local
+        #    produzca votos reales para una persona legislativa conocida del shard.
+        sonda_ok, sonda_msg = sonda_conteo(eleccion, regs)
+        probe_msgs.append(sonda_msg)
+        if not sonda_ok:
+            errs.append(sonda_msg)
+
     print(f"[gate:personas] {len(shards)} shard(s), {total_regs_global:,} registros")
+    print("  sondas de conteo no-cero:")
+    for pm in probe_msgs:
+        print(pm)
     if infos:
         print(f"  · {len(infos)} aviso(s) de hojas sin votos (tasa <{HUERFANAS_HARD_PCT:.0f}%, esperado):")
         for i in infos:
@@ -163,7 +303,8 @@ def main() -> None:
 
     print(
         "[gate:personas] OK — campos completos, cargos legislativos presentes, "
-        f"tasa de hojas huérfanas dentro del umbral (<{HUERFANAS_HARD_PCT:.0f}%)."
+        f"tasa de hojas huérfanas dentro del umbral (<{HUERFANAS_HARD_PCT:.0f}%), "
+        "sonda de votos > 0."
     )
 
 

@@ -99,6 +99,23 @@ def main():
             "titularSuplente": clean(r.get("TitularSuplente")) or None,
         }
         out.append(rec)
+
+    # Guard FIX 3: abortar si la elección no tiene credenciales válidas.
+    # nacionales-2019 y nacionales-2014 NO tienen CredencialSerie/CredencialNumero,
+    # lo que produce masivamente personaId="-" → shard inútil.
+    if out:
+        sin_cred = sum(
+            1 for rec in out
+            if not rec["personaId"] or rec["personaId"] == "-"
+        )
+        tasa = sin_cred / len(out)
+        if tasa > 0.5:
+            raise SystemExit(
+                f"ABORTANDO: la elección '{eleccion}' no tiene credencial en la integración "
+                f"({sin_cred:,}/{len(out):,} registros = {tasa:.0%} sin personaId) "
+                f"— no apta para la dimensión por credencial."
+            )
+
     destdir = os.path.join(ROOT, "public/data/personas")
     os.makedirs(destdir, exist_ok=True)
     dest = os.path.join(destdir, f"personas-hoja.{eleccion}.json")
