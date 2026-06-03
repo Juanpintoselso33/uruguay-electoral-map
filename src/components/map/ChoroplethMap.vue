@@ -456,6 +456,9 @@ let zonasDisplayFC: FeatureCollection | null = null;
 // Ficha por circuito/local: dato completo de cada local/circuito del overlay (norm(geoId) → zona).
 type ZonaLocal = AgregadoZona & { local?: { nombre: string; direccion: string; habilitados: number }; circuitos?: CircuitoBreak[] };
 let circuitoZonaPorGeo = new Map<string, ZonaLocal>();
+// Desglose por HOJA del nivel local (hoja-local.json), keyed por norm(localId) → opcionId → votos.
+// Da el detalle por lista/sublema en la ficha del circuito y coloreo hoja-exacto (si existe el shard).
+let circuitHojaVotos = new Map<string, Map<string, number>>();
 
 /** Carga los SVGs de banderas como HTMLImageElement para el canvas overlay. */
 async function loadFlagImages(): Promise<void> {
@@ -517,6 +520,33 @@ function siglaDeOpcion(oid: string): string {
   return resolveParty(nombrePartidoDeOpcion(oid), activeEleccion).sigla;
 }
 
+/** Votos de la selección en un circuito/local: si existe hoja-local.json suma EXACTO las hojas
+ *  seleccionadas; si no, agrega por partido (sigla) desde el porOpcion lema-level. Devuelve el total
+ *  y el desglose por partido (para el modo "ganador entre seleccionados"). */
+function circuitSelVotes(z: ZonaLocal, sel: string[], selSiglas: Set<string>): { sum: number; porPartido: Map<string, { votos: number; nombre: string }> } {
+  const hojaMap = circuitHojaVotos.get(norm(z.geoId));
+  const porPartido = new Map<string, { votos: number; nombre: string }>();
+  let sum = 0;
+  if (hojaMap) {
+    for (const oid of sel) {
+      const v = hojaMap.get(oid) ?? 0; if (v <= 0) continue;
+      sum += v;
+      const sigla = siglaDeOpcion(oid);
+      const e = porPartido.get(sigla) ?? { votos: 0, nombre: nombrePartidoDeOpcion(oid) };
+      e.votos += v; porPartido.set(sigla, e);
+    }
+  } else {
+    for (const o of z.porOpcion) {
+      const sigla = siglaDeOpcion(o.opcionId);
+      if (!selSiglas.has(sigla)) continue;
+      sum += o.votos;
+      const e = porPartido.get(sigla) ?? { votos: 0, nombre: opcNombreMap.get(o.opcionId) ?? o.opcionId };
+      e.votos += o.votos; porPartido.set(sigla, e);
+    }
+  }
+  return { sum, porPartido };
+}
+
 /** Contexto de coloreo de los dots de circuito para el frame actual: modo activo + siglas de la
  *  selección + máximos de escala (heatmap/intensidad se normalizan al máximo sobre los circuitos). */
 function circuitColorCtx(): {
@@ -535,7 +565,7 @@ function circuitColorCtx(): {
       const z = circuitoZonaPorGeo.get(norm(String((f.properties as { name?: string }).name ?? '')));
       if (!z) continue;
       if (sel.length > 0 && modo === 'heatmap') {
-        let s = 0; for (const o of z.porOpcion) if (selSiglas.has(siglaDeOpcion(o.opcionId))) s += o.votos;
+        const s = circuitSelVotes(z, sel, selSiglas).sum;
         if (s > maxSelSum) maxSelSum = s;
       }
       if (opcion && intensidad && z.validos > 0) {
@@ -556,22 +586,15 @@ function circuitStyle(z: ZonaLocal, ctx: ReturnType<typeof circuitColorCtx>): { 
     const meta = resolveParty(nombre, activeEleccion);
     return { color: meta.color, flagPattern: meta.flagUrl ? `flag-${meta.sigla.toLowerCase()}` : null };
   };
-  // Selección activa (acordeón): ganador-entre-seleccionado | share | heatmap. Agrega por partido.
+  // Selección activa (acordeón): ganador-entre-seleccionado | share | heatmap.
+  // Hoja-exacto si hay hoja-local.json; si no, agrega por partido (sigla).
   if (ctx.sel.length > 0) {
-    const porPartido = new Map<string, { votos: number; nombre: string }>();
-    for (const o of z.porOpcion) {
-      const sigla = siglaDeOpcion(o.opcionId);
-      if (!ctx.selSiglas.has(sigla)) continue;
-      const nombre = opcNombreMap.get(o.opcionId) ?? o.opcionId;
-      const e = porPartido.get(sigla) ?? { votos: 0, nombre };
-      e.votos += o.votos; porPartido.set(sigla, e);
-    }
+    const { sum, porPartido } = circuitSelVotes(z, ctx.sel, ctx.selSiglas);
     if (ctx.modo === 'ganador') {
       let best: { votos: number; nombre: string } | null = null;
       for (const v of porPartido.values()) if (!best || v.votos > best.votos) best = v;
       return best && best.votos > 0 ? partyStyle(best.nombre) : { color: MUTED, flagPattern: null };
     }
-    let sum = 0; for (const v of porPartido.values()) sum += v.votos;
     if (sum <= 0) return { color: validos > 0 ? (ctx.modo === 'heatmap' ? HEAT_STOPS[0] : MUTED) : COLOR_SIN_DATOS, flagPattern: null };
     const t = ctx.modo === 'share' ? (validos > 0 ? Math.min(1, sum / validos) : 0) : Math.min(1, sum / ctx.maxSelSum);
     const color = ctx.modo === 'heatmap' ? heatColor(Math.max(0.05, t)) : interpolateHex(INTENSIDAD_LIGHT, SEL_BASE, Math.max(0.1, t));
@@ -967,15 +990,17 @@ function selSumZona(key: string, sel: string[]): number {
 }
 
 /** Desglose por hoja de la selección en una zona, agrupado por lema (Story 10.5). */
-function buildDesglose(key: string, sel: string[]): { grupos: DesgloseGrupo[]; total: number } {
+function buildDesglose(key: string, sel: string[], votesFor?: (id: string) => number): { grupos: DesgloseGrupo[]; total: number } {
   const TOP = 10;
+  // votesFor permite reusar el desglose para circuitos (que leen su propio mapa hoja-local).
+  const lookup = votesFor ?? ((id: string) => hojaVotos.get(key)?.get(id) ?? zonasVotos.get(key)?.get(id) ?? 0);
   // Agrupar por (contienda, lema): aunque hoy la selección es de una sola contienda
   // (el acordeón la limpia al cambiar), esto evita conflar odn+odd del mismo lema (AC6).
   const byLema = new Map<string, { nombre: string; hojas: { id: string; label: string; votos: number }[]; total: number }>();
   let total = 0;
   for (const id of sel) {
     const meta = catalogoOpcMeta?.get(id);
-    const votos = hojaVotos.get(key)?.get(id) ?? zonasVotos.get(key)?.get(id) ?? 0;
+    const votos = lookup(id);
     total += votos; // el total cuenta SIEMPRE
     if (!meta || !meta.lemaId) {
       // Tipos planos (balotaje/plebiscito/referéndum) o selección por opción simple (Epic 12):
@@ -1181,10 +1206,11 @@ async function applySeleccion(): Promise<void> {
   const zonaSel = $selection.get().zona;
   // setData resetea los feature-state: re-aplicar el resaltado de la zona seleccionada + ficha.
   const reaplicarZona = (): void => {
-    if (zonaSel) {
-      m.setFeatureState({ source: 'zonas', id: zonaSel }, { sel: true });
-      selectByName(zonaSel, fc);
-    }
+    if (!zonaSel) return;
+    // Circuito/local seleccionado: re-armar su ficha ahora que el catálogo ya cargó (desglose por hoja).
+    if (circuitoZonaPorGeo.has(norm(zonaSel))) { selectCircuitoLocal(zonaSel); return; }
+    m.setFeatureState({ source: 'zonas', id: zonaSel }, { sel: true });
+    selectByName(zonaSel, fc);
   };
 
   if (modo === 'ganador') {
@@ -1471,6 +1497,8 @@ async function reloadData(eleccion: string, departamento: string, nivel: string)
   catalogoPromise = null;
   hojaVotos = new Map();
   circuitoZonaPorGeo = new Map();   // ficha por circuito/local: limpiar dato del overlay al cambiar depto/elección
+  circuitHojaVotos = new Map();     // desglose por hoja del local: idem
+
   lemasCargados = new Set();
   hojaGeoPromise = null; // Story 7.8: re-cargar el consolidado hoja-{nivel} al cambiar nivel/depto
   seleccionFCActive = false;
@@ -1555,6 +1583,19 @@ async function loadCircuitoOverlay(eleccion: string, departamento: string): Prom
 
     const zonaPorGeo = new Map(votes.zonas.map((z) => [norm(z.geoId), z]));
     circuitoZonaPorGeo = new Map(votes.zonas.map((z) => [norm(z.geoId), z as ZonaLocal]));
+    // Desglose por HOJA del local (si existe el shard): detalle por lista en la ficha + coloreo exacto.
+    circuitHojaVotos = new Map();
+    if (votes.nivel === 'local') {
+      try {
+        const hlRes = await fetch(`${base}/data/${eleccion}/${departamento}/hoja-local.json`);
+        if (hlRes.ok) {
+          const hl = (await hlRes.json()) as VotosShard;
+          for (const z of hl.zonas) {
+            circuitHojaVotos.set(norm(z.geoId), new Map(z.porOpcion.map((o) => [o.opcionId, o.votos])));
+          }
+        }
+      } catch { /* sin hoja-local → la ficha degrada a nivel partido */ }
+    }
     for (const f of geo.features) {
       const name = String((f.properties as { name: string }).name);
       const zona = zonaPorGeo.get(norm(name));
@@ -1684,13 +1725,17 @@ function selectCircuitoLocal(name: string): void {
     const m = resolveParty(nm, activeEleccion);
     return { circuito: c.circuito, sigla: m.sigla, nombre: nm, color: m.color, flagUrl: m.flagUrl, validos: c.validos };
   });
-  // Desglose de lo seleccionado en este circuito (paridad con selectByName, a nivel partido).
+  // Desglose de lo seleccionado en este circuito (paridad con selectByName). Si existe hoja-local
+  // → detalle COMPLETO por lista/sublema (igual que zona); si no → agregado por partido.
   const opcionId = $selection.get().opcion;
   const selFicha = seleccionActiva.value.length > 0 ? seleccionActiva.value : opcionId ? [opcionId] : [];
-  const desgRaw = selFicha.length > 0 ? buildDesgloseCircuito(z, selFicha) : null;
+  const hojaMap = circuitHojaVotos.get(norm(name));
+  const desgRaw = selFicha.length > 0
+    ? (hojaMap ? buildDesglose(norm(name), selFicha, (id) => hojaMap.get(id) ?? 0) : buildDesgloseCircuito(z, selFicha))
+    : null;
   const desg = desgRaw && desgRaw.grupos.length > 0 ? desgRaw : null;
   const pctOpcionActiva = !desg && opcionId && z.validos > 0
-    ? ((z.porOpcion.find((o) => o.opcionId === opcionId)?.votos ?? 0) / z.validos) * 100
+    ? ((hojaMap?.get(opcionId) ?? z.porOpcion.find((o) => o.opcionId === opcionId)?.votos ?? 0) / z.validos) * 100
     : null;
   selected.value = {
     geoId: name,

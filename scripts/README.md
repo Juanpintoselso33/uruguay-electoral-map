@@ -65,5 +65,6 @@ Corren en el build (`package.json → build`) y/o a demanda:
 - `sweep-party-consistency.py` — normaliza ids y nombres canónicos de partidos en todas las elecciones.
 - `audit-grises.py` / `audit-ganador.py` — auditorías de cobertura geográfica y de "ganador" por zona.
 - `enrich-votes-local.py`, `build-votes-local-*.py`, `votes_local_lib.py` — construcción del nivel "local de votación".
+- `build-hoja-local.py` — desglose por **HOJA** agregado al nivel local → `hoja-local.json` (un archivo por elección×depto). Mismo motor circuito→local que `build-votes-local.py` (`--mode direct|match [--plan PATH]`) pero a granularidad de hoja, resolviendo el `opcionId` contra `catalogo.json`. Da el detalle por lista/sublema en la ficha del circuito (paridad con barrio/localidad) y coloreo hoja-exacto. Hoy cubre el formato `HOJA_EN/VOTO_LEMA` (nacionales 2014/2019/2024); internas (`HOJA_ODN/ODD`, sublema/precandidato) y departamentales-2025 (`HOJA_ED`) degradan a nivel partido (pendiente de mapeo de su formato multi-contienda).
 
 > Requisitos Python: ver imports de cada script. Los `.py` se invocan vía los scripts `npm run etl:*` correspondientes.
