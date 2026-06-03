@@ -81,12 +81,16 @@
     "etl:nacional": "npm run etl:nacional-geo && npm run etl:nacional-zona-geo && npm run etl:nacional-votes",
     "etl:annex": "python scripts/build-annex-series.py",
     "etl:totales-fetch": "python scripts/fetch-totales-ckan.py",
+    "etl:nominas-fetch": "python scripts/fetch-nominas-ckan.py",
     "etl:no-partidarios": "python scripts/build-no-partidarios.py",
     "gate:grises": "python scripts/gate-grises.py",
     "gate:no-partidarios": "python scripts/gate-no-partidarios.py",
+    "gate:personas": "python scripts/gate-personas.py",
     "gate:api": "node scripts/gate-api-contract.mjs",
     "etl:api-index": "python scripts/build-api-index.py",
-    "etl:api-dumps": "python scripts/build-api-dumps.py"
+    "etl:api-dumps": "python scripts/build-api-dumps.py",
+    "etl:personas-hoja": "python scripts/build-personas-hoja.py",
+    "etl:personas": "python scripts/build-personas-canonical.py"
   },
   "dependencies": {
     "@nanostores/vue": "^0.11.0",
