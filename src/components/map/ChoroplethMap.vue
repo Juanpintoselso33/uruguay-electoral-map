@@ -2065,12 +2065,6 @@ onUnmounted(() => {
     <p v-if="status === 'cargando'" class="map-status">Cargando mapa…</p>
     <p v-else-if="status === 'error'" class="map-status map-status--error">Error: {{ errorMsg }}</p>
 
-    <ZoneSheet
-      :sel="selected"
-      :opcion-sigla="opcionActiva ? (opcNombreMap.get(opcionActiva) ? resolveParty(opcNombreMap.get(opcionActiva)!).sigla : opcionActiva) : null"
-      @close="commit({ zona: null })"
-    />
-
     <!-- Toggle Ganador / Intensidad — sólo visible cuando hay opción activa (Story 2.3) -->
     <div v-if="opcionActiva" class="vista-toggle" role="group" aria-label="Tipo de vista del mapa">
       <button
@@ -2114,6 +2108,15 @@ onUnmounted(() => {
     <MapLegend
       v-if="opcionActiva || seleccionActiva.length > 0 || votosSinUbicacion > 0"
       :entradas="legend" :sin-datos="sinDatos" :votos-sin-ubicacion="votosSinUbicacion" :zonas-sin-ubicacion="zonasSinUbicacion" />
+
+    <!-- Ficha de zona (detalle on-demand): va AL FINAL para no separar el mapa de sus
+         controles (toggle de coloreo + RESULTADO + leyenda). El highlight en el mapa ya da
+         feedback inmediato al clickear; la ficha se lee al hacer scroll. -->
+    <ZoneSheet
+      :sel="selected"
+      :opcion-sigla="opcionActiva ? (opcNombreMap.get(opcionActiva) ? resolveParty(opcNombreMap.get(opcionActiva)!).sigla : opcionActiva) : null"
+      @close="commit({ zona: null })"
+    />
   </section>
 </template>
 
