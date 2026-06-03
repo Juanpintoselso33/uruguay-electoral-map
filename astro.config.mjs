@@ -4,6 +4,7 @@ import vue from '@astrojs/vue';
 import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
+import vercelCorsHeaders from './scripts/vercel-cors-headers.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -18,7 +19,10 @@ export default defineConfig({
   },
   // Deploy en Vercel. El adapter es la fuente de verdad del deploy (reemplaza vercel.json).
   adapter: vercel(),
-  integrations: [vue(), sitemap()],
+  // vercelCorsHeaders va DESPUÉS del adapter en el orden de hooks (el adapter se
+  // antepone solo), así inyecta CORS/cache en config.json una vez que el adapter
+  // ya lo escribió. Ver scripts/vercel-cors-headers.mjs.
+  integrations: [vue(), sitemap(), vercelCorsHeaders()],
   vite: {
     plugins: [tailwindcss()],
     server: {
