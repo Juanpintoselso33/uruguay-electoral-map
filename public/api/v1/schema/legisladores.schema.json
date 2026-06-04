@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://uruguay-electoral-map.vercel.app/api/v1/schema/legisladores.schema.json",
+  "title": "Legisladores con resultados (votos de lista por departamento)",
+  "type": "object",
+  "required": ["total", "candidatos"],
+  "properties": {
+    "total": { "type": "integer" },
+    "fuente": { "type": "string" },
+    "metrica": { "type": "string" },
+    "candidatos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "nombres", "cargos", "resultados"],
+        "properties": {
+          "id": { "type": "string" },
+          "nombres": { "type": "array", "items": { "type": "string" } },
+          "cargos": { "type": "array", "items": { "type": "string" } },
+          "partidos": { "type": "array", "items": { "type": "string" } },
+          "elecciones": { "type": "array", "items": { "type": "string" } },
+          "candidaturas": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "eleccion": { "type": "string" },
+                "cargo": { "type": ["string", "null"] },
+                "partido": { "type": ["string", "null"] },
+                "sublema": { "type": ["string", "null"] }
+              }
+            }
+          },
+          "resultados": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "required": ["porDepto", "total"],
+              "properties": {
+                "porDepto": { "type": "object", "additionalProperties": { "type": "integer" } },
+                "total": { "type": "integer" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

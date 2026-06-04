@@ -10,6 +10,8 @@ const checks = [
   ['public/api/v1/index.json', 'public/api/v1/schema/index.schema.json'],
   ['public/data/nacionales-2024/montevideo/votes.json', 'public/api/v1/schema/votes.schema.json'],
   ['public/data/nacionales-2024/montevideo/catalogo.json', 'public/api/v1/schema/catalogo.schema.json'],
+  ['public/api/v1/candidatos/index.json', 'public/api/v1/schema/candidatos-index.schema.json'],
+  ['public/api/v1/candidatos/legisladores.json', 'public/api/v1/schema/legisladores.schema.json'],
 ];
 
 let failed = false;
