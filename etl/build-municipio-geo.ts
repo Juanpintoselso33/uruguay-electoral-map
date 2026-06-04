@@ -33,8 +33,11 @@ const ELECCION = CYCLE;
 const YEAR = (CYCLE.match(/\d{4}/) ?? [''])[0];
 const SUFFIX = CYCLE === 'departamentales-2025' ? '' : `.${YEAR}`;
 const BUDGET_DEPTO_GZIP = 500 * 1024;
-// Tope ~1 MB gz para que el RAW quede holgado bajo el límite de 3 MB/archivo (2025 ya entra a q=0.2).
-const BUDGET_NACIONAL_GZIP = 1024 * 1024;
+// PERF: el budget manda la simplificación (serializeWithBudget elige el q menos simplificado que
+// entre). Antes 1 MB gz dejaba el RAW del nacional en ~2.5 MB (= muchos vértices = render lento,
+// peor que zona-nacional que pesa ~0.5 MB con MÁS features). Bajamos el tope nacional para forzar
+// un RAW comparable a zona (los municipios son áreas grandes → toleran simplificación agresiva).
+const BUDGET_NACIONAL_GZIP = 256 * 1024;
 const SIMPLIFY_STEPS = [0.2, 0.15, 0.1, 0.05, 0.02, 0.01, 0.005];
 
 // Los 19 departamentos. Montevideo se disuelve igual que el resto: sus 8 municipios (A–G, CH)
