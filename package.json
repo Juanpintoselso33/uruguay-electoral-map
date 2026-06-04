@@ -86,6 +86,8 @@
     "etl:municipales-2025": "python scripts/build-municipales.py",
     "etl:alcaldes": "python scripts/build-alcaldes.py",
     "etl:concejos": "python scripts/build-concejos.py",
+    "etl:municipales-2020": "python scripts/build-municipales-2020.py",
+    "etl:municipio-geo-2020": "npx tsx etl/build-municipio-geo.ts departamentales-2020",
     "etl:annex": "python scripts/build-annex-series.py",
     "etl:totales-fetch": "python scripts/fetch-totales-ckan.py",
     "etl:nominas-fetch": "python scripts/fetch-nominas-ckan.py",

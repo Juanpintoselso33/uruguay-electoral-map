@@ -32,6 +32,7 @@ const META: Record<string, { short: string; type: TipoEleccion; año: number }> 
   'balotaje-2024':                    { short: 'Balotaje',         type: 'balotaje',    año: 2024 },
   'departamentales-2025':             { short: 'Departamentales',  type: 'dptales',     año: 2025 },
   'municipales-2025':                 { short: 'Municipales',      type: 'dptales',     año: 2025 },
+  'municipales-2020':                 { short: 'Municipales',      type: 'dptales',     año: 2020 },
 };
 
 const ALL_IDS = Object.keys(META);

@@ -322,8 +322,13 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
                   // nivel 'zona' usa votes-zona.json (todas las zonas de los 19 deptos combinadas).
                   : (departamento === '_nacional' && nivel === 'zona') ? 'votes-zona.json'
                   : 'votes.json';
+  // Geometría de municipios POR CICLO (los municipios cambian entre elecciones): 2025 = default
+  // sin sufijo; otros ciclos → municipio.{año}.topo.json (ver etl/build-municipio-geo.ts).
+  const geoNivel = (nivel === 'municipio' && eleccion !== 'municipales-2025')
+    ? `municipio.${(eleccion.match(/\d{4}/) ?? [''])[0]}`
+    : nivel;
   const [topoRes, votesRes, opcRes, metaRes, serieMapRes, serieBarrioRes, annexRes, intendentesRes, alcaldesRes, concejosRes] = await Promise.all([
-    fetch(`${base}/data/geo/${departamento}/${nivel}.topo.json`),
+    fetch(`${base}/data/geo/${departamento}/${geoNivel}.topo.json`),
     fetch(`${base}/data/${eleccion}/${departamento}/${votesFile}`),
     fetch(`${base}/data/${eleccion}/${departamento}/opciones.json`),
     nivel === 'localidad'
