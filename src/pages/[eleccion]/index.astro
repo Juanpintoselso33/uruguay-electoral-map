@@ -107,6 +107,8 @@ const canonicalPath = `/${eleccion}`;
     <!-- Toggle Departamentos/Zonas — control del mapa: va PEGADO arriba del mapa (Story 15.4).
          No aplica a Municipales (nivel único 'municipio'). -->
     {!esMunicipales && <GranularitySelector client:idle />}
+    <!-- Control de listas/partido (Epic UX): ARRIBA del mapa, plegable y colapsado por defecto. -->
+    <OpcionAccordion client:idle eleccion={eleccion} departamento="_nacional" />
     <!-- Map-first: el mapa va arriba de los selectores para quedar visible sin scrollear.
          persist con nombre propio ("map-nacional") → persiste entre elecciones nacionales pero
          NO cruza con la vista por-depto (que debe re-inicializar). -->
@@ -119,8 +121,6 @@ const canonicalPath = `/${eleccion}`;
         defaultNivel={nacDefaultNivel}
       />
     </div>
-    <!-- Selector de opción (listas) — debajo del mapa -->
-    <OpcionAccordion client:idle eleccion={eleccion} departamento="_nacional" />
     <Sello eleccion={eleccion} departamento="_nacional" />
   </main>
 </Base>

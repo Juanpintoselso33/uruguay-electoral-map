@@ -3,6 +3,7 @@
  * Ficha de zona (Story 2.4). Bottom sheet en mobile, panel lateral en desktop.
  * Muestra ganador, votos, %, blanco/anulados/observados para la zona seleccionada.
  */
+import { ref, watch } from 'vue';
 
 interface DesgloseGrupo {
   lemaNombre: string;
@@ -60,6 +61,11 @@ const props = defineProps<{
   sel: SelInfo | null;
   opcionSigla: string | null;
 }>();
+
+// Plegable (Epic UX): el detalle de la zona seleccionada se puede esconder. Se reabre al
+// seleccionar otra zona (es información on-demand). No persiste (efímero por selección).
+const bodyOpen = ref(true);
+watch(() => props.sel?.geoId, () => { bodyOpen.value = true; });
 
 const emit = defineEmits<{ close: [] }>();
 
@@ -124,6 +130,13 @@ function pctEmit(n: number): string {
       <div class="zone-sheet__handle" aria-hidden="true"></div>
 
       <header class="zone-sheet__header">
+        <button
+          class="zone-sheet__plegar"
+          type="button"
+          :aria-expanded="bodyOpen"
+          :aria-label="bodyOpen ? 'Plegar detalle' : 'Desplegar detalle'"
+          @click="bodyOpen = !bodyOpen"
+        ><span class="zone-sheet__chevron" :class="{ 'zone-sheet__chevron--open': bodyOpen }" aria-hidden="true">▸</span></button>
         <h2 class="zone-sheet__titulo">{{ sel.label ?? sel.geoId }}</h2>
         <button
           class="zone-sheet__cerrar"
@@ -144,7 +157,7 @@ function pctEmit(n: number): string {
         Vista por barrio no disponible aún — mostrando resultado agregado de la ciudad
       </p>
 
-      <div class="zone-sheet__body">
+      <div v-show="bodyOpen" class="zone-sheet__body">
         <!-- Desglose por hoja de la selección (Epic 10, Story 10.5) -->
         <template v-if="sel.desglose && sel.desglose.length > 0">
           <div class="zone-sheet__sel-resumen">
@@ -379,11 +392,27 @@ function pctEmit(n: number): string {
   border-bottom: 1px solid var(--color-surface-2);
 }
 
+.zone-sheet__plegar {
+  background: none;
+  border: none;
+  padding: 0 0.5rem 0 0;
+  margin: 0;
+  cursor: pointer;
+  color: var(--color-ink-faint);
+  flex: none;
+}
+.zone-sheet__chevron {
+  display: inline-block;
+  font-size: 0.8125rem;
+  transition: transform 0.15s ease;
+}
+.zone-sheet__chevron--open { transform: rotate(90deg); }
 .zone-sheet__titulo {
   font-size: 1rem;
   font-weight: 700;
   color: var(--color-ink);
   margin: 0;
+  margin-right: auto;
 }
 
 .zone-sheet__cerrar {

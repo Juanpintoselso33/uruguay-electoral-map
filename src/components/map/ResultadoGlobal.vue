@@ -7,6 +7,7 @@
  * El % usa el mismo denominador que la ficha (votos válidos), así reconcilian entre sí.
  */
 import { computed } from 'vue';
+import { useCollapsible } from '../../lib/use-collapsible';
 
 interface Entrada {
   readonly opcionId: string;
@@ -42,14 +43,29 @@ const otros = computed(() => {
   const pct = resto.reduce((s, e) => s + e.pct, 0);
   return { n: resto.length, votos, pct };
 });
+
+// Plegable (Epic UX): el resultado arranca ABIERTO; el usuario puede esconderlo.
+const { open, toggle } = useCollapsible('resultado', true);
+// Resumen de una línea cuando está colapsado (las 2 opciones más votadas).
+const resumen = computed(() =>
+  props.entradas.slice(0, 2).map((e) => `${e.sigla} ${e.pct.toFixed(1)}%`).join(' · '));
 </script>
 
 <template>
   <div v-if="entradas.length > 0" class="resultado" aria-label="Resultado agregado">
-    <h2 class="resultado__titulo">
-      {{ titulo }}<span v-if="contexto" class="resultado__contexto"> · {{ contexto }}</span>
-    </h2>
-    <ul class="resultado__lista">
+    <button
+      type="button"
+      class="resultado__toggle"
+      :aria-expanded="open"
+      @click="toggle"
+    >
+      <span class="resultado__chevron" :class="{ 'resultado__chevron--open': open }" aria-hidden="true">▸</span>
+      <h2 class="resultado__titulo">
+        {{ titulo }}<span v-if="contexto" class="resultado__contexto"> · {{ contexto }}</span>
+      </h2>
+      <span v-if="!open" class="resultado__resumen">{{ resumen }}</span>
+    </button>
+    <ul v-show="open" class="resultado__lista">
       <li v-for="e in visibles" :key="e.opcionId" class="resultado__fila">
         <img
           v-if="e.flagUrl"
@@ -79,7 +95,7 @@ const otros = computed(() => {
         <span class="resultado__pct">{{ otros.pct.toFixed(1) }}%</span>
       </li>
     </ul>
-    <p class="resultado__pie">{{ fmt(validos) }} votos válidos</p>
+    <p v-show="open" class="resultado__pie">{{ fmt(validos) }} votos válidos</p>
   </div>
 </template>
 
@@ -89,13 +105,41 @@ const otros = computed(() => {
   border-top: 1px solid var(--color-border);
   padding: 0.75rem 1rem;
 }
+.resultado__toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0 0 0.5rem;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+}
+.resultado__chevron {
+  color: var(--color-ink-faint);
+  font-size: 0.75rem;
+  transition: transform 0.15s ease;
+  flex: none;
+}
+.resultado__chevron--open { transform: rotate(90deg); }
 .resultado__titulo {
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   color: var(--color-ink-muted);
-  margin: 0 0 0.5rem;
+  margin: 0;
+}
+.resultado__resumen {
+  margin-left: auto;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-ink-soft);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 .resultado__contexto { font-weight: 600; color: var(--color-ink-soft); text-transform: none; letter-spacing: 0; }
 .resultado__lista {

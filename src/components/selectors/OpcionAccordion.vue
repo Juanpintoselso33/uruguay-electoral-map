@@ -11,6 +11,10 @@
 import { onMounted, ref, computed, onUnmounted } from 'vue';
 import { resolveParty } from '../../lib/party-meta';
 import { $selection, commit } from '../../stores/map-state';
+import { useCollapsible } from '../../lib/use-collapsible';
+
+// Plegable (Epic UX): el control de listas arranca COLAPSADO (es avanzado); el usuario lo abre.
+const { open: panelOpen, toggle: togglePanel } = useCollapsible('opcion', false);
 
 const props = defineProps<{ eleccion: string; departamento: string }>();
 
@@ -365,6 +369,20 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
 
 <template>
   <section class="acc" aria-label="Selector de opción (granularidad)">
+    <!-- Header plegable (Epic UX): el control arranca colapsado; al abrir aparece el selector. -->
+    <button
+      v-if="contienda"
+      type="button"
+      class="acc__toggle"
+      :aria-expanded="panelOpen"
+      @click="togglePanel"
+    >
+      <span class="acc__toggle-chevron" :class="{ 'acc__toggle-chevron--open': panelOpen }" aria-hidden="true">▸</span>
+      <span class="acc__toggle-lbl">Filtrar por lista / partido</span>
+      <span v-if="!panelOpen && seleccion.size > 0" class="acc__toggle-badge">{{ seleccion.size }} sel.</span>
+    </button>
+
+    <div v-show="panelOpen || !contienda" class="acc__body">
     <!-- Selector de contienda (solo si hay >1) -->
     <div v-if="tieneVariasContiendas" class="acc__contiendas" role="tablist" aria-label="Contienda">
       <button
@@ -563,11 +581,28 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
     </ul>
 
     <p v-if="!catalogo" class="acc__cargando">Cargando opciones…</p>
+    </div>
   </section>
 </template>
 
 <style scoped>
 .acc { padding: 0.5rem 1rem; border-bottom: 1px solid var(--color-border); font-size: 0.875rem; }
+.acc__toggle {
+  display: flex; align-items: center; gap: 0.5rem; width: 100%;
+  background: none; border: none; padding: 0.25rem 0; margin: 0; cursor: pointer;
+  text-align: left; color: inherit; min-height: 36px;
+}
+.acc__toggle-chevron { color: var(--color-ink-faint); font-size: 0.75rem; transition: transform 0.15s ease; flex: none; }
+.acc__toggle-chevron--open { transform: rotate(90deg); }
+.acc__toggle-lbl {
+  font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
+  color: var(--color-ink-muted);
+}
+.acc__toggle-badge {
+  margin-left: auto; font-size: 0.6875rem; font-weight: 700; color: var(--color-paper);
+  background: var(--color-ink); border-radius: 9999px; padding: 0.0625rem 0.5rem;
+}
+.acc__body { margin-top: 0.5rem; }
 .acc__contiendas { display: flex; gap: 0.25rem; margin-bottom: 0.5rem; }
 .acc__contienda {
   flex: 1; padding: 0.375rem 0.5rem; border: 1px solid var(--color-border-strong);

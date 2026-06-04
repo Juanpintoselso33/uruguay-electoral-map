@@ -145,7 +145,10 @@ const canonicalPath = `/${eleccion}/${departamento}`;
       availableElecciones={availableElecciones}
       eleccionActual={eleccion}
     />
-    <!-- Map-first: el mapa (héroe) va arriba de los selectores para quedar visible sin scrollear.
+    <!-- Control de listas/partido (Epic UX): ARRIBA del mapa, plegable y colapsado por defecto
+         (decisión de Juan). Sincroniza con el mapa por el store, así que su posición no afecta. -->
+    <OpcionAccordion client:idle eleccion={eleccion} departamento={departamento} />
+    <!-- Map-first: el mapa (héroe) queda visible sin scrollear (el control de arriba va colapsado).
          transition:persist con nombre ESTABLE ("map") → el island MapLibre sobrevive la navegación
          entre departamentos aunque vaya antes en el DOM (NFR1). -->
     <div id="map-persist" transition:persist="map">
@@ -156,8 +159,6 @@ const canonicalPath = `/${eleccion}/${departamento}`;
         availableLevels={availableLevels}
       />
     </div>
-    <!-- Selector de opción (listas) — debajo del mapa (isla fuera de persist, se re-monta, Story 2.2) -->
-    <OpcionAccordion client:idle eleccion={eleccion} departamento={departamento} />
     <div class="share-actions">
       <ExportButton client:idle eleccion={eleccion} departamento={departamento} />
       <MapScreenshotButton
