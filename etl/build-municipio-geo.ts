@@ -137,9 +137,17 @@ function main(): void {
     }
   }
 
-  // Nacional: todos los municipios del interior en un archivo.
+  // Nacional: todos los municipios del interior en un archivo. El geoId nacional es COMPUESTO
+  // ("MUNICIPIO · DEPTO") — hay 3 nombres repetidos entre deptos (La Paz, Quebracho, Cerro Chato)
+  // y además el depto da contexto útil en el overview. build-municipales.py keyea por este mismo nombre.
+  const deptos = JSON.parse(readFileSync('src/config/departments.json', 'utf8')) as { id: string; label: string }[];
+  const deptoLabel = new Map(deptos.map((d) => [d.id, d.label]));
   if (nacional.length > 0) {
-    const fc: FeatureCollection = { type: 'FeatureCollection', features: nacional };
+    const nacionalComposite: Feature[] = nacional.map((f) => {
+      const p = f.properties as { name: string; departamento: string };
+      return { ...f, properties: { ...p, name: `${p.name} · ${deptoLabel.get(p.departamento) ?? p.departamento}` } };
+    });
+    const fc: FeatureCollection = { type: 'FeatureCollection', features: nacionalComposite };
     const s = serializeWithBudget(fc, BUDGET_NACIONAL_GZIP, '_nacional');
     const out = 'public/data/geo/_nacional/municipio.topo.json';
     mkdirSync(dirname(out), { recursive: true });
