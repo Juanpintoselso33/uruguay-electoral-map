@@ -53,6 +53,36 @@ ALCALDE_SORTEO = {
     "SAN BAUTISTA · Canelones": "1025-V",  # 1025-V y 900-V empatadas en 857; sorteo 21/05/2025 → Farina.
 }
 
+# FUENTE DE VERDAD = la PROCLAMACIÓN. Donde el cálculo difiere del acta oficial (validado a mano),
+# se fija el Concejo del acta verbatim. Casos detectados en la validación:
+#  - Pando / Parque del Plata (Canelones): el último concejal cae en un cuasi-empate de sublema y
+#    el voto-al-sublema (no separado en la fuente) lo vuelca distinto → se fija el reparto del acta.
+#  - Municipio CH (Montevideo): el 2º cargo es una SUSTITUCIÓN de candidato post-registro (el acta
+#    proclama a Llanes Santana donde la nómina registrada tiene a Nóvoa Campo).
+PROCLAMACION_OVERRIDE = {
+    "PANDO · Canelones": [
+        {"cargo": "alcalde",  "nombre": "LEONARDO MAURICIO CHIESA CURBELO", "lema": "frente-amplio", "hoja": "609-C"},
+        {"cargo": "concejal", "nombre": "LAURA ARACELI PIRIZ PELLEJERO",    "lema": "frente-amplio", "hoja": "609-C"},
+        {"cargo": "concejal", "nombre": "WASHINGTON CESAR CAYAFFA FERNANDEZ", "lema": "frente-amplio", "hoja": "190-C"},
+        {"cargo": "concejal", "nombre": "DIMAR FABIAN PEREZ FIGUEREDO",      "lema": "coalicion-republicana", "hoja": "3340-C"},
+        {"cargo": "concejal", "nombre": "EMILIANO NICOLÁS QUINTERO PIOVENE", "lema": "coalicion-republicana", "hoja": "33340-C"},
+    ],
+    "PARQUE DEL PLATA · Canelones": [
+        {"cargo": "alcalde",  "nombre": "TANIA SUSANA VECCHIO CABAN",     "lema": "frente-amplio", "hoja": "609-LL"},
+        {"cargo": "concejal", "nombre": "VICKY KARINA KRAUSE DA ROSA",    "lema": "frente-amplio", "hoja": "609-LL"},
+        {"cargo": "concejal", "nombre": "GABRIELLA MARINA GESTAL MARTIN", "lema": "frente-amplio", "hoja": "1764-LL"},
+        {"cargo": "concejal", "nombre": "EDUARDO SERGIO SOSA VAZQUEZ",    "lema": "coalicion-republicana", "hoja": "400-LL"},
+        {"cargo": "concejal", "nombre": "RICARDO PONCE AZARI",            "lema": "coalicion-republicana", "hoja": "400-LL"},
+    ],
+    "Municipio CH · Montevideo": [
+        {"cargo": "alcalde",  "nombre": "MATILDE ANTIA ADAMI",            "lema": "coalicion-republicana", "hoja": "40-CH"},
+        {"cargo": "concejal", "nombre": "JOSE FELIX LLANES SANTANA",      "lema": "coalicion-republicana", "hoja": "40-CH"},  # sustitución vs Nóvoa Campo
+        {"cargo": "concejal", "nombre": "JORGE VICTOR BAYLEY MARCOS",     "lema": "coalicion-republicana", "hoja": "40-CH"},
+        {"cargo": "concejal", "nombre": "JAVIER ENRIQUE BARRIOS BOVE",    "lema": "coalicion-republicana", "hoja": "11-CH"},
+        {"cargo": "concejal", "nombre": "MONICA SILVANA CAFFA REYES",     "lema": "frente-amplio", "hoja": "79-CH"},
+    ],
+}
+
 
 def norm(s): return " ".join((s or "").strip().split())
 def hoja_num(h):
@@ -212,8 +242,12 @@ def main():
                     por_muni[muni][o["opcionId"]] += o.get("votos", 0)
 
         for muni, por_hoja in por_muni.items():
-            concejo = concejo_de_municipio(muni, slug, por_hoja, opc_hoja, opc_lema, opc_sublema, nom)
             geo = f"{muni} · {DEPTO_LABEL.get(slug, slug)}"
+            if geo in PROCLAMACION_OVERRIDE:  # fuente de verdad = acta: se fija el Concejo proclamado
+                out[geo] = {"municipio": muni, "departamento": slug,
+                            "concejo": [dict(c) for c in PROCLAMACION_OVERRIDE[geo]]}
+                continue
+            concejo = concejo_de_municipio(muni, slug, por_hoja, opc_hoja, opc_lema, opc_sublema, nom)
             if geo in ALCALDE_SORTEO:  # reasignar alcalde a la hoja sorteada (titular #1 de esa hoja)
                 forced = ALCALDE_SORTEO[geo]
                 idx_alc = next((i for i, c in enumerate(concejo) if c["hoja"] == forced), None)
@@ -233,7 +267,7 @@ def main():
         with open(DST, "w", encoding="utf-8") as f:
             json.dump({"fuente": "Adjudicación D'Hondt sobre votos de la Corte (escrutinio definitivo); nombres de la Integración de hojas.",
                        "regla": f"Concejo de 5: D'Hondt lema→sublema→lista→ordinal. mayoriaAutomatica={MAYORIA_AUTOMATICA}.",
-                       "validacion": "Validado vs acta oficial de Canelones (31/31 composición por partido; 29/31 nombres exactos). El total por lema coincide exacto con el acta; el ÚLTIMO concejal puede diferir cuando dos sublemas quedan en cuasi-empate, porque la fuente no separa el voto-al-sublema del voto-al-lema y subvalúa los sublemas grandes en un puñado de votos. Alcalde y composición por partido robustos.",
+                       "validacion": "Validado vs acta oficial de proclamación: Canelones (31/31 composición por partido) y Montevideo (8/8 alcaldes). La PROCLAMACIÓN es la fuente de verdad: los 3 casos donde el cálculo difería del acta (Pando y Parque del Plata por voto-al-sublema en cuasi-empate; Municipio CH por sustitución de candidato post-registro) se fijan al Concejo proclamado vía PROCLAMACION_OVERRIDE. El resto se computa por D'Hondt (método validado).",
                        "municipios": out}, f, ensure_ascii=False)
         print(f"concejos: {len(out)} municipios → {DST}")
 
