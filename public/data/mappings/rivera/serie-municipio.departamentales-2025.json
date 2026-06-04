@@ -1,0 +1,34 @@
+[
+ {
+  "serie": "H1",
+  "municipio": "TRANQUERAS"
+ },
+ {
+  "serie": "H2",
+  "municipio": "VICHADERO"
+ },
+ {
+  "serie": "H3",
+  "municipio": "MINAS DE CORRALES"
+ },
+ {
+  "serie": "HCC",
+  "municipio": "TRANQUERAS"
+ },
+ {
+  "serie": "HCD",
+  "municipio": "TRANQUERAS"
+ },
+ {
+  "serie": "HCG",
+  "municipio": "TRANQUERAS"
+ },
+ {
+  "serie": "HDB",
+  "municipio": "MINAS DE CORRALES"
+ },
+ {
+  "serie": "HFG",
+  "municipio": "VICHADERO"
+ }
+]

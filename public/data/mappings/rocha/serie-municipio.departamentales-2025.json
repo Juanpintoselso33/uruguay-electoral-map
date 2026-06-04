@@ -1,0 +1,38 @@
+[
+ {
+  "serie": "E1",
+  "municipio": "CHUY"
+ },
+ {
+  "serie": "E2",
+  "municipio": "CASTILLOS"
+ },
+ {
+  "serie": "E3",
+  "municipio": "LASCANO"
+ },
+ {
+  "serie": "E4",
+  "municipio": "LA PALOMA"
+ },
+ {
+  "serie": "ECB",
+  "municipio": "CASTILLOS"
+ },
+ {
+  "serie": "ECG",
+  "municipio": "LA PALOMA"
+ },
+ {
+  "serie": "EDC",
+  "municipio": "CASTILLOS"
+ },
+ {
+  "serie": "EEA",
+  "municipio": "LASCANO"
+ },
+ {
+  "serie": "EFB",
+  "municipio": "CHUY"
+ }
+]

@@ -1,0 +1,50 @@
+[
+ {
+  "serie": "F1",
+  "municipio": "VERGARA"
+ },
+ {
+  "serie": "F2",
+  "municipio": "SANTA CLARA DE OLIMAR"
+ },
+ {
+  "serie": "F3",
+  "municipio": "CERRO CHATO"
+ },
+ {
+  "serie": "F4",
+  "municipio": "GENERAL ENRIQUE MARTÍNEZ"
+ },
+ {
+  "serie": "F5",
+  "municipio": "VILLA SARA"
+ },
+ {
+  "serie": "F6",
+  "municipio": "RINCÓN"
+ },
+ {
+  "serie": "FBA",
+  "municipio": "VERGARA"
+ },
+ {
+  "serie": "FBC",
+  "municipio": "GENERAL ENRIQUE MARTÍNEZ"
+ },
+ {
+  "serie": "FBE",
+  "municipio": "RINCÓN"
+ },
+ {
+  "serie": "FDA",
+  "municipio": "SANTA CLARA DE OLIMAR"
+ },
+ {
+  "serie": "FDB",
+  "municipio": "CERRO CHATO"
+ },
+ {
+  "serie": "FEA",
+  "municipio": "VILLA SARA"
+ }
+]

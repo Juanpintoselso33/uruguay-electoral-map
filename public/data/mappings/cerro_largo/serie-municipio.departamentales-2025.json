@@ -1,0 +1,194 @@
+[
+ {
+  "serie": "G1",
+  "municipio": "RÍO BRANCO"
+ },
+ {
+  "serie": "G10",
+  "municipio": "BAÑADO DE MEDINA"
+ },
+ {
+  "serie": "G11",
+  "municipio": "LAS CAÑAS"
+ },
+ {
+  "serie": "G12",
+  "municipio": "CERRO DE LAS CUENTAS"
+ },
+ {
+  "serie": "G13",
+  "municipio": "CENTURIÓN"
+ },
+ {
+  "serie": "G14",
+  "municipio": "TRES ISLAS"
+ },
+ {
+  "serie": "G15",
+  "municipio": "QUEBRACHO"
+ },
+ {
+  "serie": "G2",
+  "municipio": "FRAILE MUERTO"
+ },
+ {
+  "serie": "G3",
+  "municipio": "ISIDORO NOBLÍA"
+ },
+ {
+  "serie": "G4",
+  "municipio": "ACEGUÁ"
+ },
+ {
+  "serie": "G5",
+  "municipio": "TUPAMBAÉ"
+ },
+ {
+  "serie": "G6",
+  "municipio": "PLÁCIDO ROSAS"
+ },
+ {
+  "serie": "G7",
+  "municipio": "ARÉVALO"
+ },
+ {
+  "serie": "G8",
+  "municipio": "ARBOLITO"
+ },
+ {
+  "serie": "G9",
+  "municipio": "RAMÓN TRIGO"
+ },
+ {
+  "serie": "G96",
+  "municipio": "LAGUNA MERÍN"
+ },
+ {
+  "serie": "GBD",
+  "municipio": "BAÑADO DE MEDINA"
+ },
+ {
+  "serie": "GCA",
+  "municipio": "PLÁCIDO ROSAS"
+ },
+ {
+  "serie": "GCC",
+  "municipio": "ARBOLITO"
+ },
+ {
+  "serie": "GCD",
+  "municipio": "CERRO DE LAS CUENTAS"
+ },
+ {
+  "serie": "GCE",
+  "municipio": "ARBOLITO"
+ },
+ {
+  "serie": "GCF",
+  "municipio": "LAS CAÑAS"
+ },
+ {
+  "serie": "GDA",
+  "municipio": "RÍO BRANCO"
+ },
+ {
+  "serie": "GDB",
+  "municipio": "RÍO BRANCO"
+ },
+ {
+  "serie": "GDC",
+  "municipio": "RÍO BRANCO"
+ },
+ {
+  "serie": "GDD",
+  "municipio": "RÍO BRANCO"
+ },
+ {
+  "serie": "GDE",
+  "municipio": "LAS CAÑAS"
+ },
+ {
+  "serie": "GDF",
+  "municipio": "CENTURIÓN"
+ },
+ {
+  "serie": "GDG",
+  "municipio": "LAS CAÑAS"
+ },
+ {
+  "serie": "GDH",
+  "municipio": "LAGUNA MERÍN"
+ },
+ {
+  "serie": "GEA",
+  "municipio": "CENTURIÓN"
+ },
+ {
+  "serie": "GEC",
+  "municipio": "ISIDORO NOBLÍA"
+ },
+ {
+  "serie": "GED",
+  "municipio": "ISIDORO NOBLÍA"
+ },
+ {
+  "serie": "GEE",
+  "municipio": "ACEGUÁ"
+ },
+ {
+  "serie": "GEF",
+  "municipio": "ISIDORO NOBLÍA"
+ },
+ {
+  "serie": "GFA",
+  "municipio": "TRES ISLAS"
+ },
+ {
+  "serie": "GFB",
+  "municipio": "FRAILE MUERTO"
+ },
+ {
+  "serie": "GFC",
+  "municipio": "CERRO DE LAS CUENTAS"
+ },
+ {
+  "serie": "GFD",
+  "municipio": "RAMÓN TRIGO"
+ },
+ {
+  "serie": "GFE",
+  "municipio": "BAÑADO DE MEDINA"
+ },
+ {
+  "serie": "GGA",
+  "municipio": "TUPAMBAÉ"
+ },
+ {
+  "serie": "GGB",
+  "municipio": "QUEBRACHO"
+ },
+ {
+  "serie": "GGC",
+  "municipio": "TUPAMBAÉ"
+ },
+ {
+  "serie": "GGD",
+  "municipio": "ARÉVALO"
+ },
+ {
+  "serie": "GGE",
+  "municipio": "ARÉVALO"
+ },
+ {
+  "serie": "GGF",
+  "municipio": "ARÉVALO"
+ },
+ {
+  "serie": "GGG",
+  "municipio": "ARÉVALO"
+ },
+ {
+  "serie": "GGH",
+  "municipio": "ARÉVALO"
+ }
+]

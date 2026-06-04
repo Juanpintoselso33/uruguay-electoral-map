@@ -1,0 +1,50 @@
+[
+ {
+  "serie": "T1",
+  "municipio": "PASO DE LOS TOROS"
+ },
+ {
+  "serie": "T2",
+  "municipio": "SAN GREGORIO DE POLANCO"
+ },
+ {
+  "serie": "T20",
+  "municipio": "VILLA CARAGUATÁ"
+ },
+ {
+  "serie": "T3",
+  "municipio": "ANSINA"
+ },
+ {
+  "serie": "TBE",
+  "municipio": "ANSINA"
+ },
+ {
+  "serie": "TED",
+  "municipio": "SAN GREGORIO DE POLANCO"
+ },
+ {
+  "serie": "TFD",
+  "municipio": "PASO DE LOS TOROS"
+ },
+ {
+  "serie": "TGA",
+  "municipio": "VILLA CARAGUATÁ"
+ },
+ {
+  "serie": "TGB",
+  "municipio": "VILLA CARAGUATÁ"
+ },
+ {
+  "serie": "TGC",
+  "municipio": "VILLA CARAGUATÁ"
+ },
+ {
+  "serie": "TGD",
+  "municipio": "VILLA CARAGUATÁ"
+ },
+ {
+  "serie": "TGE",
+  "municipio": "VILLA CARAGUATÁ"
+ }
+]

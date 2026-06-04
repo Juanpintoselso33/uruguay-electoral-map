@@ -35,6 +35,7 @@ Corren en el build (`package.json → build`) y/o a demanda:
 | `build-nacional-zona-geo.py` | `npm run etl:nacional-zona-geo` | Geometría nacional por zona. |
 | `build-nacional-votes.py` | `npm run etl:nacional-votes` | Votos consolidados a nivel nacional. |
 | `build-intendentes-nacional.py` | `npm run etl:intendentes-nacional` | Candidatos a intendente por depto (electo + votos por candidato) para la ficha de la vista nacional `departamentales-2025`. Depende de `_nacional/votes.json` y de los shards `{depto}/hoja/intendente/{lema}.json`: re-correr tras `etl:nacional-votes` o tras regenerar los datos por depto. |
+| `build-serie-municipio.py` | `npm run etl:serie-municipio` | (Epic 22.1) Mapeo `serie→municipio` derivado del dato (cada serie → el `Municipio` de las hojas municipales que vota), sin spatial join → `public/data/mappings/{depto}/serie-municipio.departamentales-2025.json`. Gate inline: 1 serie → exactamente 1 municipio. Interior (18 deptos); **Montevideo salteado** (votos por barrio no anidan en municipios) y **2020 no aplica** (su integración no trae columna Municipio). |
 | `build-annex-series.py` | `npm run etl:annex` | Anexa series sin geometría propia. |
 
 ## Mapeo CRV → barrio de Montevideo (por ciclo)

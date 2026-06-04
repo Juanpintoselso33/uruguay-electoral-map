@@ -1,0 +1,298 @@
+[
+ {
+  "serie": "C1",
+  "municipio": "CIUDAD DE LA COSTA"
+ },
+ {
+  "serie": "C10",
+  "municipio": "BARROS BLANCOS"
+ },
+ {
+  "serie": "C11",
+  "municipio": "COLONIA NICOLICH"
+ },
+ {
+  "serie": "C12",
+  "municipio": "SAN RAMÓN"
+ },
+ {
+  "serie": "C13",
+  "municipio": "SALINAS"
+ },
+ {
+  "serie": "C14",
+  "municipio": "SUÁREZ"
+ },
+ {
+  "serie": "C15",
+  "municipio": "PARQUE DEL PLATA"
+ },
+ {
+  "serie": "C16",
+  "municipio": "SAUCE"
+ },
+ {
+  "serie": "C17",
+  "municipio": "TALA"
+ },
+ {
+  "serie": "C18",
+  "municipio": "ATLÁNTIDA"
+ },
+ {
+  "serie": "C19",
+  "municipio": "TOLEDO"
+ },
+ {
+  "serie": "C2",
+  "municipio": "18 DE MAYO"
+ },
+ {
+  "serie": "C20",
+  "municipio": "EMPALME OLMOS"
+ },
+ {
+  "serie": "C21",
+  "municipio": "SAN JACINTO"
+ },
+ {
+  "serie": "C22",
+  "municipio": "SANTA ROSA"
+ },
+ {
+  "serie": "C23",
+  "municipio": "LA FLORESTA"
+ },
+ {
+  "serie": "C24",
+  "municipio": "MIGUES"
+ },
+ {
+  "serie": "C25",
+  "municipio": "LOS CERRILLOS"
+ },
+ {
+  "serie": "C26",
+  "municipio": "SAN BAUTISTA"
+ },
+ {
+  "serie": "C28",
+  "municipio": "MONTES"
+ },
+ {
+  "serie": "C29",
+  "municipio": "SAN ANTONIO"
+ },
+ {
+  "serie": "C3",
+  "municipio": "LAS PIEDRAS"
+ },
+ {
+  "serie": "C31",
+  "municipio": "DEL ANDALUZ"
+ },
+ {
+  "serie": "C32",
+  "municipio": "JUANICÓ"
+ },
+ {
+  "serie": "C4",
+  "municipio": "PANDO"
+ },
+ {
+  "serie": "C5",
+  "municipio": "LA PAZ"
+ },
+ {
+  "serie": "C6",
+  "municipio": "CANELONES"
+ },
+ {
+  "serie": "C7",
+  "municipio": "SANTA LUCÍA"
+ },
+ {
+  "serie": "C8",
+  "municipio": "PROGRESO"
+ },
+ {
+  "serie": "C9",
+  "municipio": "PASO CARRASCO"
+ },
+ {
+  "serie": "CAA",
+  "municipio": "CANELONES"
+ },
+ {
+  "serie": "CBA",
+  "municipio": "SANTA LUCÍA"
+ },
+ {
+  "serie": "CBB",
+  "municipio": "SANTA LUCÍA"
+ },
+ {
+  "serie": "CBC",
+  "municipio": "SANTA LUCÍA"
+ },
+ {
+  "serie": "CCA",
+  "municipio": "LOS CERRILLOS"
+ },
+ {
+  "serie": "CCB",
+  "municipio": "AGUAS CORRIENTES"
+ },
+ {
+  "serie": "CDA",
+  "municipio": "LAS PIEDRAS"
+ },
+ {
+  "serie": "CDB",
+  "municipio": "PROGRESO"
+ },
+ {
+  "serie": "CDC",
+  "municipio": "18 DE MAYO"
+ },
+ {
+  "serie": "CDD",
+  "municipio": "LAS PIEDRAS"
+ },
+ {
+  "serie": "CDE",
+  "municipio": "LAS PIEDRAS"
+ },
+ {
+  "serie": "CEA",
+  "municipio": "LA PAZ"
+ },
+ {
+  "serie": "CEB",
+  "municipio": "LOS CERRILLOS"
+ },
+ {
+  "serie": "CFA",
+  "municipio": "SAUCE"
+ },
+ {
+  "serie": "CGA",
+  "municipio": "SANTA ROSA"
+ },
+ {
+  "serie": "CHA",
+  "municipio": "SAN JACINTO"
+ },
+ {
+  "serie": "CIA",
+  "municipio": "SAN RAMÓN"
+ },
+ {
+  "serie": "CJA",
+  "municipio": "TALA"
+ },
+ {
+  "serie": "CJB",
+  "municipio": "TALA"
+ },
+ {
+  "serie": "CKA",
+  "municipio": "MIGUES"
+ },
+ {
+  "serie": "CKB",
+  "municipio": "MONTES"
+ },
+ {
+  "serie": "CLA",
+  "municipio": "SOCA"
+ },
+ {
+  "serie": "CLB",
+  "municipio": "LA FLORESTA"
+ },
+ {
+  "serie": "CLC",
+  "municipio": "LA FLORESTA"
+ },
+ {
+  "serie": "CLD",
+  "municipio": "SOCA"
+ },
+ {
+  "serie": "CLE",
+  "municipio": "SOCA"
+ },
+ {
+  "serie": "CMA",
+  "municipio": "PANDO"
+ },
+ {
+  "serie": "CMB",
+  "municipio": "EMPALME OLMOS"
+ },
+ {
+  "serie": "CMC",
+  "municipio": "ATLÁNTIDA"
+ },
+ {
+  "serie": "CMD",
+  "municipio": "PASO CARRASCO"
+ },
+ {
+  "serie": "CME",
+  "municipio": "BARROS BLANCOS"
+ },
+ {
+  "serie": "CMF",
+  "municipio": "CIUDAD DE LA COSTA"
+ },
+ {
+  "serie": "CMG",
+  "municipio": "SALINAS"
+ },
+ {
+  "serie": "CMH",
+  "municipio": "PARQUE DEL PLATA"
+ },
+ {
+  "serie": "CMI",
+  "municipio": "CIUDAD DE LA COSTA"
+ },
+ {
+  "serie": "CMJ",
+  "municipio": "CIUDAD DE LA COSTA"
+ },
+ {
+  "serie": "CMK",
+  "municipio": "COLONIA NICOLICH"
+ },
+ {
+  "serie": "CNA",
+  "municipio": "JUANICÓ"
+ },
+ {
+  "serie": "COA",
+  "municipio": "SAN ANTONIO"
+ },
+ {
+  "serie": "CPA",
+  "municipio": "SAN BAUTISTA"
+ },
+ {
+  "serie": "CPB",
+  "municipio": "SAN BAUTISTA"
+ },
+ {
+  "serie": "CQA",
+  "municipio": "SUÁREZ"
+ },
+ {
+  "serie": "CQB",
+  "municipio": "TOLEDO"
+ },
+ {
+  "serie": "CQC",
+  "municipio": "DEL ANDALUZ"
+ }
+]
