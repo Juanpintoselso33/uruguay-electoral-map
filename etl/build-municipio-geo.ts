@@ -21,14 +21,21 @@
 import { mkdirSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import type { FeatureCollection, Feature, Polygon, MultiPolygon } from 'geojson';
+import polygonClipping from 'polygon-clipping';
 import { topojsonFromFC } from './geometry/build-topojson';
 import { assertGeometryBudget } from './gates/geometry-size';
 import { normName } from './lib/normalize';
 
-const ELECCION = 'departamentales-2025';
+// Ciclo electoral (argv): los municipios cambian entre ciclos → geometría propia por ciclo.
+// 2025 = default sin sufijo (geo/{depto}/municipio.topo.json); otros → municipio.{año}.topo.json.
+const CYCLE = process.argv[2] || 'departamentales-2025';
+const ELECCION = CYCLE;
+const YEAR = (CYCLE.match(/\d{4}/) ?? [''])[0];
+const SUFFIX = CYCLE === 'departamentales-2025' ? '' : `.${YEAR}`;
 const BUDGET_DEPTO_GZIP = 500 * 1024;
-const BUDGET_NACIONAL_GZIP = 1500 * 1024;
-const SIMPLIFY_STEPS = [0.2, 0.15, 0.1, 0.05, 0.02];
+// Tope ~1 MB gz para que el RAW quede holgado bajo el límite de 3 MB/archivo (2025 ya entra a q=0.2).
+const BUDGET_NACIONAL_GZIP = 1024 * 1024;
+const SIMPLIFY_STEPS = [0.2, 0.15, 0.1, 0.05, 0.02, 0.01, 0.005];
 
 // Los 19 departamentos. Montevideo se disuelve igual que el resto: sus 8 municipios (A–G, CH)
 // salen de unir las SERIES de cada municipio (mapeo serie→municipio OFICIAL de plan-circuital,
@@ -104,15 +111,24 @@ function deptoFeatures(deptName: string, grises: string[]): Feature[] {
     if (!geomSeries.has(e.serie.toUpperCase())) grises.push(`${deptName}/${e.serie}→${e.municipio}`);
   }
 
+  // UNION real de las series de cada municipio (polygon-clipping) → disuelve las fronteras internas
+  // y deja solo el contorno del municipio. (Concatenar sin unir dejaba visibles los bordes de serie,
+  // por eso MVD parecía el mapa de barrios.) Fallback a concatenación si el union falla.
+  type UnionArg = Parameters<typeof polygonClipping.union>[0];
   const features: Feature[] = [];
   for (const { display, polys } of byMuni.values()) {
-    const combined: PcMultiPoly = [];
-    for (const mp of polys) for (const poly of mp) combined.push(poly);
-    features.push({
-      type: 'Feature',
-      properties: { name: display, departamento: deptName },
-      geometry: fromMultiPoly(combined),
-    });
+    let geometry;
+    try {
+      const merged = polys.length === 1
+        ? polys[0]
+        : (polygonClipping.union(polys[0] as UnionArg, ...(polys.slice(1) as UnionArg[])) as PcMultiPoly);
+      geometry = fromMultiPoly(merged);
+    } catch {
+      const combined: PcMultiPoly = [];
+      for (const mp of polys) for (const poly of mp) combined.push(poly);
+      geometry = fromMultiPoly(combined);
+    }
+    features.push({ type: 'Feature', properties: { name: display, departamento: deptName }, geometry });
   }
   return features;
 }
@@ -129,7 +145,7 @@ function main(): void {
     const fc: FeatureCollection = { type: 'FeatureCollection', features };
     try {
       const s = serializeWithBudget(fc, BUDGET_DEPTO_GZIP, deptName);
-      const out = `public/data/geo/${deptName}/municipio.topo.json`;
+      const out = `public/data/geo/${deptName}/municipio${SUFFIX}.topo.json`;
       mkdirSync(dirname(out), { recursive: true });
       writeFileSync(out, s, 'utf8');
       nacional.push(...features);
@@ -152,7 +168,7 @@ function main(): void {
     });
     const fc: FeatureCollection = { type: 'FeatureCollection', features: nacionalComposite };
     const s = serializeWithBudget(fc, BUDGET_NACIONAL_GZIP, '_nacional');
-    const out = 'public/data/geo/_nacional/municipio.topo.json';
+    const out = `public/data/geo/_nacional/municipio${SUFFIX}.topo.json`;
     mkdirSync(dirname(out), { recursive: true });
     writeFileSync(out, s, 'utf8');
     console.log(`✅ _nacional: ${nacional.length} municipios (${(JSON.stringify(JSON.parse(s)).length / 1024).toFixed(0)} KB) → ${out}`);
