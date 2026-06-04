@@ -76,6 +76,30 @@
    "detalle": "/api/v1/elections/balotaje-2024.json"
   },
   {
+   "id": "departamentales-2015",
+   "departamentos": [
+    "artigas",
+    "canelones",
+    "cerro_largo",
+    "colonia",
+    "durazno",
+    "flores",
+    "florida",
+    "lavalleja",
+    "maldonado",
+    "paysandu",
+    "rio_negro",
+    "rivera",
+    "rocha",
+    "salto",
+    "san_jose",
+    "soriano",
+    "tacuarembo",
+    "treinta_y_tres"
+   ],
+   "detalle": "/api/v1/elections/departamentales-2015.json"
+  },
+  {
    "id": "departamentales-2020",
    "departamentos": [
     "artigas",
@@ -174,6 +198,31 @@
     "treinta_y_tres"
    ],
    "detalle": "/api/v1/elections/internas-2024.json"
+  },
+  {
+   "id": "municipales-2015",
+   "departamentos": [
+    "artigas",
+    "canelones",
+    "cerro_largo",
+    "colonia",
+    "durazno",
+    "flores",
+    "florida",
+    "lavalleja",
+    "maldonado",
+    "montevideo",
+    "paysandu",
+    "rio_negro",
+    "rivera",
+    "rocha",
+    "salto",
+    "san_jose",
+    "soriano",
+    "tacuarembo",
+    "treinta_y_tres"
+   ],
+   "detalle": "/api/v1/elections/municipales-2015.json"
   },
   {
    "id": "municipales-2020",

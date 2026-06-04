@@ -34,6 +34,8 @@ const ELECCION_LABELS: Record<string, string> = {
   'departamentales-2025':             'Elecciones Departamentales y Municipales 2025',
   'municipales-2025':                 'Elecciones Municipales 2025',
   'municipales-2020':                 'Elecciones Municipales 2020',
+  'departamentales-2015':             'Elecciones Departamentales 2015',
+  'municipales-2015':                 'Elecciones Municipales 2015',
   'referendum-luc-2022':             'Referéndum LUC 2022',
   'plebiscito-vivir-sin-miedo-2019': 'Plebiscito Vivir sin Miedo 2019',
 };
@@ -54,7 +56,12 @@ const eleccionLabel = ELECCION_LABELS[eleccion!] ?? eleccion!;
 // Municipales: vista nacional = mapa de municipios (islas). Nivel único 'municipio', sin el
 // toggle Departamentos/Zonas (que aplica solo a las elecciones agregadas por depto).
 const esMunicipales = eleccion!.startsWith('municipales');
-const nacAvailableLevels: ('departamento' | 'zona' | 'municipio')[] = esMunicipales ? ['municipio'] : ['departamento', 'zona'];
+// El nivel 'zona' nacional solo se ofrece si existe el shard (departamentales-2015 = solo
+// nivel departamento; no tiene votes-zona). Election-aware por existencia en disco.
+const hayZonaNacional = existsSync(`public/data/${eleccion}/_nacional/votes-zona.json`);
+const nacAvailableLevels: ('departamento' | 'zona' | 'municipio')[] = esMunicipales
+  ? ['municipio']
+  : (hayZonaNacional ? ['departamento', 'zona'] : ['departamento']);
 const nacDefaultNivel = esMunicipales ? 'municipio' : 'departamento';
 
 // Elecciones con vista nacional (para el selector de elección, variante nacional).
@@ -105,8 +112,9 @@ const canonicalPath = `/${eleccion}`;
       departamento="_nacional"
     />
     <!-- Toggle Departamentos/Zonas — control del mapa: va PEGADO arriba del mapa (Story 15.4).
-         No aplica a Municipales (nivel único 'municipio'). -->
-    {!esMunicipales && <GranularitySelector client:idle />}
+         No aplica a Municipales (nivel único 'municipio') ni a elecciones sin nivel zona nacional
+         (p.ej. departamentales-2015, que solo tiene agregado por departamento). -->
+    {!esMunicipales && hayZonaNacional && <GranularitySelector client:idle />}
     <!-- Control de listas/partido (Epic UX): ARRIBA del mapa, plegable y colapsado por defecto. -->
     <OpcionAccordion client:idle eleccion={eleccion} departamento="_nacional" />
     <!-- Map-first: el mapa va arriba de los selectores para quedar visible sin scrollear.
