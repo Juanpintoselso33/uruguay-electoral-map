@@ -126,7 +126,7 @@
       "get": {
         "tags": ["Candidatos"],
         "summary": "Índice de legisladores",
-        "description": "Búsqueda de los 17.665 legisladores (senadores y representantes). El detalle con resultados está en `/api/v1/candidatos/legisladores.json`.",
+        "description": "Búsqueda de los 17.665 legisladores (senadores y representantes). El detalle con resultados está en `/api/v1/candidatos/legisladores.json`. El roster se decide por credencial dura; el puente por nombre (2019/2020) enriquece historial pero no agrega legisladores. Ver `/api/v1/candidatos/README.md`.",
         "responses": { "200": { "description": "OK", "content": { "application/json": { "example": {
           "total": 17665,
           "fuente": "Corte Electoral del Uruguay — Integración de hojas de votación (catalogodatos.gub.uy).",
@@ -142,7 +142,7 @@
       "get": {
         "tags": ["Candidatos"],
         "summary": "Legisladores con resultados",
-        "description": "Para cada legislador, los votos de las listas que integra **por departamento y elección**. Métrica: voto a la LISTA (hoja), no voto personal — así funciona el voto legislativo en Uruguay.",
+        "description": "Para cada legislador, los votos de las listas que integra **por departamento y elección**. Métrica: voto a la LISTA (hoja), no voto personal — así funciona el voto legislativo en Uruguay. Identidad por credencial (id duro, 2024+); las candidaturas 2019/2020 se linkean por nombre unívoco (campo `match`: `credencial` | `nombre`). Los votos en `resultados` salen SOLO de candidaturas por credencial. **2014 no tiene roster de candidatos (deuda pendiente).** Detalle del matcheo y la deuda en `/api/v1/candidatos/README.md`.",
         "responses": { "200": { "description": "OK", "content": { "application/json": { "example": {
           "total": 17665,
           "metrica": "votos de la(s) lista(s) que integra la persona (hoja), por departamento.",
@@ -153,7 +153,7 @@
               "cargos": ["REPRESENTANTE", "SENADOR"],
               "partidos": ["FRENTE AMPLIO"],
               "elecciones": ["nacionales-2024"],
-              "candidaturas": [{ "eleccion": "nacionales-2024", "cargo": "SENADOR", "partido": "FRENTE AMPLIO", "sublema": "UNIDAD PARA LOS CAMBIOS" }],
+              "candidaturas": [{ "eleccion": "nacionales-2024", "cargo": "SENADOR", "partido": "FRENTE AMPLIO", "sublema": "UNIDAD PARA LOS CAMBIOS", "match": "credencial" }],
               "resultados": {
                 "nacionales-2024": {
                   "porDepto": { "montevideo": 30920, "colonia": 13996, "canelones": 13308, "…": 0 },
@@ -169,7 +169,7 @@
       "get": {
         "tags": ["Candidatos"],
         "summary": "Índice de todas las personas candidatas",
-        "description": "Cobertura/descubrimiento de las 196.834 personas candidatas (sin resultados; los resultados por departamento solo están para legisladores en `legisladores.json`).",
+        "description": "Cobertura/descubrimiento de las 196.834 personas candidatas (sin resultados; los resultados por departamento solo están para legisladores en `legisladores.json`). Identidad por credencial (2024+) + puente por nombre para 2019/2020; **2014 pendiente** (sin roster en datos abiertos). Ver `/api/v1/candidatos/README.md`.",
         "responses": { "200": { "description": "OK", "content": { "application/json": { "example": {
           "total": 196834,
           "nota": "Resultados (por depto) solo para legisladores en legisladores.json.",
