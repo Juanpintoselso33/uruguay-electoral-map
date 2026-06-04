@@ -68,6 +68,10 @@ async function handleShare(): Promise<void> {
   cursor: pointer;
   transition: background 0.12s, color 0.12s, border-color 0.12s;
   white-space: nowrap;
+  /* No comprimirse en el masthead (flex space-between): con títulos/elecciones
+     largos —p. ej. la vista nacional— el botón se achicaba y el texto se
+     desbordaba de su caja. El lado del título absorbe el ajuste (wrap). */
+  flex-shrink: 0;
 }
 .share-btn:hover {
   background: var(--color-surface-2);

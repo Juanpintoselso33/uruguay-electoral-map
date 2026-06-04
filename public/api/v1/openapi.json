@@ -10,7 +10,7 @@
   "tags": [
     { "name": "Descubrimiento", "description": "Índices para navegar la API." },
     { "name": "Resultados", "description": "Votos por zona y geometría por departamento." },
-    { "name": "Candidatos", "description": "Personas candidatas y votos de sus listas (Epic 21)." }
+    { "name": "Candidatos", "description": "Personas candidatas y votos de las listas que integran (legisladores)." }
   ],
   "paths": {
     "/api/v1/index.json": {

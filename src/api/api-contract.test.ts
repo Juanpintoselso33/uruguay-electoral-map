@@ -1,5 +1,5 @@
 /**
- * Tests de contrato de la API pública v1 (Epics 20 + 21.3).
+ * Tests de contrato de la API pública v1.
  *
  * Validan los artefactos servidos bajo public/api/v1/** (y los /data detrás de los
  * rewrites) leyéndolos del disco: forma (JSON-Schema), integridad referencial
@@ -106,7 +106,7 @@ describe('API v1 — votos servidos (forma)', () => {
   });
 });
 
-describe('API v1 — candidatos (Epic 21.3)', () => {
+describe('API v1 — candidatos', () => {
   const index = read('public/api/v1/candidatos/index.json');
   const legis = read('public/api/v1/candidatos/legisladores.json');
   const personas = read('public/api/v1/candidatos/personas-index.json');
