@@ -9,7 +9,7 @@
  */
 
 /** Tipo de elección. Discrimina la forma de `Opcion`. */
-export type EleccionTipo = 'internas' | 'nacionales' | 'balotaje' | 'departamentales' | 'plebiscito';
+export type EleccionTipo = 'internas' | 'nacionales' | 'balotaje' | 'departamentales' | 'plebiscito' | 'municipales';
 
 /**
  * Contienda — el "voto paralelo" dentro de una elección (v3, Epic 10).

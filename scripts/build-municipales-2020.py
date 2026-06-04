@@ -277,7 +277,9 @@ def main():
             m = opc_meta[oid]; lemas_depto[m["lemaId"]] = m["lemaNombre"]
             opciones.append({"id": oid, "contienda": "municipio", "clase": "hoja", "hoja": m["hoja"],
                              "lemaId": m["lemaId"], "partidoId": m["lemaId"], "grupoId": m["lemaId"]})
-        contienda = {"contienda": "municipio", "niveles": ["lema", "hoja"], "opciones": opciones,
+        # niveles [lema, hoja] = subsecuencia de la escalera [lema, alcalde, hoja] (sin agrupador
+        # de alcalde en 2020) → degradado:true para que el gate de escaleras lo acepte.
+        contienda = {"contienda": "municipio", "niveles": ["lema", "hoja"], "degradado": True, "opciones": opciones,
                      "nodos": [{"id": l, "nivel": "lema", "etiqueta": n} for l, n in sorted(lemas_depto.items())]}
         write(os.path.join(DST_DIR, slug, "catalogo.json"),
               {"eleccionId": DST, "departamento": slug, "contiendas": [contienda]})

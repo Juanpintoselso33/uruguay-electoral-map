@@ -28,6 +28,9 @@ export const ESCALERAS: readonly EscaleraGranularidad[] = [
   { tipo: 'departamentales', contienda: 'intendente', niveles: ['lema', 'candidato'] },
   { tipo: 'departamentales', contienda: 'junta', niveles: ['lema', 'sublema', 'hoja'] },
   { tipo: 'departamentales', contienda: 'municipio', niveles: ['lema', 'alcalde', 'hoja'] },
+  // Elección municipal standalone (Epic 22): mismo árbol que la contienda municipio departamental.
+  // 2025 emite los 3 niveles; 2020 degrada a [lema, hoja] (sin agrupador de alcalde).
+  { tipo: 'municipales', contienda: 'municipio', niveles: ['lema', 'alcalde', 'hoja'] },
 ] as const;
 
 /** Devuelve la escalera de una `(tipo, contienda)`, o `undefined` si no está declarada. */
