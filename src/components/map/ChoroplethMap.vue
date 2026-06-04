@@ -73,6 +73,8 @@ interface SelInfo {
   resultadoZona?: ResultadoLinea[];
   /** Intendente electo de la zona (candidato más votado del lema ganador) — solo nacional 2025. */
   intendenteElecto?: string | null;
+  /** Alcalde electo del municipio (primer titular de la lista más votada del lema ganador) — municipales. */
+  alcaldeElecto?: string | null;
   // Ficha por circuito/local: metadata del local + desglose de sus circuitos.
   local?: { nombre: string; direccion: string; habilitados: number };
   circuitos?: { circuito: string; sigla: string; nombre: string; color: string; flagUrl?: string | null; validos: number }[];
@@ -184,6 +186,10 @@ type IntendentesDepto = {
   lemas: Record<string, { candidato: string; votos: number }[]>;
 };
 let intendentesPorDepto = new Map<string, IntendentesDepto>();
+// Alcalde electo por municipio (vista municipales, Epic 22.4). Clave norm(geoId): en la vista
+// nacional el geoId es compuesto "MUNICIPIO · Depto"; per-depto es el municipio simple.
+type AlcaldesDoc = { municipios: Record<string, { municipio: string; departamento: string; ganadorLema: string; alcaldeElecto: { nombre: string } | null }> };
+let alcaldesPorMuni = new Map<string, string>();
 // Ciudades grandes para nivel localidad (Story 8.4 — rótulo degradación).
 let ciudadesGrandesSet = new Set<string>();
 // Flag: indica si se hizo setData con FC de intensidad (para saber cuándo restaurar).
@@ -310,7 +316,7 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
                   // nivel 'zona' usa votes-zona.json (todas las zonas de los 19 deptos combinadas).
                   : (departamento === '_nacional' && nivel === 'zona') ? 'votes-zona.json'
                   : 'votes.json';
-  const [topoRes, votesRes, opcRes, metaRes, serieMapRes, serieBarrioRes, annexRes, intendentesRes] = await Promise.all([
+  const [topoRes, votesRes, opcRes, metaRes, serieMapRes, serieBarrioRes, annexRes, intendentesRes, alcaldesRes] = await Promise.all([
     fetch(`${base}/data/geo/${departamento}/${nivel}.topo.json`),
     fetch(`${base}/data/${eleccion}/${departamento}/${votesFile}`),
     fetch(`${base}/data/${eleccion}/${departamento}/opciones.json`),
@@ -335,6 +341,11 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
     // Solo existe para 2025; ausente = ficha sin candidatos (degrada al desglose por partido).
     departamento === '_nacional' && eleccion.startsWith('departamentales')
       ? fetch(`${base}/data/${eleccion}/_nacional/intendentes.json`).catch(() => null)
+      : Promise.resolve(null),
+    // Municipales: alcalde electo por municipio (Epic 22.4). El archivo es único (_nacional)
+    // pero aplica tanto a la vista nacional como a las per-depto (se keyea según el geoId del view).
+    eleccion.startsWith('municipales')
+      ? fetch(`${base}/data/${eleccion}/_nacional/alcaldes.json`).catch(() => null)
       : Promise.resolve(null),
   ]);
   if (!topoRes.ok || !votesRes.ok || !opcRes.ok) throw new Error('No se pudieron cargar los datos del mapa');
@@ -392,6 +403,20 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
         intendentesPorDepto.set(norm(geoId), info);
       }
     } catch { /* archivo malformado → ficha sin candidatos */ }
+  }
+
+  // Alcalde electo por municipio (vista municipales). En nacional el geoId es compuesto
+  // ("MUNICIPIO · Depto", = clave del JSON); per-depto se keyea por el municipio simple del depto.
+  alcaldesPorMuni = new Map();
+  if (alcaldesRes && alcaldesRes.ok) {
+    try {
+      const doc = (await alcaldesRes.json()) as AlcaldesDoc;
+      for (const [geoId, info] of Object.entries(doc.municipios ?? {})) {
+        if (!info.alcaldeElecto) continue;
+        if (departamento === '_nacional') alcaldesPorMuni.set(norm(geoId), info.alcaldeElecto.nombre);
+        else if (info.departamento === departamento) alcaldesPorMuni.set(norm(info.municipio), info.alcaldeElecto.nombre);
+      }
+    } catch { /* archivo malformado → ficha sin alcalde */ }
   }
 
   const zonaPorGeo = new Map(votes.zonas.map((z) => [norm(z.geoId), z]));
@@ -2081,6 +2106,7 @@ function selectByName(name: string, fc: FeatureCollection): void {
           .sort((a, b) => b.votos - a.votos)
       : undefined;
     const intendenteElecto = intend?.intendenteElecto?.candidato ?? null;
+    const alcaldeElecto = alcaldesPorMuni.get(key) ?? null;
     // pctOpcionActiva queda solo como fallback cuando el desglose no aplica (evita redundancia).
     const pctOpcionActiva = !desg && opcionId && validos > 0
       ? ((zonasVotos.get(key)?.get(opcionId) ?? 0) / validos) * 100
@@ -2108,6 +2134,7 @@ function selectByName(name: string, fc: FeatureCollection): void {
       desglose: desg?.grupos,
       resultadoZona,
       intendenteElecto,
+      alcaldeElecto,
       esCiudadGrande: ciudadesGrandesSet.size > 0 && ciudadesGrandesSet.has(norm(String(p.name))) && !(props.availableLevels ?? []).includes('barrio'),
     };
   } else if (p) {

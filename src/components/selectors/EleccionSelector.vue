@@ -31,6 +31,7 @@ const META: Record<string, { short: string; type: TipoEleccion; año: number }> 
   'plebiscito-seguridad-social-2024': { short: 'Seguridad Social', type: 'plebiscito',  año: 2024 },
   'balotaje-2024':                    { short: 'Balotaje',         type: 'balotaje',    año: 2024 },
   'departamentales-2025':             { short: 'Departamentales',  type: 'dptales',     año: 2025 },
+  'municipales-2025':                 { short: 'Municipales',      type: 'dptales',     año: 2025 },
 };
 
 const ALL_IDS = Object.keys(META);

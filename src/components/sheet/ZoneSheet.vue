@@ -47,6 +47,7 @@ interface SelInfo {
   desglose?: DesgloseGrupo[];
   resultadoZona?: ResultadoLinea[];
   intendenteElecto?: string | null;
+  alcaldeElecto?: string | null;
   esCiudadGrande?: boolean;
   // Ficha por circuito/local: metadata del local + desglose de sus circuitos.
   local?: { nombre: string; direccion: string; habilitados: number };
@@ -196,6 +197,9 @@ function pctEmit(n: number): string {
             </span>
             <p v-if="r.esGanador && sel.intendenteElecto" class="zone-sheet__electo">
               Intendente electo: <strong>{{ titleCase(sel.intendenteElecto) }}</strong>
+            </p>
+            <p v-if="r.esGanador && sel.alcaldeElecto" class="zone-sheet__electo">
+              Alcalde electo: <strong>{{ titleCase(sel.alcaldeElecto) }}</strong>
             </p>
             <ul v-if="r.candidatos && r.candidatos.length" class="zone-sheet__cands">
               <li

@@ -27,6 +27,7 @@ const BASE_LABELS: Partial<Record<NivelGeografico, string>> = {
   barrio:    'Barrios',
   localidad: 'Localidades',
   serie:     'Series',
+  municipio: 'Municipios',
 };
 const baseLabel = computed(() => BASE_LABELS[defaultBase.value] ?? 'Zonas');
 

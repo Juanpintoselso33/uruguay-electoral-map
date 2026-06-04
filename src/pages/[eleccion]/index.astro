@@ -32,6 +32,7 @@ const ELECCION_LABELS: Record<string, string> = {
   'plebiscito-seguridad-social-2024': 'Plebiscito Seguridad Social 2024',
   'departamentales-2020':             'Elecciones Departamentales y Municipales 2020',
   'departamentales-2025':             'Elecciones Departamentales y Municipales 2025',
+  'municipales-2025':                 'Elecciones Municipales 2025',
   'referendum-luc-2022':             'Referéndum LUC 2022',
   'plebiscito-vivir-sin-miedo-2019': 'Plebiscito Vivir sin Miedo 2019',
 };
@@ -48,6 +49,12 @@ export function getStaticPaths() {
 
 const { eleccion } = Astro.params;
 const eleccionLabel = ELECCION_LABELS[eleccion!] ?? eleccion!;
+
+// Municipales: vista nacional = mapa de municipios (islas). Nivel único 'municipio', sin el
+// toggle Departamentos/Zonas (que aplica solo a las elecciones agregadas por depto).
+const esMunicipales = eleccion!.startsWith('municipales');
+const nacAvailableLevels: ('departamento' | 'zona' | 'municipio')[] = esMunicipales ? ['municipio'] : ['departamento', 'zona'];
+const nacDefaultNivel = esMunicipales ? 'municipio' : 'departamento';
 
 // Elecciones con vista nacional (para el selector de elección, variante nacional).
 const eleccionesNacionales: string[] = [
@@ -96,8 +103,9 @@ const canonicalPath = `/${eleccion}`;
       eleccionActual={eleccion}
       departamento="_nacional"
     />
-    <!-- Toggle Departamentos/Zonas — control del mapa: va PEGADO arriba del mapa (Story 15.4). -->
-    <GranularitySelector client:idle />
+    <!-- Toggle Departamentos/Zonas — control del mapa: va PEGADO arriba del mapa (Story 15.4).
+         No aplica a Municipales (nivel único 'municipio'). -->
+    {!esMunicipales && <GranularitySelector client:idle />}
     <!-- Map-first: el mapa va arriba de los selectores para quedar visible sin scrollear.
          persist con nombre propio ("map-nacional") → persiste entre elecciones nacionales pero
          NO cruza con la vista por-depto (que debe re-inicializar). -->
@@ -106,8 +114,8 @@ const canonicalPath = `/${eleccion}`;
         client:load
         eleccion={eleccion}
         departamento="_nacional"
-        availableLevels={['departamento', 'zona']}
-        defaultNivel="departamento"
+        availableLevels={nacAvailableLevels}
+        defaultNivel={nacDefaultNivel}
       />
     </div>
     <!-- Selector de opción (listas) — debajo del mapa -->

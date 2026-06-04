@@ -12,7 +12,7 @@ import type { EleccionTipo } from './election';
 export type Escrutinio = 'definitivo' | 'primario' | 'total';
 
 /** Nivel geográfico (jerarquía DEPARTAMENTO ⊃ {CIRCUITO ⊃ SERIE ⊃ ZONA; LOCALIDAD agrega series por localidad del interior; BARRIO subdivide ciudades grandes; LOCAL = local de votación geolocalizado, agrega circuitos por venue físico — Epic 17}. DEPARTAMENTO = vista nacional, agrega los 19 deptos — Epic 15). */
-export type NivelGeografico = 'departamento' | 'zona' | 'serie' | 'circuito' | 'local' | 'localidad' | 'barrio';
+export type NivelGeografico = 'departamento' | 'zona' | 'serie' | 'circuito' | 'local' | 'localidad' | 'barrio' | 'municipio';
 
 /** Categorías no partidarias presentes en los totales oficiales. */
 export interface CategoriasNoPartidarias {

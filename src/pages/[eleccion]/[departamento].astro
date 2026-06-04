@@ -30,6 +30,7 @@ const ELECCION_LABELS: Record<string, string> = {
   'plebiscito-seguridad-social-2024': 'Plebiscito Seguridad Social 2024',
   'departamentales-2020':             'Elecciones Departamentales y Municipales 2020',
   'departamentales-2025':             'Elecciones Departamentales y Municipales 2025',
+  'municipales-2025':                 'Elecciones Municipales 2025',
   'referendum-luc-2022':             'Referéndum LUC 2022',
   'plebiscito-vivir-sin-miedo-2019': 'Plebiscito Vivir sin Miedo 2019',
 };
@@ -59,7 +60,11 @@ function shardDeNivel(level: NivelGeografico): string {
 const nivelesConDato = deptMeta.levels.filter((lvl) =>
   existsSync(`public/data/${eleccion}/${departamento}/${shardDeNivel(lvl)}`),
 );
-const availableLevels: NivelGeografico[] = nivelesConDato.length > 0 ? nivelesConDato : deptMeta.levels;
+// Municipales: nivel ÚNICO 'municipio' (no se deriva de departments.json.levels — que es
+// compartido por depto y haría colisionar serie↔municipio en votes.json). Election-aware.
+const availableLevels: NivelGeografico[] = eleccion.startsWith('municipales')
+  ? ['municipio']
+  : (nivelesConDato.length > 0 ? nivelesConDato : deptMeta.levels);
 const availableElecciones: string[] = deptMeta.elecciones;
 const deptLabel = deptMeta.label;
 
