@@ -25,10 +25,21 @@ MAP_DIR = os.path.join(ROOT, "public/data/mappings")
 INTEGRACION = os.path.join(ROOT, "data/raw/electoral/departamentales-2025/integracion-de-hojas-full.csv")
 
 CODE_DEPT = {"AR": "artigas", "CA": "canelones", "CL": "cerro_largo", "CO": "colonia", "DU": "durazno",
-    "FD": "florida", "FS": "flores", "LA": "lavalleja", "MA": "maldonado", "PA": "paysandu",
-    "RN": "rio_negro", "RO": "rocha", "RV": "rivera", "SA": "salto", "SJ": "san_jose", "SO": "soriano",
-    "TA": "tacuarembo", "TT": "treinta_y_tres"}
+    "FD": "florida", "FS": "flores", "LA": "lavalleja", "MA": "maldonado", "MO": "montevideo",
+    "PA": "paysandu", "RN": "rio_negro", "RO": "rocha", "RV": "rivera", "SA": "salto",
+    "SJ": "san_jose", "SO": "soriano", "TA": "tacuarembo", "TT": "treinta_y_tres"}
 DEPTOS = sorted(CODE_DEPT.values())
+
+
+def hoja_municipio_dir(slug):
+    # MVD: voto municipal por SERIE (build-montevideo-municipio-shards.py), dir aparte para no
+    # pisar los shards barrio-keyed de la vista departamental.
+    return os.path.join(SRC_DIR, slug, "hoja", "municipio-serie" if slug == "montevideo" else "municipio")
+
+
+def muni_label(slug, raw):
+    # En MVD el municipio es una letra (A..G, CH) → "Municipio X" (igual que el mapeo serie→municipio).
+    return f"Municipio {raw}" if slug == "montevideo" else raw
 
 # Empates de "lista más votada" se resuelven por SORTEO de la Junta Electoral (no calculable):
 # geoId compuesto -> hoja del alcalde proclamado. Fuente: acta de proclamación oficial.
@@ -72,7 +83,8 @@ def main():
         slug = SLUG_BY_CODE.get((r.get("Departamento") or "").strip().upper())
         if not slug:
             continue
-        key = (norm_muni(r.get("Municipio")).upper(), slug, str(r.get("Numero")).strip())
+        muni = muni_label(slug, norm_muni(r.get("Municipio")))
+        key = (muni.upper(), slug, str(r.get("Numero")).strip())
         cabeza[key] = norm_muni(r.get("Nombre"))
 
     departamentos = {}
@@ -80,7 +92,7 @@ def main():
     for slug in DEPTOS:
         mpath = os.path.join(MAP_DIR, slug, f"serie-municipio.{SRC}.json")
         cpath = os.path.join(SRC_DIR, slug, "catalogo.json")
-        hdir = os.path.join(SRC_DIR, slug, "hoja", "municipio")
+        hdir = hoja_municipio_dir(slug)
         if not (os.path.exists(mpath) and os.path.exists(cpath) and os.path.isdir(hdir)):
             continue
         serie_muni = {e["serie"].upper(): e["municipio"] for e in json.load(open(mpath, encoding="utf-8"))}

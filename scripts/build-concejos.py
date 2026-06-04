@@ -39,9 +39,9 @@ INTEGRACION = os.path.join(ROOT, "data/raw/electoral/departamentales-2025/integr
 DST = os.path.join(ROOT, "public/data/municipales-2025/_nacional/concejos.json")
 
 CODE_DEPT = {"AR": "artigas", "CA": "canelones", "CL": "cerro_largo", "CO": "colonia", "DU": "durazno",
-    "FD": "florida", "FS": "flores", "LA": "lavalleja", "MA": "maldonado", "PA": "paysandu",
-    "RN": "rio_negro", "RO": "rocha", "RV": "rivera", "SA": "salto", "SJ": "san_jose", "SO": "soriano",
-    "TA": "tacuarembo", "TT": "treinta_y_tres"}
+    "FD": "florida", "FS": "flores", "LA": "lavalleja", "MA": "maldonado", "MO": "montevideo",
+    "PA": "paysandu", "RN": "rio_negro", "RO": "rocha", "RV": "rivera", "SA": "salto",
+    "SJ": "san_jose", "SO": "soriano", "TA": "tacuarembo", "TT": "treinta_y_tres"}
 DEPTOS = sorted(CODE_DEPT.values())
 SEATS = 5
 MAYORIA_AUTOMATICA = False  # se ajusta tras validar contra actas
@@ -60,6 +60,13 @@ def hoja_num(h):
     d = "".join(ch for ch in str(h).split("-")[0] if ch.isdigit())
     return int(d) if d else 10**9
 def normU(s): return "".join(c for c in unicodedata.normalize("NFD", s or "") if unicodedata.category(c) != "Mn").upper().strip()
+def hoja_municipio_dir(slug):
+    # MVD: voto municipal por SERIE (build-montevideo-municipio-shards.py), dir aparte para no
+    # pisar los shards barrio-keyed de la vista departamental.
+    return os.path.join(SRC_DIR, slug, "hoja", "municipio-serie" if slug == "montevideo" else "municipio")
+def muni_label(slug, raw):
+    # En MVD el municipio es una letra (A..G, CH) → "Municipio X" (igual que el mapeo serie→municipio).
+    return f"Municipio {raw}" if slug == "montevideo" else raw
 
 
 def read_csv(path):
@@ -116,7 +123,7 @@ def nomina(rows):
         slug = CODE_DEPT.get((r.get("Departamento") or "").strip().upper())
         if not slug:
             continue
-        key = (normU(r.get("Municipio")), slug, str(r.get("Numero")).strip())
+        key = (normU(muni_label(slug, norm(r.get("Municipio")))), slug, str(r.get("Numero")).strip())
         try:
             ordn = int(str(r.get("Ordinal")).strip())
         except ValueError:
@@ -183,7 +190,7 @@ def main():
     for slug in (DEPTOS if not only else [only]):
         mpath = os.path.join(MAP_DIR, slug, f"serie-municipio.{SRC}.json")
         cpath = os.path.join(SRC_DIR, slug, "catalogo.json")
-        hdir = os.path.join(SRC_DIR, slug, "hoja", "municipio")
+        hdir = hoja_municipio_dir(slug)
         if not (os.path.exists(mpath) and os.path.exists(cpath) and os.path.isdir(hdir)):
             continue
         serie_muni = {e["serie"].upper(): e["municipio"] for e in json.load(open(mpath, encoding="utf-8"))}
