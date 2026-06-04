@@ -1,15 +1,165 @@
 ---
-// Docs de la API pública (Scalar UI sobre /api/v1/openapi.json). Estática (prerender por defecto).
+/**
+ * Docs de la API pública (Scalar UI sobre /api/v1/openapi.json). Estática.
+ * Alineada con la estética de la app: tokens de color (light/dark vía
+ * prefers-color-scheme), fuentes Inter/Source Serif 4, header con vuelta al
+ * mapa y footer (Sello). El tema de Scalar se mapea a las variables de la app.
+ */
+import '../../../styles/global.css';
 ---
+
 <!doctype html>
-<html lang="es">
+<html lang="es-UY">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
     <title>API pública — Mapa Electoral de Uruguay</title>
+    <meta
+      name="description"
+      content="Documentación de la API pública de datos electorales de Uruguay: resultados, geometría y candidatos. Read-only, CORS abierto, datos abiertos de la Corte Electoral."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap"
+      rel="stylesheet"
+    />
+    <style is:global>
+      /* Mapea las variables de Scalar a los tokens de la app (light). */
+      :root {
+        --scalar-font: 'Inter', system-ui, sans-serif;
+        --scalar-font-code: ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
+        --scalar-color-1: var(--color-ink);
+        --scalar-color-2: var(--color-ink-soft);
+        --scalar-color-3: var(--color-ink-muted);
+        --scalar-color-accent: var(--color-accent);
+        --scalar-background-1: var(--color-paper);
+        --scalar-background-2: var(--color-surface-2);
+        --scalar-background-3: var(--color-bg);
+        --scalar-background-accent: var(--color-highlight);
+        --scalar-border-color: var(--color-border);
+        --scalar-color-green: #15803d;
+        --scalar-radius: 0.5rem;
+      }
+
+      html,
+      body {
+        margin: 0;
+        background: var(--color-bg);
+        color: var(--color-ink);
+        font-family: 'Inter', system-ui, sans-serif;
+      }
+
+      /* Header de la doc — mismo lenguaje visual que el masthead de la app. */
+      .api-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.85rem 1.25rem;
+        background: var(--color-paper);
+        border-bottom: 1px solid var(--color-border);
+        position: sticky;
+        top: 0;
+        z-index: 20;
+      }
+      .api-header__home {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--color-ink-muted);
+        text-decoration: none;
+        padding: 0.4rem 0.7rem;
+        border: 1px solid var(--color-border-strong);
+        border-radius: 0.5rem;
+        white-space: nowrap;
+        transition: color 0.15s, border-color 0.15s, background 0.15s;
+      }
+      .api-header__home:hover {
+        color: var(--color-ink);
+        border-color: var(--color-ink-muted);
+        background: var(--color-surface-2);
+      }
+      .api-header__titles {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.15;
+      }
+      .api-header__kicker {
+        font-size: 0.7rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--color-ink-faint);
+      }
+      .api-header__title {
+        margin: 0;
+        font-family: 'Source Serif 4', Georgia, serif;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--color-ink);
+      }
+      .api-header__badge {
+        margin-left: auto;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--color-accent);
+        border: 1px solid var(--color-border-strong);
+        border-radius: 999px;
+        padding: 0.15rem 0.6rem;
+      }
+
+      .api-footer {
+        font-size: 0.75rem;
+        color: var(--color-ink-faint);
+        text-align: center;
+        padding: 1rem 0.75rem 1.5rem;
+        background: var(--color-bg);
+        border-top: 1px solid var(--color-border);
+      }
+      .api-footer a {
+        color: var(--color-ink-muted);
+        text-underline-offset: 2px;
+      }
+
+      @media (max-width: 560px) {
+        .api-header__badge { display: none; }
+        .api-header__title { font-size: 1rem; }
+      }
+    </style>
   </head>
   <body>
-    <script id="api-reference" data-url="/api/v1/openapi.json"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+    <header class="api-header">
+      <a class="api-header__home" href="/" aria-label="Volver al mapa electoral">
+        <span aria-hidden="true">←</span> Volver al mapa
+      </a>
+      <div class="api-header__titles">
+        <span class="api-header__kicker">Mapa Electoral de Uruguay</span>
+        <h1 class="api-header__title">API pública v1</h1>
+      </div>
+      <span class="api-header__badge">read-only · CORS abierto</span>
+    </header>
+
+    <main id="main-content">
+      <script is:inline id="api-reference" data-url="/api/v1/openapi.json"></script>
+      <script is:inline>
+        // Scalar: tema 'none' (usa nuestras variables CSS) y dark mode siguiendo el SO.
+        const el = document.getElementById('api-reference');
+        el.dataset.configuration = JSON.stringify({
+          theme: 'none',
+          layout: 'modern',
+          darkMode: window.matchMedia('(prefers-color-scheme: dark)').matches,
+          hideDarkModeToggle: false,
+          metaData: { title: 'API pública — Mapa Electoral de Uruguay' },
+        });
+      </script>
+      <script is:inline src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+    </main>
+
+    <footer class="api-footer">
+      Fuente:&nbsp;<a href="https://www.corteelectoral.gub.uy/" target="_blank" rel="noopener">Corte Electoral Uruguay</a>
+      &nbsp;·&nbsp;Datos abiertos con atribución&nbsp;·&nbsp;<a href="/">volver al mapa</a>
+    </footer>
   </body>
 </html>
