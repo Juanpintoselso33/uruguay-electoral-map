@@ -1927,6 +1927,8 @@ async function reloadData(eleccion: string, departamento: string, nivel: string)
     if (m.getLayer('zonas-circle')) {
       m.setLayoutProperty('zonas-circle', 'visibility', isPointNivel ? 'visible' : 'none');
     }
+    // Municipales: contorno de deptos como referencia (las islas de municipios "flotan" sin él).
+    void ensureDeptoOutline(eleccion.startsWith('municipales'));
     m.fitBounds(bounds, { padding: 24 });
     rebuildMarkers(fc);
     fcRef.value = fc;
@@ -1962,6 +1964,36 @@ async function reloadData(eleccion: string, departamento: string, nivel: string)
   } catch (err) {
     status.value = 'error';
     errorMsg.value = err instanceof Error ? err.message : String(err);
+  }
+}
+
+/**
+ * Capa de referencia (municipales): contorno de los 19 departamentos (línea), DEBAJO de los
+ * municipios. Los ~127 municipios son islas con huecos (zonas sin municipio) → sin el contorno
+ * "flotan". Reusa geo/_nacional/departamento.topo.json. La capa persiste (el mapa sobrevive
+ * navegaciones); se togglea visible solo en municipales.
+ */
+async function ensureDeptoOutline(show: boolean): Promise<void> {
+  const m = map.value;
+  if (!m) return;
+  if (show && !m.getSource('depto-outline')) {
+    try {
+      const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+      const res = await fetch(`${base}/data/geo/_nacional/departamento.topo.json`);
+      if (!res.ok) return;
+      const topo = (await res.json()) as Topology;
+      const objName = Object.keys(topo.objects)[0];
+      const geo = topoFeature(topo, topo.objects[objName] as GeometryCollection) as FeatureCollection;
+      if (m.getSource('depto-outline')) return; // carrera: otro load ya la agregó
+      m.addSource('depto-outline', { type: 'geojson', data: geo });
+      m.addLayer({
+        id: 'depto-outline-line', type: 'line', source: 'depto-outline',
+        paint: { 'line-color': 'rgba(120,120,135,0.55)', 'line-width': 1 },
+      }, m.getLayer('zonas-fill') ? 'zonas-fill' : undefined);
+    } catch { /* sin contorno → islas sin referencia (degrada) */ }
+  }
+  if (m.getLayer('depto-outline-line')) {
+    m.setLayoutProperty('depto-outline-line', 'visibility', show ? 'visible' : 'none');
   }
 }
 
@@ -2385,6 +2417,9 @@ onMounted(async () => {
         m.setLayoutProperty('zonas-fill', 'visibility', 'none');
         m.setLayoutProperty('zonas-line', 'visibility', 'none');
       }
+
+      // Municipales: contorno de deptos de referencia, debajo de los municipios (carga inicial).
+      void ensureDeptoOutline(props.eleccion.startsWith('municipales'));
 
       fcRef.value = fc;
 
