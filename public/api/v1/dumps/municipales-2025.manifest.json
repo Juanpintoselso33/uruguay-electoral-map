@@ -1,0 +1,15 @@
+{
+ "eleccion": "municipales-2025",
+ "registros": 359,
+ "formato": "ndjson",
+ "campos": [
+  "eleccion",
+  "departamento",
+  "geoId",
+  "opcionId",
+  "votos",
+  "validos"
+ ],
+ "fuente": "Corte Electoral del Uruguay",
+ "version": "v1"
+}

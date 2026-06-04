@@ -2,6 +2,19 @@
  "id": "balotaje-2024",
  "departamentos": [
   {
+   "id": "_nacional",
+   "results": {
+    "opciones": "/api/v1/results/balotaje-2024/_nacional/opciones.json",
+    "votes": "/api/v1/results/balotaje-2024/_nacional/votes.json"
+   },
+   "geo": {
+    "departamento.topo": "/api/v1/geo/_nacional/departamento.topo.json",
+    "municipio.2020.topo": "/api/v1/geo/_nacional/municipio.2020.topo.json",
+    "municipio.topo": "/api/v1/geo/_nacional/municipio.topo.json",
+    "zona.topo": "/api/v1/geo/_nacional/zona.topo.json"
+   }
+  },
+  {
    "id": "artigas",
    "results": {
     "opciones": "/api/v1/results/balotaje-2024/artigas/opciones.json",
@@ -13,6 +26,8 @@
     "circuito.topo": "/api/v1/geo/artigas/circuito.topo.json",
     "local.topo": "/api/v1/geo/artigas/local.topo.json",
     "localidad.topo": "/api/v1/geo/artigas/localidad.topo.json",
+    "municipio.2020.topo": "/api/v1/geo/artigas/municipio.2020.topo.json",
+    "municipio.topo": "/api/v1/geo/artigas/municipio.topo.json",
     "serie.topo": "/api/v1/geo/artigas/serie.topo.json"
    }
   },
@@ -27,6 +42,8 @@
     "circuito.topo": "/api/v1/geo/canelones/circuito.topo.json",
     "local.topo": "/api/v1/geo/canelones/local.topo.json",
     "localidad.topo": "/api/v1/geo/canelones/localidad.topo.json",
+    "municipio.2020.topo": "/api/v1/geo/canelones/municipio.2020.topo.json",
+    "municipio.topo": "/api/v1/geo/canelones/municipio.topo.json",
     "serie.topo": "/api/v1/geo/canelones/serie.topo.json"
    }
   },
@@ -42,6 +59,8 @@
     "circuito.topo": "/api/v1/geo/cerro_largo/circuito.topo.json",
     "local.topo": "/api/v1/geo/cerro_largo/local.topo.json",
     "localidad.topo": "/api/v1/geo/cerro_largo/localidad.topo.json",
+    "municipio.2020.topo": "/api/v1/geo/cerro_largo/municipio.2020.topo.json",
+    "municipio.topo": "/api/v1/geo/cerro_largo/municipio.topo.json",
     "serie.topo": "/api/v1/geo/cerro_largo/serie.topo.json"
    }
   },
@@ -56,6 +75,8 @@
     "circuito.topo": "/api/v1/geo/colonia/circuito.topo.json",
     "local.topo": "/api/v1/geo/colonia/local.topo.json",
     "localidad.topo": "/api/v1/geo/colonia/localidad.topo.json",
+    "municipio.2020.topo": "/api/v1/geo/colonia/municipio.2020.topo.json",
+    "municipio.topo": "/api/v1/geo/colonia/municipio.topo.json",
     "serie.topo": "/api/v1/geo/colonia/serie.topo.json"
    }
   },
@@ -71,6 +92,8 @@
     "circuito.topo": "/api/v1/geo/durazno/circuito.topo.json",
     "local.topo": "/api/v1/geo/durazno/local.topo.json",
     "localidad.topo": "/api/v1/geo/durazno/localidad.topo.json",
+    "municipio.2020.topo": "/api/v1/geo/durazno/municipio.2020.topo.json",
+    "municipio.topo": "/api/v1/geo/durazno/municipio.topo.json",
     "serie.topo": "/api/v1/geo/durazno/serie.topo.json"
    }
   },
@@ -85,6 +108,8 @@
     "circuito.topo": "/api/v1/geo/flores/circuito.topo.json",
     "local.topo": "/api/v1/geo/flores/local.topo.json",
     "localidad.topo": "/api/v1/geo/flores/localidad.topo.json",
+    "municipio.2020.topo": "/api/v1/geo/flores/municipio.2020.topo.json",
+    "municipio.topo": "/api/v1/geo/flores/municipio.topo.json",
     "serie.topo": "/api/v1/geo/flores/serie.topo.json"
    }
   },
@@ -99,6 +124,8 @@
     "circuito.topo": "/api/v1/geo/florida/circuito.topo.json",
     "local.topo": "/api/v1/geo/florida/local.topo.json",
     "localidad.topo": "/api/v1/geo/florida/localidad.topo.json",
+    "municipio.2020.topo": "/api/v1/geo/florida/municipio.2020.topo.json",
+    "municipio.topo": "/api/v1/geo/florida/municipio.topo.json",
     "serie.topo": "/api/v1/geo/florida/serie.topo.json"
    }
   },
@@ -113,6 +140,8 @@
     "circuito.topo": "/api/v1/geo/lavalleja/circuito.topo.json",
     "local.topo": "/api/v1/geo/lavalleja/local.topo.json",
     "localidad.topo": "/api/v1/geo/lavalleja/localidad.topo.json",
+    "municipio.2020.topo": "/api/v1/geo/lavalleja/municipio.2020.topo.json",
+    "municipio.topo": "/api/v1/geo/lavalleja/municipio.topo.json",
     "serie.topo": "/api/v1/geo/lavalleja/serie.topo.json"
    }
   },
@@ -127,6 +156,8 @@
     "circuito.topo": "/api/v1/geo/maldonado/circuito.topo.json",
     "local.topo": "/api/v1/geo/maldonado/local.topo.json",
     "localidad.topo": "/api/v1/geo/maldonado/localidad.topo.json",
+    "municipio.2020.topo": "/api/v1/geo/maldonado/municipio.2020.topo.json",
+    "municipio.topo": "/api/v1/geo/maldonado/municipio.topo.json",
     "serie.topo": "/api/v1/geo/maldonado/serie.topo.json"
    }
   },
@@ -141,6 +172,8 @@
    "geo": {
     "circuito.topo": "/api/v1/geo/montevideo/circuito.topo.json",
     "local.topo": "/api/v1/geo/montevideo/local.topo.json",
+    "municipio.2020.topo": "/api/v1/geo/montevideo/municipio.2020.topo.json",
+    "municipio.topo": "/api/v1/geo/montevideo/municipio.topo.json",
     "zona.topo": "/api/v1/geo/montevideo/zona.topo.json"
    }
   },
@@ -156,6 +189,8 @@
     "circuito.topo": "/api/v1/geo/paysandu/circuito.topo.json",
     "local.topo": "/api/v1/geo/paysandu/local.topo.json",
     "localidad.topo": "/api/v1/geo/paysandu/localidad.topo.json",
+    "municipio.2020.topo": "/api/v1/geo/paysandu/municipio.2020.topo.json",
+    "municipio.topo": "/api/v1/geo/paysandu/municipio.topo.json",
     "serie.topo": "/api/v1/geo/paysandu/serie.topo.json"
    }
   },
@@ -170,6 +205,8 @@
     "circuito.topo": "/api/v1/geo/rio_negro/circuito.topo.json",
     "local.topo": "/api/v1/geo/rio_negro/local.topo.json",
     "localidad.topo": "/api/v1/geo/rio_negro/localidad.topo.json",
+    "municipio.2020.topo": "/api/v1/geo/rio_negro/municipio.2020.topo.json",
+    "municipio.topo": "/api/v1/geo/rio_negro/municipio.topo.json",
     "serie.topo": "/api/v1/geo/rio_negro/serie.topo.json"
    }
   },
@@ -185,6 +222,8 @@
     "circuito.topo": "/api/v1/geo/rivera/circuito.topo.json",
     "local.topo": "/api/v1/geo/rivera/local.topo.json",
     "localidad.topo": "/api/v1/geo/rivera/localidad.topo.json",
+    "municipio.2020.topo": "/api/v1/geo/rivera/municipio.2020.topo.json",
+    "municipio.topo": "/api/v1/geo/rivera/municipio.topo.json",
     "serie.topo": "/api/v1/geo/rivera/serie.topo.json"
    }
   },
@@ -199,6 +238,8 @@
     "circuito.topo": "/api/v1/geo/rocha/circuito.topo.json",
     "local.topo": "/api/v1/geo/rocha/local.topo.json",
     "localidad.topo": "/api/v1/geo/rocha/localidad.topo.json",
+    "municipio.2020.topo": "/api/v1/geo/rocha/municipio.2020.topo.json",
+    "municipio.topo": "/api/v1/geo/rocha/municipio.topo.json",
     "serie.topo": "/api/v1/geo/rocha/serie.topo.json"
    }
   },
@@ -214,6 +255,8 @@
     "circuito.topo": "/api/v1/geo/salto/circuito.topo.json",
     "local.topo": "/api/v1/geo/salto/local.topo.json",
     "localidad.topo": "/api/v1/geo/salto/localidad.topo.json",
+    "municipio.2020.topo": "/api/v1/geo/salto/municipio.2020.topo.json",
+    "municipio.topo": "/api/v1/geo/salto/municipio.topo.json",
     "serie.topo": "/api/v1/geo/salto/serie.topo.json"
    }
   },
@@ -229,6 +272,8 @@
     "circuito.topo": "/api/v1/geo/san_jose/circuito.topo.json",
     "local.topo": "/api/v1/geo/san_jose/local.topo.json",
     "localidad.topo": "/api/v1/geo/san_jose/localidad.topo.json",
+    "municipio.2020.topo": "/api/v1/geo/san_jose/municipio.2020.topo.json",
+    "municipio.topo": "/api/v1/geo/san_jose/municipio.topo.json",
     "serie.topo": "/api/v1/geo/san_jose/serie.topo.json"
    }
   },
@@ -243,6 +288,8 @@
     "circuito.topo": "/api/v1/geo/soriano/circuito.topo.json",
     "local.topo": "/api/v1/geo/soriano/local.topo.json",
     "localidad.topo": "/api/v1/geo/soriano/localidad.topo.json",
+    "municipio.2020.topo": "/api/v1/geo/soriano/municipio.2020.topo.json",
+    "municipio.topo": "/api/v1/geo/soriano/municipio.topo.json",
     "serie.topo": "/api/v1/geo/soriano/serie.topo.json"
    }
   },
@@ -257,6 +304,8 @@
     "circuito.topo": "/api/v1/geo/tacuarembo/circuito.topo.json",
     "local.topo": "/api/v1/geo/tacuarembo/local.topo.json",
     "localidad.topo": "/api/v1/geo/tacuarembo/localidad.topo.json",
+    "municipio.2020.topo": "/api/v1/geo/tacuarembo/municipio.2020.topo.json",
+    "municipio.topo": "/api/v1/geo/tacuarembo/municipio.topo.json",
     "serie.topo": "/api/v1/geo/tacuarembo/serie.topo.json"
    }
   },
@@ -272,6 +321,8 @@
     "circuito.topo": "/api/v1/geo/treinta_y_tres/circuito.topo.json",
     "local.topo": "/api/v1/geo/treinta_y_tres/local.topo.json",
     "localidad.topo": "/api/v1/geo/treinta_y_tres/localidad.topo.json",
+    "municipio.2020.topo": "/api/v1/geo/treinta_y_tres/municipio.2020.topo.json",
+    "municipio.topo": "/api/v1/geo/treinta_y_tres/municipio.topo.json",
     "serie.topo": "/api/v1/geo/treinta_y_tres/serie.topo.json"
    }
   }

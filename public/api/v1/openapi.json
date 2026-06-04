@@ -10,6 +10,7 @@
   "tags": [
     { "name": "Descubrimiento", "description": "Índices para navegar la API." },
     { "name": "Resultados", "description": "Votos por zona y geometría por departamento." },
+    { "name": "Municipales", "description": "Elecciones municipales (municipales-2025, municipales-2020): nivel municipio, alcalde electo y Concejo Municipal (alcalde + 4 concejales) por adjudicación D'Hondt, validado contra las actas de proclamación." },
     { "name": "Candidatos", "description": "Personas candidatas y votos de las listas que integran (legisladores)." }
   ],
   "paths": {
@@ -27,7 +28,7 @@
           "elections": "/api/v1/elections.json",
           "candidatos": "/api/v1/candidatos/index.json",
           "departamentos": ["artigas", "canelones", "montevideo", "salto", "…"],
-          "elecciones": ["balotaje-2024", "nacionales-2024", "departamentales-2025", "…"]
+          "elecciones": ["balotaje-2024", "nacionales-2024", "departamentales-2025", "municipales-2025", "municipales-2020", "…"]
         } } } } }
       }
     },
@@ -97,11 +98,50 @@
         } } } } }
       }
     },
+    "/api/v1/results/{eleccion}/_nacional/alcaldes.json": {
+      "get": {
+        "tags": ["Municipales"],
+        "summary": "Alcalde electo por municipio (municipales)",
+        "description": "Solo para elecciones municipales. Alcalde = primer titular de la lista más votada del lema más votado (Ley 19.272). Clave: geoId nacional compuesto «MUNICIPIO · Departamento». En Montevideo el municipio es una letra (A–G, CH) → «Municipio X».",
+        "parameters": [{ "name": "eleccion", "in": "path", "required": true, "schema": { "type": "string", "enum": ["municipales-2025", "municipales-2020"] }, "example": "municipales-2025" }],
+        "responses": { "200": { "description": "OK", "content": { "application/json": { "example": {
+          "eleccion": "municipales-2025",
+          "regla": "Alcalde = primer titular de la lista más votada del lema más votado (Ley 19.272).",
+          "municipios": {
+            "Municipio CH · Montevideo": {
+              "municipio": "Municipio CH", "departamento": "montevideo", "ganadorLema": "coalicion-republicana",
+              "alcaldeElecto": { "nombre": "MATILDE ANTIA ADAMI", "lema": "coalicion-republicana", "hoja": "40-CH", "votosLista": 28000 }
+            }
+          }
+        } } } } }
+      }
+    },
+    "/api/v1/results/{eleccion}/_nacional/concejos.json": {
+      "get": {
+        "tags": ["Municipales"],
+        "summary": "Concejo Municipal (alcalde + 4 concejales)",
+        "description": "Solo para elecciones municipales. Los 5 cargos del Concejo por adjudicación D'Hondt (lema→sublema→lista→ordinal; sin mayoría automática). Nombres de la integración de hojas. Validado contra las actas de proclamación; donde el cálculo difería del acta (empate por sorteo, voto-al-sublema, sustitución de candidato) se fija el Concejo proclamado.",
+        "parameters": [{ "name": "eleccion", "in": "path", "required": true, "schema": { "type": "string", "enum": ["municipales-2025", "municipales-2020"] }, "example": "municipales-2025" }],
+        "responses": { "200": { "description": "OK", "content": { "application/json": { "example": {
+          "regla": "Concejo de 5: D'Hondt lema→sublema→lista→ordinal. mayoriaAutomatica=False.",
+          "municipios": {
+            "Municipio CH · Montevideo": {
+              "municipio": "Municipio CH", "departamento": "montevideo",
+              "concejo": [
+                { "cargo": "alcalde", "nombre": "MATILDE ANTIA ADAMI", "lema": "coalicion-republicana", "hoja": "40-CH" },
+                { "cargo": "concejal", "nombre": "JOSE FELIX LLANES SANTANA", "lema": "coalicion-republicana", "hoja": "40-CH" },
+                { "cargo": "concejal", "nombre": "MONICA SILVANA CAFFA REYES", "lema": "frente-amplio", "hoja": "79-CH" }
+              ]
+            }
+          }
+        } } } } }
+      }
+    },
     "/api/v1/geo/{departamento}/{nivel}.topo.json": {
       "get": {
         "tags": ["Resultados"],
         "summary": "Geometría TopoJSON",
-        "description": "Geometría del departamento en formato TopoJSON para el nivel pedido (zona/barrio, circuito, local, serie, localidad). Los `geoId` cruzan con los de `votes.json`.",
+        "description": "Geometría del departamento en formato TopoJSON para el nivel pedido (zona/barrio, circuito, local, serie, localidad, municipio). Los `geoId` cruzan con los de `votes.json`. El nivel `municipio` cambia por ciclo: 2025 = `municipio.topo.json`; otros ciclos = `municipio.{año}.topo.json` (p.ej. `municipio.2020.topo.json`).",
         "parameters": [
           { "name": "departamento", "in": "path", "required": true, "schema": { "type": "string" }, "example": "montevideo" },
           { "name": "nivel", "in": "path", "required": true, "schema": { "type": "string" }, "example": "zona" }

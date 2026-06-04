@@ -1,11 +1,13 @@
 {
- "id": "internas-2024",
+ "id": "municipales-2025",
  "departamentos": [
   {
    "id": "_nacional",
    "results": {
-    "opciones": "/api/v1/results/internas-2024/_nacional/opciones.json",
-    "votes": "/api/v1/results/internas-2024/_nacional/votes.json"
+    "opciones": "/api/v1/results/municipales-2025/_nacional/opciones.json",
+    "votes": "/api/v1/results/municipales-2025/_nacional/votes.json",
+    "alcaldes": "/api/v1/results/municipales-2025/_nacional/alcaldes.json",
+    "concejos": "/api/v1/results/municipales-2025/_nacional/concejos.json"
    },
    "geo": {
     "departamento.topo": "/api/v1/geo/_nacional/departamento.topo.json",
@@ -17,13 +19,9 @@
   {
    "id": "artigas",
    "results": {
-    "catalogo": "/api/v1/results/internas-2024/artigas/catalogo.json",
-    "opciones": "/api/v1/results/internas-2024/artigas/opciones.json",
-    "votes": "/api/v1/results/internas-2024/artigas/votes.json",
-    "votes-local": "/api/v1/results/internas-2024/artigas/votes-local.json",
-    "votes-circuito": "/api/v1/results/internas-2024/artigas/votes-circuito.json",
-    "votes-barrio": "/api/v1/results/internas-2024/artigas/votes-barrio.json",
-    "hoja-local": "/api/v1/results/internas-2024/artigas/hoja-local.json"
+    "catalogo": "/api/v1/results/municipales-2025/artigas/catalogo.json",
+    "opciones": "/api/v1/results/municipales-2025/artigas/opciones.json",
+    "votes": "/api/v1/results/municipales-2025/artigas/votes.json"
    },
    "geo": {
     "barrio.topo": "/api/v1/geo/artigas/barrio.topo.json",
@@ -38,12 +36,9 @@
   {
    "id": "canelones",
    "results": {
-    "catalogo": "/api/v1/results/internas-2024/canelones/catalogo.json",
-    "opciones": "/api/v1/results/internas-2024/canelones/opciones.json",
-    "votes": "/api/v1/results/internas-2024/canelones/votes.json",
-    "votes-local": "/api/v1/results/internas-2024/canelones/votes-local.json",
-    "votes-circuito": "/api/v1/results/internas-2024/canelones/votes-circuito.json",
-    "hoja-local": "/api/v1/results/internas-2024/canelones/hoja-local.json"
+    "catalogo": "/api/v1/results/municipales-2025/canelones/catalogo.json",
+    "opciones": "/api/v1/results/municipales-2025/canelones/opciones.json",
+    "votes": "/api/v1/results/municipales-2025/canelones/votes.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/canelones/circuito.topo.json",
@@ -57,13 +52,9 @@
   {
    "id": "cerro_largo",
    "results": {
-    "catalogo": "/api/v1/results/internas-2024/cerro_largo/catalogo.json",
-    "opciones": "/api/v1/results/internas-2024/cerro_largo/opciones.json",
-    "votes": "/api/v1/results/internas-2024/cerro_largo/votes.json",
-    "votes-local": "/api/v1/results/internas-2024/cerro_largo/votes-local.json",
-    "votes-circuito": "/api/v1/results/internas-2024/cerro_largo/votes-circuito.json",
-    "votes-barrio": "/api/v1/results/internas-2024/cerro_largo/votes-barrio.json",
-    "hoja-local": "/api/v1/results/internas-2024/cerro_largo/hoja-local.json"
+    "catalogo": "/api/v1/results/municipales-2025/cerro_largo/catalogo.json",
+    "opciones": "/api/v1/results/municipales-2025/cerro_largo/opciones.json",
+    "votes": "/api/v1/results/municipales-2025/cerro_largo/votes.json"
    },
    "geo": {
     "barrio.topo": "/api/v1/geo/cerro_largo/barrio.topo.json",
@@ -78,12 +69,9 @@
   {
    "id": "colonia",
    "results": {
-    "catalogo": "/api/v1/results/internas-2024/colonia/catalogo.json",
-    "opciones": "/api/v1/results/internas-2024/colonia/opciones.json",
-    "votes": "/api/v1/results/internas-2024/colonia/votes.json",
-    "votes-local": "/api/v1/results/internas-2024/colonia/votes-local.json",
-    "votes-circuito": "/api/v1/results/internas-2024/colonia/votes-circuito.json",
-    "hoja-local": "/api/v1/results/internas-2024/colonia/hoja-local.json"
+    "catalogo": "/api/v1/results/municipales-2025/colonia/catalogo.json",
+    "opciones": "/api/v1/results/municipales-2025/colonia/opciones.json",
+    "votes": "/api/v1/results/municipales-2025/colonia/votes.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/colonia/circuito.topo.json",
@@ -97,13 +85,9 @@
   {
    "id": "durazno",
    "results": {
-    "catalogo": "/api/v1/results/internas-2024/durazno/catalogo.json",
-    "opciones": "/api/v1/results/internas-2024/durazno/opciones.json",
-    "votes": "/api/v1/results/internas-2024/durazno/votes.json",
-    "votes-local": "/api/v1/results/internas-2024/durazno/votes-local.json",
-    "votes-circuito": "/api/v1/results/internas-2024/durazno/votes-circuito.json",
-    "votes-barrio": "/api/v1/results/internas-2024/durazno/votes-barrio.json",
-    "hoja-local": "/api/v1/results/internas-2024/durazno/hoja-local.json"
+    "catalogo": "/api/v1/results/municipales-2025/durazno/catalogo.json",
+    "opciones": "/api/v1/results/municipales-2025/durazno/opciones.json",
+    "votes": "/api/v1/results/municipales-2025/durazno/votes.json"
    },
    "geo": {
     "barrio.topo": "/api/v1/geo/durazno/barrio.topo.json",
@@ -118,12 +102,9 @@
   {
    "id": "flores",
    "results": {
-    "catalogo": "/api/v1/results/internas-2024/flores/catalogo.json",
-    "opciones": "/api/v1/results/internas-2024/flores/opciones.json",
-    "votes": "/api/v1/results/internas-2024/flores/votes.json",
-    "votes-local": "/api/v1/results/internas-2024/flores/votes-local.json",
-    "votes-circuito": "/api/v1/results/internas-2024/flores/votes-circuito.json",
-    "hoja-local": "/api/v1/results/internas-2024/flores/hoja-local.json"
+    "catalogo": "/api/v1/results/municipales-2025/flores/catalogo.json",
+    "opciones": "/api/v1/results/municipales-2025/flores/opciones.json",
+    "votes": "/api/v1/results/municipales-2025/flores/votes.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/flores/circuito.topo.json",
@@ -137,12 +118,9 @@
   {
    "id": "florida",
    "results": {
-    "catalogo": "/api/v1/results/internas-2024/florida/catalogo.json",
-    "opciones": "/api/v1/results/internas-2024/florida/opciones.json",
-    "votes": "/api/v1/results/internas-2024/florida/votes.json",
-    "votes-local": "/api/v1/results/internas-2024/florida/votes-local.json",
-    "votes-circuito": "/api/v1/results/internas-2024/florida/votes-circuito.json",
-    "hoja-local": "/api/v1/results/internas-2024/florida/hoja-local.json"
+    "catalogo": "/api/v1/results/municipales-2025/florida/catalogo.json",
+    "opciones": "/api/v1/results/municipales-2025/florida/opciones.json",
+    "votes": "/api/v1/results/municipales-2025/florida/votes.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/florida/circuito.topo.json",
@@ -156,12 +134,9 @@
   {
    "id": "lavalleja",
    "results": {
-    "catalogo": "/api/v1/results/internas-2024/lavalleja/catalogo.json",
-    "opciones": "/api/v1/results/internas-2024/lavalleja/opciones.json",
-    "votes": "/api/v1/results/internas-2024/lavalleja/votes.json",
-    "votes-local": "/api/v1/results/internas-2024/lavalleja/votes-local.json",
-    "votes-circuito": "/api/v1/results/internas-2024/lavalleja/votes-circuito.json",
-    "hoja-local": "/api/v1/results/internas-2024/lavalleja/hoja-local.json"
+    "catalogo": "/api/v1/results/municipales-2025/lavalleja/catalogo.json",
+    "opciones": "/api/v1/results/municipales-2025/lavalleja/opciones.json",
+    "votes": "/api/v1/results/municipales-2025/lavalleja/votes.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/lavalleja/circuito.topo.json",
@@ -175,12 +150,9 @@
   {
    "id": "maldonado",
    "results": {
-    "catalogo": "/api/v1/results/internas-2024/maldonado/catalogo.json",
-    "opciones": "/api/v1/results/internas-2024/maldonado/opciones.json",
-    "votes": "/api/v1/results/internas-2024/maldonado/votes.json",
-    "votes-local": "/api/v1/results/internas-2024/maldonado/votes-local.json",
-    "votes-circuito": "/api/v1/results/internas-2024/maldonado/votes-circuito.json",
-    "hoja-local": "/api/v1/results/internas-2024/maldonado/hoja-local.json"
+    "catalogo": "/api/v1/results/municipales-2025/maldonado/catalogo.json",
+    "opciones": "/api/v1/results/municipales-2025/maldonado/opciones.json",
+    "votes": "/api/v1/results/municipales-2025/maldonado/votes.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/maldonado/circuito.topo.json",
@@ -194,12 +166,9 @@
   {
    "id": "montevideo",
    "results": {
-    "catalogo": "/api/v1/results/internas-2024/montevideo/catalogo.json",
-    "opciones": "/api/v1/results/internas-2024/montevideo/opciones.json",
-    "votes": "/api/v1/results/internas-2024/montevideo/votes.json",
-    "votes-local": "/api/v1/results/internas-2024/montevideo/votes-local.json",
-    "votes-circuito": "/api/v1/results/internas-2024/montevideo/votes-circuito.json",
-    "hoja-local": "/api/v1/results/internas-2024/montevideo/hoja-local.json"
+    "catalogo": "/api/v1/results/municipales-2025/montevideo/catalogo.json",
+    "opciones": "/api/v1/results/municipales-2025/montevideo/opciones.json",
+    "votes": "/api/v1/results/municipales-2025/montevideo/votes.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/montevideo/circuito.topo.json",
@@ -212,13 +181,9 @@
   {
    "id": "paysandu",
    "results": {
-    "catalogo": "/api/v1/results/internas-2024/paysandu/catalogo.json",
-    "opciones": "/api/v1/results/internas-2024/paysandu/opciones.json",
-    "votes": "/api/v1/results/internas-2024/paysandu/votes.json",
-    "votes-local": "/api/v1/results/internas-2024/paysandu/votes-local.json",
-    "votes-circuito": "/api/v1/results/internas-2024/paysandu/votes-circuito.json",
-    "votes-barrio": "/api/v1/results/internas-2024/paysandu/votes-barrio.json",
-    "hoja-local": "/api/v1/results/internas-2024/paysandu/hoja-local.json"
+    "catalogo": "/api/v1/results/municipales-2025/paysandu/catalogo.json",
+    "opciones": "/api/v1/results/municipales-2025/paysandu/opciones.json",
+    "votes": "/api/v1/results/municipales-2025/paysandu/votes.json"
    },
    "geo": {
     "barrio.topo": "/api/v1/geo/paysandu/barrio.topo.json",
@@ -233,12 +198,9 @@
   {
    "id": "rio_negro",
    "results": {
-    "catalogo": "/api/v1/results/internas-2024/rio_negro/catalogo.json",
-    "opciones": "/api/v1/results/internas-2024/rio_negro/opciones.json",
-    "votes": "/api/v1/results/internas-2024/rio_negro/votes.json",
-    "votes-local": "/api/v1/results/internas-2024/rio_negro/votes-local.json",
-    "votes-circuito": "/api/v1/results/internas-2024/rio_negro/votes-circuito.json",
-    "hoja-local": "/api/v1/results/internas-2024/rio_negro/hoja-local.json"
+    "catalogo": "/api/v1/results/municipales-2025/rio_negro/catalogo.json",
+    "opciones": "/api/v1/results/municipales-2025/rio_negro/opciones.json",
+    "votes": "/api/v1/results/municipales-2025/rio_negro/votes.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/rio_negro/circuito.topo.json",
@@ -252,13 +214,9 @@
   {
    "id": "rivera",
    "results": {
-    "catalogo": "/api/v1/results/internas-2024/rivera/catalogo.json",
-    "opciones": "/api/v1/results/internas-2024/rivera/opciones.json",
-    "votes": "/api/v1/results/internas-2024/rivera/votes.json",
-    "votes-local": "/api/v1/results/internas-2024/rivera/votes-local.json",
-    "votes-circuito": "/api/v1/results/internas-2024/rivera/votes-circuito.json",
-    "votes-barrio": "/api/v1/results/internas-2024/rivera/votes-barrio.json",
-    "hoja-local": "/api/v1/results/internas-2024/rivera/hoja-local.json"
+    "catalogo": "/api/v1/results/municipales-2025/rivera/catalogo.json",
+    "opciones": "/api/v1/results/municipales-2025/rivera/opciones.json",
+    "votes": "/api/v1/results/municipales-2025/rivera/votes.json"
    },
    "geo": {
     "barrio.topo": "/api/v1/geo/rivera/barrio.topo.json",
@@ -273,12 +231,9 @@
   {
    "id": "rocha",
    "results": {
-    "catalogo": "/api/v1/results/internas-2024/rocha/catalogo.json",
-    "opciones": "/api/v1/results/internas-2024/rocha/opciones.json",
-    "votes": "/api/v1/results/internas-2024/rocha/votes.json",
-    "votes-local": "/api/v1/results/internas-2024/rocha/votes-local.json",
-    "votes-circuito": "/api/v1/results/internas-2024/rocha/votes-circuito.json",
-    "hoja-local": "/api/v1/results/internas-2024/rocha/hoja-local.json"
+    "catalogo": "/api/v1/results/municipales-2025/rocha/catalogo.json",
+    "opciones": "/api/v1/results/municipales-2025/rocha/opciones.json",
+    "votes": "/api/v1/results/municipales-2025/rocha/votes.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/rocha/circuito.topo.json",
@@ -292,13 +247,9 @@
   {
    "id": "salto",
    "results": {
-    "catalogo": "/api/v1/results/internas-2024/salto/catalogo.json",
-    "opciones": "/api/v1/results/internas-2024/salto/opciones.json",
-    "votes": "/api/v1/results/internas-2024/salto/votes.json",
-    "votes-local": "/api/v1/results/internas-2024/salto/votes-local.json",
-    "votes-circuito": "/api/v1/results/internas-2024/salto/votes-circuito.json",
-    "votes-barrio": "/api/v1/results/internas-2024/salto/votes-barrio.json",
-    "hoja-local": "/api/v1/results/internas-2024/salto/hoja-local.json"
+    "catalogo": "/api/v1/results/municipales-2025/salto/catalogo.json",
+    "opciones": "/api/v1/results/municipales-2025/salto/opciones.json",
+    "votes": "/api/v1/results/municipales-2025/salto/votes.json"
    },
    "geo": {
     "barrio.topo": "/api/v1/geo/salto/barrio.topo.json",
@@ -313,13 +264,9 @@
   {
    "id": "san_jose",
    "results": {
-    "catalogo": "/api/v1/results/internas-2024/san_jose/catalogo.json",
-    "opciones": "/api/v1/results/internas-2024/san_jose/opciones.json",
-    "votes": "/api/v1/results/internas-2024/san_jose/votes.json",
-    "votes-local": "/api/v1/results/internas-2024/san_jose/votes-local.json",
-    "votes-circuito": "/api/v1/results/internas-2024/san_jose/votes-circuito.json",
-    "votes-barrio": "/api/v1/results/internas-2024/san_jose/votes-barrio.json",
-    "hoja-local": "/api/v1/results/internas-2024/san_jose/hoja-local.json"
+    "catalogo": "/api/v1/results/municipales-2025/san_jose/catalogo.json",
+    "opciones": "/api/v1/results/municipales-2025/san_jose/opciones.json",
+    "votes": "/api/v1/results/municipales-2025/san_jose/votes.json"
    },
    "geo": {
     "barrio.topo": "/api/v1/geo/san_jose/barrio.topo.json",
@@ -334,12 +281,9 @@
   {
    "id": "soriano",
    "results": {
-    "catalogo": "/api/v1/results/internas-2024/soriano/catalogo.json",
-    "opciones": "/api/v1/results/internas-2024/soriano/opciones.json",
-    "votes": "/api/v1/results/internas-2024/soriano/votes.json",
-    "votes-local": "/api/v1/results/internas-2024/soriano/votes-local.json",
-    "votes-circuito": "/api/v1/results/internas-2024/soriano/votes-circuito.json",
-    "hoja-local": "/api/v1/results/internas-2024/soriano/hoja-local.json"
+    "catalogo": "/api/v1/results/municipales-2025/soriano/catalogo.json",
+    "opciones": "/api/v1/results/municipales-2025/soriano/opciones.json",
+    "votes": "/api/v1/results/municipales-2025/soriano/votes.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/soriano/circuito.topo.json",
@@ -353,12 +297,9 @@
   {
    "id": "tacuarembo",
    "results": {
-    "catalogo": "/api/v1/results/internas-2024/tacuarembo/catalogo.json",
-    "opciones": "/api/v1/results/internas-2024/tacuarembo/opciones.json",
-    "votes": "/api/v1/results/internas-2024/tacuarembo/votes.json",
-    "votes-local": "/api/v1/results/internas-2024/tacuarembo/votes-local.json",
-    "votes-circuito": "/api/v1/results/internas-2024/tacuarembo/votes-circuito.json",
-    "hoja-local": "/api/v1/results/internas-2024/tacuarembo/hoja-local.json"
+    "catalogo": "/api/v1/results/municipales-2025/tacuarembo/catalogo.json",
+    "opciones": "/api/v1/results/municipales-2025/tacuarembo/opciones.json",
+    "votes": "/api/v1/results/municipales-2025/tacuarembo/votes.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/tacuarembo/circuito.topo.json",
@@ -372,13 +313,9 @@
   {
    "id": "treinta_y_tres",
    "results": {
-    "catalogo": "/api/v1/results/internas-2024/treinta_y_tres/catalogo.json",
-    "opciones": "/api/v1/results/internas-2024/treinta_y_tres/opciones.json",
-    "votes": "/api/v1/results/internas-2024/treinta_y_tres/votes.json",
-    "votes-local": "/api/v1/results/internas-2024/treinta_y_tres/votes-local.json",
-    "votes-circuito": "/api/v1/results/internas-2024/treinta_y_tres/votes-circuito.json",
-    "votes-barrio": "/api/v1/results/internas-2024/treinta_y_tres/votes-barrio.json",
-    "hoja-local": "/api/v1/results/internas-2024/treinta_y_tres/hoja-local.json"
+    "catalogo": "/api/v1/results/municipales-2025/treinta_y_tres/catalogo.json",
+    "opciones": "/api/v1/results/municipales-2025/treinta_y_tres/opciones.json",
+    "votes": "/api/v1/results/municipales-2025/treinta_y_tres/votes.json"
    },
    "geo": {
     "barrio.topo": "/api/v1/geo/treinta_y_tres/barrio.topo.json",

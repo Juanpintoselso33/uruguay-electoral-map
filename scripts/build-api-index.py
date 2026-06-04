@@ -9,7 +9,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'public/data')
 OUT = os.path.join(ROOT, 'public/api/v1')
 RESULT_FILES = ['catalogo.json', 'opciones.json', 'votes.json', 'votes-local.json',
-                'votes-circuito.json', 'votes-barrio.json', 'hoja-local.json']
+                'votes-circuito.json', 'votes-barrio.json', 'hoja-local.json',
+                # Municipales (Epic 22): recursos nacionales — alcalde electo + Concejo Municipal por municipio.
+                'alcaldes.json', 'concejos.json']
 
 def depts():
     return json.load(open(os.path.join(ROOT, 'src/config/departments.json'), encoding='utf-8'))
@@ -52,6 +54,9 @@ def main():
     json.dump({"elecciones": elist}, open(os.path.join(OUT, 'elections.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     for e in sorted(elections):
         detalle = {"id": e, "departamentos": []}
+        # Vista nacional: agregados + recursos solo-nacionales (alcaldes/concejos en municipales).
+        if os.path.isdir(os.path.join(DATA, e, '_nacional')):
+            detalle["departamentos"].append({"id": "_nacional", "results": resources_for(e, '_nacional'), "geo": geo_for('_nacional')})
         for depto in sorted(set(elections[e])):
             detalle["departamentos"].append({"id": depto, "results": resources_for(e, depto), "geo": geo_for(depto)})
         json.dump(detalle, open(os.path.join(OUT, 'elections', f'{e}.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
