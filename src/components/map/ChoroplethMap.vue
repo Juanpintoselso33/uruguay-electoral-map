@@ -2479,20 +2479,21 @@ onUnmounted(() => {
       </div>
     </div>
 
+    <!-- Ficha de zona (detalle on-demand al clickear un polígono): va ARRIBA del RESULTADO
+         agregado. Cuando no hay zona seleccionada colapsa a max-height:0 (no ocupa espacio),
+         así el resultado nacional/depto queda pegado a los controles; al clickear, el detalle
+         dinámico de la zona aparece por ENCIMA del resultado agregado. -->
+    <ZoneSheet
+      :sel="selected"
+      :opcion-sigla="opcionActiva ? (opcNombreMap.get(opcionActiva) ? resolveParty(opcNombreMap.get(opcionActiva)!).sigla : opcionActiva) : null"
+      @close="commit({ zona: null })"
+    />
+
     <ResultadoGlobal
       :entradas="resultadoGlobal"
       :validos="resultadoValidos"
       :titulo="departamento === '_nacional' ? 'Resultado nacional' : 'Resultado'"
       :contexto="resultadoCtx"
-    />
-
-    <!-- Ficha de zona (detalle on-demand): va AL FINAL para no separar el mapa de sus
-         controles (leyenda + toggle de coloreo + RESULTADO). El highlight en el mapa ya da
-         feedback inmediato al clickear; la ficha se lee al hacer scroll. -->
-    <ZoneSheet
-      :sel="selected"
-      :opcion-sigla="opcionActiva ? (opcNombreMap.get(opcionActiva) ? resolveParty(opcNombreMap.get(opcionActiva)!).sigla : opcionActiva) : null"
-      @close="commit({ zona: null })"
     />
   </section>
 </template>

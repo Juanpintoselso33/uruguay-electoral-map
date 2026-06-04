@@ -13,7 +13,6 @@ Aplicación **Astro 5** con **islas Vue 3.5**. Astro genera páginas estáticas;
 | `components/compare/` | Comparación entre elecciones/resultados. |
 | `components/search/` | Búsqueda (barrio, serie, localidad). |
 | `components/share/` | Compartir vista / enlaces con estado. |
-| `components/a11y/` | Tabla de datos accesible por nivel geográfico. |
 | `components/ui/` | Componentes de UI transversales. |
 | `stores/` | Estado de la app (`map-state.ts`, nanostores). |
 | `lib/` | Lógica de dominio del frontend: colores de partido, metadata, estado-en-URL, contratos. |

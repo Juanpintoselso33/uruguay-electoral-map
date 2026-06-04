@@ -9,7 +9,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import Base from '../../layouts/Base.astro';
 import ChoroplethMap from '../../components/map/ChoroplethMap.vue';
-import DataTable from '../../components/a11y/DataTable.astro';
 import OpcionAccordion from '../../components/selectors/OpcionAccordion.vue';
 import EleccionSelector from '../../components/selectors/EleccionSelector.vue';
 import GranularitySelector from '../../components/selectors/GranularitySelector.vue';
@@ -113,7 +112,6 @@ const canonicalPath = `/${eleccion}`;
     </div>
     <!-- Selector de opción (listas) — debajo del mapa -->
     <OpcionAccordion client:idle eleccion={eleccion} departamento="_nacional" />
-    <DataTable eleccion={eleccion} departamento="_nacional" eleccionLabel={eleccionLabel} deptLabel="Uruguay" />
     <Sello eleccion={eleccion} departamento="_nacional" />
   </main>
 </Base>

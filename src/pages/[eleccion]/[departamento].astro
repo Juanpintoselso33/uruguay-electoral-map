@@ -3,7 +3,6 @@ import { existsSync, readFileSync } from 'node:fs';
 import type { NivelGeografico } from '../../lib/contracts';
 import Base from '../../layouts/Base.astro';
 import ChoroplethMap from '../../components/map/ChoroplethMap.vue';
-import DataTable from '../../components/a11y/DataTable.astro';
 import OpcionAccordion from '../../components/selectors/OpcionAccordion.vue';
 import LevelSelector from '../../components/selectors/LevelSelector.vue';
 import EleccionSelector from '../../components/selectors/EleccionSelector.vue';
@@ -153,10 +152,6 @@ const canonicalPath = `/${eleccion}/${departamento}`;
     </div>
     <!-- Selector de opción (listas) — debajo del mapa (isla fuera de persist, se re-monta, Story 2.2) -->
     <OpcionAccordion client:idle eleccion={eleccion} departamento={departamento} />
-    <!-- Tabla accesible por CADA nivel geográfico disponible (serie/localidad/barrio/circuito/local) -->
-    {availableLevels.map((lvl) => (
-      <DataTable eleccion={eleccion} departamento={departamento} shard={shardDeNivel(lvl)} eleccionLabel={eleccionLabel} deptLabel={deptLabel} />
-    ))}
     <div class="share-actions">
       <ExportButton client:idle eleccion={eleccion} departamento={departamento} />
       <MapScreenshotButton
