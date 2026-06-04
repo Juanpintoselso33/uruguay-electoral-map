@@ -24,6 +24,7 @@ const META: Record<string, { short: string; type: TipoEleccion; año: number }> 
   'plebiscito-vivir-sin-miedo-2019':  { short: 'Vivir sin Miedo',  type: 'plebiscito',  año: 2019 },
   'balotaje-2019':                    { short: 'Balotaje',         type: 'balotaje',    año: 2019 },
   'departamentales-2020':             { short: 'Departamentales',  type: 'dptales',     año: 2020 },
+  'municipales-2020':                 { short: 'Municipales',      type: 'dptales',     año: 2020 },
   'referendum-luc-2022':              { short: 'Referéndum LUC',   type: 'plebiscito',  año: 2022 },
   'internas-2024':                    { short: 'Internas',         type: 'internas',    año: 2024 },
   'nacionales-2024':                  { short: 'Nacionales',       type: 'nacionales',  año: 2024 },
@@ -32,7 +33,6 @@ const META: Record<string, { short: string; type: TipoEleccion; año: number }> 
   'balotaje-2024':                    { short: 'Balotaje',         type: 'balotaje',    año: 2024 },
   'departamentales-2025':             { short: 'Departamentales',  type: 'dptales',     año: 2025 },
   'municipales-2025':                 { short: 'Municipales',      type: 'dptales',     año: 2025 },
-  'municipales-2020':                 { short: 'Municipales',      type: 'dptales',     año: 2020 },
 };
 
 const ALL_IDS = Object.keys(META);
