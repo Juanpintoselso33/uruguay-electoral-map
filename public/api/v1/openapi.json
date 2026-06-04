@@ -3,19 +3,181 @@
   "info": {
     "title": "API pública — Mapa Electoral de Uruguay",
     "version": "1.0.0",
-    "description": "Datos electorales de Uruguay (resultados, catálogos, geometría). Read-only, CORS abierto, cache inmutable. El descubrimiento vive en /api/v1/index.json. Toda la superficie cuelga de /api/v1/. Fuente: Corte Electoral. Datos abiertos con atribución.",
+    "description": "Datos electorales de Uruguay (resultados, catálogos, geometría y candidatos). Read-only, CORS abierto (`Access-Control-Allow-Origin: *`), cache inmutable. El descubrimiento vive en `/api/v1/index.json`; toda la superficie cuelga de `/api/v1/`. Los resultados y la geometría se sirven desde archivos estáticos vía rewrites. Fuente: Corte Electoral del Uruguay — datos abiertos con atribución.",
     "license": { "name": "Datos abiertos con atribución a la Corte Electoral" }
   },
   "servers": [{ "url": "https://uruguay-electoral-map.vercel.app" }],
+  "tags": [
+    { "name": "Descubrimiento", "description": "Índices para navegar la API." },
+    { "name": "Resultados", "description": "Votos por zona y geometría por departamento." },
+    { "name": "Candidatos", "description": "Personas candidatas y votos de sus listas (Epic 21)." }
+  ],
   "paths": {
-    "/api/v1/index.json": { "get": { "summary": "Descubrimiento (elecciones, departamentos, links)", "responses": { "200": { "description": "OK" } } } },
-    "/api/v1/elections.json": { "get": { "summary": "Lista de elecciones", "responses": { "200": { "description": "OK" } } } },
-    "/api/v1/elections/{eleccion}.json": { "get": { "summary": "Detalle de una elección (deptos + recursos)", "parameters": [{ "name": "eleccion", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "OK" } } } },
-    "/api/v1/dumps/{eleccion}.ndjson": { "get": { "summary": "Dump NDJSON por elección", "parameters": [{ "name": "eleccion", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "OK" } } } },
-    "/api/v1/results/{eleccion}/{departamento}/votes.json": { "get": { "summary": "Resultados por zona", "parameters": [{ "name": "eleccion", "in": "path", "required": true, "schema": { "type": "string" } }, { "name": "departamento", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "OK" } } } },
-    "/api/v1/geo/{departamento}/{nivel}.topo.json": { "get": { "summary": "Geometría TopoJSON", "parameters": [{ "name": "departamento", "in": "path", "required": true, "schema": { "type": "string" } }, { "name": "nivel", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "OK" } } } },
-    "/api/v1/candidatos/index.json": { "get": { "summary": "Índice de búsqueda de legisladores (senadores y representantes)", "responses": { "200": { "description": "OK" } } } },
-    "/api/v1/candidatos/legisladores.json": { "get": { "summary": "Legisladores con resultados: votos de sus listas por departamento y elección (métrica: voto a la lista, no personal)", "responses": { "200": { "description": "OK" } } } },
-    "/api/v1/candidatos/personas-index.json": { "get": { "summary": "Índice slim de todas las personas candidatas (sin resultados; resultados solo para legisladores)", "responses": { "200": { "description": "OK" } } } }
+    "/api/v1/index.json": {
+      "get": {
+        "tags": ["Descubrimiento"],
+        "summary": "Índice raíz",
+        "description": "Punto de entrada: links a elecciones, candidatos, docs y OpenAPI; lista de departamentos y elecciones disponibles.",
+        "responses": { "200": { "description": "OK", "content": { "application/json": { "example": {
+          "version": "v1",
+          "fuente": "Corte Electoral del Uruguay (catalogodatos.gub.uy)",
+          "licencia": "Datos abiertos con atribución a la Corte Electoral.",
+          "docs": "/api/v1/docs",
+          "openapi": "/api/v1/openapi.json",
+          "elections": "/api/v1/elections.json",
+          "candidatos": "/api/v1/candidatos/index.json",
+          "departamentos": ["artigas", "canelones", "montevideo", "salto", "…"],
+          "elecciones": ["balotaje-2024", "nacionales-2024", "departamentales-2025", "…"]
+        } } } } }
+      }
+    },
+    "/api/v1/elections.json": {
+      "get": {
+        "tags": ["Descubrimiento"],
+        "summary": "Lista de elecciones",
+        "responses": { "200": { "description": "OK", "content": { "application/json": { "example": {
+          "elecciones": [
+            { "id": "nacionales-2024", "departamentos": ["artigas", "canelones", "montevideo", "…"], "detalle": "/api/v1/elections/nacionales-2024.json" },
+            { "id": "balotaje-2024", "departamentos": ["artigas", "canelones", "montevideo", "…"], "detalle": "/api/v1/elections/balotaje-2024.json" }
+          ]
+        } } } } }
+      }
+    },
+    "/api/v1/elections/{eleccion}.json": {
+      "get": {
+        "tags": ["Descubrimiento"],
+        "summary": "Detalle de una elección (departamentos + recursos)",
+        "parameters": [{ "name": "eleccion", "in": "path", "required": true, "schema": { "type": "string" }, "example": "nacionales-2024" }],
+        "responses": { "200": { "description": "OK", "content": { "application/json": { "example": {
+          "id": "nacionales-2024",
+          "departamentos": [
+            {
+              "id": "montevideo",
+              "results": {
+                "catalogo": "/api/v1/results/nacionales-2024/montevideo/catalogo.json",
+                "votes": "/api/v1/results/nacionales-2024/montevideo/votes.json",
+                "hoja-local": "/api/v1/results/nacionales-2024/montevideo/hoja-local.json"
+              },
+              "geo": {
+                "zona.topo": "/api/v1/geo/montevideo/zona.topo.json",
+                "circuito.topo": "/api/v1/geo/montevideo/circuito.topo.json"
+              }
+            }
+          ]
+        } } } } }
+      }
+    },
+    "/api/v1/results/{eleccion}/{departamento}/votes.json": {
+      "get": {
+        "tags": ["Resultados"],
+        "summary": "Resultados por zona",
+        "description": "Votos por opción en cada zona geográfica del departamento, con el ganador, los válidos y los votos no partidarios (en blanco / anulados / observados).",
+        "parameters": [
+          { "name": "eleccion", "in": "path", "required": true, "schema": { "type": "string" }, "example": "balotaje-2024" },
+          { "name": "departamento", "in": "path", "required": true, "schema": { "type": "string" }, "example": "montevideo" }
+        ],
+        "responses": { "200": { "description": "OK", "content": { "application/json": { "example": {
+          "eleccionId": "balotaje-2024",
+          "departamento": "montevideo",
+          "nivel": "zona",
+          "escrutinio": "definitivo",
+          "tipo": "balotaje",
+          "zonas": [
+            {
+              "geoId": "Ciudad Vieja",
+              "ganadorOpcionId": "frente-amplio",
+              "validos": 22729,
+              "porOpcion": [
+                { "opcionId": "frente-amplio", "votos": 15195 },
+                { "opcionId": "nacional", "votos": 7534 }
+              ],
+              "noPartidarios": { "enBlanco": 309, "anulados": 595, "observados": 157 }
+            }
+          ]
+        } } } } }
+      }
+    },
+    "/api/v1/geo/{departamento}/{nivel}.topo.json": {
+      "get": {
+        "tags": ["Resultados"],
+        "summary": "Geometría TopoJSON",
+        "description": "Geometría del departamento en formato TopoJSON para el nivel pedido (zona/barrio, circuito, local, serie, localidad). Los `geoId` cruzan con los de `votes.json`.",
+        "parameters": [
+          { "name": "departamento", "in": "path", "required": true, "schema": { "type": "string" }, "example": "montevideo" },
+          { "name": "nivel", "in": "path", "required": true, "schema": { "type": "string" }, "example": "zona" }
+        ],
+        "responses": { "200": { "description": "OK (objeto TopoJSON: { type: 'Topology', objects, arcs })", "content": { "application/json": { "example": {
+          "type": "Topology",
+          "objects": { "zona": { "type": "GeometryCollection", "geometries": ["…"] } },
+          "arcs": ["…"]
+        } } } } }
+      }
+    },
+    "/api/v1/dumps/{eleccion}.ndjson": {
+      "get": {
+        "tags": ["Resultados"],
+        "summary": "Dump NDJSON por elección",
+        "description": "Una línea JSON por (departamento × zona × opción) para procesamiento masivo.",
+        "parameters": [{ "name": "eleccion", "in": "path", "required": true, "schema": { "type": "string" }, "example": "nacionales-2024" }],
+        "responses": { "200": { "description": "OK", "content": { "application/x-ndjson": { "example": "{\"eleccion\":\"nacionales-2024\",\"departamento\":\"montevideo\",\"zona\":\"Ciudad Vieja\",\"opcionId\":\"frente-amplio\",\"votos\":12345}\n{\"eleccion\":\"nacionales-2024\",\"departamento\":\"montevideo\",\"zona\":\"Ciudad Vieja\",\"opcionId\":\"nacional\",\"votos\":6789}" } } } }
+      }
+    },
+    "/api/v1/candidatos/index.json": {
+      "get": {
+        "tags": ["Candidatos"],
+        "summary": "Índice de legisladores",
+        "description": "Búsqueda de los 17.665 legisladores (senadores y representantes). El detalle con resultados está en `/api/v1/candidatos/legisladores.json`.",
+        "responses": { "200": { "description": "OK", "content": { "application/json": { "example": {
+          "total": 17665,
+          "fuente": "Corte Electoral del Uruguay — Integración de hojas de votación (catalogodatos.gub.uy).",
+          "metrica": "votos de la(s) lista(s) que integra la persona (hoja), por departamento. No es voto personal: el voto legislativo en Uruguay es a la LISTA.",
+          "detalle": "/api/v1/candidatos/legisladores.json",
+          "candidatos": [
+            { "id": "BNB-42702", "nombre": "MARIO ESTEBAN BERGARA DUQUE", "cargos": ["REPRESENTANTE", "SENADOR"], "partidos": ["FRENTE AMPLIO"], "elecciones": ["nacionales-2024"] }
+          ]
+        } } } } }
+      }
+    },
+    "/api/v1/candidatos/legisladores.json": {
+      "get": {
+        "tags": ["Candidatos"],
+        "summary": "Legisladores con resultados",
+        "description": "Para cada legislador, los votos de las listas que integra **por departamento y elección**. Métrica: voto a la LISTA (hoja), no voto personal — así funciona el voto legislativo en Uruguay.",
+        "responses": { "200": { "description": "OK", "content": { "application/json": { "example": {
+          "total": 17665,
+          "metrica": "votos de la(s) lista(s) que integra la persona (hoja), por departamento.",
+          "candidatos": [
+            {
+              "id": "BNB-42702",
+              "nombres": ["MARIO ESTEBAN BERGARA DUQUE"],
+              "cargos": ["REPRESENTANTE", "SENADOR"],
+              "partidos": ["FRENTE AMPLIO"],
+              "elecciones": ["nacionales-2024"],
+              "candidaturas": [{ "eleccion": "nacionales-2024", "cargo": "SENADOR", "partido": "FRENTE AMPLIO", "sublema": "UNIDAD PARA LOS CAMBIOS" }],
+              "resultados": {
+                "nacionales-2024": {
+                  "porDepto": { "montevideo": 30920, "colonia": 13996, "canelones": 13308, "…": 0 },
+                  "total": 90784
+                }
+              }
+            }
+          ]
+        } } } } }
+      }
+    },
+    "/api/v1/candidatos/personas-index.json": {
+      "get": {
+        "tags": ["Candidatos"],
+        "summary": "Índice de todas las personas candidatas",
+        "description": "Cobertura/descubrimiento de las 196.834 personas candidatas (sin resultados; los resultados por departamento solo están para legisladores en `legisladores.json`).",
+        "responses": { "200": { "description": "OK", "content": { "application/json": { "example": {
+          "total": 196834,
+          "nota": "Resultados (por depto) solo para legisladores en legisladores.json.",
+          "personas": [
+            { "id": "BNB-42702", "nombre": "MARIO ESTEBAN BERGARA DUQUE", "cargos": ["INTENDENTE", "JUNTA DEPARTAMENTAL", "REPRESENTANTE", "SENADOR"], "elecciones": ["departamentales-2025", "internas-2024", "nacionales-2024"] }
+          ]
+        } } } } }
+      }
+    }
   }
 }
