@@ -91,6 +91,7 @@
     "etl:api-index": "python scripts/build-api-index.py",
     "etl:api-dumps": "python scripts/build-api-dumps.py",
     "etl:personas-hoja": "python scripts/build-personas-hoja.py",
+    "etl:personas-historico": "python scripts/build-personas-historico.py",
     "etl:personas": "python scripts/build-personas-canonical.py",
     "etl:candidatos": "python scripts/build-candidatos.py"
   },

@@ -105,12 +105,18 @@ def main():
 
         personas_index.append({"id": pid, "nombre": nombre, "cargos": cargos, "elecciones": elecciones})
 
-        if not (set(cargos) & CARGOS_LEGISLATIVOS):
+        # El roster de legisladores se decide SOLO con cargos de credencial DURA
+        # (match="credencial"): el puente por nombre 2019/2020 (match="nombre") enriquece el
+        # historial de un legislador ya confirmado, nunca lo agrega al roster. Mantiene la
+        # lista autoritativa. Ver [[dimension-personas-hoja-epic21]].
+        cargos_hard = {a["cargo"].upper() for a in p["apariciones"]
+                       if a.get("cargo") and a.get("match", "credencial") == "credencial"}
+        if not (cargos_hard & CARGOS_LEGISLATIVOS):
             continue
 
         partidos = sorted({a["partido"] for a in p["apariciones"] if a.get("partido")})
 
-        # Candidaturas compactas (deduped por eleccion+cargo+partido+sublema).
+        # Candidaturas compactas (deduped por eleccion+cargo+partido+sublema+match).
         cand_seen = set()
         candidaturas = []
         # Resultados: dedup de listas por (eleccion, depto, opcionId) → votos por depto.
@@ -120,12 +126,19 @@ def main():
         for a in p["apariciones"]:
             e, d, hoja = a["eleccion"], a["departamento"], str(a["hoja"])
             cargo, partido, sublema = a.get("cargo"), a.get("partido"), a.get("sublema")
+            match = a.get("match", "credencial")
 
-            ck = (e, cargo, partido, sublema)
+            ck = (e, cargo, partido, sublema, match)
             if ck not in cand_seen:
                 cand_seen.add(ck)
-                candidaturas.append({"eleccion": e, "cargo": cargo, "partido": partido, "sublema": sublema})
+                candidaturas.append({"eleccion": e, "cargo": cargo, "partido": partido,
+                                     "sublema": sublema, "match": match})
 
+            # VOTOS: solo de credencial DURA. El puente por nombre aporta la candidatura
+            # (historial), NO números de voto → los totales publicados quedan 100%
+            # autoritativos (no se mezclan datos matcheados por nombre).
+            if match != "credencial":
+                continue
             cat = get_cat(e, d)
             if not cat:
                 continue
@@ -167,7 +180,10 @@ def main():
             json.dump(payload, f, ensure_ascii=False)
         return os.path.getsize(path) / 1024 / 1024
 
-    base = {"fuente": FUENTE, "metrica": METRICA}
+    base = {"fuente": FUENTE, "metrica": METRICA,
+            "nota": ("candidaturas.match: 'credencial' = id por credencial (duro); 'nombre' = "
+                     "candidato 2019/2020 linkeado por nombre unívoco (la Corte no publicó credencial "
+                     "esos años). Los votos en 'resultados' son SOLO de candidaturas por credencial.")}
     mb_idx = dump("index.json", {**base, "total": len(index),
                   "detalle": "/api/v1/candidatos/legisladores.json", "candidatos": index})
     mb_leg = dump("legisladores.json", {**base, "total": len(legisladores), "candidatos": legisladores})

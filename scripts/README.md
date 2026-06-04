@@ -84,7 +84,8 @@ Para agregar más elecciones (internas/departamentales pasadas): verificar que e
 |--------|---------|---------|
 | `fetch-nominas-ckan.py` | `npm run etl:nominas-fetch` | Baja el recurso "Integración de hojas" de CKAN para cada elección declarada en `TARGETS`. Idempotente. |
 | `build-personas-hoja.py` | `npm run etl:personas-hoja <eleccion>` | Parsea la integración → `personas-hoja.{eleccion}.json`: un registro por persona × hoja × cargo. `personaId = CredencialSerie-CredencialNumero` (estable entre elecciones). |
-| `build-personas-canonical.py` | `npm run etl:personas-canonical` | Consolida todos los shards → `personas.json`: una persona por credencial con sus apariciones cross-elección. Reporta M = personas en >1 elección (validación del join). |
+| `build-personas-historico.py` | `npm run etl:personas-historico` | Puente hacia 2019/2020 (sin credencial en origen): linkea candidatos por **nombre unívoco** contra la era credencial → `personas-historico.{eleccion}.json` (mismo schema + flag `match: "nombre"`). El nombre es casi-único (0.15% homónimos; los ambiguos se descartan). NO genera credenciales nativas, así que `gate:personas` no lo escanea. Correr ANTES de `etl:personas`. |
+| `build-personas-canonical.py` | `npm run etl:personas` | Consolida `personas-hoja.*` (nativos, `match: "credencial"`) + `personas-historico.*` (`match: "nombre"`) → `personas.json`: una persona por credencial con apariciones cross-elección. Reporta M = personas en >1 elección. |
 | `gate-personas.py` | `npm run gate:personas` | Valida: campos obligatorios presentes, cargos SENADOR/REPRESENTANTE en nacionales, tasa de hojas huérfanas <10%. |
 | `query-persona.py` | — | Verificación standalone: dado un nombre o credencial, imprime hojas, votos de cada lista y ranking departamental. Los votos se leen de **`hoja-local.json`** (no `votes.json`, que es solo a nivel lema/partido). |
 

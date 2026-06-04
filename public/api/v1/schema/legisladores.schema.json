@@ -27,7 +27,8 @@
                 "eleccion": { "type": "string" },
                 "cargo": { "type": ["string", "null"] },
                 "partido": { "type": ["string", "null"] },
-                "sublema": { "type": ["string", "null"] }
+                "sublema": { "type": ["string", "null"] },
+                "match": { "type": "string", "enum": ["credencial", "nombre"] }
               }
             }
           },
