@@ -2299,6 +2299,10 @@ const unsubSelection = $selection.subscribe((s) => {
 
 /** Resuelve el nivel base efectivo: excluye 'circuito' (ahora es overlay, no nivel base). */
 function resolveNivel(urlLevel: NivelGeografico, dept?: string): NivelGeografico {
+  // Election-aware: las municipales tienen nivel ÚNICO 'municipio'. DEPT_LEVELS es por-DEPTO (no por
+  // elección) → al navegar in-app desde una departamental (zona/serie) resolvería mal y cargaría la
+  // geometría vieja (barrios) con votos de municipio = todo gris. Forzar 'municipio' lo evita.
+  if (activeEleccion?.startsWith('municipales')) return 'municipio' as NivelGeografico;
   const avail = (dept ? DEPT_LEVELS[dept] : null) ?? props.availableLevels ?? (['zona'] as NivelGeografico[]);
   const base = avail.filter(l => l !== 'circuito' && l !== 'local');
   const valid = base.length > 0 ? base : avail;
