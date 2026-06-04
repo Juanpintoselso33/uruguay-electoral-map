@@ -10,8 +10,9 @@
  *  - `public/data/geo/{depto}/municipio.topo.json`  (municipios de ese depto)
  *  - `public/data/geo/_nacional/municipio.topo.json` (todos los municipios del interior)
  *
- * Montevideo se OMITE: sus votos están por barrio y no anidan en sus 8 municipios (A–G);
- * su geometría municipal necesita CRV→municipio aparte (ver Story 22.1 / 22.6).
+ * Montevideo se incluye igual que el resto: sus 8 municipios (A–G, CH) se disuelven de las SERIES
+ * (montevideo_series_map.json) con el mapeo serie→municipio oficial (plan-circuital). Se nombran
+ * "Municipio X" para que joineen con los votos (build-montevideo-municipio-shards.py).
  * El contorno de los 19 departamentos (capa de referencia, Story 22.5) NO se genera acá:
  * se reusa `public/data/geo/_nacional/departamento.topo.json` (ya existe).
  *
@@ -29,11 +30,13 @@ const BUDGET_DEPTO_GZIP = 500 * 1024;
 const BUDGET_NACIONAL_GZIP = 1500 * 1024;
 const SIMPLIFY_STEPS = [0.2, 0.15, 0.1, 0.05, 0.02];
 
-// Interior (Montevideo es caso especial, ver cabecera).
+// Los 19 departamentos. Montevideo se disuelve igual que el resto: sus 8 municipios (A–G, CH)
+// salen de unir las SERIES de cada municipio (mapeo serie→municipio OFICIAL de plan-circuital,
+// generado por build-montevideo-municipio-shards.py). El municipio se nombra "Municipio X".
 const DEPTOS = [
   'artigas', 'canelones', 'cerro_largo', 'colonia', 'durazno', 'flores', 'florida',
-  'lavalleja', 'maldonado', 'paysandu', 'rio_negro', 'rivera', 'rocha', 'salto',
-  'san_jose', 'soriano', 'tacuarembo', 'treinta_y_tres',
+  'lavalleja', 'maldonado', 'montevideo', 'paysandu', 'rio_negro', 'rivera', 'rocha',
+  'salto', 'san_jose', 'soriano', 'tacuarembo', 'treinta_y_tres',
 ];
 
 interface SerieMunicipioEntry { serie: string; municipio: string }
