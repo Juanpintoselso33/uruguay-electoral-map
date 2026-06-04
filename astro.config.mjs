@@ -16,8 +16,8 @@ export default defineConfig({
   // Redirect de raíz INSTANTÁNEO: el adapter Vercel lo emite como redirect HTTP de plataforma
   // (no una página HTML con meta-refresh, que mostraba el "flash" de redirección).
   redirects: {
-    // Landing = última elección nacional (balotaje 2024) en su vista nacional.
-    '/': '/balotaje-2024',
+    // Landing = última elección disponible (departamentales 2025) en su vista nacional.
+    '/': '/departamentales-2025',
   },
   // Deploy en Vercel. El adapter es la fuente de verdad del deploy (reemplaza vercel.json).
   adapter: vercel(),
