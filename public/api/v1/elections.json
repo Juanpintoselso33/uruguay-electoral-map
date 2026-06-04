@@ -176,6 +176,56 @@
    "detalle": "/api/v1/elections/internas-2024.json"
   },
   {
+   "id": "municipales-2020",
+   "departamentos": [
+    "artigas",
+    "canelones",
+    "cerro_largo",
+    "colonia",
+    "durazno",
+    "flores",
+    "florida",
+    "lavalleja",
+    "maldonado",
+    "montevideo",
+    "paysandu",
+    "rio_negro",
+    "rivera",
+    "rocha",
+    "salto",
+    "san_jose",
+    "soriano",
+    "tacuarembo",
+    "treinta_y_tres"
+   ],
+   "detalle": "/api/v1/elections/municipales-2020.json"
+  },
+  {
+   "id": "municipales-2025",
+   "departamentos": [
+    "artigas",
+    "canelones",
+    "cerro_largo",
+    "colonia",
+    "durazno",
+    "flores",
+    "florida",
+    "lavalleja",
+    "maldonado",
+    "montevideo",
+    "paysandu",
+    "rio_negro",
+    "rivera",
+    "rocha",
+    "salto",
+    "san_jose",
+    "soriano",
+    "tacuarembo",
+    "treinta_y_tres"
+   ],
+   "detalle": "/api/v1/elections/municipales-2025.json"
+  },
+  {
    "id": "nacionales-2014",
    "departamentos": [
     "artigas",
