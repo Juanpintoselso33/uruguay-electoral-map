@@ -68,9 +68,26 @@ interface SelInfo {
   seleccionPct?: number;
   desglose?: DesgloseGrupo[];
   esCiudadGrande?: boolean;
+  // Desglose de TODAS las opciones de la zona (sin selección activa): ranking de partidos con
+  // % sobre válidos, ganador marcado. En departamentales nacional incluye candidatos por partido.
+  resultadoZona?: ResultadoLinea[];
+  /** Intendente electo de la zona (candidato más votado del lema ganador) — solo nacional 2025. */
+  intendenteElecto?: string | null;
   // Ficha por circuito/local: metadata del local + desglose de sus circuitos.
   local?: { nombre: string; direccion: string; habilitados: number };
   circuitos?: { circuito: string; sigla: string; nombre: string; color: string; flagUrl?: string | null; validos: number }[];
+}
+interface CandidatoLinea { candidato: string; votos: number; esVotoAlLema: boolean }
+interface ResultadoLinea {
+  opcionId: string;
+  sigla: string;
+  nombre: string;
+  color: string;
+  flagUrl?: string | null;
+  votos: number;
+  pct: number;
+  esGanador: boolean;
+  candidatos?: CandidatoLinea[];
 }
 interface CircuitoBreak { circuito: string; ganadorOpcionId: string; validos: number }
 interface DesgloseGrupo {
@@ -158,6 +175,15 @@ let zonasVotos = new Map<string, Map<string, number>>();
 let zonasValidos = new Map<string, number>();
 // Categorías no partidarias por zona (Story 2.4 — ficha).
 let zonasNoPartidarios = new Map<string, { enBlanco: number; anulados: number; observados: number; habilitados: number; emitidos: number }>();
+// Candidatos a intendente por departamento (vista nacional, departamentales). Clave: norm(geoId).
+// La base nacional es solo a nivel lema; este índice agrega quién es el intendente electo y
+// los votos por candidato dentro de cada partido. Generado por scripts/build-intendentes-nacional.py.
+type IntendentesDepto = {
+  ganadorLema: string;
+  intendenteElecto: { candidato: string; votos: number; lema: string } | null;
+  lemas: Record<string, { candidato: string; votos: number }[]>;
+};
+let intendentesPorDepto = new Map<string, IntendentesDepto>();
 // Ciudades grandes para nivel localidad (Story 8.4 — rótulo degradación).
 let ciudadesGrandesSet = new Set<string>();
 // Flag: indica si se hizo setData con FC de intensidad (para saber cuándo restaurar).
@@ -284,7 +310,7 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
                   // nivel 'zona' usa votes-zona.json (todas las zonas de los 19 deptos combinadas).
                   : (departamento === '_nacional' && nivel === 'zona') ? 'votes-zona.json'
                   : 'votes.json';
-  const [topoRes, votesRes, opcRes, metaRes, serieMapRes, serieBarrioRes, annexRes] = await Promise.all([
+  const [topoRes, votesRes, opcRes, metaRes, serieMapRes, serieBarrioRes, annexRes, intendentesRes] = await Promise.all([
     fetch(`${base}/data/geo/${departamento}/${nivel}.topo.json`),
     fetch(`${base}/data/${eleccion}/${departamento}/${votesFile}`),
     fetch(`${base}/data/${eleccion}/${departamento}/opciones.json`),
@@ -305,6 +331,11 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
       : (nivel === 'zona' && departamento === '_nacional')
         ? fetch(`${base}/data/${eleccion}/_nacional/zona-annexed.json`).catch(() => null)
         : Promise.resolve(null),
+    // Vista nacional departamentales: candidatos a intendente por depto (electo + votos por candidato).
+    // Solo existe para 2025; ausente = ficha sin candidatos (degrada al desglose por partido).
+    departamento === '_nacional' && eleccion.startsWith('departamentales')
+      ? fetch(`${base}/data/${eleccion}/_nacional/intendentes.json`).catch(() => null)
+      : Promise.resolve(null),
   ]);
   if (!topoRes.ok || !votesRes.ok || !opcRes.ok) throw new Error('No se pudieron cargar los datos del mapa');
   const topo = (await topoRes.json()) as Topology;
@@ -350,6 +381,17 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
       habilitados: z.habilitados ?? 0,
       emitidos: z.emitidos ?? 0,
     });
+  }
+
+  // Candidatos a intendente por depto (vista nacional). Clave norm(geoId) para joinear con la ficha.
+  intendentesPorDepto = new Map();
+  if (intendentesRes && intendentesRes.ok) {
+    try {
+      const doc = (await intendentesRes.json()) as { departamentos: Record<string, IntendentesDepto> };
+      for (const [geoId, info] of Object.entries(doc.departamentos ?? {})) {
+        intendentesPorDepto.set(norm(geoId), info);
+      }
+    } catch { /* archivo malformado → ficha sin candidatos */ }
   }
 
   const zonaPorGeo = new Map(votes.zonas.map((z) => [norm(z.geoId), z]));
@@ -2014,6 +2056,31 @@ function selectByName(name: string, fc: FeatureCollection): void {
       : [];
     const desgRaw = selFicha.length > 0 ? buildDesglose(key, selFicha) : null;
     const desg = desgRaw && desgRaw.grupos.length > 0 ? desgRaw : null;
+    // Ranking de TODAS las opciones de la zona (cuando NO hay selección activa): el ganador queda
+    // como primera fila marcada y, en departamentales nacional, cada partido trae sus candidatos.
+    const intend = intendentesPorDepto.get(key);
+    const vm = !desg ? zonasVotos.get(key) : undefined;
+    const resultadoZona: ResultadoLinea[] | undefined = vm && vm.size > 0
+      ? [...vm.entries()]
+          .map(([oid, votos]): ResultadoLinea => {
+            const nombre = opcNombreMap.get(oid) ?? oid;
+            const meta = resolveParty(nombre, activeEleccion);
+            const cands = intend?.lemas?.[oid];
+            return {
+              opcionId: oid,
+              sigla: meta.sigla,
+              nombre,
+              color: meta.color,
+              flagUrl: meta.flagUrl ?? null,
+              votos,
+              pct: validos > 0 ? (votos / validos) * 100 : 0,
+              esGanador: oid === ganadorId,
+              candidatos: cands?.map((c) => ({ candidato: c.candidato, votos: c.votos, esVotoAlLema: c.candidato === 'Voto al lema' })),
+            };
+          })
+          .sort((a, b) => b.votos - a.votos)
+      : undefined;
+    const intendenteElecto = intend?.intendenteElecto?.candidato ?? null;
     // pctOpcionActiva queda solo como fallback cuando el desglose no aplica (evita redundancia).
     const pctOpcionActiva = !desg && opcionId && validos > 0
       ? ((zonasVotos.get(key)?.get(opcionId) ?? 0) / validos) * 100
@@ -2039,6 +2106,8 @@ function selectByName(name: string, fc: FeatureCollection): void {
       seleccionTotal: desg?.total,
       seleccionPct: desg && validos > 0 ? (desg.total / validos) * 100 : undefined,
       desglose: desg?.grupos,
+      resultadoZona,
+      intendenteElecto,
       esCiudadGrande: ciudadesGrandesSet.size > 0 && ciudadesGrandesSet.has(norm(String(p.name))) && !(props.availableLevels ?? []).includes('barrio'),
     };
   } else if (p) {

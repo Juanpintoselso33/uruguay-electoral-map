@@ -13,6 +13,18 @@ interface DesgloseGrupo {
   hojas: { id: string; label: string; votos: number }[];
   masN: number;
 }
+interface CandidatoLinea { candidato: string; votos: number; esVotoAlLema: boolean }
+interface ResultadoLinea {
+  opcionId: string;
+  sigla: string;
+  nombre: string;
+  color: string;
+  flagUrl?: string | null;
+  votos: number;
+  pct: number;
+  esGanador: boolean;
+  candidatos?: CandidatoLinea[];
+}
 interface SelInfo {
   geoId: string;
   label?: string;
@@ -33,6 +45,8 @@ interface SelInfo {
   seleccionTotal?: number;
   seleccionPct?: number;
   desglose?: DesgloseGrupo[];
+  resultadoZona?: ResultadoLinea[];
+  intendenteElecto?: string | null;
   esCiudadGrande?: boolean;
   // Ficha por circuito/local: metadata del local + desglose de sus circuitos.
   local?: { nombre: string; direccion: string; habilitados: number };
@@ -54,6 +68,17 @@ function onTouchEnd(e: TouchEvent): void {
 
 function fmt(n: number): string {
   return n.toLocaleString('es-UY');
+}
+
+// Los nombres de candidatos vienen en MAYÚSCULAS desde la Corte; los mostramos en Capitalización
+// para que se lean mejor, dejando partículas (de, la, da…) en minúscula salvo al inicio.
+const PARTICULAS = new Set(['de', 'del', 'la', 'las', 'los', 'y', 'da', 'do', 'dos', 'di']);
+function titleCase(s: string): string {
+  return s
+    .toLocaleLowerCase('es-UY')
+    .split(/\s+/)
+    .map((w, i) => (i > 0 && PARTICULAS.has(w) ? w : w.charAt(0).toLocaleUpperCase('es-UY') + w.slice(1)))
+    .join(' ');
 }
 
 /** % de los votos válidos de la zona (mismo denominador que el ganador y la selección). */
@@ -147,8 +172,47 @@ function pctEmit(n: number): string {
           </div>
         </template>
 
-        <!-- Ganador destacado (solo sin selección: con selección va el compacto de arriba) -->
-        <div v-if="!(sel.desglose && sel.desglose.length > 0)" class="zone-sheet__ganador">
+        <!-- Ranking de TODAS las opciones de la zona (sin selección): el ganador queda como primera
+             fila marcada "Ganador"; en departamentales nacional cada partido lista sus candidatos a
+             intendente y se nombra al intendente electo. -->
+        <div v-if="!(sel.desglose && sel.desglose.length > 0) && sel.resultadoZona && sel.resultadoZona.length > 0" class="zone-sheet__ranking">
+          <div
+            v-for="r in sel.resultadoZona"
+            :key="r.opcionId"
+            class="zone-sheet__rfila"
+            :class="{ 'zone-sheet__rfila--ganador': r.esGanador }"
+          >
+            <div class="zone-sheet__rhead">
+              <span v-if="r.esGanador" class="zone-sheet__rbadge">Ganador</span>
+              <img v-if="r.flagUrl" :src="r.flagUrl" :alt="r.sigla" class="zone-sheet__flag--sm" aria-hidden="true" />
+              <span v-else class="zone-sheet__swatch--sm" :style="{ background: r.color }" aria-hidden="true"></span>
+              <span class="zone-sheet__rsigla">{{ r.sigla }}</span>
+              <span v-if="r.nombre !== r.sigla" class="zone-sheet__rnombre">{{ r.nombre }}</span>
+              <span class="zone-sheet__rpct">{{ r.pct.toFixed(1) }}%</span>
+              <span class="zone-sheet__rvotos">{{ fmt(r.votos) }}</span>
+            </div>
+            <span class="zone-sheet__rbar" aria-hidden="true">
+              <span class="zone-sheet__rbar-fill" :style="{ width: r.pct + '%', background: r.color }"></span>
+            </span>
+            <p v-if="r.esGanador && sel.intendenteElecto" class="zone-sheet__electo">
+              Intendente electo: <strong>{{ titleCase(sel.intendenteElecto) }}</strong>
+            </p>
+            <ul v-if="r.candidatos && r.candidatos.length" class="zone-sheet__cands">
+              <li
+                v-for="c in r.candidatos"
+                :key="c.candidato"
+                class="zone-sheet__cand"
+                :class="{ 'zone-sheet__cand--vl': c.esVotoAlLema }"
+              >
+                <span class="zone-sheet__cand-nombre">{{ c.esVotoAlLema ? 'Voto al lema' : titleCase(c.candidato) }}</span>
+                <span class="zone-sheet__cand-votos">{{ fmt(c.votos) }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Ganador destacado (fallback: sin selección y sin ranking de zona disponible) -->
+        <div v-if="!(sel.desglose && sel.desglose.length > 0) && !(sel.resultadoZona && sel.resultadoZona.length > 0)" class="zone-sheet__ganador">
           <img
             v-if="sel.flagUrl"
             :src="sel.flagUrl"
@@ -380,6 +444,81 @@ function pctEmit(n: number): string {
   font-size: 0.75rem;
   color: var(--color-ink-muted);
 }
+
+/* Ranking de partidos de la zona (sin selección) + candidatos a intendente. */
+.zone-sheet__ranking { margin-bottom: 0.75rem; }
+.zone-sheet__rfila {
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--color-surface-2);
+}
+.zone-sheet__rfila:first-child { border-top: none; }
+.zone-sheet__rfila--ganador {
+  background: var(--color-surface-1);
+  border-radius: 0.5rem;
+  border-top: none;
+  padding: 0.625rem;
+  margin-bottom: 0.25rem;
+}
+.zone-sheet__rhead {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+}
+.zone-sheet__rbadge {
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-card);
+  background: var(--color-ink);
+  border-radius: 9999px;
+  padding: 0.0625rem 0.375rem;
+  flex-shrink: 0;
+}
+.zone-sheet__rsigla { font-weight: 800; color: var(--color-ink); flex-shrink: 0; }
+.zone-sheet__rnombre {
+  color: var(--color-ink-muted);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.zone-sheet__rpct { font-weight: 800; color: var(--color-ink); font-variant-numeric: tabular-nums; margin-left: auto; }
+.zone-sheet__rvotos { color: var(--color-ink-muted); font-variant-numeric: tabular-nums; min-width: 3.5rem; text-align: right; }
+.zone-sheet__rbar {
+  display: block;
+  height: 0.375rem;
+  border-radius: 9999px;
+  background: var(--color-surface-2);
+  overflow: hidden;
+  margin: 0.375rem 0 0;
+}
+.zone-sheet__rbar-fill { display: block; height: 100%; border-radius: 9999px; min-width: 2px; }
+.zone-sheet__electo {
+  margin: 0.5rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--color-ink);
+}
+.zone-sheet__electo strong { font-weight: 700; }
+.zone-sheet__cands {
+  list-style: none;
+  margin: 0.375rem 0 0;
+  padding: 0 0 0 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1875rem;
+}
+.zone-sheet__cand {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-ink-soft);
+}
+.zone-sheet__cand-nombre { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.zone-sheet__cand-votos { color: var(--color-ink-muted); font-variant-numeric: tabular-nums; }
+.zone-sheet__cand--vl { color: var(--color-ink-faint); font-style: italic; }
 
 .zone-sheet__opcion-activa {
   font-size: 0.8125rem;

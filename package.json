@@ -79,6 +79,7 @@
     "etl:nacional-votes": "python scripts/build-nacional-votes.py",
     "etl:nacional-zona-geo": "python scripts/build-nacional-zona-geo.py",
     "etl:nacional": "npm run etl:nacional-geo && npm run etl:nacional-zona-geo && npm run etl:nacional-votes",
+    "etl:intendentes-nacional": "python scripts/build-intendentes-nacional.py",
     "etl:annex": "python scripts/build-annex-series.py",
     "etl:totales-fetch": "python scripts/fetch-totales-ckan.py",
     "etl:nominas-fetch": "python scripts/fetch-nominas-ckan.py",

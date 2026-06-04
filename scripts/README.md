@@ -34,6 +34,7 @@ Corren en el build (`package.json → build`) y/o a demanda:
 | `build-nacional-geo.py` | `npm run etl:nacional-geo` | Geometría nacional (departamentos). |
 | `build-nacional-zona-geo.py` | `npm run etl:nacional-zona-geo` | Geometría nacional por zona. |
 | `build-nacional-votes.py` | `npm run etl:nacional-votes` | Votos consolidados a nivel nacional. |
+| `build-intendentes-nacional.py` | `npm run etl:intendentes-nacional` | Candidatos a intendente por depto (electo + votos por candidato) para la ficha de la vista nacional `departamentales-2025`. Depende de `_nacional/votes.json` y de los shards `{depto}/hoja/intendente/{lema}.json`: re-correr tras `etl:nacional-votes` o tras regenerar los datos por depto. |
 | `build-annex-series.py` | `npm run etl:annex` | Anexa series sin geometría propia. |
 
 ## Mapeo CRV → barrio de Montevideo (por ciclo)
