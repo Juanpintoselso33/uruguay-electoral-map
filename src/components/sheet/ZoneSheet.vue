@@ -48,6 +48,8 @@ interface SelInfo {
   resultadoZona?: ResultadoLinea[];
   intendenteElecto?: string | null;
   alcaldeElecto?: string | null;
+  // Concejo Municipal completo (alcalde + 4 concejales) — municipales (Epic 22.7).
+  concejo?: { cargo: 'alcalde' | 'concejal'; nombre: string; lema: string; hoja: string }[] | null;
   esCiudadGrande?: boolean;
   // Ficha por circuito/local: metadata del local + desglose de sus circuitos.
   local?: { nombre: string; direccion: string; habilitados: number };
@@ -80,6 +82,16 @@ function titleCase(s: string): string {
     .split(/\s+/)
     .map((w, i) => (i > 0 && PARTICULAS.has(w) ? w : w.charAt(0).toLocaleUpperCase('es-UY') + w.slice(1)))
     .join(' ');
+}
+
+// Sigla legible del lema para el Concejo Municipal (los miembros traen el lema como slug).
+const LEMA_SIGLA: Record<string, string> = {
+  'frente-amplio': 'FA', 'partido-nacional': 'PN', 'partido-colorado': 'PC',
+  'coalicion-republicana': 'CR', 'cabildo-abierto': 'CA', 'partido-independiente': 'PI',
+  'asamblea-popular': 'AP', 'partido-ecologista-radical-intransigente': 'PERI',
+};
+function lemaSigla(slug: string): string {
+  return LEMA_SIGLA[slug] ?? titleCase(slug.replace(/-/g, ' '));
 }
 
 /** % de los votos válidos de la zona (mismo denominador que el ganador y la selección). */
@@ -213,6 +225,24 @@ function pctEmit(n: number): string {
               </li>
             </ul>
           </div>
+        </div>
+
+        <!-- Concejo Municipal (Epic 22.7): los 5 cargos (alcalde + 4 concejales) adjudicados por
+             D'Hondt sobre el escrutinio definitivo; nombres de la Integración de hojas. -->
+        <div v-if="sel.concejo && sel.concejo.length" class="zone-sheet__concejo">
+          <h3 class="zone-sheet__concejo-titulo">Concejo Municipal</h3>
+          <ul class="zone-sheet__concejo-lista">
+            <li
+              v-for="(m, i) in sel.concejo"
+              :key="i"
+              class="zone-sheet__concejo-item"
+              :class="{ 'zone-sheet__concejo-item--alcalde': m.cargo === 'alcalde' }"
+            >
+              <span class="zone-sheet__concejo-cargo">{{ m.cargo === 'alcalde' ? 'Alcalde' : 'Concejal' }}</span>
+              <span class="zone-sheet__concejo-nombre">{{ titleCase(m.nombre) }}</span>
+              <span class="zone-sheet__concejo-lema">{{ lemaSigla(m.lema) }} · {{ m.hoja }}</span>
+            </li>
+          </ul>
         </div>
 
         <!-- Ganador destacado (fallback: sin selección y sin ranking de zona disponible) -->
@@ -523,6 +553,45 @@ function pctEmit(n: number): string {
 .zone-sheet__cand-nombre { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .zone-sheet__cand-votos { color: var(--color-ink-muted); font-variant-numeric: tabular-nums; }
 .zone-sheet__cand--vl { color: var(--color-ink-faint); font-style: italic; }
+
+/* Concejo Municipal (Epic 22.7) */
+.zone-sheet__concejo {
+  margin: 0.875rem 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+}
+.zone-sheet__concejo-titulo {
+  margin: 0 0 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+.zone-sheet__concejo-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.zone-sheet__concejo-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--color-ink-soft);
+}
+.zone-sheet__concejo-item--alcalde { color: var(--color-ink); font-weight: 600; }
+.zone-sheet__concejo-cargo {
+  flex: 0 0 4.5rem;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--color-ink-muted);
+}
+.zone-sheet__concejo-item--alcalde .zone-sheet__concejo-cargo { color: var(--color-ink-soft); }
+.zone-sheet__concejo-nombre { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.zone-sheet__concejo-lema { color: var(--color-ink-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 .zone-sheet__opcion-activa {
   font-size: 0.8125rem;

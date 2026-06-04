@@ -30,8 +30,19 @@ CODE_DEPT = {"AR": "artigas", "CA": "canelones", "CL": "cerro_largo", "CO": "col
     "TA": "tacuarembo", "TT": "treinta_y_tres"}
 DEPTOS = sorted(CODE_DEPT.values())
 
+# Empates de "lista más votada" se resuelven por SORTEO de la Junta Electoral (no calculable):
+# geoId compuesto -> hoja del alcalde proclamado. Fuente: acta de proclamación oficial.
+ALCALDE_SORTEO = {
+    # San Bautista (Canelones): 1025-V y 900-V empatadas en 857; sorteo Junta 21/05/2025 → Farina (1025-V).
+    "SAN BAUTISTA · Canelones": "1025-V",
+}
+
 
 def norm_muni(s): return " ".join((s or "").strip().split())
+def hoja_num(h):
+    """Número de hoja como int (desempate determinístico): '900-V'→900, '1025-V'→1025."""
+    d = "".join(ch for ch in str(h).split("-")[0] if ch.isdigit())
+    return int(d) if d else 10**9
 
 
 def read_csv(path):
@@ -100,7 +111,11 @@ def main():
             hojas_lema = {oid: v for oid, v in por_hoja[muni].items() if opc_lema.get(oid) == lema_gan}
             if not hojas_lema:
                 continue
-            oid_gan = max(hojas_lema, key=hojas_lema.get)
+            # lista más votada; empate de votos → menor número de hoja (desempate determinístico)
+            oid_gan = max(hojas_lema, key=lambda oid: (hojas_lema[oid], -hoja_num(opc_hoja.get(oid))))
+            geo = f"{muni} · {DEPTO_LABEL.get(slug, slug)}"
+            if geo in ALCALDE_SORTEO:  # empate real resuelto por sorteo → tomar la hoja del acta
+                oid_gan = next((oid for oid in hojas_lema if opc_hoja.get(oid) == ALCALDE_SORTEO[geo]), oid_gan)
             hoja_gan = opc_hoja.get(oid_gan)
             nombre = cabeza.get((norm_muni(muni).upper(), slug, hoja_gan))
             if not nombre:
