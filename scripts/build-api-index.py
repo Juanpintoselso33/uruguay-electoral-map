@@ -42,6 +42,7 @@ def main():
         "docs": "/api/v1/docs",
         "openapi": "/api/v1/openapi.json",
         "elections": "/api/v1/elections.json",
+        "candidatos": "/api/v1/candidatos/index.json",
         "departamentos": sorted(d['id'] for d in ds),
         "elecciones": sorted(elections),
     }

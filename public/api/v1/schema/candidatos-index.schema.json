@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://uruguay-electoral-map.vercel.app/api/v1/schema/candidatos-index.schema.json",
+  "title": "Índice de candidatos (legisladores)",
+  "type": "object",
+  "required": ["total", "candidatos"],
+  "properties": {
+    "total": { "type": "integer" },
+    "fuente": { "type": "string" },
+    "metrica": { "type": "string" },
+    "detalle": { "type": "string" },
+    "candidatos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "nombre", "cargos", "elecciones"],
+        "properties": {
+          "id": { "type": "string" },
+          "nombre": { "type": "string" },
+          "cargos": { "type": "array", "items": { "type": "string" } },
+          "partidos": { "type": "array", "items": { "type": "string" } },
+          "elecciones": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}
