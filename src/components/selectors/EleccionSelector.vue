@@ -19,6 +19,8 @@ type TipoEleccion = 'internas' | 'nacionales' | 'balotaje' | 'dptales' | 'plebis
 const META: Record<string, { short: string; type: TipoEleccion; año: number }> = {
   'nacionales-2014':                  { short: 'Nacionales',       type: 'nacionales',  año: 2014 },
   'balotaje-2014':                    { short: 'Balotaje',         type: 'balotaje',    año: 2014 },
+  'departamentales-2015':             { short: 'Departamentales',  type: 'dptales',     año: 2015 },
+  'municipales-2015':                 { short: 'Municipales',      type: 'dptales',     año: 2015 },
   'internas-2019':                    { short: 'Internas',         type: 'internas',    año: 2019 },
   'nacionales-2019':                  { short: 'Nacionales',       type: 'nacionales',  año: 2019 },
   'plebiscito-vivir-sin-miedo-2019':  { short: 'Vivir sin Miedo',  type: 'plebiscito',  año: 2019 },

@@ -106,8 +106,12 @@ def audit_shard(eleccion, depto, fname, opciones_ok):
             flag("WARN", eleccion, depto, f"{fname} ({nivel}): {len(orphan_geo)} polígonos sin votos: {sorted(orphan_geo)[:4]}")
 
 def audit_municipales(eleccion):
-    alc = load(os.path.join(DATA, eleccion, "_nacional", "alcaldes.json"))
-    con = load(os.path.join(DATA, eleccion, "_nacional", "concejos.json"))
+    # alcaldes/concejos son opcionales: 2015 no tiene nóminas abiertas → solo mapa por lema.
+    ap = os.path.join(DATA, eleccion, "_nacional", "alcaldes.json")
+    cp = os.path.join(DATA, eleccion, "_nacional", "concejos.json")
+    if not (os.path.exists(ap) and os.path.exists(cp)):
+        return
+    alc = load(ap); con = load(cp)
     if "__error__" in alc:
         flag("ERROR", eleccion, "_nacional", "alcaldes.json no parsea"); return
     if "__error__" in con:
