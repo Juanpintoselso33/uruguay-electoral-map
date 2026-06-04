@@ -24,8 +24,13 @@ DST_DIR = os.path.join(ROOT, "public/data", DST)
 MAP_DIR = os.path.join(ROOT, "public/data/mappings")
 
 DEPTOS = ["artigas", "canelones", "cerro_largo", "colonia", "durazno", "flores", "florida",
-          "lavalleja", "maldonado", "paysandu", "rio_negro", "rivera", "rocha", "salto",
-          "san_jose", "soriano", "tacuarembo", "treinta_y_tres"]
+          "lavalleja", "maldonado", "montevideo", "paysandu", "rio_negro", "rivera", "rocha",
+          "salto", "san_jose", "soriano", "tacuarembo", "treinta_y_tres"]
+
+# MVD reusa el catálogo + el voto municipal por SERIE generado por build-montevideo-municipio-shards.py
+# (dir aparte para no pisar los shards barrio-keyed de la vista departamental).
+def hoja_municipio_dir(slug):
+    return os.path.join(SRC_DIR, slug, "hoja", "municipio-serie" if slug == "montevideo" else "municipio")
 
 
 def labels():
@@ -52,7 +57,7 @@ def main():
     for slug in DEPTOS:
         mpath = os.path.join(MAP_DIR, slug, f"serie-municipio.{SRC}.json")
         cpath = os.path.join(SRC_DIR, slug, "catalogo.json")
-        hdir = os.path.join(SRC_DIR, slug, "hoja", "municipio")
+        hdir = hoja_municipio_dir(slug)
         if not (os.path.exists(mpath) and os.path.exists(cpath) and os.path.isdir(hdir)):
             continue
 
