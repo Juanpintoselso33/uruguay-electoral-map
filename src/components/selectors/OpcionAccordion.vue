@@ -383,294 +383,435 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
     </button>
 
     <div v-show="panelOpen || !contienda" class="acc__body">
-    <!-- Selector de contienda (solo si hay >1) -->
-    <div v-if="tieneVariasContiendas" class="acc__contiendas" role="tablist" aria-label="Contienda">
-      <button
-        v-for="c in catalogo?.contiendas"
-        :key="c.contienda"
-        type="button"
-        role="tab"
-        :aria-selected="c.contienda === contiendaActiva"
-        class="acc__contienda"
-        :class="{ 'acc__contienda--activa': c.contienda === contiendaActiva }"
-        @click="cambiarContienda(c.contienda)"
-      >
-        {{ CONTIENDA_LABEL[c.contienda] ?? c.contienda }}
-      </button>
-    </div>
 
-    <!-- Filtro + búsqueda + acciones -->
-    <div v-if="contienda && !esPlano" class="acc__controles">
-      <input
-        v-model="busqueda"
-        class="acc__busqueda"
-        type="search"
-        :inputmode="nivelHoja === 'candidato' ? 'text' : 'numeric'"
-        :placeholder="nivelHoja === 'candidato' ? 'Buscar candidato…' : 'Buscar lista por número…'"
-        :aria-label="nivelHoja === 'candidato' ? 'Buscar candidato' : 'Buscar lista por número'"
-      />
-      <select v-model="filtroPartido" class="acc__filtro" aria-label="Filtrar por partido">
-        <option value="">Todos los partidos</option>
-        <option v-for="p in partidos" :key="p.id" :value="p.id">{{ p.nombre }}</option>
-      </select>
-    </div>
+      <!-- Tabs de contienda (solo si hay >1) -->
+      <div v-if="tieneVariasContiendas" class="acc__contiendas" role="tablist" aria-label="Contienda">
+        <button
+          v-for="c in catalogo?.contiendas"
+          :key="c.contienda"
+          type="button"
+          role="tab"
+          :aria-selected="c.contienda === contiendaActiva"
+          class="acc__contienda"
+          :class="{ 'acc__contienda--activa': c.contienda === contiendaActiva }"
+          @click="cambiarContienda(c.contienda)"
+        >
+          {{ CONTIENDA_LABEL[c.contienda] ?? c.contienda }}
+        </button>
+      </div>
 
-    <!-- Acciones: botones claros (antes eran links de texto poco visibles) -->
-    <div v-if="contienda && !esPlano" class="acc__acciones">
-      <button class="acc__btn" type="button" @click="seleccionarTodasVisibles">
-        <span aria-hidden="true">☑</span> Seleccionar todas
-      </button>
-      <button class="acc__btn acc__btn--ghost" type="button" :disabled="seleccion.size === 0" @click="limpiarTodo">
-        <span aria-hidden="true">✕</span> Limpiar<span v-if="seleccion.size"> ({{ seleccion.size }})</span>
-      </button>
-    </div>
+      <!-- Búsqueda + filtro de partido -->
+      <div v-if="contienda && !esPlano" class="acc__controles">
+        <input
+          v-model="busqueda"
+          class="acc__busqueda"
+          type="search"
+          :inputmode="nivelHoja === 'candidato' ? 'text' : 'numeric'"
+          :placeholder="nivelHoja === 'candidato' ? 'Buscar candidato…' : 'Buscar lista por número…'"
+          :aria-label="nivelHoja === 'candidato' ? 'Buscar candidato' : 'Buscar lista por número'"
+        />
+        <select v-model="filtroPartido" class="acc__filtro" aria-label="Filtrar por partido">
+          <option value="">Todos los partidos</option>
+          <option v-for="p in partidos" :key="p.id" :value="p.id">{{ p.nombre }}</option>
+        </select>
+      </div>
 
-    <!-- Chips de filtros/selección activos -->
-    <div v-if="seleccion.size > 0 || filtroPartido || busqueda" class="acc__chips" aria-live="polite">
-      <span v-if="filtroPartido" class="acc__chip">
-        {{ partidos.find((p) => p.id === filtroPartido)?.nombre }}
-        <button type="button" aria-label="Quitar filtro de partido" @click="filtroPartido = ''">✕</button>
-      </span>
-      <span v-if="busqueda" class="acc__chip">
-        "{{ busqueda }}"
-        <button type="button" aria-label="Limpiar búsqueda" @click="busqueda = ''">✕</button>
-      </span>
-      <span v-if="seleccion.size > 0" class="acc__chip acc__chip--sel">
-        {{ seleccion.size }} {{ seleccion.size === 1 ? 'lista' : 'listas' }} seleccionada{{ seleccion.size === 1 ? '' : 's' }}
-      </span>
-    </div>
+      <!-- Chips de filtros/selección activos -->
+      <div v-if="seleccion.size > 0 || filtroPartido || busqueda" class="acc__chips" aria-live="polite">
+        <span v-if="filtroPartido" class="acc__chip">
+          {{ partidos.find((p) => p.id === filtroPartido)?.nombre }}
+          <button type="button" aria-label="Quitar filtro de partido" @click="filtroPartido = ''">✕</button>
+        </span>
+        <span v-if="busqueda" class="acc__chip">
+          "{{ busqueda }}"
+          <button type="button" aria-label="Limpiar búsqueda" @click="busqueda = ''">✕</button>
+        </span>
+        <span v-if="seleccion.size > 0" class="acc__chip acc__chip--sel">
+          {{ seleccion.size }} {{ seleccion.size === 1 ? 'lista' : 'listas' }} seleccionada{{ seleccion.size === 1 ? '' : 's' }}
+        </span>
+      </div>
 
-    <!-- Rótulo de degradación: escalera sin nivel sublema por falta de dato (AC2, Story 10.7) -->
-    <p v-if="contienda?.degradado" class="acc__degradado">
-      Sin desglose por sublema — dato no disponible; se muestra lema → lista.
-    </p>
+      <!-- Rótulo de degradación: escalera sin nivel sublema por falta de dato (AC2, Story 10.7) -->
+      <p v-if="contienda?.degradado" class="acc__degradado">
+        Sin desglose por sublema — dato no disponible; se muestra lema → lista.
+      </p>
 
-    <!-- Árbol -->
-    <ul v-if="contienda && !esPlano" class="acc__tree" role="tree">
-      <li v-for="l in lemas" :key="l.id" class="acc__lema" role="treeitem" :aria-expanded="expandidos.has(l.id)">
-        <div class="acc__row acc__row--lema">
-          <button
-            type="button"
-            class="acc__cb"
-            :class="`acc__cb--${tri(hojasDeLema(l.id))}`"
-            :aria-label="`Seleccionar todas las listas de ${l.etiqueta}`"
-            @click="toggleSet(hojasDeLema(l.id))"
-          ><span aria-hidden="true">{{ tri(hojasDeLema(l.id)) === 'full' ? '✓' : tri(hojasDeLema(l.id)) === 'partial' ? '–' : '' }}</span></button>
-          <button
-            type="button"
-            class="acc__expand"
-            :aria-expanded="expandidos.has(l.id)"
-            :aria-label="`${expandidos.has(l.id) ? 'Contraer' : 'Ver listas de'} ${l.etiqueta}`"
-            @click="toggleExpand(l.id)"
-          >
-            <span class="acc__chevron" aria-hidden="true">{{ expandidos.has(l.id) ? '▾' : '▸' }}</span>
-            <img v-if="flagLema(l)" :src="flagLema(l)!" :alt="siglaLema(l)" class="acc__flag" aria-hidden="true" />
-            <span v-else class="acc__swatch" :style="{ background: colorLema(l) }" aria-hidden="true"></span>
-            <span class="acc__sigla">{{ siglaLema(l) }}</span>
-            <span class="acc__etiqueta">{{ l.etiqueta }}</span>
-          </button>
-        </div>
+      <!-- Árbol jerárquico -->
+      <ul v-if="contienda && !esPlano" class="acc__tree" role="tree">
+        <li v-for="l in lemas" :key="l.id" class="acc__lema" role="treeitem" :aria-expanded="expandidos.has(l.id)">
+          <div class="acc__row acc__row--lema">
+            <button
+              type="button"
+              class="acc__cb"
+              :class="`acc__cb--${tri(hojasDeLema(l.id))}`"
+              :aria-label="`Seleccionar todas las listas de ${l.etiqueta}`"
+              @click="toggleSet(hojasDeLema(l.id))"
+            ><span aria-hidden="true">{{ tri(hojasDeLema(l.id)) === 'full' ? '✓' : tri(hojasDeLema(l.id)) === 'partial' ? '–' : '' }}</span></button>
+            <button
+              type="button"
+              class="acc__expand"
+              :aria-expanded="expandidos.has(l.id)"
+              :aria-label="`${expandidos.has(l.id) ? 'Contraer' : 'Ver listas de'} ${l.etiqueta}`"
+              @click="toggleExpand(l.id)"
+            >
+              <span class="acc__chevron" aria-hidden="true">{{ expandidos.has(l.id) ? '▾' : '▸' }}</span>
+              <img v-if="flagLema(l)" :src="flagLema(l)!" :alt="siglaLema(l)" class="acc__flag" aria-hidden="true" />
+              <span v-else class="acc__swatch" :style="{ background: colorLema(l) }" aria-hidden="true"></span>
+              <span class="acc__sigla">{{ siglaLema(l) }}</span>
+              <span class="acc__etiqueta">{{ l.etiqueta }}</span>
+            </button>
+          </div>
 
-        <ul v-if="expandidos.has(l.id)" class="acc__children" role="group">
-          <!-- Nivel intermedio 1 (precandidato en ODN; sublema en ODD/nacionales): lema → g1 -->
-          <li v-for="g in gruposDe(l.id)" :key="g.id" class="acc__precand" role="treeitem" :aria-expanded="expandidos.has(g.id)">
-            <div class="acc__row acc__row--precand">
-              <button
-                type="button"
-                class="acc__cb"
-                :class="`acc__cb--${tri(idsDeGrupo(g.id))}`"
-                :aria-label="`Seleccionar todas las opciones de ${g.etiqueta}`"
-                @click="toggleSet(idsDeGrupo(g.id))"
-              ><span aria-hidden="true">{{ tri(idsDeGrupo(g.id)) === 'full' ? '✓' : tri(idsDeGrupo(g.id)) === 'partial' ? '–' : '' }}</span></button>
-              <button
-                type="button"
-                class="acc__expand"
-                :aria-expanded="expandidos.has(g.id)"
-                :aria-label="`${expandidos.has(g.id) ? 'Contraer' : 'Ver listas de'} ${g.etiqueta}`"
-                @click="toggleExpand(g.id)"
-              >
-                <span class="acc__chevron" aria-hidden="true">{{ expandidos.has(g.id) ? '▾' : '▸' }}</span>
-                <span class="acc__etiqueta acc__etiqueta--precand">{{ g.etiqueta }}</span>
-              </button>
-            </div>
-            <ul v-if="expandidos.has(g.id)" class="acc__children" role="group">
-              <!-- Nivel intermedio 2 (sublema bajo precandidato en ODN): g1 → g2 → hoja -->
-              <li v-for="g2 in gruposDe(g.id)" :key="g2.id" class="acc__precand" role="treeitem" :aria-expanded="expandidos.has(g2.id)">
-                <div class="acc__row acc__row--sublema">
-                  <button
-                    type="button"
-                    class="acc__cb"
-                    :class="`acc__cb--${tri(idsDeGrupo(g2.id))}`"
-                    :aria-label="`Seleccionar todas las opciones de ${g2.etiqueta}`"
-                    @click="toggleSet(idsDeGrupo(g2.id))"
-                  ><span aria-hidden="true">{{ tri(idsDeGrupo(g2.id)) === 'full' ? '✓' : tri(idsDeGrupo(g2.id)) === 'partial' ? '–' : '' }}</span></button>
-                  <button
-                    type="button"
-                    class="acc__expand"
-                    :aria-expanded="expandidos.has(g2.id)"
-                    :aria-label="`${expandidos.has(g2.id) ? 'Contraer' : 'Ver listas de'} ${g2.etiqueta}`"
-                    @click="toggleExpand(g2.id)"
-                  >
-                    <span class="acc__chevron" aria-hidden="true">{{ expandidos.has(g2.id) ? '▾' : '▸' }}</span>
-                    <span class="acc__etiqueta acc__etiqueta--precand">{{ g2.etiqueta }}</span>
-                  </button>
-                </div>
-                <ul v-if="expandidos.has(g2.id)" class="acc__children" role="group">
-                  <li v-for="h in opcionesDeGrupo(g2.id)" :key="h.id" class="acc__hoja" role="treeitem">
-                    <div class="acc__row acc__row--hoja2">
-                      <button
-                        type="button"
-                        class="acc__cb"
-                        :class="seleccion.has(h.id) ? 'acc__cb--full' : 'acc__cb--empty'"
-                        :aria-label="`Seleccionar ${etiquetaOpcion(h)}`"
-                        @click="toggleHoja(h.id)"
-                      ><span aria-hidden="true">{{ seleccion.has(h.id) ? '✓' : '' }}</span></button>
-                      <span class="acc__lista">{{ etiquetaOpcion(h) }}</span>
-                    </div>
-                  </li>
-                </ul>
-              </li>
-              <!-- Hojas directas de g1 (sin sub-grupo): ODD/nacionales todas; ODN listas sin sublema -->
-              <li v-for="h in opcionesDeGrupo(g.id)" :key="h.id" class="acc__hoja" role="treeitem">
-                <div class="acc__row acc__row--hoja">
-                  <button
-                    type="button"
-                    class="acc__cb"
-                    :class="seleccion.has(h.id) ? 'acc__cb--full' : 'acc__cb--empty'"
-                    :aria-label="`Seleccionar ${etiquetaOpcion(h)}`"
-                    @click="toggleHoja(h.id)"
-                  ><span aria-hidden="true">{{ seleccion.has(h.id) ? '✓' : '' }}</span></button>
-                  <span class="acc__lista">{{ etiquetaOpcion(h) }}</span>
-                </div>
-              </li>
-            </ul>
-          </li>
-          <!-- Opciones directas del lema (ODD: hoja; intendente: candidato; voto al lema) -->
-          <li v-for="h in opcionesDeLemaDirecto(l.id)" :key="h.id" class="acc__hoja" role="treeitem">
-            <div class="acc__row acc__row--hoja">
-              <button
-                type="button"
-                class="acc__cb"
-                :class="seleccion.has(h.id) ? 'acc__cb--full' : 'acc__cb--empty'"
-                :aria-label="`Seleccionar ${etiquetaOpcion(h)}`"
-                @click="toggleHoja(h.id)"
-              ><span aria-hidden="true">{{ seleccion.has(h.id) ? '✓' : '' }}</span></button>
-              <span class="acc__lista">{{ etiquetaOpcion(h) }}</span>
-            </div>
-          </li>
-        </ul>
-      </li>
-    </ul>
+          <ul v-if="expandidos.has(l.id)" class="acc__children" role="group">
+            <!-- Nivel intermedio 1 (precandidato en ODN; sublema en ODD/nacionales): lema → g1 -->
+            <li v-for="g in gruposDe(l.id)" :key="g.id" class="acc__precand" role="treeitem" :aria-expanded="expandidos.has(g.id)">
+              <div class="acc__row acc__row--precand">
+                <button
+                  type="button"
+                  class="acc__cb"
+                  :class="`acc__cb--${tri(idsDeGrupo(g.id))}`"
+                  :aria-label="`Seleccionar todas las opciones de ${g.etiqueta}`"
+                  @click="toggleSet(idsDeGrupo(g.id))"
+                ><span aria-hidden="true">{{ tri(idsDeGrupo(g.id)) === 'full' ? '✓' : tri(idsDeGrupo(g.id)) === 'partial' ? '–' : '' }}</span></button>
+                <button
+                  type="button"
+                  class="acc__expand"
+                  :aria-expanded="expandidos.has(g.id)"
+                  :aria-label="`${expandidos.has(g.id) ? 'Contraer' : 'Ver listas de'} ${g.etiqueta}`"
+                  @click="toggleExpand(g.id)"
+                >
+                  <span class="acc__chevron" aria-hidden="true">{{ expandidos.has(g.id) ? '▾' : '▸' }}</span>
+                  <span class="acc__etiqueta acc__etiqueta--precand">{{ g.etiqueta }}</span>
+                </button>
+              </div>
+              <ul v-if="expandidos.has(g.id)" class="acc__children" role="group">
+                <!-- Nivel intermedio 2 (sublema bajo precandidato en ODN): g1 → g2 → hoja -->
+                <li v-for="g2 in gruposDe(g.id)" :key="g2.id" class="acc__precand" role="treeitem" :aria-expanded="expandidos.has(g2.id)">
+                  <div class="acc__row acc__row--sublema">
+                    <button
+                      type="button"
+                      class="acc__cb"
+                      :class="`acc__cb--${tri(idsDeGrupo(g2.id))}`"
+                      :aria-label="`Seleccionar todas las opciones de ${g2.etiqueta}`"
+                      @click="toggleSet(idsDeGrupo(g2.id))"
+                    ><span aria-hidden="true">{{ tri(idsDeGrupo(g2.id)) === 'full' ? '✓' : tri(idsDeGrupo(g2.id)) === 'partial' ? '–' : '' }}</span></button>
+                    <button
+                      type="button"
+                      class="acc__expand"
+                      :aria-expanded="expandidos.has(g2.id)"
+                      :aria-label="`${expandidos.has(g2.id) ? 'Contraer' : 'Ver listas de'} ${g2.etiqueta}`"
+                      @click="toggleExpand(g2.id)"
+                    >
+                      <span class="acc__chevron" aria-hidden="true">{{ expandidos.has(g2.id) ? '▾' : '▸' }}</span>
+                      <span class="acc__etiqueta acc__etiqueta--precand">{{ g2.etiqueta }}</span>
+                    </button>
+                  </div>
+                  <ul v-if="expandidos.has(g2.id)" class="acc__children" role="group">
+                    <li v-for="h in opcionesDeGrupo(g2.id)" :key="h.id" class="acc__hoja" role="treeitem">
+                      <div class="acc__row acc__row--hoja2">
+                        <button
+                          type="button"
+                          class="acc__cb"
+                          :class="seleccion.has(h.id) ? 'acc__cb--full' : 'acc__cb--empty'"
+                          :aria-label="`Seleccionar ${etiquetaOpcion(h)}`"
+                          @click="toggleHoja(h.id)"
+                        ><span aria-hidden="true">{{ seleccion.has(h.id) ? '✓' : '' }}</span></button>
+                        <span class="acc__lista">{{ etiquetaOpcion(h) }}</span>
+                      </div>
+                    </li>
+                  </ul>
+                </li>
+                <!-- Hojas directas de g1 (sin sub-grupo): ODD/nacionales todas; ODN listas sin sublema -->
+                <li v-for="h in opcionesDeGrupo(g.id)" :key="h.id" class="acc__hoja" role="treeitem">
+                  <div class="acc__row acc__row--hoja">
+                    <button
+                      type="button"
+                      class="acc__cb"
+                      :class="seleccion.has(h.id) ? 'acc__cb--full' : 'acc__cb--empty'"
+                      :aria-label="`Seleccionar ${etiquetaOpcion(h)}`"
+                      @click="toggleHoja(h.id)"
+                    ><span aria-hidden="true">{{ seleccion.has(h.id) ? '✓' : '' }}</span></button>
+                    <span class="acc__lista">{{ etiquetaOpcion(h) }}</span>
+                  </div>
+                </li>
+              </ul>
+            </li>
+            <!-- Opciones directas del lema (ODD: hoja; intendente: candidato; voto al lema) -->
+            <li v-for="h in opcionesDeLemaDirecto(l.id)" :key="h.id" class="acc__hoja" role="treeitem">
+              <div class="acc__row acc__row--hoja">
+                <button
+                  type="button"
+                  class="acc__cb"
+                  :class="seleccion.has(h.id) ? 'acc__cb--full' : 'acc__cb--empty'"
+                  :aria-label="`Seleccionar ${etiquetaOpcion(h)}`"
+                  @click="toggleHoja(h.id)"
+                ><span aria-hidden="true">{{ seleccion.has(h.id) ? '✓' : '' }}</span></button>
+                <span class="acc__lista">{{ etiquetaOpcion(h) }}</span>
+              </div>
+            </li>
+          </ul>
+        </li>
+      </ul>
 
-    <!-- Tipo plano (balotaje/plebiscito): lista simple de opciones con checkbox, sin chevrons -->
-    <ul v-else-if="contienda && esPlano" class="acc__tree acc__tree--plano" role="group">
-      <li v-for="o in opcionesPlano" :key="o.id" class="acc__hoja">
-        <div class="acc__row">
-          <button
-            type="button"
-            class="acc__cb"
-            :class="seleccion.has(o.id) ? 'acc__cb--full' : 'acc__cb--empty'"
-            :aria-label="`Seleccionar ${metaPlano(o).label}`"
-            @click="toggleHoja(o.id)"
-          ><span aria-hidden="true">{{ seleccion.has(o.id) ? '✓' : '' }}</span></button>
-          <img v-if="metaPlano(o).flagUrl" :src="metaPlano(o).flagUrl!" :alt="metaPlano(o).sigla" class="acc__flag" aria-hidden="true" />
-          <span v-else class="acc__swatch" :style="{ background: metaPlano(o).color }" aria-hidden="true"></span>
-          <span class="acc__lista">{{ metaPlano(o).label }}</span>
-        </div>
-      </li>
-    </ul>
+      <!-- Tipo plano (balotaje/plebiscito): lista simple de opciones con checkbox, sin chevrons -->
+      <ul v-else-if="contienda && esPlano" class="acc__tree acc__tree--plano" role="group">
+        <li v-for="o in opcionesPlano" :key="o.id" class="acc__hoja">
+          <div class="acc__row">
+            <button
+              type="button"
+              class="acc__cb"
+              :class="seleccion.has(o.id) ? 'acc__cb--full' : 'acc__cb--empty'"
+              :aria-label="`Seleccionar ${metaPlano(o).label}`"
+              @click="toggleHoja(o.id)"
+            ><span aria-hidden="true">{{ seleccion.has(o.id) ? '✓' : '' }}</span></button>
+            <img v-if="metaPlano(o).flagUrl" :src="metaPlano(o).flagUrl!" :alt="metaPlano(o).sigla" class="acc__flag" aria-hidden="true" />
+            <span v-else class="acc__swatch" :style="{ background: metaPlano(o).color }" aria-hidden="true"></span>
+            <span class="acc__lista">{{ metaPlano(o).label }}</span>
+          </div>
+        </li>
+      </ul>
 
-    <p v-if="!catalogo" class="acc__cargando">Cargando opciones…</p>
+      <p v-if="!catalogo" class="acc__cargando">Cargando opciones…</p>
+
+      <!-- Acciones: footer bajo el árbol (mismo v-if, mismos handlers que antes) -->
+      <div v-if="contienda && !esPlano" class="acc__acciones">
+        <button class="acc__btn" type="button" @click="seleccionarTodasVisibles">
+          <span aria-hidden="true">☑</span> Seleccionar todas
+        </button>
+        <button class="acc__btn acc__btn--ghost" type="button" :disabled="seleccion.size === 0" @click="limpiarTodo">
+          <span aria-hidden="true">✕</span> Limpiar<span v-if="seleccion.size"> ({{ seleccion.size }})</span>
+        </button>
+      </div>
+
     </div>
   </section>
 </template>
 
 <style scoped>
-.acc { padding: 0.5rem 1rem; border-bottom: 1px solid var(--color-border); font-size: 0.875rem; }
+/* ── Contenedor ────────────────────────────────────────────────────────────── */
+.acc {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.8125rem;
+  font-family: var(--font-ui);
+}
+
+/* ── Header toggle ─────────────────────────────────────────────────────────── */
 .acc__toggle {
   display: flex; align-items: center; gap: 0.5rem; width: 100%;
   background: none; border: none; padding: 0.25rem 0; margin: 0; cursor: pointer;
-  text-align: left; color: inherit; min-height: 36px;
+  text-align: left; color: inherit; min-height: 32px;
 }
-.acc__toggle-chevron { color: var(--color-ink-faint); font-size: 0.75rem; transition: transform 0.15s ease; flex: none; }
+.acc__toggle-chevron {
+  color: var(--color-ink-faint); font-size: 0.7rem; flex: none;
+  display: inline-block;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .acc__toggle-chevron { transition: transform 0.15s ease; }
+}
 .acc__toggle-chevron--open { transform: rotate(90deg); }
 .acc__toggle-lbl {
-  font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
   color: var(--color-ink-muted);
 }
 .acc__toggle-badge {
-  margin-left: auto; font-size: 0.6875rem; font-weight: 700; color: var(--color-paper);
-  background: var(--color-ink); border-radius: 9999px; padding: 0.0625rem 0.5rem;
+  margin-left: auto; font-size: 0.6875rem; font-weight: 700;
+  color: var(--color-card);
+  background: var(--color-accent);
+  border-radius: 9999px; padding: 0.075rem 0.5rem;
 }
-.acc__body { margin-top: 0.5rem; }
-.acc__contiendas { display: flex; gap: 0.25rem; margin-bottom: 0.5rem; }
+.acc__toggle:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+
+/* ── Body ──────────────────────────────────────────────────────────────────── */
+.acc__body { margin-top: 0.375rem; }
+
+/* ── Tabs de contienda: estilo .seg track ──────────────────────────────────── */
+.acc__contiendas {
+  display: flex; gap: 2px;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius); padding: 3px;
+  margin-bottom: 0.5rem;
+}
 .acc__contienda {
-  flex: 1; padding: 0.375rem 0.5rem; border: 1px solid var(--color-border-strong);
-  border-radius: 0.25rem; background: var(--color-surface-1); color: var(--color-ink-soft);
-  font-size: 0.75rem; font-weight: 600; cursor: pointer; min-height: 36px;
+  flex: 1; padding: 5px 0.5rem;
+  border: none; border-radius: calc(var(--radius) - 2px);
+  background: transparent; color: var(--color-ink-muted);
+  font-size: 0.72rem; font-weight: 600; cursor: pointer;
+  font-family: var(--font-ui);
+  white-space: nowrap;
 }
-.acc__contienda--activa { background: var(--color-ink); color: var(--color-paper); border-color: var(--color-ink); }
-.acc__contienda:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
-
-.acc__controles { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-bottom: 0.375rem; }
-.acc__busqueda { flex: 1 1 9rem; min-width: 9rem; padding: 0.375rem 0.5rem; border: 1px solid var(--color-border); border-radius: 0.25rem; min-height: 36px; }
-.acc__filtro { flex: 1 1 9rem; padding: 0.375rem 0.5rem; border: 1px solid var(--color-border); border-radius: 0.25rem; min-height: 36px; }
-
-.acc__chips { display: flex; flex-wrap: wrap; align-items: center; gap: 0.375rem; margin-bottom: 0.375rem; font-size: 0.75rem; }
-.acc__chip { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; border: 1px solid var(--color-border-strong); border-radius: 9999px; background: var(--color-surface-1); }
-.acc__chip--sel { font-weight: 700; }
-.acc__chip button { background: none; border: none; cursor: pointer; color: var(--color-ink-muted); padding: 0 0.125rem; }
-
-/* Acciones como botones claros (antes links de texto poco visibles) */
-.acc__acciones { display: flex; gap: 0.375rem; margin-bottom: 0.375rem; }
-.acc__btn {
-  display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.625rem;
-  border: 1px solid var(--color-border-strong); border-radius: 0.375rem;
-  background: var(--color-surface-1); color: var(--color-ink); font-size: 0.75rem; font-weight: 600;
-  cursor: pointer; min-height: 34px;
+@media (prefers-reduced-motion: no-preference) {
+  .acc__contienda { transition: background 0.12s, color 0.12s, box-shadow 0.12s; }
 }
-.acc__btn:hover { background: var(--color-surface-2); }
-.acc__btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
-.acc__btn--ghost { background: none; color: var(--color-ink-soft); }
-.acc__btn:disabled { opacity: 0.45; cursor: default; }
-.acc__btn:disabled:hover { background: none; }
+.acc__contienda:hover { color: var(--color-ink); }
+.acc__contienda--activa {
+  background: var(--color-card);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-sm);
+}
+.acc__contienda:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 1px; }
 
-.acc__tree { list-style: none; margin: 0; padding: 0; max-height: 22rem; overflow-y: auto; border: 1px solid var(--color-border); border-radius: 0.375rem; }
+/* ── Controles: búsqueda + filtro apilados ─────────────────────────────────── */
+.acc__controles { display: flex; flex-direction: column; gap: 0.3125rem; margin-bottom: 0.375rem; }
+.acc__busqueda,
+.acc__filtro {
+  width: 100%; padding: 0 0.5rem;
+  height: 30px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-2);
+  color: var(--color-ink);
+  font-size: 0.8125rem;
+  font-family: var(--font-ui);
+}
+.acc__busqueda::placeholder { color: var(--color-ink-faint); }
+@media (prefers-reduced-motion: no-preference) {
+  .acc__busqueda, .acc__filtro { transition: border-color 0.12s; }
+}
+.acc__busqueda:focus-visible,
+.acc__filtro:focus-visible {
+  outline: 2px solid var(--color-focus); outline-offset: 1px;
+  border-color: var(--color-focus);
+}
+
+/* ── Chips ─────────────────────────────────────────────────────────────────── */
+.acc__chips {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: 0.3125rem; margin-bottom: 0.375rem; font-size: 0.72rem;
+}
+.acc__chip {
+  display: inline-flex; align-items: center; gap: 0.25rem;
+  padding: 0.1rem 0.4rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 9999px;
+  background: var(--color-surface-1);
+  color: var(--color-ink-soft);
+}
+.acc__chip--sel { font-weight: 700; color: var(--color-ink); }
+.acc__chip button {
+  background: none; border: none; cursor: pointer;
+  color: var(--color-ink-muted); padding: 0 0.1rem; line-height: 1;
+  font-size: 0.75rem;
+}
+.acc__chip button:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 1px; border-radius: 2px; }
+
+/* ── Nota de degradado ─────────────────────────────────────────────────────── */
+.acc__degradado {
+  font-size: 0.6875rem; color: var(--color-ink-faint); font-style: italic;
+  margin: 0 0 0.3125rem; line-height: 1.4;
+}
+
+/* ── Árbol ─────────────────────────────────────────────────────────────────── */
+.acc__tree {
+  list-style: none; margin: 0; padding: 0;
+  max-height: 22.5rem; /* ~360px */
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+}
 .acc__children { list-style: none; margin: 0; padding: 0; }
-.acc__row { display: flex; align-items: center; gap: 0.375rem; min-height: 40px; padding: 0.125rem 0.375rem; border-bottom: 1px solid var(--color-surface-2); }
+
+/* Filas: más bajas y compactas */
+.acc__row {
+  display: flex; align-items: center; gap: 0.3125rem;
+  min-height: 30px; padding: 0.0625rem 0.375rem;
+  border-bottom: 1px solid var(--color-surface-2);
+}
 .acc__row--lema { font-weight: 600; }
-.acc__row--precand { padding-left: 1.75rem; }
-.acc__row--sublema { padding-left: 3rem; }
-.acc__row--hoja { padding-left: 3rem; }
-.acc__row--hoja2 { padding-left: 4.25rem; }
+.acc__row--precand { padding-left: 1.375rem; }
+.acc__row--sublema { padding-left: 2.5rem; }
+.acc__row--hoja   { padding-left: 2.5rem; }
+.acc__row--hoja2  { padding-left: 3.625rem; }
 .acc__tree--plano .acc__row { padding-left: 0.375rem; }
 
+/* ── Checkbox tri-estado ───────────────────────────────────────────────────── */
 .acc__cb {
-  width: 22px; height: 22px; flex-shrink: 0; border: 1.5px solid var(--color-border-strong);
-  border-radius: 0.25rem; background: var(--color-paper); cursor: pointer; display: grid; place-items: center;
-  font-size: 0.8rem; line-height: 1; color: var(--color-paper);
+  width: 18px; height: 18px; flex-shrink: 0;
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-paper);
+  cursor: pointer; display: grid; place-items: center;
+  font-size: 0.7rem; line-height: 1;
+  color: var(--color-paper);
 }
-.acc__cb--full { background: var(--color-ink); border-color: var(--color-ink); }
+@media (prefers-reduced-motion: no-preference) {
+  .acc__cb { transition: background 0.1s, border-color 0.1s; }
+}
+.acc__cb--full    { background: var(--color-ink); border-color: var(--color-ink); }
 .acc__cb--partial { background: var(--color-ink-soft); border-color: var(--color-ink-soft); }
 .acc__cb:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
 
-/* Rótulo del lema/grupo: toda la fila (chevron + bandera + nombre) abre el desglose */
+/* ── Botón expandir lema/grupo ─────────────────────────────────────────────── */
 .acc__expand {
-  display: flex; align-items: center; gap: 0.375rem; flex: 1; min-width: 0;
+  display: flex; align-items: center; gap: 0.3125rem; flex: 1; min-width: 0;
   background: none; border: none; cursor: pointer; text-align: left;
-  min-height: 40px; padding: 0 0.25rem; border-radius: 0.25rem; color: inherit; font: inherit;
+  min-height: 30px; padding: 0 0.25rem;
+  border-radius: var(--radius-sm); color: inherit;
+  font: inherit; font-family: var(--font-ui);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .acc__expand { transition: background 0.1s; }
 }
 .acc__expand:hover { background: var(--color-surface-2); }
 .acc__expand:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
-.acc__chevron { width: 0.9rem; flex-shrink: 0; color: var(--color-ink-soft); font-size: 0.7rem; }
 
-.acc__swatch { width: 0.75rem; height: 0.75rem; border-radius: 0.125rem; flex-shrink: 0; border: 1px solid rgba(0,0,0,.1); }
-.acc__flag  { width: 1.25rem; height: 0.8125rem; border-radius: 0.125rem; flex-shrink: 0; border: 1px solid rgba(0,0,0,.15); object-fit: cover; }
-.acc__sigla { font-weight: 700; min-width: 2.25rem; color: var(--color-ink); }
-.acc__etiqueta { flex: 1; min-width: 0; color: var(--color-ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.acc__etiqueta--precand { font-weight: 500; color: var(--color-ink); }
-.acc__lista { color: var(--color-ink); }
+.acc__chevron { width: 0.875rem; flex-shrink: 0; color: var(--color-ink-faint); font-size: 0.65rem; }
 
-.acc__cargando { color: var(--color-ink-faint); font-size: 0.8125rem; margin: 0.5rem 0; }
-.acc__degradado { font-size: 0.7rem; color: var(--color-ink-faint); font-style: italic; margin: 0 0 0.375rem; }
+/* ── Indicadores visuales del partido ─────────────────────────────────────── */
+.acc__swatch {
+  width: 0.75rem; height: 0.75rem;
+  border-radius: var(--radius-sm); flex-shrink: 0;
+  border: 1px solid var(--color-border);
+}
+.acc__flag {
+  width: 1.25rem; height: 0.8125rem;
+  border-radius: var(--radius-sm); flex-shrink: 0;
+  border: 1px solid var(--color-border);
+  object-fit: cover;
+}
+
+/* ── Texto en el árbol ─────────────────────────────────────────────────────── */
+.acc__sigla {
+  font-weight: 700; min-width: 2rem; color: var(--color-ink);
+  font-size: 0.75rem;
+}
+.acc__etiqueta {
+  flex: 1; min-width: 0; color: var(--color-ink-soft);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: 0.8125rem;
+}
+.acc__etiqueta--precand { font-weight: 600; color: var(--color-ink); }
+.acc__lista { color: var(--color-ink); font-size: 0.8125rem; flex: 1; min-width: 0; }
+
+/* ── Cargando ──────────────────────────────────────────────────────────────── */
+.acc__cargando { color: var(--color-ink-faint); font-size: 0.8125rem; margin: 0.4rem 0; }
+
+/* ── Footer de acciones (bajo el árbol) ────────────────────────────────────── */
+.acc__acciones {
+  display: flex; gap: 0.3125rem;
+  border-top: 1px solid var(--color-border);
+  margin-top: 0.3125rem; padding-top: 0.375rem;
+}
+.acc__btn {
+  display: inline-flex; align-items: center; gap: 0.3125rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-1); color: var(--color-ink);
+  font-size: 0.75rem; font-weight: 600;
+  font-family: var(--font-ui);
+  cursor: pointer; min-height: 28px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .acc__btn { transition: background 0.1s; }
+}
+.acc__btn:hover { background: var(--color-surface-2); }
+.acc__btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.acc__btn--ghost { background: none; border-color: transparent; color: var(--color-ink-soft); }
+.acc__btn--ghost:hover { background: var(--color-surface-2); border-color: var(--color-border); }
+.acc__btn:disabled { opacity: 0.4; cursor: default; }
+.acc__btn:disabled:hover { background: none; border-color: transparent; }
 </style>
