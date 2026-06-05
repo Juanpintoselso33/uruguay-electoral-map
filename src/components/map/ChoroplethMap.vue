@@ -2674,6 +2674,38 @@ onUnmounted(() => {
 <style>
 @import 'maplibre-gl/dist/maplibre-gl.css';
 
+/* Epic 23 · Story 23.4 — control de zoom on-brand (la card blanca default desentona con
+   el papel cálido y el dark). Sin tocar la lógica: solo re-skin del NavigationControl. */
+.maplibregl-ctrl-group {
+  background: color-mix(in srgb, var(--color-card) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.maplibregl-ctrl-group button {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  color: var(--color-ink-soft);
+}
+.maplibregl-ctrl-group button + button {
+  border-top: 1px solid var(--color-border);
+}
+.maplibregl-ctrl-group button:hover {
+  background: var(--color-surface-2);
+}
+.maplibregl-ctrl-group button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+/* los íconos +/- de maplibre son background-image (SVG con stroke fijo); en dark se invierten
+   para que se vean sobre el control oscuro. */
+:root[data-theme="dark"] .maplibregl-ctrl-group button .maplibregl-ctrl-icon {
+  filter: invert(1) brightness(1.6);
+}
+
 .zona-sigla {
   font: 700 0.6875rem/1 system-ui, sans-serif;
   color: var(--color-ink);
