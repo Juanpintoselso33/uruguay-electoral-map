@@ -44,6 +44,9 @@ const canonicalUrl = canonical ? `${siteUrl}${canonical}` : undefined;
         }
         apply();
         window.__applyTheme = apply;
+        // Astro ClientRouter (SPA) reemplaza el DOM al navegar y descarta el data-theme del
+        // <html> → re-aplicarlo tras cada swap para que el tema persista entre páginas.
+        document.addEventListener('astro:after-swap', apply);
         try {
           window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
             var mode = 'auto';
