@@ -276,6 +276,8 @@ const siglasComparables = computed(() => {
 let catalogoOpcMeta: Map<string, {
   contienda: string; lemaId: string; hoja: string; lemaNombre: string;
   precandidatoId?: string; sublemaId?: string;
+  /** Etiqueta terminal legible (nombre del candidato p/ intendente; undefined p/ hojas). */
+  label?: string;
 }> | null = null;
 /** nodeId → etiqueta (de catalogo.nodos): labels de precandidato/sublema para la leyenda. */
 let catalogoNodeLabel: Map<string, string> = new Map();
@@ -344,7 +346,7 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
   const geoNivel = (nivel === 'municipio' && eleccion !== 'municipales-2025')
     ? `municipio.${(eleccion.match(/\d{4}/) ?? [''])[0]}`
     : nivel;
-  const [topoRes, votesRes, opcRes, metaRes, serieMapRes, serieBarrioRes, annexRes, intendentesRes, alcaldesRes, concejosRes] = await Promise.all([
+  const [topoRes, votesRes, opcRes, metaRes, serieMapRes, serieBarrioRes, annexRes, intendentesRes, alcaldesRes, concejosRes, intendentesZonaRes] = await Promise.all([
     fetch(`${base}/data/geo/${departamento}/${geoNivel}.topo.json`),
     fetch(`${base}/data/${eleccion}/${departamento}/${votesFile}`),
     fetch(`${base}/data/${eleccion}/${departamento}/opciones.json`),
@@ -378,6 +380,12 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
     // Municipales: Concejo Municipal completo (alcalde + 4 concejales) por municipio (Epic 22.7).
     eleccion.startsWith('municipales')
       ? fetch(`${base}/data/${eleccion}/_nacional/concejos.json`).catch(() => null)
+      : Promise.resolve(null),
+    // Vista por-depto departamentales (nivel serie): candidatos a intendente POR SERIE, para que
+    // la ficha del polígono muestre "cómo le fue a cada candidato en esa zona" (gemelo por-serie
+    // de _nacional/intendentes.json). Solo 2025; ausente → ficha sin candidatos (degrada a partido).
+    departamento !== '_nacional' && eleccion.startsWith('departamentales') && nivel === 'serie'
+      ? fetch(`${base}/data/${eleccion}/${departamento}/intendentes-zona.json`).catch(() => null)
       : Promise.resolve(null),
   ]);
   if (!topoRes.ok || !votesRes.ok || !opcRes.ok) throw new Error('No se pudieron cargar los datos del mapa');
@@ -433,6 +441,17 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
       const doc = (await intendentesRes.json()) as { departamentos: Record<string, IntendentesDepto> };
       for (const [geoId, info] of Object.entries(doc.departamentos ?? {})) {
         intendentesPorDepto.set(norm(geoId), info);
+      }
+    } catch { /* archivo malformado → ficha sin candidatos */ }
+  }
+  // Vista por-depto: candidatos a intendente por SERIE (shard intendentes-zona.json). Mismo Map que
+  // la nacional, keyeado por serie. `intendenteElecto: null` a propósito: el intendente se elige a
+  // nivel depto, no por serie (mostrarlo junto al ganador local de la serie sería engañoso).
+  if (intendentesZonaRes && intendentesZonaRes.ok) {
+    try {
+      const doc = (await intendentesZonaRes.json()) as { zonas: Record<string, { lemas: IntendentesDepto['lemas'] }> };
+      for (const [serie, info] of Object.entries(doc.zonas ?? {})) {
+        intendentesPorDepto.set(norm(serie), { ganadorLema: '', intendenteElecto: null, lemas: info.lemas });
       }
     } catch { /* archivo malformado → ficha sin candidatos */ }
   }
@@ -738,7 +757,10 @@ function circuitColorCtx(): {
       }
     }
   }
-  return { sel, opcion, modo, intensidad, selSiglas, maxSelSum, maxPct, nivel: gnivel.value, cont: $selection.get().contienda };
+  // Contienda efectiva (con fallback a la primera del catálogo) — mismo criterio que las zonas,
+  // para que el ganador-por-nivel del circuito no mezcle listas de otras contiendas.
+  const cont = $selection.get().contienda ?? [...catalogoNivelesPorCont.keys()][0];
+  return { sel, opcion, modo, intensidad, selSiglas, maxSelSum, maxPct, nivel: gnivel.value, cont };
 }
 
 /** Coloreo-por-nivel en un circuito/local (Epic 19.2): ganador al nivel `gnivel` sobre el desglose
@@ -1090,7 +1112,7 @@ function ensureCatalogo(eleccion: string, departamento: string): Promise<void> {
   if (catalogoOpcMeta) return Promise.resolve();
   if (catalogoPromise) return catalogoPromise;
   catalogoPromise = (async () => {
-    const built = new Map<string, { contienda: string; lemaId: string; hoja: string; lemaNombre: string; precandidatoId?: string; sublemaId?: string }>();
+    const built = new Map<string, { contienda: string; lemaId: string; hoja: string; lemaNombre: string; precandidatoId?: string; sublemaId?: string; label?: string }>();
     const nodeLabel = new Map<string, string>();
     const nivPorCont = new Map<string, Nivel[]>();
     try {
@@ -1102,7 +1124,7 @@ function ensureCatalogo(eleccion: string, departamento: string): Promise<void> {
             contienda: string;
             niveles: string[];
             nodos: { id: string; nivel: string; etiqueta: string }[];
-            opciones: { id: string; hoja?: string; lemaId?: string; precandidatoId?: string; sublemaId?: string }[];
+            opciones: { id: string; hoja?: string; lemaId?: string; precandidatoId?: string; sublemaId?: string; candidato?: string; etiqueta?: string }[];
           }[];
         };
         const NIVEL_MAP: Record<string, Nivel> = { lema: 'lema', precandidato: 'precandidato', sublema: 'sublema', hoja: 'lista', candidato: 'candidato' };
@@ -1117,6 +1139,7 @@ function ensureCatalogo(eleccion: string, departamento: string): Promise<void> {
               contienda: c.contienda, lemaId, hoja: o.hoja ?? '',
               lemaNombre: lemaNombre.get(lemaId) ?? lemaId,
               precandidatoId: o.precandidatoId, sublemaId: o.sublemaId,
+              label: o.candidato ?? o.etiqueta, // nombre del candidato (intendente) p/ la etiqueta terminal
             });
           }
         }
@@ -1380,9 +1403,11 @@ function lemaNombrePorNodo(nodeId: string): string {
 }
 /** "Lista N" / "Voto al lema" para un opcionId terminal. */
 function etiquetaTerminal(oid: string): string {
-  const hoja = catalogoOpcMeta?.get(oid)?.hoja;
-  if (hoja === 'vl') return 'Voto al lema';
-  return hoja ? `Lista ${hoja}` : (opcNombreMap.get(oid) ?? oid);
+  const meta = catalogoOpcMeta?.get(oid);
+  if (meta?.hoja === 'vl') return 'Voto al lema';
+  if (meta?.hoja) return `Lista ${meta.hoja}`;
+  // Candidato (intendente): nombre legible del catálogo en vez del opcionId crudo.
+  return meta?.label ?? opcNombreMap.get(oid) ?? oid;
 }
 /** Apariencia (color/sigla/label/pattern) de una clave ganadora al nivel actual. */
 function appearanceDeKey(key: string, nivel: Nivel): ReturnType<typeof resolveOpcionAppearance> {
@@ -1552,7 +1577,10 @@ async function aplicarGanadorAbsolutoPorNivel(): Promise<void> {
   await ensureCatalogo(activeEleccion, activeDepartamento);
   syncNivelesDisponibles();
   if (gnivel.value === 'lema') { restoreGanadorDesdeSeleccion(); return; } // quedó clampeado
-  const cont = $selection.get().contienda;
+  // Contienda EFECTIVA: la elegida en el acordeón o, sin selección explícita, la primera del
+  // catálogo (misma que usa syncNivelesDisponibles para ofrecer los niveles). Sin este fallback,
+  // `!cont` dejaba pasar TODAS las contiendas y mezclaba listas de Junta/Municipio en Intendente.
+  const cont = $selection.get().contienda ?? [...catalogoNivelesPorCont.keys()][0];
   const universo = [...(catalogoOpcMeta?.entries() ?? [])]
     .filter(([, meta]) => !cont || meta.contienda === cont)
     .map(([id]) => id);
@@ -2487,6 +2515,10 @@ onMounted(async () => {
       const hoverTip = mlLib ? new mlLib.Popup({ closeButton: false, closeOnClick: false, offset: 12, className: 'map-tip-pop' }) : null;
       const tipHTML = (name: string): string => {
         const key = norm(name);
+        // Resolver el código de serie a su localidad/barrio (mismo mapeo que la ficha); si no
+        // hay mapeo, caer al nombre crudo. Evita que los polígonos del interior muestren "DAA".
+        const resuelto = serieBarrioMap.get(name.toLowerCase()) ?? serieLocalidadMap.get(name.toLowerCase());
+        const display = resuelto ? `${resuelto} · ${name.toUpperCase()}` : name;
         const votos = zonasVotos.get(key);
         const validos = zonasValidos.get(key) ?? 0;
         let row = '';
@@ -2499,7 +2531,7 @@ onMounted(async () => {
             row = `<div class="tt-row"><span class="tt-sw" style="background:${meta.color}"></span>${meta.sigla} · ${pct}%</div>`;
           }
         }
-        return `<div class="tt-name">${name}</div>${row}`;
+        return `<div class="tt-name">${display}</div>${row}`;
       };
       m.on('mousemove', 'zonas-fill', (e) => {
         const f = e.features?.[0];
