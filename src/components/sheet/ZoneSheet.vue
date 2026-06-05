@@ -91,14 +91,36 @@ function titleCase(s: string): string {
     .join(' ');
 }
 
-// Sigla legible del lema para el Concejo Municipal (los miembros traen el lema como slug).
+// Sigla legible del lema para el Concejo Municipal. Los miembros traen el lema como slug BARE
+// (post sweep-party-consistency): 'nacional', 'frente-amplio', etc. (sin prefijo 'partido-').
 const LEMA_SIGLA: Record<string, string> = {
-  'frente-amplio': 'FA', 'partido-nacional': 'PN', 'partido-colorado': 'PC',
-  'coalicion-republicana': 'CR', 'cabildo-abierto': 'CA', 'partido-independiente': 'PI',
-  'asamblea-popular': 'AP', 'partido-ecologista-radical-intransigente': 'PERI',
+  'frente-amplio': 'FA', 'nacional': 'PN', 'colorado': 'PC',
+  'coalicion-republicana': 'CR', 'cabildo-abierto': 'CA', 'independiente': 'PI',
+  'asamblea-popular': 'AP', 'ecologista-radical-intransigente': 'PERI',
+  'avanzar-republicano': 'AR', 'constitucional-ambientalista': 'PCA',
+  'por-los-cambios-necesarios-pcn': 'PCN', 'identidad-soberana': 'IS',
+  'de-los-trabajadores': 'PT', 'trabajadores': 'PT',
 };
+// Nombre completo del partido por sigla (para el título accesible del Concejo).
+const SIGLA_NOMBRE: Record<string, string> = {
+  FA: 'Frente Amplio', PN: 'Partido Nacional', PC: 'Partido Colorado',
+  CR: 'Coalición Republicana', CA: 'Cabildo Abierto', PI: 'Partido Independiente',
+  AP: 'Asamblea Popular', PERI: 'Partido Ecologista Radical Intransigente',
+  AR: 'Avanzar Republicano', PCA: 'Partido Constitucional Ambientalista',
+  PCN: 'Por los Cambios Necesarios', IS: 'Identidad Soberana', PT: 'Partido de los Trabajadores',
+};
+// Siglas con archivo de bandera en public/flags/.
+const FLAG_SIGLAS = new Set(['AP', 'AR', 'CA', 'CR', 'FA', 'IS', 'PC', 'PCA', 'PCN', 'PERI', 'PI', 'PN', 'PT']);
 function lemaSigla(slug: string): string {
   return LEMA_SIGLA[slug] ?? titleCase(slug.replace(/-/g, ' '));
+}
+function lemaNombre(slug: string): string {
+  const s = LEMA_SIGLA[slug];
+  return (s && SIGLA_NOMBRE[s]) ?? lemaSigla(slug);
+}
+function lemaFlag(slug: string): string | null {
+  const s = LEMA_SIGLA[slug];
+  return s && FLAG_SIGLAS.has(s) ? `/flags/${s.toLowerCase()}.svg` : null;
 }
 
 /** % de los votos válidos de la zona (mismo denominador que el ganador y la selección). */
@@ -259,7 +281,17 @@ function pctEmit(n: number): string {
             >
               <span class="zone-sheet__concejo-cargo">{{ m.cargo === 'alcalde' ? 'Alcalde' : 'Concejal' }}</span>
               <span class="zone-sheet__concejo-nombre">{{ titleCase(m.nombre) }}</span>
-              <span class="zone-sheet__concejo-lema">{{ lemaSigla(m.lema) }} · {{ m.hoja }}</span>
+              <span class="zone-sheet__concejo-lema" :title="`${lemaNombre(m.lema)} · hoja ${m.hoja}`">
+                <img
+                  v-if="lemaFlag(m.lema)"
+                  :src="lemaFlag(m.lema)!"
+                  :alt="lemaNombre(m.lema)"
+                  class="zone-sheet__concejo-flag"
+                  aria-hidden="true"
+                />
+                <span class="zone-sheet__concejo-sigla">{{ lemaSigla(m.lema) }}</span>
+                <span class="zone-sheet__concejo-hoja">{{ m.hoja }}</span>
+              </span>
             </li>
           </ul>
         </div>
@@ -651,7 +683,24 @@ function pctEmit(n: number): string {
 }
 .zone-sheet__concejo-item--alcalde .zone-sheet__concejo-cargo { color: var(--color-ink-soft); }
 .zone-sheet__concejo-nombre { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.zone-sheet__concejo-lema { color: var(--color-ink-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.zone-sheet__concejo-lema {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--color-ink-muted);
+  white-space: nowrap;
+  flex: none;
+}
+.zone-sheet__concejo-flag {
+  width: 1.125rem;
+  height: 0.75rem;
+  border-radius: 0.125rem;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+  flex: none;
+}
+.zone-sheet__concejo-sigla { font-weight: 700; color: var(--color-ink-soft); }
+.zone-sheet__concejo-hoja { color: var(--color-ink-faint); font-variant-numeric: tabular-nums; }
 
 .zone-sheet__opcion-activa {
   font-size: 0.8125rem;
