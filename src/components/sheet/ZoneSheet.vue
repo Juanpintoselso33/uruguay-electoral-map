@@ -29,6 +29,7 @@ interface ResultadoLinea {
 interface SelInfo {
   geoId: string;
   label?: string;
+  nivelLabel?: string;
   sigla: string;
   nombre: string;
   color: string;
@@ -131,13 +132,18 @@ function pctEmit(n: number): string {
 
       <header class="zone-sheet__header">
         <button
-          class="zone-sheet__plegar"
+          class="zone-sheet__toggle"
           type="button"
           :aria-expanded="bodyOpen"
-          :aria-label="bodyOpen ? 'Plegar detalle' : 'Desplegar detalle'"
+          :aria-label="bodyOpen ? 'Plegar detalle de la zona' : 'Desplegar detalle de la zona'"
           @click="bodyOpen = !bodyOpen"
-        ><span class="zone-sheet__chevron" :class="{ 'zone-sheet__chevron--open': bodyOpen }" aria-hidden="true">▸</span></button>
-        <h2 class="zone-sheet__titulo">{{ sel.label ?? sel.geoId }}</h2>
+        >
+          <span class="zone-sheet__chevron" :class="{ 'zone-sheet__chevron--open': bodyOpen }" aria-hidden="true">▸</span>
+          <span class="zone-sheet__titles">
+            <span class="zone-sheet__kicker">{{ sel.nivelLabel ?? 'Zona' }}</span>
+            <span class="zone-sheet__titulo">{{ sel.label ?? sel.geoId }}</span>
+          </span>
+        </button>
         <button
           class="zone-sheet__cerrar"
           type="button"
@@ -345,17 +351,14 @@ function pctEmit(n: number): string {
 <style scoped>
 .zone-sheet {
   background: var(--color-card);
-  border-radius: var(--radius-lg);
+  border-top: 1px solid var(--color-border);
   overflow: hidden;
   max-height: 0;
   transition: max-height 0.25s ease;
 }
-/* Epic 23: card del rail solo cuando hay zona abierta (colapsada no deja artefacto). */
+/* Sin scroll: se ve todo el contenido (max-height alto solo para animar el colapso). */
 .zone-sheet--open {
-  max-height: 420px;
-  overflow-y: auto;
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-sm);
+  max-height: 2000px;
 }
 
 /* Mobile: bottom sheet fijo */
@@ -395,27 +398,52 @@ function pctEmit(n: number): string {
   border-bottom: 1px solid var(--color-surface-2);
 }
 
-.zone-sheet__plegar {
+/* Toda la fila título es el toggle (plegable como ResultadoGlobal/OpcionAccordion). */
+.zone-sheet__toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
   background: none;
   border: none;
-  padding: 0 0.5rem 0 0;
+  padding: 0;
   margin: 0;
   cursor: pointer;
-  color: var(--color-ink-faint);
-  flex: none;
+  text-align: left;
+  color: inherit;
 }
 .zone-sheet__chevron {
   display: inline-block;
   font-size: 0.8125rem;
+  color: var(--color-ink-faint);
   transition: transform 0.15s ease;
+  flex: none;
 }
 .zone-sheet__chevron--open { transform: rotate(90deg); }
+.zone-sheet__titles {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.zone-sheet__kicker {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-ink-muted);
+  line-height: 1.2;
+}
 .zone-sheet__titulo {
-  font-size: 1rem;
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 1.0625rem;
   font-weight: 700;
   color: var(--color-ink);
   margin: 0;
-  margin-right: auto;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .zone-sheet__cerrar {

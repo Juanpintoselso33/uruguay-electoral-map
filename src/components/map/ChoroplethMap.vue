@@ -49,6 +49,8 @@ interface SelInfo {
   geoId: string;
   /** Etiqueta de display: "Localidad · SERIE" en nivel serie, undefined en otros niveles. */
   label?: string;
+  /** Nombre del nivel geográfico de la ficha (Barrio / Localidad / Departamento / Municipio / …). */
+  nivelLabel?: string;
   sigla: string;
   nombre: string;
   color: string;
@@ -169,6 +171,21 @@ let activeEleccion = props.eleccion;
 let activeDepartamento = props.departamento;
 // Nivel activo en curso (sincronizado con URL/$level tras resolución de DEPT_AVAIL).
 let activeNivel: NivelGeografico = 'zona';
+
+/** Nombre del nivel geográfico de la ficha, según lo que se está viendo (Barrio / Localidad /
+ *  Departamento / Municipio / Serie / Circuito / Local). 'zona' en Montevideo = "Barrio". */
+function nivelLabelActual(): string {
+  const n = activeNivel;
+  if (n === 'departamento') return 'Departamento';
+  if (n === 'municipio') return 'Municipio';
+  if (n === 'barrio') return 'Barrio';
+  if (n === 'localidad') return 'Localidad';
+  if (n === 'serie') return 'Serie';
+  if (n === 'circuito') return 'Circuito';
+  if (n === 'local') return 'Local';
+  // 'zona' (base genérico): en Montevideo son barrios.
+  return activeDepartamento === 'montevideo' ? 'Barrio' : 'Zona';
+}
 // Unsub de $level para limpiar en onUnmounted.
 let unsubLevel: (() => void) | null = null;
 // Catálogo opcionId→nombre y snapshot de leyenda en modo ganador (Story 2.2).
@@ -2177,6 +2194,7 @@ function selectByName(name: string, fc: FeatureCollection): void {
     selected.value = {
       geoId: rawGeoId,
       label: zonaNombre ? `${zonaNombre} · ${rawGeoId.toUpperCase()}` : undefined,
+      nivelLabel: nivelLabelActual(),
       sigla: String(p.sigla),
       nombre: String(p.nombre),
       color: String(p.color),
@@ -2205,6 +2223,7 @@ function selectByName(name: string, fc: FeatureCollection): void {
     selected.value = {
       geoId: rawGeoId2,
       label: zonaNombre2 ? `${zonaNombre2} · ${rawGeoId2.toUpperCase()}` : undefined,
+      nivelLabel: nivelLabelActual(),
       sigla: '', nombre: 'Sin datos', color: '#e5e7eb',
       votoGanador: 0, validos: 0, pct: 0, enBlanco: 0, anulados: 0, observados: 0,
       pctOpcionActiva: null,
@@ -2242,6 +2261,7 @@ function selectCircuitoLocal(name: string): void {
   selected.value = {
     geoId: name,
     label: z.local?.nombre ?? name,
+    nivelLabel: z.local ? 'Local' : 'Circuito',
     sigla: ganMeta.sigla, nombre: ganNombre, color: ganMeta.color, flagUrl: ganMeta.flagUrl,
     votoGanador, validos: z.validos,
     pct: z.validos > 0 ? (votoGanador / z.validos) * 100 : 0,
@@ -2587,10 +2607,12 @@ onUnmounted(() => {
     <p v-else-if="status === 'error'" class="map-status map-status--error">Error: {{ errorMsg }}</p>
 
     <!-- Leyenda: explica los colores del mapa → va PEGADA al mapa, arriba del toggle de
-         coloreo y del RESULTADO. Solo aporta en modos selección/filtro/intensidad (escala)
-         o si hay nota de votos sin ubicación; en el modo ganador base duplica a RESULTADO. -->
+         coloreo y del RESULTADO. Aporta en modos selección/filtro/intensidad (escala), si hay
+         nota de votos sin ubicación, o en la VISTA NACIONAL (mapa multi-partido por depto, donde
+         la leyenda de colores es necesaria —pedido del usuario). En depto modo ganador base se
+         omite porque duplica al RESULTADO. -->
     <MapLegend
-      v-if="opcionActiva || seleccionActiva.length > 0 || votosSinUbicacion > 0 || gnivel !== 'lema' || comparacionActiva"
+      v-if="opcionActiva || seleccionActiva.length > 0 || votosSinUbicacion > 0 || gnivel !== 'lema' || comparacionActiva || (departamento === '_nacional' && legend.length > 0)"
       :entradas="legend" :sin-datos="sinDatos" :votos-sin-ubicacion="votosSinUbicacion" :zonas-sin-ubicacion="zonasSinUbicacion"
       :comparacion-nota="comparacionActiva && cmpModo === 'ganador' ? 'Zonas a todo color: cambió el partido ganador entre las dos elecciones. Las atenuadas mantuvieron el mismo ganador.' : null" />
 

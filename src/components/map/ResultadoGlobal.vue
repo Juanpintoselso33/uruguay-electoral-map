@@ -100,13 +100,10 @@ const resumen = computed(() =>
 </template>
 
 <style scoped>
-/* Epic 23 · Story 23.3 — card del rail (antes era border-top para el layout apilado). */
 .resultado {
   background: var(--color-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  padding: 0.875rem 1rem 1rem;
+  border-top: 1px solid var(--color-border);
+  padding: 0.75rem 1rem;
 }
 .resultado__toggle {
   display: flex;
