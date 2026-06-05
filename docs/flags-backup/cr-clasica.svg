@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 60">
+  <!-- Coalición Republicana: blanco con barras roja+azul y estrella amarilla, emblema CENTRADO -->
+  <rect x="0" y="0" width="90" height="60" fill="#FFFFFF"/>
+  <rect x="36" y="20" width="9" height="32" fill="#FD0000"/>
+  <rect x="45" y="20" width="9" height="32" fill="#000163"/>
+  <path fill="#FFD400" d="M50 5 L51.65 9.74 L56.66 9.84 L52.66 12.87 L54.11 17.66 L50 14.8 L45.89 17.66 L47.34 12.87 L43.34 9.84 L48.35 9.74 Z"/>
+</svg>
