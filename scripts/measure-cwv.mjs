@@ -29,9 +29,12 @@ const cdp = await ctx.newCDPSession(page);
 await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
 
 await page.goto(base + PATH, { waitUntil: 'networkidle' });
-// Esperar a que el mapa termine de inicializar (siglas montadas) y QUEDE INTERACTIVO.
-// INP = latencia de interacción con la página ya interactiva (no durante el init).
-await page.waitForSelector('.zona-sigla', { timeout: 15000 }).catch(() => {});
+// Esperar a que el mapa termine de inicializar y QUEDE INTERACTIVO.
+// OJO: en la vista por defecto (modo ganador) las siglas/banderas se dibujan en el CANVAS
+// overlay — NO hay markers `.zona-sigla` (esos son de modo selección). Esperar `.zona-sigla`
+// hacía timeout SIEMPRE (15s) e inflaba el LCP artificialmente. El elemento LCP real de la
+// página de mapa es el canvas de MapLibre: esperamos a que esté montado.
+await page.waitForSelector('.map canvas', { timeout: 15000 }).catch(() => {});
 await page.waitForTimeout(3500); // dejar drenar el init pesado de MapLibre (TBT de carga)
 
 // Warm-up: un par de taps para superar el init y estabilizar, ANTES de medir.

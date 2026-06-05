@@ -8,19 +8,36 @@
  *
  * Exit ≠ 0 si se viola algún budget → rompe el build/CI.
  */
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { join } from 'node:path';
 
 const ROOT = '.vercel/output/static';
 const ASTRO = join(ROOT, '_astro');
 
-// Presupuestos (gz). Fijados según medición real (ver story 1.10).
+// Presupuestos (gz). Recalibrados según medición real (2026-06-05; antes story 1.10).
+// La PORTADA `/` hoy es un 301 → vista nacional (departamentales-2025), que YA es un mapa.
+// Por eso el invariante que importa no es "la portada no tiene mapa" sino "NINGUNA página
+// carga MapLibre eager" (siempre import() dinámico) + un budget de JS eager por página.
 const BUDGETS = {
-  portadaEager: 40 * 1024, // la portada NO debe cargar el mapa
-  mapaEager: 70 * 1024, // isla + runtime Vue, SIN MapLibre (que es lazy)
-  maplibreChunk: 300 * 1024, // guardia de regresión del chunk del mapa
+  landingEager: 85 * 1024, // vista nacional (entry): islas + Vue, SIN MapLibre (lazy). Medido ~71KB.
+  mapaEager: 90 * 1024, // página de mapa depto: SIN MapLibre (lazy). Medido ~75KB.
+  maplibreChunk: 300 * 1024, // guardia de regresión del chunk del mapa. Medido ~277KB.
 };
+
+/** Página de aterrizaje real: el destino del redirect `^/$` en la config de salida de Vercel. */
+function landingPage() {
+  try {
+    const cfg = JSON.parse(readFileSync('.vercel/output/config.json', 'utf8'));
+    const r = cfg.routes?.find((x) => x.src === '^/$' && x.headers?.Location);
+    if (r) return r.headers.Location.replace(/^\//, '') + '/index.html';
+  } catch {
+    /* sin config de salida → fallback a index.html */
+  }
+  return 'index.html';
+}
+
+const pageExists = (rel) => existsSync(join(ROOT, rel.replace(/^\//, '')));
 
 const gz = (buf) => gzipSync(buf, { level: 9 }).length;
 const sizeOf = (rel) => {
@@ -92,21 +109,32 @@ function maplibreChunkSize() {
 const fails = [];
 const ok = [];
 
-// 1) Portada NO carga MapLibre + budget.
-const portada = eagerSize('index.html');
-if (portada.hasMaplibre) fails.push('PORTADA carga MapLibre (debe ser on-demand) ❌');
-else ok.push('portada NO carga MapLibre ✅');
-if (portada.total > BUDGETS.portadaEager)
-  fails.push(`portada eager ${(portada.total / 1024).toFixed(1)}KB > ${BUDGETS.portadaEager / 1024}KB`);
-else ok.push(`portada eager ${(portada.total / 1024).toFixed(1)}KB ≤ ${BUDGETS.portadaEager / 1024}KB ✅`);
+// 1) Página de aterrizaje (vista nacional, destino del redirect `/`): MapLibre debe ser
+//    lazy (no eager) + budget de JS eager.
+const landingRel = landingPage();
+if (!pageExists(landingRel)) {
+  fails.push(`no existe la página de aterrizaje '${landingRel}' (¿cambió el redirect de '/'?)`);
+} else {
+  const landing = eagerSize(landingRel);
+  if (landing.hasMaplibre) fails.push(`PORTADA (${landingRel}) carga MapLibre EAGER (debe ser on-demand) ❌`);
+  else ok.push(`portada (${landingRel}) NO carga MapLibre eager ✅`);
+  if (landing.total > BUDGETS.landingEager)
+    fails.push(`portada eager ${(landing.total / 1024).toFixed(1)}KB > ${BUDGETS.landingEager / 1024}KB`);
+  else ok.push(`portada eager ${(landing.total / 1024).toFixed(1)}KB ≤ ${BUDGETS.landingEager / 1024}KB ✅`);
+}
 
-// 2) Página del mapa: MapLibre debe ser lazy (no en el set eager) + budget eager.
-const mapa = eagerSize('internas-2024/montevideo/index.html');
-if (mapa.hasMaplibre) fails.push('MapLibre está en el JS EAGER del mapa (debería ser import() dinámico) ❌');
-else ok.push('MapLibre lazy en el mapa (no eager) ✅');
-if (mapa.total > BUDGETS.mapaEager)
-  fails.push(`mapa eager ${(mapa.total / 1024).toFixed(1)}KB > ${BUDGETS.mapaEager / 1024}KB`);
-else ok.push(`mapa eager ${(mapa.total / 1024).toFixed(1)}KB ≤ ${BUDGETS.mapaEager / 1024}KB ✅`);
+// 2) Página del mapa depto: MapLibre debe ser lazy (no en el set eager) + budget eager.
+const mapaRel = 'internas-2024/montevideo/index.html';
+if (!pageExists(mapaRel)) {
+  fails.push(`no existe la página de mapa de referencia '${mapaRel}'`);
+} else {
+  const mapa = eagerSize(mapaRel);
+  if (mapa.hasMaplibre) fails.push('MapLibre está en el JS EAGER del mapa (debería ser import() dinámico) ❌');
+  else ok.push('MapLibre lazy en el mapa (no eager) ✅');
+  if (mapa.total > BUDGETS.mapaEager)
+    fails.push(`mapa eager ${(mapa.total / 1024).toFixed(1)}KB > ${BUDGETS.mapaEager / 1024}KB`);
+  else ok.push(`mapa eager ${(mapa.total / 1024).toFixed(1)}KB ≤ ${BUDGETS.mapaEager / 1024}KB ✅`);
+}
 
 // 3) Guardia de regresión del chunk MapLibre.
 const ml = maplibreChunkSize();

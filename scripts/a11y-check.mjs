@@ -40,14 +40,21 @@ const fails = [];
 const ok = [];
 
 const html = readFileSync(MAP_PAGE, 'utf8');
+const css = allCss();
 
-// 1) Color nunca solo: cada fila de la tabla tiene sigla TEXTO. (DataTable estática)
-const rows = (html.match(/<th scope="row"/g) || []).length;
-const siglasTexto = (html.match(/<span class="sigla"/g) || []).length;
-if (rows === 0) fails.push('tabla accesible: 0 filas (no se renderizó)');
-else if (siglasTexto < rows)
-  fails.push(`color sin texto: ${siglasTexto} siglas para ${rows} filas (debe haber 1 por fila)`);
-else ok.push(`tabla: ${rows} barrios, cada uno con sigla TEXTO (color nunca solo) ✅`);
+// 1) Color NUNCA solo: el ganador/opción se acompaña SIEMPRE de la sigla como TEXTO.
+// La tabla/ficha hoy se renderiza en una isla Vue (client) — no en el HTML estático —,
+// así que en lugar de contar filas estáticas verificamos que los componentes que emiten
+// la sigla como TEXTO viajen en el build: la etiqueta del mapa (.zona-sigla) y la sigla
+// del desglose de la ficha (.dtree__sigla, DesgloseTree). El recorrido por teclado/render
+// dinámico lo cubre Playwright (E2E).
+const tieneSiglaMapa = css.includes('zona-sigla');
+const tieneSiglaFicha = css.includes('dtree__sigla');
+if (!tieneSiglaMapa || !tieneSiglaFicha)
+  fails.push(
+    `color sin texto: falta sigla TEXTO en el build (mapa .zona-sigla=${tieneSiglaMapa}, ficha .dtree__sigla=${tieneSiglaFicha})`,
+  );
+else ok.push('color nunca solo: sigla TEXTO en mapa (.zona-sigla) y ficha (.dtree__sigla) ✅');
 
 // 2) Contraste WCAG AA (≥4.5) de los textos sobre su fondo.
 const WHITE = '#ffffff';
@@ -64,22 +71,26 @@ for (const [label, fg, bg] of pares) {
 }
 
 // 3) La sigla del mapa lleva halo (text-shadow) → legible sobre cualquier relleno.
-const css = allCss();
-const zonaSiglaBlock = css.slice(css.indexOf('zona-sigla'), css.indexOf('zona-sigla') + 240);
-if (!css.includes('zona-sigla') || !/text-shadow/.test(zonaSiglaBlock))
+// Detección robusta: matcheamos la(s) regla(s) `.zona-sigla{…}` completas (hasta su `}`)
+// y verificamos que alguna tenga text-shadow (el slice fijo de 240 chars fallaba con el
+// CSS minificado y daba falso negativo aunque el halo existiera).
+const zonaSiglaRules = css.match(/zona-sigla[^{]*\{[^}]*\}/g) || [];
+if (!zonaSiglaRules.some((r) => /text-shadow/.test(r)))
   fails.push('sigla del mapa sin text-shadow (halo) → ilegible sobre rellenos oscuros');
-else ok.push('sigla del mapa con halo blanco (text-shadow) ✅');
+else ok.push('sigla del mapa con halo (text-shadow) ✅');
 
 // 4) Skip link presente en el HTML (WCAG 2.4.1 Bypass Blocks).
 if (!html.includes('skip-link') || !html.includes('id="main-content"'))
   fails.push('skip link o id="main-content" ausente (WCAG 2.4.1)');
 else ok.push('skip link presente: .skip-link → #main-content (WCAG 2.4.1) ✅');
 
-// 5) Listbox con tabindex (WCAG 2.1.1 Keyboard).
-// Verificamos que el CSS de la build incluya el foco del listbox (indicador visual).
-if (!css.includes('opcion-selector__lista') || !css.includes('opcion-selector__item--focused'))
-  fails.push('listbox: falta estilo focused (WCAG 2.1.1) — verificar tabindex y keyboard nav');
-else ok.push('listbox: estilos focused presentes (WCAG 2.1.1) ✅');
+// 5) Selector de opción con foco de teclado visible (WCAG 2.1.1 Keyboard).
+// El selector hoy es OpcionAccordion (reemplazó a OpcionSelector): árbol con roles ARIA
+// (tree/treeitem/tab) y foco vía :focus-visible. Verificamos que el accordion (.acc__) y
+// un indicador de foco (focus-visible) viajen en el CSS construido.
+if (!css.includes('acc__') || !css.includes('focus-visible'))
+  fails.push('selector (OpcionAccordion): falta indicador de foco de teclado (.acc__ + focus-visible) (WCAG 2.1.1)');
+else ok.push('selector (OpcionAccordion) con foco de teclado (focus-visible) ✅');
 
 // 6) Contraste dark mode: ink sobre paper, ink-soft sobre card (WCAG 1.4.3).
 // Tokens dark: ink=#E8ECF6, paper=#151B2B, ink-soft=#C1CAE0, card=#28324A, ink-muted=#93A0BC
