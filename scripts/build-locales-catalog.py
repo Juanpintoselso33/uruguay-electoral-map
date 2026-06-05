@@ -18,6 +18,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GEOREF = os.path.join(ROOT, "data/raw/geographic/plan-circuital-georreferencia-nacional-2024.csv")
 OUT_CAT = os.path.join(ROOT, "data/processed/locales")
 OUT_GEO = os.path.join(ROOT, "public/data/geo")
+# Override de coordenadas re-geocodificadas (scripts/geocode-locales-coords.py): norm(direccion) -> [lon, lat].
+# Corrige los venues que el georef-2024 colapsó en una coord-fallback compartida (bug "falta el St. George").
+COORDS_OVERRIDE = os.path.join(ROOT, "data/mappings/locales-coords-cache.json")
 
 # planName (como aparece en el georef, col Departamento) → dir de departamento en /geo
 DEPT_DIR = {
@@ -44,6 +47,11 @@ def to_float(s):
     except: return None
 
 def main():
+    # override de coordenadas re-geocodificadas (norm(direccion) -> [lon, lat])
+    coords_override = {}
+    if os.path.exists(COORDS_OVERRIDE):
+        coords_override = {k: v for k, v in json.load(open(COORDS_OVERRIDE, encoding="utf-8")).items() if v}
+
     # 1) leer georef
     with open(GEOREF, encoding="utf-8-sig", newline="") as f:
         rows = list(csv.DictReader(f, delimiter=";"))
@@ -62,14 +70,17 @@ def main():
     grand = {"locales": 0, "circuitos": 0, "habilitados": 0}
 
     for ddir, drows in sorted(by_dept.items()):
-        # agrupar por coordenada exacta (string) = un local físico
+        # agrupar por (NOMBRE DEL VENUE, coordenada) = un local físico. La coord sola NO alcanza:
+        # el georef-2024 colapsa venues distintos (St. George, Esc. 173, Colegio del Sur…) en una
+        # misma coord-fallback; meter el nombre en la clave los separa aunque compartan coord.
         groups = defaultdict(list)
         for r in drows:
             lat = (r.get("Latitud") or "").strip()
             lon = (r.get("Longitud") or "").strip()
             if not lat or not lon:
                 continue
-            groups[(lat, lon)].append(r)
+            vname = norm(venue_name(r.get("direccion", "")))
+            groups[(vname, lat, lon)].append(r)
 
         locales = []
         # orden determinístico: por (serie mínima, desde mínimo)
@@ -79,7 +90,7 @@ def main():
             desdes = sorted(int(rr["Desde"]) for rr in rs if (rr.get("Desde") or "").strip().isdigit())
             return (series[0] if series else "", desdes[0] if desdes else 0)
 
-        for i, ((lat, lon), rs) in enumerate(sorted(groups.items(), key=gkey), start=1):
+        for i, ((vname, lat, lon), rs) in enumerate(sorted(groups.items(), key=gkey), start=1):
             circuitos = sorted({int(rr["NroCircuito"]) for rr in rs if (rr.get("NroCircuito") or "").strip().isdigit()})
             series = sorted({rr.get("Serie", "").strip() for rr in rs if rr.get("Serie", "").strip()})
             hab = sum(int(rr["Habilitados"]) for rr in rs if (rr.get("Habilitados") or "").strip().isdigit())
@@ -95,9 +106,13 @@ def main():
             direccion = max(set(dirs), key=dirs.count) if dirs else ""
             locs = [rr.get("Localidad", "").strip() for rr in rs if rr.get("Localidad", "").strip()]
             localidad = max(set(locs), key=locs.count) if locs else ""
+            # coord: override re-geocodificado si existe (corrige el fallback compartido del georef)
+            ov = coords_override.get(norm(direccion))
+            flat = ov[1] if ov else to_float(lat)
+            flon = ov[0] if ov else to_float(lon)
             locales.append({
                 "localId": f"{ddir}-L{i:03d}",
-                "lat": to_float(lat), "lon": to_float(lon),
+                "lat": flat, "lon": flon,
                 "nombre": venue_name(direccion), "direccion": direccion,
                 "nombreNorm": norm(venue_name(direccion)),
                 "localidad": localidad,
