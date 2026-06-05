@@ -2554,6 +2554,9 @@ onUnmounted(() => {
 
 <template>
   <section class="map-wrap" aria-label="Mapa electoral por zona">
+   <!-- Columna del mapa (héroe). En desktop ≥940px queda a la izquierda; el rail de
+        resultados va a la derecha (Epic 23 · Story 23.2). -->
+   <div class="ws-map">
     <div ref="mapEl" class="map" role="img" :aria-label="`Mapa de ${departamento}, ${eleccion}, coloreado por partido ganador`"></div>
 
     <p v-if="status === 'cargando'" class="map-status">Cargando mapa…</p>
@@ -2644,10 +2647,14 @@ onUnmounted(() => {
       </div>
     </div>
 
+   </div><!-- /.ws-map -->
+
+   <!-- Rail de resultados (Epic 23 · Story 23.2/23.3): en desktop ≥940px columna sticky a la
+        derecha; en mobile cae debajo del mapa en una sola columna. -->
+   <aside class="ws-rail">
     <!-- Ficha de zona (detalle on-demand al clickear un polígono): va ARRIBA del RESULTADO
          agregado. Cuando no hay zona seleccionada colapsa a max-height:0 (no ocupa espacio),
-         así el resultado nacional/depto queda pegado a los controles; al clickear, el detalle
-         dinámico de la zona aparece por ENCIMA del resultado agregado. -->
+         al clickear, el detalle dinámico de la zona aparece por ENCIMA del resultado agregado. -->
     <ZoneSheet
       :sel="selected"
       :opcion-sigla="opcionActiva ? (opcNombreMap.get(opcionActiva) ? resolveParty(opcNombreMap.get(opcionActiva)!).sigla : opcionActiva) : null"
@@ -2660,6 +2667,7 @@ onUnmounted(() => {
       :titulo="departamento === '_nacional' ? 'Resultado nacional' : 'Resultado'"
       :contexto="resultadoCtx"
     />
+   </aside><!-- /.ws-rail -->
   </section>
 </template>
 
@@ -2682,6 +2690,27 @@ onUnmounted(() => {
 .map-wrap {
   display: flex;
   flex-direction: column;
+}
+.ws-map { min-width: 0; display: flex; flex-direction: column; }
+
+/* Epic 23 · Story 23.2 — workspace 2 columnas en desktop: mapa (héroe) + rail sticky.
+   Breakpoint alineado con Tailwind lg (el <main> se ensancha a max-w-6xl ahí).
+   En mobile (<1024px) cae a 1 columna (flex column del .map-wrap). */
+@media (min-width: 1024px) {
+  .map-wrap {
+    display: grid;
+    grid-template-columns: 1fr var(--rail-w);
+    gap: var(--gap);
+    align-items: start;
+  }
+  .ws-rail {
+    position: sticky;
+    top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 0;
+  }
 }
 .map {
   width: 100%;
