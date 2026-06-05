@@ -345,14 +345,17 @@ function pctEmit(n: number): string {
 <style scoped>
 .zone-sheet {
   background: var(--color-card);
-  border-top: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   max-height: 0;
   transition: max-height 0.25s ease;
 }
+/* Epic 23: card del rail solo cuando hay zona abierta (colapsada no deja artefacto). */
 .zone-sheet--open {
   max-height: 420px;
   overflow-y: auto;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Mobile: bottom sheet fijo */
