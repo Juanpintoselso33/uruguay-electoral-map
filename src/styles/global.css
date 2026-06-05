@@ -52,8 +52,10 @@
   --rail-w: 384px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
+/* Dark (Epic 23 · Story 23.5) — se activa por data-theme="dark" en <html>, que pone el
+   script anti-flash de Base.astro: toggle manual o, en modo "auto", resuelto desde
+   prefers-color-scheme. El app requiere JS para el mapa, así que no hay fallback no-JS. */
+:root[data-theme="dark"] {
     /* Dark = Dirección A · Editorial del mockup (oscuro CÁLIDO, no navy). */
     --color-bg:        #131210;
     --color-paper:     #1C1A16;
@@ -81,7 +83,6 @@
     --shadow:       0 6px 22px rgba(0, 0, 0, 0.5);
     --shadow-lg:    0 22px 60px rgba(0, 0, 0, 0.6);
     --shadow-sheet: 0 -12px 44px rgba(0, 0, 0, 0.5);
-  }
 }
 
 html {
@@ -114,6 +115,12 @@ h1, h2, h3 {
   font-size: 0.8125rem;
   color: var(--color-ink-soft);
   margin: 0.125rem 0 0;
+}
+.masthead__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex-shrink: 0;
 }
 
 /* ── Department nav ──────────────────────────────────────────────────────── */

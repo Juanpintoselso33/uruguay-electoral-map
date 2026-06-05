@@ -14,6 +14,7 @@ import EleccionSelector from '../../components/selectors/EleccionSelector.vue';
 import GranularitySelector from '../../components/selectors/GranularitySelector.vue';
 import Sello from '../../components/ui/Sello.astro';
 import ShareButton from '../../components/share/ShareButton.vue';
+import ThemeToggle from '../../components/ui/ThemeToggle.vue';
 import deptsConfig from '../../config/departments.json';
 
 type DeptEntry = { id: string; label: string; elecciones: string[] };
@@ -90,7 +91,10 @@ const canonicalPath = `/${eleccion}`;
         <h1 class="masthead__dept">Uruguay</h1>
         <p class="masthead__eleccion">{eleccionLabel} — mapa nacional</p>
       </div>
-      <ShareButton client:idle />
+      <div class="masthead__actions">
+        <ThemeToggle client:idle />
+        <ShareButton client:idle />
+      </div>
     </header>
     {preguntaPlebiscito && (
       <p class="pregunta-banner">

@@ -27,6 +27,32 @@ const canonicalUrl = canonical ? `${siteUrl}${canonical}` : undefined;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
+    <!-- Epic 23 · Story 23.5 — tema anti-flash: pone data-theme en <html> antes del paint.
+         Modo en localStorage ('light'|'dark'|'auto', default auto = sistema). -->
+    <script is:inline>
+      (function () {
+        var KEY = 'ui:theme';
+        var root = document.documentElement;
+        function effective(mode) {
+          if (mode === 'light' || mode === 'dark') return mode;
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        function apply() {
+          var mode = 'auto';
+          try { mode = localStorage.getItem(KEY) || 'auto'; } catch (e) {}
+          root.setAttribute('data-theme', effective(mode));
+        }
+        apply();
+        window.__applyTheme = apply;
+        try {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+            var mode = 'auto';
+            try { mode = localStorage.getItem(KEY) || 'auto'; } catch (e) {}
+            if (mode === 'auto') apply();
+          });
+        } catch (e) {}
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet" />

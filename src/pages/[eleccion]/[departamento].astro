@@ -9,6 +9,7 @@ import EleccionSelector from '../../components/selectors/EleccionSelector.vue';
 import CompareControls from '../../components/map/CompareControls.vue';
 import Sello from '../../components/ui/Sello.astro';
 import ShareButton from '../../components/share/ShareButton.vue';
+import ThemeToggle from '../../components/ui/ThemeToggle.vue';
 import ExportButton from '../../components/share/ExportButton.vue';
 import MapScreenshotButton from '../../components/share/MapScreenshotButton.vue';
 import deptsConfig from '../../config/departments.json';
@@ -109,7 +110,10 @@ const canonicalPath = `/${eleccion}/${departamento}`;
         <h1 class="masthead__dept">{deptLabel}</h1>
         <p class="masthead__eleccion">{eleccionLabel}</p>
       </div>
-      <ShareButton client:idle />
+      <div class="masthead__actions">
+        <ThemeToggle client:idle />
+        <ShareButton client:idle />
+      </div>
     </header>
     <!-- Pregunta del plebiscito/referéndum como contexto (Story 7.5) -->
     {preguntaPlebiscito && (
