@@ -4,6 +4,8 @@
  * Muestra ganador, votos, %, blanco/anulados/observados para la zona seleccionada.
  */
 import { ref, watch } from 'vue';
+import DesgloseTree from './DesgloseTree.vue';
+import type { TreeNode } from '../../lib/opcion-tree';
 
 interface DesgloseGrupo {
   lemaNombre: string;
@@ -47,6 +49,11 @@ interface SelInfo {
   seleccionTotal?: number;
   seleccionPct?: number;
   desglose?: DesgloseGrupo[];
+  /** Árbol COMPLETO del desglose de la contienda (lema → precand/sublema → lista). Sin truncar. */
+  arbol?: TreeNode[];
+  arbolTotal?: number;
+  /** Ids de opciones seleccionadas en el acordeón — para resaltar nodos. */
+  seleccionIds?: string[];
   resultadoZona?: ResultadoLinea[];
   intendenteElecto?: string | null;
   alcaldeElecto?: string | null;
@@ -55,7 +62,7 @@ interface SelInfo {
   esCiudadGrande?: boolean;
   // Ficha por circuito/local: metadata del local + desglose de sus circuitos.
   local?: { nombre: string; direccion: string; habilitados: number };
-  circuitos?: { circuito: string; sigla: string; nombre: string; color: string; flagUrl?: string | null; validos: number }[];
+  circuitos?: { circuito: string; sigla: string; nombre: string; color: string; flagUrl?: string | null; validos: number; arbol?: TreeNode[] }[];
 }
 
 const props = defineProps<{
@@ -66,7 +73,14 @@ const props = defineProps<{
 // Plegable (Epic UX): el detalle de la zona seleccionada se puede esconder. Se reabre al
 // seleccionar otra zona (es información on-demand). No persiste (efímero por selección).
 const bodyOpen = ref(true);
-watch(() => props.sel?.geoId, () => { bodyOpen.value = true; });
+// Circuitos expandidos (per-circuito): se resetea al cambiar de zona/local.
+const circAbierto = ref<Set<string>>(new Set());
+function toggleCirc(id: string): void {
+  const s = new Set(circAbierto.value);
+  if (s.has(id)) s.delete(id); else s.add(id);
+  circAbierto.value = s;
+}
+watch(() => props.sel?.geoId, () => { bodyOpen.value = true; circAbierto.value = new Set(); });
 
 const emit = defineEmits<{ close: [] }>();
 
@@ -186,50 +200,39 @@ function pctEmit(n: number): string {
       </p>
 
       <div v-show="bodyOpen" class="zone-sheet__body">
-        <!-- Desglose por hoja de la selección (Epic 10, Story 10.5) -->
-        <template v-if="sel.desglose && sel.desglose.length > 0">
-          <div class="zone-sheet__sel-resumen">
-            <span class="zone-sheet__sel-label">Tu selección en esta zona</span>
-            <span class="zone-sheet__sel-num">
-              <strong>{{ fmt(sel.seleccionTotal ?? 0) }}</strong> votos
-              <template v-if="sel.seleccionPct !== undefined">· {{ sel.seleccionPct.toFixed(1) }}%</template>
-            </span>
-          </div>
-          <div class="zone-sheet__desglose">
-            <div v-for="g in sel.desglose" :key="g.lemaNombre" class="zone-sheet__grupo">
-              <div class="zone-sheet__grupo-head">
-                <img v-if="g.flagUrl" :src="g.flagUrl" :alt="g.sigla" class="zone-sheet__swatch--sm zone-sheet__flag--sm" aria-hidden="true" />
-                <span v-else class="zone-sheet__swatch zone-sheet__swatch--sm" :style="{ background: g.color }" aria-hidden="true"></span>
-                <span class="zone-sheet__grupo-sigla">{{ g.sigla }}</span>
-                <span v-if="g.lemaNombre !== g.sigla" class="zone-sheet__grupo-nombre">{{ g.lemaNombre }}</span>
-                <span class="zone-sheet__grupo-pct">{{ pctValidos(g.total) }}</span>
-                <span class="zone-sheet__grupo-total">{{ fmt(g.total) }}</span>
-              </div>
-              <ul class="zone-sheet__hojas">
-                <li v-for="h in g.hojas" :key="h.id" class="zone-sheet__hoja">
-                  <span class="zone-sheet__hoja-label">{{ h.label }}</span>
-                  <span class="zone-sheet__hoja-pct">{{ pctValidos(h.votos) }}</span>
-                  <span class="zone-sheet__hoja-votos">{{ fmt(h.votos) }}</span>
-                </li>
-                <li v-if="g.masN > 0" class="zone-sheet__hoja zone-sheet__hoja--mas">y {{ g.masN }} más…</li>
-              </ul>
-            </div>
-          </div>
-          <!-- Ganador de la zona en compacto: cuando hay selección, NO se muestra el bloque
-               grande (confunde "lo que seleccioné" con "quién ganó la zona"). -->
+        <!-- Resumen de la selección del acordeón (si hay opciones marcadas) -->
+        <div v-if="sel.seleccionIds && sel.seleccionIds.length && sel.seleccionTotal !== undefined" class="zone-sheet__sel-resumen">
+          <span class="zone-sheet__sel-label">Tu selección en esta zona</span>
+          <span class="zone-sheet__sel-num">
+            <strong>{{ fmt(sel.seleccionTotal) }}</strong> votos
+            <template v-if="sel.seleccionPct !== undefined">· {{ sel.seleccionPct.toFixed(1) }}%</template>
+          </span>
+        </div>
+
+        <!-- Desglose COMPLETO por lista (árbol, sin truncar; agrupado según el tipo de elección) -->
+        <template v-if="sel.arbol && sel.arbol.length > 0">
           <div class="zone-sheet__gano-zona">
-            <span class="zone-sheet__gano-zona-label">Ganó la zona</span>
+            <span class="zone-sheet__gano-zona-label">Ganó acá</span>
             <img v-if="sel.flagUrl" :src="sel.flagUrl" :alt="sel.sigla" class="zone-sheet__flag--sm" aria-hidden="true" />
             <span v-else class="zone-sheet__swatch--sm" :style="{ background: sel.color }" aria-hidden="true"></span>
             <span class="zone-sheet__gano-zona-sigla">{{ sel.sigla }}</span>
             <span class="zone-sheet__gano-zona-pct">{{ sel.pct.toFixed(1) }}% · {{ fmt(sel.votoGanador) }} votos</span>
           </div>
+          <p v-if="sel.intendenteElecto" class="zone-sheet__electo">
+            Intendente electo: <strong>{{ titleCase(sel.intendenteElecto) }}</strong>
+          </p>
+          <p v-if="sel.alcaldeElecto" class="zone-sheet__electo">
+            Alcalde electo: <strong>{{ titleCase(sel.alcaldeElecto) }}</strong>
+          </p>
+          <div class="zone-sheet__arbol">
+            <span class="zone-sheet__arbol-titulo">Resultado por lista</span>
+            <DesgloseTree :nodes="sel.arbol" :validos="sel.validos" :seleccion-ids="sel.seleccionIds" />
+          </div>
         </template>
 
-        <!-- Ranking de TODAS las opciones de la zona (sin selección): el ganador queda como primera
-             fila marcada "Ganador"; en departamentales nacional cada partido lista sus candidatos a
-             intendente y se nombra al intendente electo. -->
-        <div v-if="!(sel.desglose && sel.desglose.length > 0) && sel.resultadoZona && sel.resultadoZona.length > 0" class="zone-sheet__ranking">
+        <!-- Fallback: ranking de TODAS las opciones (cuando no se pudo armar el árbol). En
+             departamentales nacional cada partido lista sus candidatos a intendente. -->
+        <div v-if="!(sel.arbol && sel.arbol.length > 0) && sel.resultadoZona && sel.resultadoZona.length > 0" class="zone-sheet__ranking">
           <div
             v-for="r in sel.resultadoZona"
             :key="r.opcionId"
@@ -296,8 +299,8 @@ function pctEmit(n: number): string {
           </ul>
         </div>
 
-        <!-- Ganador destacado (fallback: sin selección y sin ranking de zona disponible) -->
-        <div v-if="!(sel.desglose && sel.desglose.length > 0) && !(sel.resultadoZona && sel.resultadoZona.length > 0)" class="zone-sheet__ganador">
+        <!-- Ganador destacado (fallback: sin árbol, sin selección y sin ranking de zona disponible) -->
+        <div v-if="!(sel.arbol && sel.arbol.length > 0) && !(sel.desglose && sel.desglose.length > 0) && !(sel.resultadoZona && sel.resultadoZona.length > 0)" class="zone-sheet__ganador">
           <img
             v-if="sel.flagUrl"
             :src="sel.flagUrl"
@@ -360,16 +363,37 @@ function pctEmit(n: number): string {
           </div>
         </dl>
 
-        <!-- Ficha por circuito/local: desglose de los circuitos que votan en este local -->
+        <!-- Ficha por circuito/local: cómo salió cada circuito que vota en este local. Si hay
+             desglose por opción del circuito (votes-circuito), cada fila se expande a su árbol. -->
         <div v-if="sel.circuitos && sel.circuitos.length > 1" class="zone-sheet__circuitos">
           <span class="zone-sheet__circuitos-titulo">Circuitos que votan acá</span>
           <ul class="zone-sheet__circuitos-lista">
-            <li v-for="c in sel.circuitos" :key="c.circuito" class="zone-sheet__circuito">
-              <span class="zone-sheet__circuito-n">Circuito {{ c.circuito }}</span>
-              <img v-if="c.flagUrl" :src="c.flagUrl" :alt="c.sigla" class="zone-sheet__circuito-flag" aria-hidden="true" />
-              <span v-else class="zone-sheet__circuito-swatch" :style="{ background: c.color }" aria-hidden="true"></span>
-              <span class="zone-sheet__circuito-sigla">{{ c.sigla }}</span>
-              <span class="zone-sheet__circuito-votos">{{ fmt(c.validos) }}</span>
+            <li v-for="c in sel.circuitos" :key="c.circuito" class="zone-sheet__circuito-wrap">
+              <component
+                :is="c.arbol && c.arbol.length ? 'button' : 'div'"
+                class="zone-sheet__circuito"
+                :class="{ 'zone-sheet__circuito--btn': c.arbol && c.arbol.length }"
+                :type="c.arbol && c.arbol.length ? 'button' : undefined"
+                :aria-expanded="c.arbol && c.arbol.length ? circAbierto.has(c.circuito) : undefined"
+                @click="c.arbol && c.arbol.length ? toggleCirc(c.circuito) : null"
+              >
+                <span
+                  v-if="c.arbol && c.arbol.length"
+                  class="zone-sheet__circuito-chev"
+                  :class="{ 'zone-sheet__circuito-chev--open': circAbierto.has(c.circuito) }"
+                  aria-hidden="true"
+                >▸</span>
+                <span class="zone-sheet__circuito-n">Circuito {{ c.circuito }}</span>
+                <img v-if="c.flagUrl" :src="c.flagUrl" :alt="c.sigla" class="zone-sheet__circuito-flag" aria-hidden="true" />
+                <span v-else class="zone-sheet__circuito-swatch" :style="{ background: c.color }" aria-hidden="true"></span>
+                <span class="zone-sheet__circuito-sigla">{{ c.sigla }}</span>
+                <span class="zone-sheet__circuito-votos">{{ fmt(c.validos) }}</span>
+              </component>
+              <DesgloseTree
+                v-if="c.arbol && c.arbol.length && circAbierto.has(c.circuito)"
+                :nodes="c.arbol"
+                :validos="c.validos"
+              />
             </li>
           </ul>
         </div>
@@ -846,4 +870,34 @@ function pctEmit(n: number): string {
 .zone-sheet__circuito-swatch { width: 0.8rem; height: 0.8rem; border-radius: 2px; flex: none; box-shadow: inset 0 0 0 1px rgba(0,0,0,.15); }
 .zone-sheet__circuito-sigla { font-weight: 700; min-width: 2.5rem; }
 .zone-sheet__circuito-votos { font-variant-numeric: tabular-nums; color: var(--color-ink-muted); }
+
+/* Árbol completo del desglose por lista (DesgloseTree). */
+.zone-sheet__arbol { margin-top: 0.5rem; }
+.zone-sheet__arbol-titulo {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-ink-muted);
+  margin-bottom: 0.25rem;
+}
+/* Circuitos expandibles. */
+.zone-sheet__circuito-wrap { border-bottom: 1px solid var(--color-border); }
+.zone-sheet__circuito-wrap > .zone-sheet__circuito { border-bottom: 0; }
+.zone-sheet__circuito--btn {
+  width: 100%;
+  background: none;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+.zone-sheet__circuito-chev {
+  flex: none;
+  width: 0.8rem;
+  color: var(--color-ink-muted);
+  transition: transform 0.12s;
+  font-size: 0.7rem;
+}
+.zone-sheet__circuito-chev--open { transform: rotate(90deg); }
 </style>

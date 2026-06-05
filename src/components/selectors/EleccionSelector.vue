@@ -17,6 +17,7 @@ function hrefDe(id: string): string {
 
 type TipoEleccion = 'internas' | 'nacionales' | 'balotaje' | 'dptales' | 'plebiscito';
 const META: Record<string, { short: string; type: TipoEleccion; año: number }> = {
+  'internas-2014':                    { short: 'Internas',         type: 'internas',    año: 2014 },
   'nacionales-2014':                  { short: 'Nacionales',       type: 'nacionales',  año: 2014 },
   'balotaje-2014':                    { short: 'Balotaje',         type: 'balotaje',    año: 2014 },
   'departamentales-2015':             { short: 'Departamentales',  type: 'dptales',     año: 2015 },

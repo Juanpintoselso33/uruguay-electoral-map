@@ -62,7 +62,12 @@ def agregar_eleccion(eleccion, id2label):
     # SOLO los 19 deptos reales (excluye _nacional y cualquier carpeta no-depto, evita auto-sumarse al re-correr).
     deptos = sorted(d for d in id2label
                     if os.path.exists(f'{base}/{d}/votes.json'))
-    assert len(deptos) == 19, f'{eleccion}: esperaba 19 deptos, hay {len(deptos)} ({deptos})'
+    # Elecciones que no cubren los 19 deptos a nivel votes.json por-depto (p.ej. departamentales-2015,
+    # sin Montevideo a este nivel) tienen su _nacional generado por su propio builder; se OMITEN aquí
+    # para no pisar/crashear (no es un error: es cobertura parcial real de esa instancia).
+    if len(deptos) != 19:
+        print(f'  ⏭ {eleccion}: {len(deptos)}/19 deptos con votes.json — se omite (cobertura parcial)')
+        return
     tipo = None
     nombres_por_id = defaultdict(set)
     pregunta = None
