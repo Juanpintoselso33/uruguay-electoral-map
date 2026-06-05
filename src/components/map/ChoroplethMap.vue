@@ -2762,30 +2762,21 @@ onUnmounted(() => {
 </style>
 
 <style scoped>
+/* Epic 23: layout single-column map-first (se revirtió el grid 2-columnas: dejaba un
+   rectángulo vacío grande junto al result card y enterraba el mapa). El orden natural
+   queda map → controles (ws-map) → ficha + resultado (ws-rail), como la UI previa pero
+   con las cards/segmented/paleta nuevas. */
 .map-wrap {
   display: flex;
   flex-direction: column;
 }
 .ws-map { min-width: 0; display: flex; flex-direction: column; }
-
-/* Epic 23 · Story 23.2 — workspace 2 columnas en desktop: mapa (héroe) + rail sticky.
-   Breakpoint alineado con Tailwind lg (el <main> se ensancha a max-w-6xl ahí).
-   En mobile (<1024px) cae a 1 columna (flex column del .map-wrap). */
-@media (min-width: 1024px) {
-  .map-wrap {
-    display: grid;
-    grid-template-columns: 1fr var(--rail-w);
-    gap: var(--gap);
-    align-items: start;
-  }
-  .ws-rail {
-    position: sticky;
-    top: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    min-width: 0;
-  }
+.ws-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  min-width: 0;
+  margin-top: 0.625rem;
 }
 .map {
   width: 100%;
