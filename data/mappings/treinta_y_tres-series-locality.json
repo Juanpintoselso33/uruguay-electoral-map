@@ -1,3 +1,31 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d0f340fcea70b9ef1d4df789957b7c26b68f8b598a2c4b9e4ad6baf0276eb4ce
-size 743
+{
+  "faa": "TREINTA Y TRES",
+  "fab": "TREINTA Y TRES",
+  "fac": "TREINTA Y TRES",
+  "fad": "TREINTA Y TRES",
+  "fae": "TREINTA Y TRES",
+  "faf": "TREINTA Y TRES",
+  "fba": "VERGARA",
+  "fbb": "EL ORO",
+  "fbc": "CHARQUEADA",
+  "fbd": "ARROZAL 33",
+  "fbe": "RINCÓN",
+  "fbf": "LA CALAVERA",
+  "fca": "BAÑADO DE OLIVERA",
+  "fcb": "LA CALERA",
+  "fcc": "PUNTAS DEL PARAO",
+  "fcd": "YERBALITO",
+  "fce": "ISLA PATRULLA",
+  "fcf": "AVESTRUZ CHICO",
+  "fda": "SANTA CLARA DEL OLIMAR",
+  "fdb": "CERRO CHATO",
+  "fdc": "LA TAHONA",
+  "fdd": "RINCÓN DE URTUBEY",
+  "fde": "VALENTINES",
+  "fea": "VILLA SARA",
+  "feb": "MARÍA ALBINA",
+  "fec": "CORRALES DE CEBOLLATÍ",
+  "fed": "PASSANO",
+  "fee": "LOS MEMBRILLOS",
+  "fef": "TREINTA Y TRES"
+}

@@ -1,3 +1,26 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7297b05442c7c5407de522122acb42028b8cfe73315e1bf49a5cf9069f4e3921
-size 582
+{
+  "iaa": "ESTIVA",
+  "iab": "JAVIER DE VIANA",
+  "iac": "ARTIGAS",
+  "iad": "ARTIGAS",
+  "iae": "ARTIGAS",
+  "iaf": "ARTIGAS",
+  "iag": "ARTIGAS",
+  "iah": "PINTADITO",
+  "iba": "CATALÁN GRANDE",
+  "ibb": "RINCÓN DE PACHECO",
+  "ibc": "SEQUEIRA",
+  "ibd": "PASO CAMPAMENTO",
+  "ibe": "DIEGO LAMAS",
+  "ibf": "COLONIA ARTIGAS",
+  "ibg": "PASO FARÍAS",
+  "ica": "BALTASAR BRUM",
+  "icb": "COLONIA PALMA",
+  "icc": "TOMÁS GOMENSORO",
+  "icd": "BELLA UNIÓN",
+  "ice": "CUAREIM",
+  "icf": "CAMPODÓNICO",
+  "ida": "CERRO AMARILLO",
+  "idb": "ESTACIÓN CUARO",
+  "idc": "TOPADOR"
+}

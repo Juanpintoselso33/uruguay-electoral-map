@@ -1,3 +1,35 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9674cc04345fc91b2da08e8130887adee112cf1e33cba4d3cfcb9ad91a2c1975
-size 812
+{
+  "naa": "PASO DE LA HORQUETA",
+  "nab": "COLONIA",
+  "nac": "EL GENERAL",
+  "nad": "REAL DE SAN CARLOS",
+  "nba": "PASO ANTOLÍN",
+  "nbb": "EL CUADRO",
+  "nbc": "COLONIA MIGUELETE",
+  "nbd": "TARARIRAS",
+  "nca": "MEDIA AGUA",
+  "ncb": "ROSARIO",
+  "nda": "LA PAZ",
+  "ndb": "COLONIA VALDENSE",
+  "nea": "CUFRÉ",
+  "neb": "NUEVA HELVECIA",
+  "nfa": "COSTA DE ROSARIO",
+  "nfb": "PARAJE ZUNÍN",
+  "nfc": "FLORENCIO SÁNCHEZ",
+  "nfd": "PUNTAS DE SAN JUAN",
+  "nga": "CAMPANA",
+  "ngb": "OMBÚES DE LAVALLE",
+  "ngc": "CONCHILLAS",
+  "nha": "COLONIA ARRUE",
+  "nhb": "CARMELO",
+  "nia": "POLANCOS",
+  "nib": "NUEVA PALMIRA",
+  "nja": "CERRO DE CARMELO",
+  "nka": "RIACHUELO",
+  "nkb": "SANTA ANA",
+  "nkc": "COLONIA",
+  "nkd": "SEMILLERO",
+  "nla": "BARKER",
+  "nlb": "JUAN LACAZE",
+  "nlc": "VILLA PANCHA"
+}

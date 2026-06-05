@@ -1,3 +1,19 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:35024c92bc4b5ffd1c9306c55888541c547dbf9659f6c25082bfd91418619b58
-size 420
+{
+  "laa": "FRAY BENTOS",
+  "lab": "NUEVO BERLÍN",
+  "lac": "BELLACO",
+  "lad": "FRAY BENTOS",
+  "lba": "SAN JAVIER",
+  "lbb": "SAUCE CHICO",
+  "lbc": "YOUNG",
+  "lbd": "YOUNG",
+  "lbe": "ALGORTA",
+  "lbf": "PASO DE LA CRUZ",
+  "lbg": "COLONIA EL OMBÚ",
+  "lbh": "COLONIA EL OMBÚ",
+  "lca": "GRECCO",
+  "lce": "GRECCO",
+  "lcb": "PASO DE LOS MELLIZOS",
+  "lcc": "SARANDÍ DE NAVARRO",
+  "lcd": "SARANDÍ DE NAVARRO"
+}

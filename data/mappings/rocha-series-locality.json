@@ -1,3 +1,27 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:25f159b1baa11498efa6f09edd25054c65cc8c74c228ad33f31f5b6aeba67f02
-size 590
+{
+  "eaa": "ROCHA",
+  "eba": "LA SIERRA",
+  "ebb": "GARZÓN ARRIBA",
+  "ebc": "GARZÓN ABAJO",
+  "eca": "ARBOLITO",
+  "ecb": "BARRA DE VALIZAS",
+  "ecc": "19 DE ABRIL",
+  "ecd": "ATAHONA",
+  "ece": "VELAZQUEZ",
+  "ecf": "PARALLÉ",
+  "ecg": "LA PALOMA",
+  "eda": "INDIA MUERTA",
+  "edb": "19 DE ABRIL",
+  "edc": "CASTILLOS",
+  "eea": "LASCANO",
+  "eeb": "ALFÉREZ",
+  "efa": "18 DE JULIO",
+  "efb": "CHUY",
+  "efc": "LA CORONILLA",
+  "efd": "CEBOLLATÍ",
+  "efe": "CORONILLA DE CEBOLLATÍ",
+  "eff": "QUEBRACHO",
+  "efg": "SAN LUIS",
+  "efh": "BARRA DEL CHUY",
+  "efi": "PUNTA DEL DIABLO"
+}

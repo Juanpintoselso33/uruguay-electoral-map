@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c0e7a88182b99f2dce4599aedb15b602cd0e0a5d5661d41de3977618169f44d7
-size 342
+{
+  "paa": "TRINIDAD",
+  "pab": "ARROYO MALO",
+  "pac": "ANDRESITO",
+  "pad": "MANANTIALES",
+  "pba": "TRINIDAD",
+  "pbb": "TRINIDAD",
+  "pbd": "ISMAEL CORTINAS",
+  "pca": "JUAN JOSÉ CASTRO",
+  "pcc": "CHAMANGÁ",
+  "pcf": "CERRO COLORADO",
+  "pbc": "TRINIDAD",
+  "pcb": "JUAN JOSÉ CASTRO",
+  "pce": "CERRO COLORADO",
+  "pcd": "CHAMANGÁ"
+}

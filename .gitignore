@@ -28,6 +28,23 @@ public/data/personas/
 data/processed/geographic/_nacional/
 data/processed/_annex_tmp/
 
+# Intermedios de ETL: regenerables corriendo el pipeline desde data/raw/. No se versionan
+# (antes estaban en Git LFS → agotaban la cuota y rompían CI + deploy de Vercel). El dato
+# que SIRVE la app vive ya simplificado en public/data/**.
+data/processed/
+
+# Geo grande LEGACY de v1 en la raíz de public/ (NO lo sirve v2 — runtime usa
+# public/data/geo/*.topo.json). Eran inputs/artefactos de ETL en LFS. Fuera del repo.
+/public/*_map.json
+/public/*_series_map.json
+/public/uruguay_series_electorales.json
+/public/uruguay_series_electorales_map.json
+/public/montevideo_series_electorales.json
+/public/v_sig_barrios.json
+/public/regions.json
+/public/elections-catalog.json
+/public/partidos_abrev.json
+
 # Borrador del post de LinkedIn (no es parte del producto)
 POST_LINKEDIN.md
 
