@@ -2801,17 +2801,22 @@ onUnmounted(() => {
 .map-status--error {
   color: #b91c1c;
 }
+/* Segmented controls dentro del mapa (Epic 23): modo de vista/coloreo on-brand
+   (antes botones unidos con azul #1d4ed8). Track + píldora, igual que el .seg global. */
 .vista-toggle {
   display: flex;
-  gap: 0;
-  padding: 0.5rem 0.75rem;
-  border-top: 1px solid var(--color-border);
+  gap: 2px;
+  margin: 0.5rem 0.75rem;
+  padding: 3px;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
 }
 /* Cluster de coloreo (Epic 19.1): UN solo borde superior para todo el bloque de controles.
    Dentro del cluster el toggle pierde su borde propio (lo aporta el cluster) y el selector de
    nivel se pega como sub-fila, evitando dos bandas pares apiladas. */
 .coloreo-cluster { border-top: 1px solid var(--color-border); }
-.coloreo-cluster .vista-toggle { border-top: none; padding-bottom: 0.375rem; }
+.coloreo-cluster .vista-toggle { margin-top: 0.5rem; margin-bottom: 0.375rem; }
 /* Selector de nivel del ganador (coloreo-por-nivel). Por defecto (vista base, va solo) = fila normal. */
 .gnivel { display: flex; flex-wrap: wrap; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem 0.5rem; font-size: 0.75rem; }
 /* Cuando sigue al toggle (selección + modo Ganador) se muestra como sub-fila tenue e indentada de él. */
@@ -2822,26 +2827,24 @@ onUnmounted(() => {
 .gnivel__btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
 .vista-toggle__btn {
   flex: 1;
-  padding: 0.375rem 0.5rem;
+  padding: 0.4rem 0.5rem;
   font-size: 0.8125rem;
-  background: var(--color-surface-1);
-  border: 1px solid var(--color-border-strong);
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  border-radius: calc(var(--radius) - 2px);
   cursor: pointer;
-  color: var(--color-ink-soft);
-  min-height: 44px;
+  color: var(--color-ink-muted);
+  min-height: 34px;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
 }
-.vista-toggle__btn:first-child {
-  border-radius: 0.25rem 0 0 0.25rem;
-}
-.vista-toggle__btn:last-child {
-  border-radius: 0 0.25rem 0.25rem 0;
-  border-left: none;
-}
+.vista-toggle__btn:hover { color: var(--color-ink); }
+.vista-toggle__btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
 .vista-toggle__btn--activo {
-  background: #1d4ed8;
-  color: #fff;
+  background: var(--color-card);
+  color: var(--color-ink);
   font-weight: 700;
-  border-color: #1d4ed8;
+  box-shadow: var(--shadow-sm);
 }
 
 /* Comparación Fase 2: controles de "cómo ver el contraste", debajo del mapa (no re-satura arriba). */
@@ -2852,20 +2855,28 @@ onUnmounted(() => {
   padding: 0.5rem 0.75rem;
   border-top: 1px solid var(--color-border);
 }
-.cmp-view__modos { display: flex; gap: 0; }
+.cmp-view__modos {
+  display: flex; gap: 2px; padding: 3px;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
 .cmp-view__btn {
   flex: 1;
-  padding: 0.35rem 0.5rem;
+  padding: 0.4rem 0.5rem;
   font-size: 0.75rem;
-  background: var(--color-surface-1);
-  border: 1px solid var(--color-border-strong);
-  color: var(--color-ink-soft);
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  border-radius: calc(var(--radius) - 2px);
+  color: var(--color-ink-muted);
   cursor: pointer;
-  min-height: 36px;
+  min-height: 32px;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
 }
-.cmp-view__btn:first-child { border-radius: 0.25rem 0 0 0.25rem; }
-.cmp-view__btn:last-child { border-radius: 0 0.25rem 0.25rem 0; border-left: none; }
-.cmp-view__btn--activo { background: #1d4ed8; color: #fff; font-weight: 700; border-color: #1d4ed8; }
+.cmp-view__btn:hover { color: var(--color-ink); }
+.cmp-view__btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
+.cmp-view__btn--activo { background: var(--color-card); color: var(--color-ink); font-weight: 700; box-shadow: var(--shadow-sm); }
 .cmp-view__delta { display: flex; flex-direction: column; gap: 0.375rem; }
 .cmp-view__lbl { font-size: 0.75rem; color: var(--color-ink-soft); display: flex; align-items: center; gap: 0.375rem; }
 .cmp-view__sel {
