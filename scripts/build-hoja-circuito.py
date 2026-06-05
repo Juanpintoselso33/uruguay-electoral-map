@@ -201,6 +201,14 @@ CONFIG = {
     "departamentales-2020": {"tipo": "departamental", "mode": "match",
         "desglose": "data/raw/electoral/departamentales-2020/desglose-de-votos-combinado.csv",
         "plan": "data/raw/electoral/departamentales-2020/plan-circuital.csv"},
+    # 2015: plan PARCIAL (6 letras Wayback → MVD,CA,MA,CL,AR,FD). GUARD plan-por-depto deja los
+    # 13 sin plan a nivel serie/municipio. Desglose convertido del XLSX (build-2015-desglose.py).
+    "departamentales-2015": {"tipo": "departamentales", "mode": "match",
+        "desglose": "data/raw/electoral/2015/desglose-departamental.csv",
+        "plan": "data/raw/electoral/2015/plan-circuital.csv"},
+    "municipales-2015": {"tipo": "municipales", "mode": "match",
+        "desglose": "data/raw/electoral/2015/desglose-municipal.csv",
+        "plan": "data/raw/electoral/2015/plan-circuital.csv"},
 }
 
 def emit_dep(eleccion, dep, tipo, circ_zonas):

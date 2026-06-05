@@ -31,6 +31,14 @@ const DEPT_LEVELS: Record<string, NivelGeografico[]> = {
   // departments.json. Sin esto, tras navegar (persist) caía a props.availableLevels stale.
   _nacional: ['departamento', 'zona'],
 };
+
+// Ciclo 2009-2010 (Epic 23): elecciones DEPARTAMENTO-only (la app GeneXus de la Corte no
+// publica circuito/serie). resolveNivel prefiere DEPT_LEVELS[dept] (serie/zona) sobre el prop;
+// sin este guard rendería geo/{depto}/serie.topo.json con votos de departamento = mapa gris.
+// Mismo patrón election-aware que municipales.
+const DEPTO_ONLY_2009_2010 = new Set([
+  'internas-2009', 'nacionales-2009', 'balotaje-2009', 'departamentales-2010',
+]);
 import MapLegend from './MapLegend.vue';
 import ResultadoGlobal from './ResultadoGlobal.vue';
 import ZoneSheet from '../sheet/ZoneSheet.vue';
@@ -2597,6 +2605,8 @@ function resolveNivel(urlLevel: NivelGeografico, dept?: string): NivelGeografico
   // elección) → al navegar in-app desde una departamental (zona/serie) resolvería mal y cargaría la
   // geometría vieja (barrios) con votos de municipio = todo gris. Forzar 'municipio' lo evita.
   if (activeEleccion?.startsWith('municipales')) return 'municipio' as NivelGeografico;
+  // 2009-2010 depto-only: forzar 'departamento' (DEPT_LEVELS[dept] traería serie/zona inexistentes).
+  if (activeEleccion && DEPTO_ONLY_2009_2010.has(activeEleccion) && dept !== '_nacional') return 'departamento' as NivelGeografico;
   const avail = (dept ? DEPT_LEVELS[dept] : null) ?? props.availableLevels ?? (['zona'] as NivelGeografico[]);
   const base = avail.filter(l => l !== 'circuito' && l !== 'local');
   const valid = base.length > 0 ? base : avail;

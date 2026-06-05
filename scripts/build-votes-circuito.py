@@ -185,6 +185,14 @@ CONFIG = {
         "plan": "data/raw/electoral/departamentales-2020/plan-circuital.csv"},
     "departamentales-2025": {"family": "desglose", "mode": "match", "tiporeg": "HOJA_ED", "tipo": "departamental",
         "plan": "data/raw/electoral/departamentales-2025/plan-circuital.csv"},
+    # 2015: plan PARCIAL (solo 6 letras de Wayback → MVD,CA,MA,CL,AR,FD). GUARD plan-por-depto =
+    # no toca los 13 deptos sin plan. Desglose convertido del XLSX (build-2015-desglose.py).
+    "departamentales-2015": {"family": "desglose", "mode": "match", "tiporeg": "HOJA_ED", "tipo": "departamentales",
+        "desglose": "data/raw/electoral/2015/desglose-departamental.csv",
+        "plan": "data/raw/electoral/2015/plan-circuital.csv"},
+    "municipales-2015": {"family": "desglose", "mode": "match", "tiporeg": "HOJA_EM", "tipo": "municipales",
+        "desglose": "data/raw/electoral/2015/desglose-municipal.csv",
+        "plan": "data/raw/electoral/2015/plan-circuital.csv"},
     # ── WIDE ──
     "balotaje-2014": {"family": "wide", "csv": "data/raw/electoral/balotaje-2014/balotaje-2014.csv", "tipo": "balotaje",
         "cols": {"TOTALVAZQUEZSENDIC": "frente-amplio", "TOTALLACALLEPOULARRANAGA": "nacional"}, "np": NP_STD},

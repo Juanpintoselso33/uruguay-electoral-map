@@ -15,7 +15,7 @@ ALCANCE (pedido de Juan: "cargos electos nada más"):
 
 Uso: python scripts/build-elecciones-2015.py
 """
-import json, os, unicodedata
+import csv, json, os, unicodedata
 from collections import defaultdict
 import openpyxl
 
@@ -59,6 +59,12 @@ INTENDENTES = {
 
 def normU(s):
     return "".join(c for c in unicodedata.normalize("NFD", str(s or "")) if unicodedata.category(c) != "Mn").upper().strip()
+
+
+def normBarrio(s):
+    """geoId de barrio MVD: idéntico a normName() del ETL (NFD-strip + UPPER + colapsa \\s).
+    Debe coincidir con los geoId de la geometría de barrios (igual que departamentales-2025)."""
+    return " ".join(normU(s).split())
 
 
 def labels():
@@ -182,6 +188,86 @@ def reconcile_hoja(eleccion, slug, contienda, por_geo_hoja, opc_lema):
     return fails
 
 
+# ── Montevideo por BARRIO (CRV→barrio del ciclo 2015) ──────────────────────────
+# A diferencia del interior (por SERIE), MVD une CRV→barrio con el mapeo POR CICLO
+# (data/mappings/montevideo-circuito-barrio.2015.json, build-circuito-barrio-cycles.py),
+# igual que departamentales-2025. Fuente de votos: desglose-departamental.csv (conversión fiel
+# del XLSX, mismo filtro de 8 lemas → Σ MO idéntica, auditado). geoId = barrio normalizado
+# (normBarrio) para casar con la geometría de barrios. Emite votes.json (nivel 'zona'),
+# opciones.json, catalogo.json y hoja/junta/{lema}.json — gemelo barrio de la vista interior.
+
+def build_montevideo_barrio(gate_fail):
+    desg = os.path.join(RAW, "desglose-departamental.csv")
+    mapping = os.path.join(ROOT, "data/mappings/montevideo-circuito-barrio.2015.json")
+    if not (os.path.exists(desg) and os.path.exists(mapping)):
+        print("montevideo (barrio): falta desglose o mapping CRV→barrio → se omite")
+        return
+    c2b = json.load(open(mapping, encoding="utf-8"))["crvToBarrio"]
+    def barrio_de(crv):
+        crv = str(crv).strip()
+        b = c2b.get(crv)
+        if not b and crv.isdigit():
+            b = c2b.get(str(int(crv)))  # normaliza ceros a la izquierda
+        return b
+    # lema crudo (LEMA_CANON del desglose, p.ej. "Partido de la Concertación") → slug canónico
+    name2slug = {normU(v): k for k, v in LEMA_NOMBRE.items()}
+    por_barrio = defaultdict(lambda: defaultdict(int))           # barrio -> lema -> votos
+    por_barrio_hoja = defaultdict(lambda: defaultdict(int))      # barrio -> opcionId -> votos
+    opc_lema, lemas_pres, pares = {}, set(), set()
+    unmapped = 0
+    with open(desg, encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            if row["DEPARTAMENTO"] != "MO":
+                continue
+            v = int(row["CANTIDAD_VOTOS"])
+            ls = name2slug.get(normU(row["LEMA"]))
+            if not ls:
+                continue
+            b = barrio_de(row["CRV"])
+            if not b:
+                unmapped += v
+                continue
+            bn = normBarrio(b)
+            hoja = (row["DESCRIPCION_1"] or "").strip()
+            por_barrio[bn][ls] += v
+            if hoja:
+                oid = opcion_hoja("junta", ls, hoja)
+                por_barrio_hoja[bn][oid] += v
+                opc_lema[oid] = ls
+                lemas_pres.add(ls)
+                pares.add((ls, hoja))
+    # votes.json (nivel 'zona', geoId = barrio) + opciones.json
+    zonas = [zona(b, lemas) for b, lemas in sorted(por_barrio.items())]
+    op = {l: LEMA_NOMBRE[l] for lemas in por_barrio.values() for l in lemas}
+    write(os.path.join(DATA, "departamentales-2015", "montevideo", "votes.json"),
+          {"eleccionId": "departamentales-2015", "departamento": "montevideo", "nivel": "zona",
+           "escrutinio": "definitivo", "tipo": "departamentales", "zonas": zonas})
+    write(os.path.join(DATA, "departamentales-2015", "montevideo", "opciones.json"),
+          {"opciones": [{"opcionId": k, "nombre": v} for k, v in sorted(op.items())]})
+    # catalogo.json (contienda 'junta' degradada [lema, hoja]) + hoja/junta/{lema}.json por barrio
+    cat = build_catalogo("departamentales-2015", "montevideo", "junta", lemas_pres, pares)
+    write(os.path.join(DATA, "departamentales-2015", "montevideo", "catalogo.json"), cat)
+    nsh = 0
+    for lema in sorted(lemas_pres):
+        by_barrio = defaultdict(lambda: defaultdict(int))
+        for b, por in por_barrio_hoja.items():
+            for oid, v in por.items():
+                if opc_lema[oid] == lema:
+                    by_barrio[b][oid] += v
+        if not by_barrio:
+            continue
+        zb = [zona_hoja(b, por) for b, por in sorted(by_barrio.items())]
+        write(os.path.join(DATA, "departamentales-2015", "montevideo", "hoja", "junta", f"{lema}.json"),
+              {"eleccionId": "departamentales-2015", "departamento": "montevideo", "nivel": "zona",
+               "escrutinio": "definitivo", "tipo": "departamentales", "clase": "hoja", "zonas": zb})
+        nsh += 1
+    fails = reconcile_hoja("departamentales-2015", "montevideo", "junta", por_barrio_hoja, opc_lema)
+    gate_fail[0] += fails
+    pct = 100 * (1 - unmapped / max(1, sum(sum(l.values()) for l in por_barrio.values()) + unmapped))
+    print(f"  {'✓' if fails==0 else '✗'} montevideo: {len(zonas)} barrios · {len(pares)} hojas · "
+          f"{nsh} shards · CRV→barrio {pct:.1f}% · votos sin barrio={unmapped} · recon fails={fails}")
+
+
 def main():
     LBL = labels()
     gate_fail = [0]  # acumulador mutable de mismatches de reconciliación HOJA (gate global)
@@ -237,6 +323,10 @@ def main():
         write(os.path.join(DATA, "departamentales-2015", slug, "opciones.json"),
               {"opciones": [{"opcionId": k, "nombre": v} for k, v in sorted(op.items())]})
     print(f"departamentales-2015: nacional {len(nac_zonas)} deptos + interior por serie ({len(INTERIOR)})")
+
+    # Montevideo por BARRIO (CRV→barrio del ciclo 2015) — votes/opciones/catalogo/hoja en un pase.
+    print("departamentales-2015 · Montevideo (BARRIO, CRV→barrio 2015):")
+    build_montevideo_barrio(gate_fail)
 
     # --- HOJA departamentales-2015: catalogo.json + hoja/junta/{lema}.json por serie (interior) ---
     print("departamentales-2015 · HOJA (contienda 'junta', degradada [lema, hoja]):")
