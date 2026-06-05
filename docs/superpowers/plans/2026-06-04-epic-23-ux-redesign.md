@@ -86,7 +86,16 @@ Rama `feat/epic-23-ux-redesign`. Todo verificado en browser (Playwright) + `npm 
 | 23.2 layout workspace 2-columnas (mapa + rail sticky) | ✅ | `11417c3` |
 | 23.5 dark mode toggle manual (claro/oscuro/auto, anti-flash) | ✅ | `e352df6` |
 | 23.3 rail de resultados como card | ✅ | `ff9a8be` |
-| 23.4 mapa: badge de leyenda overlay + tooltip on-brand (zoom ya existe) | ⏳ pendiente | |
-| 23.6 timeline con nodos conectados (re-skin EleccionSelector) | ⏳ pendiente | |
+| 23.4 mapa: zoom on-brand + tooltip al hover (nombre + ganador) | ✅ | `9128895`, `957216d` |
+| 23.6 timeline con nodos conectados | ✅ ya satisfecho | — |
+
+**Sobre 23.6:** `EleccionSelector.vue` YA es un timeline más rico que el del mockup (grupos por
+año + rieles conectores + dots con forma por tipo de elección [círculo/rombo/cuadrado] +
+activo con dot relleno/anillo/pill + fades + drag-scroll + leyenda de formas). Re-skinearlo al
+del mockup (nodos uniformes) sería un downgrade (se perdería el shape-coding informativo). Ya
+usa los tokens, así que hereda la paleta cálida automáticamente. → no se toca.
+
+**Epic 23 COMPLETO.** El badge de leyenda overlay (idea original de 23.4) se descartó: el
+tooltip al hover + el rail ya cubren "qué color es qué" sin duplicar con un overlay.
 
 **Notas para continuar:** todo el layout 2-col vive DENTRO de `ChoroplethMap.vue` (`.ws-map`/`.ws-rail`), porque el mapa+leyenda+result+ficha son un solo island con `transition:persist`. El badge (23.4) sería un overlay absolute sobre `.ws-map`. El timeline (23.6) toca `EleccionSelector.vue` (cuidado con la lógica de agrupado por año). El `<main>` se ensancha a `max-w-6xl` en `lg` (1024px), mismo breakpoint que el grid.
