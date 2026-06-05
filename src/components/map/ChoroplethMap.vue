@@ -2462,8 +2462,32 @@ onMounted(async () => {
         if (!f) return;
         commit({ zona: String((f.properties as { name: string }).name) });
       });
-      m.on('mouseenter', 'zonas-fill', () => { m.getCanvas().style.cursor = 'pointer'; });
-      m.on('mouseleave', 'zonas-fill', () => { m.getCanvas().style.cursor = ''; });
+      // Tooltip on-brand al hover (Epic 23 · Story 23.4): nombre de la zona + ganador base.
+      // Lee zonasVotos/zonasValidos (geoId normalizado); si no hay dato, muestra solo el nombre.
+      const hoverTip = mlLib ? new mlLib.Popup({ closeButton: false, closeOnClick: false, offset: 12, className: 'map-tip-pop' }) : null;
+      const tipHTML = (name: string): string => {
+        const key = norm(name);
+        const votos = zonasVotos.get(key);
+        const validos = zonasValidos.get(key) ?? 0;
+        let row = '';
+        if (votos && votos.size > 0 && validos > 0) {
+          let bestId = ''; let best = -1;
+          for (const [id, v] of votos) if (v > best) { best = v; bestId = id; }
+          if (bestId) {
+            const meta = resolveParty(opcNombreMap.get(bestId) ?? bestId, activeEleccion);
+            const pct = (best / validos * 100).toFixed(1);
+            row = `<div class="tt-row"><span class="tt-sw" style="background:${meta.color}"></span>${meta.sigla} · ${pct}%</div>`;
+          }
+        }
+        return `<div class="tt-name">${name}</div>${row}`;
+      };
+      m.on('mousemove', 'zonas-fill', (e) => {
+        const f = e.features?.[0];
+        if (!f || !hoverTip) return;
+        m.getCanvas().style.cursor = 'pointer';
+        hoverTip.setLngLat(e.lngLat).setHTML(tipHTML(String((f.properties as { name: string }).name))).addTo(m);
+      });
+      m.on('mouseleave', 'zonas-fill', () => { m.getCanvas().style.cursor = ''; hoverTip?.remove(); });
 
       m.on('click', 'zonas-circle', (e) => {
         const f = e.features?.[0];
@@ -2705,6 +2729,25 @@ onUnmounted(() => {
 :root[data-theme="dark"] .maplibregl-ctrl-group button .maplibregl-ctrl-icon {
   filter: invert(1) brightness(1.6);
 }
+
+/* Tooltip al hover (Story 23.4): tinta sobre fondo claro/oscuro, sin la flecha default. */
+.map-tip-pop { pointer-events: none; }
+.map-tip-pop .maplibregl-popup-content {
+  background: var(--color-ink);
+  color: var(--color-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 7px 10px;
+  font-family: var(--font-ui);
+}
+.map-tip-pop .maplibregl-popup-tip { display: none; }
+.map-tip-pop .tt-name { font-weight: 700; font-size: 12.5px; line-height: 1.2; }
+.map-tip-pop .tt-row {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11.5px; margin-top: 3px; opacity: 0.92;
+  font-variant-numeric: tabular-nums;
+}
+.map-tip-pop .tt-sw { width: 8px; height: 8px; border-radius: 2px; display: inline-block; flex: none; }
 
 .zona-sigla {
   font: 700 0.6875rem/1 system-ui, sans-serif;
