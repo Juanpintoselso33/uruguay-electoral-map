@@ -27,21 +27,21 @@ function selectZona() {
 </script>
 
 <template>
-  <div class="gran-sel" role="group" aria-label="Granularidad del mapa nacional">
-    <button
-      class="gran-sel__btn"
-      :class="{ 'gran-sel__btn--activo': !isZona }"
-      type="button"
-      :aria-pressed="!isZona"
-      @click="selectDepto"
-    >Departamentos</button>
-    <button
-      class="gran-sel__btn"
-      :class="{ 'gran-sel__btn--activo': isZona }"
-      type="button"
-      :aria-pressed="isZona"
-      @click="selectZona"
-    >Zonas</button>
+  <div class="gran-sel">
+    <div class="seg" role="group" aria-label="Granularidad del mapa nacional">
+      <button
+        :class="{ on: !isZona }"
+        type="button"
+        :aria-pressed="!isZona"
+        @click="selectDepto"
+      >Departamentos</button>
+      <button
+        :class="{ on: isZona }"
+        type="button"
+        :aria-pressed="isZona"
+        @click="selectZona"
+      >Zonas</button>
+    </div>
   </div>
 </template>
 
@@ -49,26 +49,6 @@ function selectZona() {
 .gran-sel {
   display: flex;
   justify-content: center;
-  gap: 0;
   padding: 0.5rem 0 0.75rem;
 }
-.gran-sel__btn {
-  font: inherit;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  padding: 0.4rem 1.1rem;
-  border: 1px solid var(--color-border-strong);
-  background: var(--color-paper);
-  color: var(--color-ink-muted);
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-}
-.gran-sel__btn:first-child { border-radius: 6px 0 0 6px; border-right: none; }
-.gran-sel__btn:last-child  { border-radius: 0 6px 6px 0; }
-.gran-sel__btn--activo {
-  background: var(--color-ink);
-  color: var(--color-paper);
-  border-color: var(--color-ink);
-}
-.gran-sel__btn:not(.gran-sel__btn--activo):hover { color: var(--color-ink); }
 </style>
