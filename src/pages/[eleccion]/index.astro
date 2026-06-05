@@ -115,12 +115,12 @@ const canonicalPath = `/${eleccion}`;
       eleccionActual={eleccion}
       departamento="_nacional"
     />
-    <!-- Toggle Departamentos/Zonas — control del mapa: va PEGADO arriba del mapa (Story 15.4).
+    <!-- Control de listas/partido (Epic UX): plegable y colapsado por defecto. -->
+    <OpcionAccordion client:idle eleccion={eleccion} departamento="_nacional" />
+    <!-- Toggle Departamentos/Zonas — va ABAJO del filtro, pegado al mapa (Story 15.4, pedido de Juan).
          No aplica a Municipales (nivel único 'municipio') ni a elecciones sin nivel zona nacional
          (p.ej. departamentales-2015, que solo tiene agregado por departamento). -->
     {!esMunicipales && hayZonaNacional && <GranularitySelector client:idle />}
-    <!-- Control de listas/partido (Epic UX): ARRIBA del mapa, plegable y colapsado por defecto. -->
-    <OpcionAccordion client:idle eleccion={eleccion} departamento="_nacional" />
     <!-- Map-first: el mapa va arriba de los selectores para quedar visible sin scrollear.
          persist con nombre propio ("map-nacional") → persiste entre elecciones nacionales pero
          NO cruza con la vista por-depto (que debe re-inicializar). -->

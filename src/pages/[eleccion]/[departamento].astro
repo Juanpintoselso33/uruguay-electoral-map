@@ -142,8 +142,6 @@ const canonicalPath = `/${eleccion}/${departamento}`;
       eleccionActual={eleccion}
       departamento={departamento}
     />
-    <!-- Toggle Zonas/Circuito (nivel geográfico) — control del mapa: va PEGADO arriba del mapa. -->
-    <LevelSelector client:idle availableLevels={availableLevels} />
     <!-- Comparación entre elecciones (prototipo Fase 1): dropdown de elecciones del mismo tipo;
          marca con borde naranja las zonas donde cambió el partido ganador. -->
     <CompareControls
@@ -151,9 +149,10 @@ const canonicalPath = `/${eleccion}/${departamento}`;
       availableElecciones={availableElecciones}
       eleccionActual={eleccion}
     />
-    <!-- Control de listas/partido (Epic UX): ARRIBA del mapa, plegable y colapsado por defecto
-         (decisión de Juan). Sincroniza con el mapa por el store, así que su posición no afecta. -->
+    <!-- Control de listas/partido (Epic UX): plegable y colapsado por defecto. -->
     <OpcionAccordion client:idle eleccion={eleccion} departamento={departamento} />
+    <!-- Toggle Zonas/Circuito (nivel geográfico) — va ABAJO del filtro, pegado al mapa (pedido de Juan). -->
+    <LevelSelector client:idle availableLevels={availableLevels} />
     <!-- Map-first: el mapa (héroe) queda visible sin scrollear (el control de arriba va colapsado).
          transition:persist con nombre ESTABLE ("map") → el island MapLibre sobrevive la navegación
          entre departamentos aunque vaya antes en el DOM (NFR1). -->
