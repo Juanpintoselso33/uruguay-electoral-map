@@ -205,6 +205,10 @@ def main():
             c2l, cat = build_circ2local_direct(dep)
             methods={}
         else:
+            # GUARD (planes de cobertura PARCIAL, ej. internas-2014 = solo MVD+CA+MA): sin filas de
+            # plan para este depto NO se emite overlay (no habilitar local en los 16 deptos sin plan).
+            if not plan_by_dept.get(dep):
+                print(f"  {dep:16} — sin plan para el depto (skip overlay)"); continue
             c2l, methods = build_circ2local_match(dep, plan_by_dept.get(dep, []))
             cat = load_catalog(dep)
         order=[lo["localId"] for lo in cat["locales"]]

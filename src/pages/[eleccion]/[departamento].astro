@@ -19,6 +19,10 @@ const DEPTS = deptsConfig as DeptEntry[];
 const DEPT_MAP = Object.fromEntries(DEPTS.map((d) => [d.id, d]));
 
 const ELECCION_LABELS: Record<string, string> = {
+  'internas-2009':       'Elecciones Internas 2009',
+  'nacionales-2009':     'Elecciones Nacionales 2009',
+  'balotaje-2009':       'Balotaje 2009',
+  'departamentales-2010':'Elecciones Departamentales 2010',
   'internas-2019':   'Elecciones Internas 2019',
   'internas-2024':   'Elecciones Internas 2024',
   'nacionales-2014': 'Elecciones Nacionales 2014',
@@ -64,10 +68,18 @@ function shardDeNivel(level: NivelGeografico): string {
 const nivelesConDato = deptMeta.levels.filter((lvl) =>
   existsSync(`public/data/${eleccion}/${departamento}/${shardDeNivel(lvl)}`),
 );
+// Ciclo 2009-2010 (Epic 23): elecciones DEPARTAMENTO-only — la fuente (app GeneXus de la
+// Corte) NO publica dato por circuito/serie/local. Nivel ÚNICO 'departamento'. No derivar de
+// disco: shardDeNivel('serie'|'zona') ambos apuntan a votes.json y rotularían mal el dato.
+const ES_DEPTO_ONLY_2009_2010 = new Set([
+  'internas-2009', 'nacionales-2009', 'balotaje-2009', 'departamentales-2010',
+]);
 // Municipales: nivel ÚNICO 'municipio' (no se deriva de departments.json.levels — que es
 // compartido por depto y haría colisionar serie↔municipio en votes.json). Election-aware.
 const availableLevels: NivelGeografico[] = eleccion.startsWith('municipales')
   ? ['municipio']
+  : ES_DEPTO_ONLY_2009_2010.has(eleccion)
+  ? ['departamento']
   : (nivelesConDato.length > 0 ? nivelesConDato : deptMeta.levels);
 const availableElecciones: string[] = deptMeta.elecciones;
 const deptLabel = deptMeta.label;

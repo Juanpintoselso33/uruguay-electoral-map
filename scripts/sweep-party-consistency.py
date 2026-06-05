@@ -70,6 +70,8 @@ CANON_NAME = {
     'p-e-r-i': 'P.E.R.I.',
     'patria-alternativa': 'Patria Alternativa',
     'por-los-cambios-necesarios-pcn': 'Por los Cambios Necesarios (PCN)',
+    'unidos': 'Unidos',                                # lema menor internas-2014
+    'union-para-el-cambio': 'Unión para el Cambio',    # lema menor internas-2014
     'verde-animalista': 'Partido Verde Animalista',
 }
 PLEBISCITE_IDS = {'si', 'no'}

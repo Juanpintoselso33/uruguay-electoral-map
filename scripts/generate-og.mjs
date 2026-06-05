@@ -138,7 +138,10 @@ for (const { eleccion, departamento } of ROUTES) {
       colorMap[z.geoId] = getColor(z.ganadorOpcionId, opciones);
     }
 
-    const fc = feature(topo, topo.objects.zonas);
+    // El nivel 'departamento' (elecciones depto-level: 2009/2010) usa la clave
+    // 'departamento'; el resto usa 'zonas'. Tomamos la única object key real del topo.
+    const objKey = topo.objects.zonas ? 'zonas' : Object.keys(topo.objects)[0];
+    const fc = feature(topo, topo.objects[objKey]);
     const projection = makeProjection(topo.bbox);
 
     const paths = fc.features

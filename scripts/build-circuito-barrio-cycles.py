@@ -152,8 +152,14 @@ def build_mapping_georef_direct():
 # ---------- ciclos ----------
 CYCLES = [
     {'cycle': '2014', 'plan': 'data/raw/electoral/nacionales-2014/plan-circuital.csv', 'addr': 'Direccion'},
+    # internas-2014: PLAN CIRCUITAL recuperado de Wayback (solo MVD+CA+MA archivados). Los CRV se
+    # renumeran vs nacionales-2014 (0% match exacto de rango) → mapeo PROPIO obligatorio, no reuso.
+    {'cycle': 'internas-2014', 'plan': 'data/raw/electoral/internas-2014/plan-circuital.csv', 'addr': 'Direccion'},
     {'cycle': 'internas-2019', 'plan': 'data/raw/electoral/internas-2019/plan-circuital.csv', 'addr': 'Direccion'},
     {'cycle': '2019', 'plan': 'data/raw/electoral/nacionales-2019-full/plan-circuital.csv', 'addr': 'Direccion'},
+    # 2015 (departamentales/municipales): PLAN CIRCUITAL recuperado de Wayback (6 letras; MVD=A+B).
+    # CRV renumerados vs otros ciclos → mapeo propio. departamentales-2015 + municipales-2015 lo usan.
+    {'cycle': '2015', 'plan': 'data/raw/electoral/2015/plan-circuital.csv', 'addr': 'Direccion'},
     {'cycle': 'departamentales-2020', 'plan': 'data/raw/electoral/departamentales-2020/plan-circuital.csv', 'addr': 'Direccion'},
     {'cycle': 'referendum-2022', 'plan': 'data/raw/electoral/referendum-2022/plan-circuital.csv', 'addr': 'Direccion'},
     {'cycle': 'departamentales-2025', 'plan': 'data/raw/electoral/departamentales-2025/plan-circuital.csv', 'addr': 'Local'},

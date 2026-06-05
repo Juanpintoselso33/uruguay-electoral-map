@@ -1,12 +1,16 @@
-# Git LFS SOLO para geometría FUENTE grande (GeoJSON crudo de IDE / ETL viejo).
-# NO usar `*.json` global ni `public/**/*.json`: eso mandaba a LFS los shards
-# chicos generados (votes.json ~45KB) y, peor, package.json/tsconfig.json.
-# Regla: LFS solo para los GeoJSON grandes; los artefactos optimizados/chicos
-# bajo public/data/** y la config quedan como TEXTO. Ver code review 1.1 + Story 1.5.
-public/*_map.json filter=lfs diff=lfs merge=lfs -text
-public/*_series_map.json filter=lfs diff=lfs merge=lfs -text
-public/montevideo_series_electorales.json filter=lfs diff=lfs merge=lfs -text
-public/uruguay_series_electorales.json filter=lfs diff=lfs merge=lfs -text
-public/uruguay_series_electorales_map.json filter=lfs diff=lfs merge=lfs -text
-public/v_sig_barrios.json filter=lfs diff=lfs merge=lfs -text
-data/raw/** filter=lfs diff=lfs merge=lfs -text
+# Sin Git LFS.
+#
+# Histórico: el repo usaba Git LFS para la geometría fuente grande (GeoJSON crudo de
+# IDE / ETL viejo). Se eliminó (2026-06-05) porque la cuota de LFS de la cuenta se
+# agotaba y bloqueaba TANTO el CI (build-and-gate) COMO los deploys de Vercel — el
+# clone bajaba punteros en vez del JSON real y el build reventaba. Ver memoria
+# [[ci-lfs-budget-vercel-es-el-gate]].
+#
+# Política actual:
+#  - La geometría que SIRVE la app en runtime vive en public/data/** como TEXTO plano,
+#    ya simplificada (public/data/geo/*.topo.json). Nunca usar LFS para eso.
+#  - El crudo/intermedios de ETL (data/raw/**, data/processed/**) y los geo grandes
+#    legacy de v1 (public/*_map.json, public/*_series*.json, public/v_sig_barrios.json)
+#    NO se versionan: son regenerables (re-descargables de IDE Uruguay / re-corriendo el
+#    ETL) y están gitignoreados. Ver .gitignore.
+#  - Los mapeos curados (data/mappings/**) son fuente manual y se versionan como TEXTO.

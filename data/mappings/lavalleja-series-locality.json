@@ -1,3 +1,33 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a9d16ab0d8b0c35d2a53439ed91ced00f4712c04d512e4e519c086aec1f9835f
-size 765
+{
+  "saa": "MINAS",
+  "sba": "MINAS",
+  "sca": "AGUAS BLANCAS",
+  "scb": "PARAJE RUTA 8 KM 96.500",
+  "scc": "SOLÍS DE MATAOJO",
+  "sda": "BARRANCAS",
+  "sdb": "VILLA DEL ROSARIO",
+  "sdc": "ESTACIÓN SOLIS",
+  "sea": "ALTO DE SANTA LUCÍA",
+  "seb": "SOLDADO",
+  "sec": "CASUPÁ",
+  "sed": "CHAMAMÉ",
+  "see": "CASUPÁ CHICO",
+  "sfa": "POLANCO",
+  "sfb": "POLANCO",
+  "sfc": "POLANCO",
+  "sfd": "BARRIGA NEGRA",
+  "sga": "MARMARAJÁ",
+  "sgb": "PASO DE LOS TRONCOS",
+  "sgc": "MARISCALA",
+  "sgd": "POBLADO COLÓN",
+  "sha": "PIRARAJÁ",
+  "shb": "ARAMENDIA",
+  "shc": "AVERIAS",
+  "shd": "JOSÉ PEDRO VARELA",
+  "sia": "ZAPICÁN",
+  "sib": "ZAPICÁN",
+  "sic": "ZAPICÁN",
+  "sia-sib-sic": "ZAPICÁN",
+  "sid": "ILLESCAS",
+  "sie": "JOSÉ BATLLE Y ORDÓÑEZ"
+}

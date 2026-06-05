@@ -16,6 +16,7 @@ import type { Topology, GeometryCollection } from 'topojson-specification';
 import { feature as topoFeature } from 'topojson-client';
 import { resolveParty } from '../../lib/party-meta';
 import { winnerAtLevel, resolveOpcionAppearance, NIVEL_LABEL, type Nivel, type OpcMeta } from '../../lib/appearance';
+import { buildOpcionTree, type TreeNode } from '../../lib/opcion-tree';
 import type { VotosShard, AgregadoZona } from '../../lib/contracts';
 import { $selection, $level, $comparison, $circuito, bindToLocation, commit, hydrateStores } from '../../stores/map-state';
 import { parseUrl } from '../../lib/url-state';
@@ -30,6 +31,14 @@ const DEPT_LEVELS: Record<string, NivelGeografico[]> = {
   // departments.json. Sin esto, tras navegar (persist) caía a props.availableLevels stale.
   _nacional: ['departamento', 'zona'],
 };
+
+// Ciclo 2009-2010 (Epic 23): elecciones DEPARTAMENTO-only (la app GeneXus de la Corte no
+// publica circuito/serie). resolveNivel prefiere DEPT_LEVELS[dept] (serie/zona) sobre el prop;
+// sin este guard rendería geo/{depto}/serie.topo.json con votos de departamento = mapa gris.
+// Mismo patrón election-aware que municipales.
+const DEPTO_ONLY_2009_2010 = new Set([
+  'internas-2009', 'nacionales-2009', 'balotaje-2009', 'departamentales-2010',
+]);
 import MapLegend from './MapLegend.vue';
 import ResultadoGlobal from './ResultadoGlobal.vue';
 import ZoneSheet from '../sheet/ZoneSheet.vue';
@@ -69,6 +78,11 @@ interface SelInfo {
   seleccionTotal?: number;
   seleccionPct?: number;
   desglose?: DesgloseGrupo[];
+  /** Árbol COMPLETO del desglose de la contienda activa (lema → precand/sublema → lista). Sin truncar. */
+  arbol?: TreeNode[];
+  arbolTotal?: number;
+  /** Ids de opciones seleccionadas en el acordeón — para resaltar nodos en el árbol. */
+  seleccionIds?: string[];
   esCiudadGrande?: boolean;
   // Desglose de TODAS las opciones de la zona (sin selección activa): ranking de partidos con
   // % sobre válidos, ganador marcado. En departamentales nacional incluye candidatos por partido.
@@ -81,7 +95,7 @@ interface SelInfo {
   concejo?: { cargo: 'alcalde' | 'concejal'; nombre: string; lema: string; hoja: string }[] | null;
   // Ficha por circuito/local: metadata del local + desglose de sus circuitos.
   local?: { nombre: string; direccion: string; habilitados: number };
-  circuitos?: { circuito: string; sigla: string; nombre: string; color: string; flagUrl?: string | null; validos: number }[];
+  circuitos?: { circuito: string; sigla: string; nombre: string; color: string; flagUrl?: string | null; validos: number; arbol?: TreeNode[] }[];
 }
 interface CandidatoLinea { candidato: string; votos: number; esVotoAlLema: boolean }
 interface ResultadoLinea {
@@ -286,6 +300,7 @@ let catalogoNivelesPorCont: Map<string, Nivel[]> = new Map();
 // zonaNorm → hojaId → votos (acumulado de los shards de hoja cargados).
 let hojaVotos = new Map<string, Map<string, number>>();
 let lemasCargados = new Set<string>(); // `${contienda}/${lemaId}` ya fetcheados
+const eleccionSinHojaBase = new Set<string>(); // elecciones sin shards de hoja base (lema-only, p.ej. municipales) → no reintentar
 // Story 7.8: a nivel localidad/barrio los shards de hoja están keyed por serie y no joinean por
 // nombre de localidad/barrio. Cargamos UN consolidado `hoja-{nivel}.json` (re-agregado en ETL) que
 // ya viene keyed por la zona geográfica. Guardamos la promise (no un bool) para que llamadas
@@ -642,6 +657,39 @@ let circuitoZonaPorGeo = new Map<string, ZonaLocal>();
 // Desglose por HOJA del nivel local (hoja-local.json), keyed por norm(localId) → opcionId → votos.
 // Da el detalle por lista/sublema en la ficha del circuito y coloreo hoja-exacto (si existe el shard).
 let circuitHojaVotos = new Map<string, Map<string, number>>();
+// Desglose por circuito agrupado por LOCAL (votes-circuito.json): cada local → sus circuitos con
+// porOpcion (nivel lema) → "cómo salió cada circuito" expandible en la ficha del local.
+interface CircuitoDetalle { circuito: string; validos: number; ganadorOpcionId: string; porOpcion: Map<string, number> }
+let circuitosPorLocal = new Map<string, CircuitoDetalle[]>();
+// Desglose por HOJA por circuito (hoja-circuito.json): localKey → circuito → opcionId(HOJA) → votos.
+// Permite que cada circuito del local expanda al árbol COMPLETO (lema→sublema→lista), no solo lema.
+// Deptos grandes vienen sharded por local (índice + hoja-circuito/{localId}.json lazy al click).
+let circuitHojaPorLocal = new Map<string, Map<string, Map<string, number>>>();
+let hojaCircuitoIndex: { base: string; eleccion: string; departamento: string; shardDir: string } | null = null;
+const hojaCircuitoShardLoaded = new Set<string>();
+type HojaCircZona = { geoId: string; local?: string; porOpcion: { opcionId: string; votos: number }[] };
+function indexHojaCircuitoZonas(zonas: HojaCircZona[]): void {
+  for (const z of zonas) {
+    if (!z.local) continue;
+    const lk = norm(z.local);
+    let byCirc = circuitHojaPorLocal.get(lk);
+    if (!byCirc) { byCirc = new Map(); circuitHojaPorLocal.set(lk, byCirc); }
+    byCirc.set(z.geoId, new Map(z.porOpcion.map((o) => [o.opcionId, o.votos])));
+  }
+}
+/** Lazy-fetch del shard hoja-circuito de un local (deptos sharded). Devuelve true si cargó algo nuevo. */
+async function ensureHojaCircuitoShard(localGeoId: string): Promise<boolean> {
+  const idx = hojaCircuitoIndex;
+  if (!idx || hojaCircuitoShardLoaded.has(localGeoId)) return false;
+  hojaCircuitoShardLoaded.add(localGeoId);
+  try {
+    const res = await fetch(`${idx.base}/data/${idx.eleccion}/${idx.departamento}/${idx.shardDir}/${localGeoId}.json`);
+    if (!res.ok) return false;
+    const shard = (await res.json()) as { zonas?: HojaCircZona[] };
+    if (Array.isArray(shard.zonas)) { indexHojaCircuitoZonas(shard.zonas); return true; }
+  } catch { /* sin shard → el circuito degrada a desglose por partido */ }
+  return false;
+}
 
 /** Carga los SVGs de banderas como HTMLImageElement para el canvas overlay. */
 async function loadFlagImages(): Promise<void> {
@@ -1155,13 +1203,13 @@ function ensureCatalogo(eleccion: string, departamento: string): Promise<void> {
 }
 
 /**
- * Carga el consolidado `hoja-{nivel}.json` (localidad/barrio) UNA vez por nivel y puebla `hojaVotos`
- * keyed por nombre de zona geográfica — el mismo índice de join que las series. Devuelve true si el
- * nivel usa este modo consolidado (localidad/barrio), independientemente de si el fetch encontró
- * datos (los tipos planos no tienen archivo → hojaVotos queda vacío → fallback por lema). */
+ * Carga el consolidado `hoja-{nivel}.json` (localidad/barrio/municipio) UNA vez por nivel y puebla
+ * `hojaVotos` keyed por nombre de zona geográfica — el mismo índice de join que las series. Devuelve
+ * true si el nivel usa este modo consolidado, independientemente de si el fetch encontró datos
+ * (los tipos planos no tienen archivo → hojaVotos queda vacío → fallback por lema). */
 async function ensureHojaGeoConsolidado(eleccion: string, departamento: string): Promise<boolean> {
   const nivel = activeNivel;
-  if (nivel !== 'localidad' && nivel !== 'barrio') return false;
+  if (nivel !== 'localidad' && nivel !== 'barrio' && nivel !== 'municipio') return false;
   if (hojaGeoPromise) return hojaGeoPromise; // un caller concurrente espera el MISMO fetch poblado
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   hojaGeoPromise = (async () => {
@@ -1269,6 +1317,113 @@ function buildDesglose(key: string, sel: string[], votesFor?: (id: string) => nu
       };
     });
   return { grupos, total };
+}
+
+/** Contienda activa para la ficha: la del acordeón ($selection.contienda); si no, la del ganador; si no, la primera. */
+function activeContiendaFicha(hint?: string): string | null {
+  const sel = $selection.get().contienda;
+  if (sel) return sel;
+  if (hint) { const m = catalogoOpcMeta?.get(hint); if (m) return m.contienda; }
+  const it = catalogoNivelesPorCont.keys().next();
+  return it.done ? null : it.value;
+}
+
+/**
+ * Árbol COMPLETO del desglose de una zona/local para la contienda activa (lema → precand/sublema →
+ * lista), SIN truncar y SIN depender de la selección. Deriva la jerarquía de los `niveles[]` del
+ * catálogo (comportamiento por tipo de elección emerge del dato). `lookup` da los votos por opcionId
+ * (hoja-local para locales, hojaVotos para zonas; zonasVotos como base para tipos planos).
+ */
+function buildArbol(key: string, lookup: (id: string) => number, contiendaHint?: string): { nodes: TreeNode[]; total: number } | null {
+  const meta = catalogoOpcMeta;
+  if (meta && meta.size > 0) {
+    // Si el usuario fijó contienda en el acordeón, respetarla; si no, probar la del hint y luego las
+    // demás, eligiendo la PRIMERA con votos en esta zona. (En departamentales el overlay del local
+    // solo tiene junta+municipio, no intendente → la primera-con-datos evita la ficha vacía.)
+    const explicit = $selection.get().contienda;
+    const hintCont = contiendaHint ? meta.get(contiendaHint)?.contienda : undefined;
+    const all = [...catalogoNivelesPorCont.keys()];
+    const candidates = explicit ? [explicit]
+      : hintCont ? [hintCont, ...all.filter((c) => c !== hintCont)]
+      : all;
+    for (const cont of candidates) {
+      const niveles = catalogoNivelesPorCont.get(cont) ?? ['lema'];
+      if (niveles.length <= 1) continue; // contienda plana → cae al fallback de abajo
+      const votos: { opcionId: string; votos: number }[] = [];
+      for (const [id, m] of meta) {
+        if (m.contienda !== cont) continue;
+        const v = lookup(id);
+        if (v > 0) votos.push({ opcionId: id, votos: v });
+      }
+      if (votos.length > 0) {
+        return buildOpcionTree({
+          niveles, votos,
+          metaOf: (id) => meta.get(id),
+          nodeLabel: (id) => catalogoNodeLabel.get(id),
+          partyOf: (nombre) => resolveParty(nombre, activeEleccion),
+          flatNombre: (id) => opcNombreMap.get(id),
+        });
+      }
+    }
+  }
+  // Fallback plano (balotaje/plebiscito/referéndum, o contienda de 1 nivel): porOpcion base de la zona.
+  const vm = zonasVotos.get(key);
+  if (vm && vm.size > 0) {
+    const votos = [...vm.entries()].filter(([, v]) => v > 0).map(([opcionId, votos]) => ({ opcionId, votos }));
+    return buildOpcionTree({
+      niveles: ['lema'], votos,
+      metaOf: () => undefined, nodeLabel: () => undefined,
+      partyOf: (nombre) => resolveParty(nombre, activeEleccion),
+      flatNombre: (id) => opcNombreMap.get(id),
+    });
+  }
+  return null;
+}
+
+/**
+ * Carga TODOS los shards de hoja de la contienda activa (no solo la selección) para que la ficha
+ * arme el árbol completo en una zona base. Localidad/barrio usan el consolidado (1 archivo). Los
+ * locales no la necesitan (hoja-local trae todo). Idempotente vía `lemasCargados`.
+ */
+async function ensureAllHojaShards(eleccion: string, departamento: string): Promise<void> {
+  await ensureCatalogo(eleccion, departamento);
+  // Consolidado (localidad/barrio/municipio) PRIMERO: gana aunque un probe anterior con nivel
+  // equivocado haya marcado la elección como sin-hoja (evita bloquear el desglose por lista).
+  if (await ensureHojaGeoConsolidado(eleccion, departamento)) return;
+  if (eleccionSinHojaBase.has(eleccion)) return; // ya se supo que no publica shards de hoja base
+
+  const cont = activeContiendaFicha();
+  const meta = catalogoOpcMeta;
+  if (!meta || !cont) return;
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  const need: string[] = [];
+  for (const [, m] of meta) {
+    if (m.contienda === cont && m.lemaId) {
+      const k = `${m.contienda}/${m.lemaId}`;
+      if (!lemasCargados.has(k)) need.push(k);
+    }
+  }
+  if (need.length === 0) return;
+  const load = async (k: string): Promise<boolean> => {
+    try {
+      const res = await fetch(`${base}/data/${eleccion}/${departamento}/hoja/${k}.json`);
+      lemasCargados.add(k);
+      if (!res.ok) return false;
+      const shard = (await res.json()) as VotosShard;
+      for (const z of shard.zonas) {
+        const zkey = norm(z.geoId);
+        let mm = hojaVotos.get(zkey);
+        if (!mm) { mm = new Map(); hojaVotos.set(zkey, mm); }
+        for (const { opcionId, votos } of z.porOpcion) mm.set(opcionId, votos);
+      }
+      return true;
+    } catch { lemasCargados.add(k); return false; }
+  };
+  // Probe el primer shard: si la elección no publica desglose por hoja (municipales = lema-only),
+  // no dispares N fetches a 404 — marcala y salí (degrada limpio al árbol por lema).
+  const firstOk = await load(need[0]);
+  if (!firstOk) { eleccionSinHojaBase.add(eleccion); return; }
+  await Promise.all(need.slice(1).map(load));
 }
 
 /** Construye un FC coloreado por la selección según el modo (share/votos/heatmap). */
@@ -1981,6 +2136,10 @@ async function reloadData(eleccion: string, departamento: string, nivel: string)
   hojaVotos = new Map();
   circuitoZonaPorGeo = new Map();   // ficha por circuito/local: limpiar dato del overlay al cambiar depto/elección
   circuitHojaVotos = new Map();     // desglose por hoja del local: idem
+  circuitosPorLocal = new Map();    // desglose por circuito agrupado por local: idem
+  circuitHojaPorLocal = new Map();  // desglose por HOJA por circuito: idem
+  hojaCircuitoIndex = null;
+  hojaCircuitoShardLoaded.clear();
 
   lemasCargados = new Set();
   hojaGeoPromise = null; // Story 7.8: re-cargar el consolidado hoja-{nivel} al cambiar nivel/depto
@@ -2017,6 +2176,7 @@ async function reloadData(eleccion: string, departamento: string, nivel: string)
       commit({ zona: null });
     } else {
       applySelection(selZona);
+      ensureFichaArbol(selZona); // navegación in-app: cargar el árbol completo con el nivel ya resuelto
     }
     // Reaplicar filtro de opción si había uno activo al cambiar de departamento (Story 2.2).
     applyOpcionFilter(sel.opcion);
@@ -2101,6 +2261,7 @@ async function loadCircuitoOverlay(eleccion: string, departamento: string): Prom
     circuitoZonaPorGeo = new Map(votes.zonas.map((z) => [norm(z.geoId), z as ZonaLocal]));
     // Desglose por HOJA del local (si existe el shard): detalle por lista en la ficha + coloreo exacto.
     circuitHojaVotos = new Map();
+    circuitosPorLocal = new Map();
     if (votes.nivel === 'local') {
       try {
         const hlRes = await fetch(`${base}/data/${eleccion}/${departamento}/hoja-local.json`);
@@ -2111,6 +2272,33 @@ async function loadCircuitoOverlay(eleccion: string, departamento: string): Prom
           }
         }
       } catch { /* sin hoja-local → la ficha degrada a nivel partido */ }
+      // El árbol per-circuito necesita el catálogo (mapea opcionId de HOJA → jerarquía).
+      await ensureCatalogo(eleccion, departamento);
+      // Desglose por circuito (votes-circuito.json, nivel lema), agrupado por su `local`: da la lista
+      // de circuitos del local + el ganador/válidos (y el desglose por partido como fallback).
+      try {
+        const vcRes = await fetch(`${base}/data/${eleccion}/${departamento}/votes-circuito.json`);
+        if (vcRes.ok) {
+          const vc = (await vcRes.json()) as { zonas: Array<{ geoId: string; local?: string; ganadorOpcionId: string; validos: number; porOpcion: { opcionId: string; votos: number }[] }> };
+          for (const z of vc.zonas) {
+            if (!z.local) continue;
+            const k = norm(z.local);
+            let arr = circuitosPorLocal.get(k);
+            if (!arr) { arr = []; circuitosPorLocal.set(k, arr); }
+            arr.push({ circuito: z.geoId, validos: z.validos, ganadorOpcionId: z.ganadorOpcionId, porOpcion: new Map(z.porOpcion.map((o) => [o.opcionId, o.votos])) });
+          }
+        }
+      } catch { /* sin votes-circuito → la ficha del local no muestra per-circuito */ }
+      // Desglose por HOJA por circuito (hoja-circuito.json): árbol completo de cada circuito. Single-file
+      // se indexa entero; los deptos sharded guardan el índice y se fetchean por local al click.
+      try {
+        const hcRes = await fetch(`${base}/data/${eleccion}/${departamento}/hoja-circuito.json`);
+        if (hcRes.ok) {
+          const hc = (await hcRes.json()) as { sharded?: boolean; shardDir?: string; zonas?: HojaCircZona[] };
+          if (hc.sharded && hc.shardDir) hojaCircuitoIndex = { base, eleccion, departamento, shardDir: hc.shardDir };
+          else if (Array.isArray(hc.zonas)) indexHojaCircuitoZonas(hc.zonas);
+        }
+      } catch { /* sin hoja-circuito → el circuito degrada a desglose por partido */ }
     }
     for (const f of geo.features) {
       const name = String((f.properties as { name: string }).name);
@@ -2162,7 +2350,15 @@ async function loadCircuitoOverlay(eleccion: string, departamento: string): Prom
     m.setLayoutProperty('circuitos-circle', 'visibility', 'visible');
     // Si la URL ya traía ?zona=<localId> (deep-link), abrir su ficha ahora que el overlay cargó.
     const zsel = $selection.get().zona;
-    if (zsel && circuitoZonaPorGeo.has(norm(zsel))) selectCircuitoLocal(zsel);
+    if (zsel && circuitoZonaPorGeo.has(norm(zsel))) {
+      selectCircuitoLocal(zsel);
+      // Depto sharded: traer el shard hoja-circuito del local y re-armar con el árbol completo por circuito.
+      if (hojaCircuitoIndex) {
+        void ensureHojaCircuitoShard(zsel).then((loaded) => {
+          if (loaded && $selection.get().zona === zsel) selectCircuitoLocal(zsel);
+        });
+      }
+    }
   } catch {
     // Sin datos de circuito — silencioso
   }
@@ -2219,6 +2415,7 @@ function selectByName(name: string, fc: FeatureCollection): void {
       : null;
     const rawGeoId = String(p.name);
     const zonaNombre = serieBarrioMap.get(rawGeoId.toLowerCase()) ?? serieLocalidadMap.get(rawGeoId.toLowerCase());
+    const arbolRes = buildArbol(key, (id) => hojaVotos.get(key)?.get(id) ?? zonasVotos.get(key)?.get(id) ?? 0, ganadorId);
     selected.value = {
       geoId: rawGeoId,
       label: zonaNombre ? `${zonaNombre} · ${rawGeoId.toUpperCase()}` : undefined,
@@ -2239,6 +2436,9 @@ function selectByName(name: string, fc: FeatureCollection): void {
       seleccionTotal: desg?.total,
       seleccionPct: desg && validos > 0 ? (desg.total / validos) * 100 : undefined,
       desglose: desg?.grupos,
+      arbol: arbolRes?.nodes,
+      arbolTotal: arbolRes?.total,
+      seleccionIds: seleccionActiva.value.length > 0 ? [...seleccionActiva.value] : undefined,
       resultadoZona,
       intendenteElecto,
       alcaldeElecto,
@@ -2269,11 +2469,35 @@ function selectCircuitoLocal(name: string): void {
   const ganMeta = resolveParty(ganNombre, activeEleccion);
   const votoGanador = z.porOpcion.find((o) => o.opcionId === z.ganadorOpcionId)?.votos ?? 0;
   const noP = z.noPartidarios ?? { enBlanco: 0, anulados: 0, observados: 0 };
-  const circuitos = (z.circuitos ?? []).map((c) => {
-    const nm = opcNombreMap.get(c.ganadorOpcionId) ?? c.ganadorOpcionId;
-    const m = resolveParty(nm, activeEleccion);
-    return { circuito: c.circuito, sigla: m.sigla, nombre: nm, color: m.color, flagUrl: m.flagUrl, validos: c.validos };
-  });
+  // "Circuitos que votan acá": preferimos el desglose por circuito de votes-circuito (con porOpcion
+  // por partido → expandible a su árbol). Si no está, caemos al resumen de votes-local (ganador+válidos).
+  const detalle = circuitosPorLocal.get(norm(name));
+  const hojaPorCirc = circuitHojaPorLocal.get(norm(name));
+  const circNumOrd = (a: string, b: string): number => (Number(a) - Number(b)) || a.localeCompare(b, 'es');
+  const circuitos = (detalle && detalle.length > 0)
+    ? detalle.slice().sort((a, b) => circNumOrd(a.circuito, b.circuito)).map((c) => {
+        const nm = opcNombreMap.get(c.ganadorOpcionId) ?? c.ganadorOpcionId;
+        const m = resolveParty(nm, activeEleccion);
+        // Si hay desglose por HOJA del circuito → árbol COMPLETO (lema→sublema→lista) como el local.
+        const hmap = hojaPorCirc?.get(c.circuito);
+        const arb = hmap
+          ? buildArbol(norm(name), (id) => hmap.get(id) ?? 0, c.ganadorOpcionId)
+          // Fallback: árbol plano por partido (votes-circuito es nivel lema).
+          : buildOpcionTree({
+              niveles: ['lema'],
+              votos: [...c.porOpcion.entries()].filter(([, v]) => v > 0).map(([opcionId, votos]) => ({ opcionId, votos })),
+              metaOf: () => undefined,
+              nodeLabel: () => undefined,
+              partyOf: (nombre) => resolveParty(nombre, activeEleccion),
+              flatNombre: (id) => opcNombreMap.get(id),
+            });
+        return { circuito: c.circuito, sigla: m.sigla, nombre: nm, color: m.color, flagUrl: m.flagUrl, validos: c.validos, arbol: arb?.nodes };
+      })
+    : (z.circuitos ?? []).map((c) => {
+        const nm = opcNombreMap.get(c.ganadorOpcionId) ?? c.ganadorOpcionId;
+        const m = resolveParty(nm, activeEleccion);
+        return { circuito: c.circuito, sigla: m.sigla, nombre: nm, color: m.color, flagUrl: m.flagUrl, validos: c.validos };
+      });
   // Desglose de lo seleccionado en este circuito (paridad con selectByName). Si existe hoja-local
   // → detalle COMPLETO por lista/sublema (igual que zona); si no → agregado por partido.
   const opcionId = $selection.get().opcion;
@@ -2286,6 +2510,12 @@ function selectCircuitoLocal(name: string): void {
   const pctOpcionActiva = !desg && opcionId && z.validos > 0
     ? ((hojaMap?.get(opcionId) ?? z.porOpcion.find((o) => o.opcionId === opcionId)?.votos ?? 0) / z.validos) * 100
     : null;
+  // Árbol completo del local: hoja-local da el per-hoja; si no, cae al porOpcion del overlay (nivel lema).
+  const arbolRes = buildArbol(
+    norm(name),
+    (id) => hojaMap?.get(id) ?? z.porOpcion.find((o) => o.opcionId === id)?.votos ?? 0,
+    z.ganadorOpcionId,
+  );
   selected.value = {
     geoId: name,
     label: z.local?.nombre ?? name,
@@ -2299,6 +2529,9 @@ function selectCircuitoLocal(name: string): void {
     seleccionTotal: desg?.total,
     seleccionPct: desg && z.validos > 0 ? (desg.total / z.validos) * 100 : undefined,
     desglose: desg?.grupos,
+    arbol: arbolRes?.nodes,
+    arbolTotal: arbolRes?.total,
+    seleccionIds: seleccionActiva.value.length > 0 ? [...seleccionActiva.value] : undefined,
     local: z.local, circuitos,
   };
 }
@@ -2324,6 +2557,26 @@ function applySelection(zona: string | null): void {
   // forzamos un render para que aparezca/desaparezca al seleccionar o limpiar.
   m.triggerRepaint();
 }
+/**
+ * Carga perezosa de los datos de hoja para el ÁRBOL COMPLETO de la ficha y re-arma cuando llegan.
+ * - Zona base → TODOS los shards de hoja de la contienda (o el consolidado localidad/barrio/municipio).
+ * - Local de depto sharded → su shard hoja-circuito (árbol por circuito).
+ * Guardado a `map.value`: la corrida temprana del subscriber (hidratación, map aún null, activeNivel
+ * sin asentar) NO dispara fetches → se evita el probe a un nivel equivocado. Lo llaman el subscriber
+ * (clicks/commits), el init (deep-link) y reloadData (navegación in-app), siempre con el nivel correcto.
+ */
+function ensureFichaArbol(zona: string | null): void {
+  if (!zona || !map.value) return;
+  if (circuitoZonaPorGeo.has(norm(zona))) {
+    if (hojaCircuitoIndex) void ensureHojaCircuitoShard(zona).then((ok) => {
+      if (ok && map.value && $selection.get().zona === zona) applySelection(zona);
+    });
+  } else {
+    void ensureAllHojaShards(activeEleccion, activeDepartamento).then(() => {
+      if (map.value && $selection.get().zona === zona) applySelection(zona);
+    });
+  }
+}
 const unsubSelection = $selection.subscribe((s) => {
   opcionActiva.value = s.opcion;
   seleccionActiva.value = [...s.seleccion];
@@ -2331,6 +2584,7 @@ const unsubSelection = $selection.subscribe((s) => {
   gnivel.value = esNivel(s.gnivel) ? s.gnivel : 'lema';
   syncNivelesDisponibles();
   applySelection(s.zona);
+  ensureFichaArbol(s.zona);
   if (comparacionActiva.value) {
     // Comparación activa: clickear una zona NO debe re-renderizar la vista base (eso causaba un
     // flash del render común por un frame). Mantenemos el coloreo de comparación intacto.
@@ -2351,6 +2605,8 @@ function resolveNivel(urlLevel: NivelGeografico, dept?: string): NivelGeografico
   // elección) → al navegar in-app desde una departamental (zona/serie) resolvería mal y cargaría la
   // geometría vieja (barrios) con votos de municipio = todo gris. Forzar 'municipio' lo evita.
   if (activeEleccion?.startsWith('municipales')) return 'municipio' as NivelGeografico;
+  // 2009-2010 depto-only: forzar 'departamento' (DEPT_LEVELS[dept] traería serie/zona inexistentes).
+  if (activeEleccion && DEPTO_ONLY_2009_2010.has(activeEleccion) && dept !== '_nacional') return 'departamento' as NivelGeografico;
   const avail = (dept ? DEPT_LEVELS[dept] : null) ?? props.availableLevels ?? (['zona'] as NivelGeografico[]);
   const base = avail.filter(l => l !== 'circuito' && l !== 'local');
   const valid = base.length > 0 ? base : avail;
@@ -2555,6 +2811,7 @@ onMounted(async () => {
         comparacionPendiente.value = !!(cmpPre.vs && cmpPre.vs !== props.eleccion && !(cmpPre.a && cmpPre.b)) && cmpModo.value === 'ganador';
       }
       applySelection($selection.get().zona);
+      ensureFichaArbol($selection.get().zona); // deep-link: cargar el árbol completo ahora que el nivel está asentado
       applyOpcionFilter($selection.get().opcion);
       // Epic 10: si la URL ya traía ?sel=, colorear por la selección de hojas (Story 10.4).
       {
@@ -2599,10 +2856,13 @@ onMounted(async () => {
   // Escuchar astro:after-swap (ClientRouter) para recargar datos sin re-init del mapa.
   const handler = () => {
     const view = parseUrl(window.location.pathname, window.location.search);
+    const ctxChanged = view.eleccion !== activeEleccion || view.departamento !== activeDepartamento;
+    // Actualizar el contexto activo ANTES de hydrateStores: si la hidratación dispara el subscriber
+    // de $circuito (al cambiar ?circ en la navegación), debe ver la elección/depto NUEVOS, no los
+    // viejos — si no, loadCircuitoOverlay corría con la elección anterior (carrera del deep-link).
+    if (ctxChanged) { activeEleccion = view.eleccion; activeDepartamento = view.departamento; }
     hydrateStores(view);
-    if (view.eleccion !== activeEleccion || view.departamento !== activeDepartamento) {
-      activeEleccion = view.eleccion;
-      activeDepartamento = view.departamento;
+    if (ctxChanged) {
       readResultadoCtx(); // el masthead nuevo ya está en el DOM tras el swap
       const newNivel = resolveNivel(view.level, view.departamento);
       activeNivel = newNivel;
