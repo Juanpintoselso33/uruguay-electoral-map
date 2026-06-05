@@ -74,3 +74,19 @@ Re-skin del `EleccionSelector` como línea de tiempo con nodos conectados + fade
 
 ## Secuencia
 Fase 1 = 23.1 · Fase 2 = 23.2 + 23.3 · Fase 3 = 23.4 + 23.5 (+ 23.6). Validar (`npm run check`, build, a11y) entre fases. Una rama por fase o PR incremental sobre `feat/epic-23-ux-redesign`.
+
+## Estado (2026-06-04)
+
+Rama `feat/epic-23-ux-redesign`. Todo verificado en browser (Playwright) + `npm run check` 0 errores.
+
+| Story | Estado | Commit |
+|---|---|---|
+| 23.1 base visual (tokens + `.seg`/`.card`/`.topbar`/`.num`, selectores segmented) | ✅ | `ddd5abf` |
+| 23.1 color (paleta exacta del mockup, dark cálido) | ✅ | `0db392a` |
+| 23.2 layout workspace 2-columnas (mapa + rail sticky) | ✅ | `11417c3` |
+| 23.5 dark mode toggle manual (claro/oscuro/auto, anti-flash) | ✅ | `e352df6` |
+| 23.3 rail de resultados como card | ✅ | `ff9a8be` |
+| 23.4 mapa: badge de leyenda overlay + tooltip on-brand (zoom ya existe) | ⏳ pendiente | |
+| 23.6 timeline con nodos conectados (re-skin EleccionSelector) | ⏳ pendiente | |
+
+**Notas para continuar:** todo el layout 2-col vive DENTRO de `ChoroplethMap.vue` (`.ws-map`/`.ws-rail`), porque el mapa+leyenda+result+ficha son un solo island con `transition:persist`. El badge (23.4) sería un overlay absolute sobre `.ws-map`. El timeline (23.6) toca `EleccionSelector.vue` (cuidado con la lógica de agrupado por año). El `<main>` se ensancha a `max-w-6xl` en `lg` (1024px), mismo breakpoint que el grid.
