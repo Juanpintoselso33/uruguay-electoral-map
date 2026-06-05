@@ -200,6 +200,9 @@ def main():
         if a.mode == "direct":
             c2l, cat = build_circ2local_direct(dep)
         else:
+            # GUARD plan parcial (internas-2014 = solo MVD+CA+MA): sin plan para el depto → skip.
+            if not plan_by_dept.get(dep):
+                continue
             c2l, cat = build_circ2local_match(dep, plan_by_dept.get(dep, []))
         order = [lo["localId"] for lo in cat["locales"]]
 

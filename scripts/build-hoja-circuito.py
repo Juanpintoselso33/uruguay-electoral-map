@@ -191,6 +191,10 @@ CONFIG = {
         "plan": "data/raw/electoral/nacionales-2019-full/plan-circuital.csv"},
     "internas-2019": {"tipo": "internas", "mode": "match",
         "plan": "data/raw/electoral/internas-2019/plan-circuital.csv"},
+    # internas-2014: plan PARCIAL (solo MVD+CA+MA, recuperado de Wayback). El GUARD de plan-por-depto
+    # evita emitir overlay en los 16 deptos sin plan.
+    "internas-2014": {"tipo": "internas", "mode": "match",
+        "plan": "data/raw/electoral/internas-2014/plan-circuital.csv"},
     "internas-2024": {"tipo": "internas", "mode": "direct"},
     "departamentales-2025": {"tipo": "departamental", "mode": "match",
         "plan": "data/raw/electoral/departamentales-2025/plan-circuital.csv"},
@@ -272,6 +276,9 @@ def build(eleccion, cfg):
         if cfg["mode"] == "direct":
             c2l, cat = build_circ2local_direct(dep)
         else:
+            # GUARD plan parcial (internas-2014 = solo MVD+CA+MA): sin plan para el depto → skip.
+            if not plan_by_dept.get(dep):
+                continue
             c2l, cat = build_circ2local_match(dep, plan_by_dept.get(dep, []))
 
         # circ_votes[crv][opcionId] += votos  (misma resolución que build-hoja-local)

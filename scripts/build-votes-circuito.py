@@ -177,6 +177,9 @@ CONFIG = {
         "plan": "data/raw/electoral/nacionales-2014/plan-circuital.csv"},
     "internas-2019": {"family": "desglose", "mode": "match", "tiporeg": "HOJA_ODN", "tipo": "internas",
         "plan": "data/raw/electoral/internas-2019/plan-circuital.csv"},
+    # internas-2014: plan PARCIAL (solo MVD+CA+MA). GUARD de plan-por-depto = no toca los 16 sin plan.
+    "internas-2014": {"family": "desglose", "mode": "match", "tiporeg": "HOJA_ODN", "tipo": "internas",
+        "plan": "data/raw/electoral/internas-2014/plan-circuital.csv"},
     "departamentales-2020": {"family": "desglose", "mode": "match", "tiporeg": "HOJA_ED", "tipo": "departamental",
         "desglose": "data/raw/electoral/departamentales-2020/desglose-de-votos-elecci-n-departamental.csv",
         "plan": "data/raw/electoral/departamentales-2020/plan-circuital.csv"},
@@ -288,6 +291,11 @@ def build_desglose(eleccion, cfg):
         else:
             if plan_by_dept is None:
                 plan_by_dept = read_plan(cfg["plan"])
+            # GUARD (planes de cobertura PARCIAL, ej. internas-2014 = solo MVD+CA+MA): si el plan
+            # no tiene filas para este depto, NO emitir overlay (evita habilitar circuito/local en
+            # los 16 deptos sin plan, que es lo que el desbloqueo NO debe tocar).
+            if not plan_by_dept.get(dep):
+                results[dep] = {"skip": "sin plan para el depto"}; continue
             c2l, _ = c2l_match(dep, plan_by_dept.get(dep, []))
 
         circ_votes = defaultdict(lambda: defaultdict(int))
@@ -397,6 +405,8 @@ def main():
             for dep, r in res.items():
                 if "error" in r:
                     print(f"  {dep:16} ✗ {r['error']}"); continue
+                if "skip" in r:
+                    print(f"  {dep:16} — {r['skip']}"); continue
                 drop = f" dropped={r['dropped']}" if r.get("dropped") else ""
                 unk = f" UNK={r['unknown']}" if r.get("unknown") else ""
                 kb = r["size"] / 1024

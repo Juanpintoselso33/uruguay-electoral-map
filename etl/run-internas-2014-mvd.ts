@@ -1,74 +1,77 @@
 /**
- * ETL — Montevideo internas-2014, DEPTO-TOTAL (una sola zona = "Montevideo").
+ * ETL — Montevideo internas-2014, nivel BARRIO (geoId = nombre del barrio, 62 zonas).
  *
- * POR QUÉ depto-total y no por barrio: el join CRV→barrio de Montevideo es POR CICLO (ADR-0001).
- * internas-2014 (junio) NO comparte la numeración de CRV de nacionales-2014 (octubre): el test
- * CRV→SERIES da 8,2% de coincidencia → reusar `montevideo-circuito-barrio.2014.json` mis-joinea
- * (el bug "Carrasco 66,5%"). Y NO existe plan-circuital de internas-2014 (ni en el repo ni en CKAN)
- * para generar un mapeo address-based propio con build-circuito-barrio-cycles.py. El fallback
- * serie→barrio dominante tiene pureza ponderada por votos de sólo 59% → inaceptable (ADR último tier).
+ * DESBLOQUEO (reemplaza el nivel-serie anterior): se recuperó el PLAN CIRCUITAL de internas-2014
+ * desde Wayback (data/raw/electoral/internas-2014/planes-pdf/Montevideo.pdf → plan-circuital.csv).
+ * Con el plan, el join CRV→BARRIO ahora es posible (geocodificación DIRECCIÓN→coords→point-in-polygon),
+ * igual que el resto de las internas. MVD pasa de "1 zona / por serie" a 62 BARRIOS.
  *
- * Solución honesta: emitir el TOTAL departamental exacto (suma de todas las filas MO HOJA_ODN,
- * sin join), en una única zona "Montevideo". Esto:
- *   - mantiene MVD (el depto más grande) en la VISTA NACIONAL (build-nacional-votes exige 19 deptos),
- *     con totales correctos a nivel departamento.
- *   - degrada con gracia la ficha per-depto de MVD a una sola zona (sin barrios falsos).
- * Para recuperar el barrio + circuito + local de MVD hace falta el plan-circuital de internas-2014.
+ * IMPORTANTE: los CRV de internas-2014 se RENUMERAN vs nacionales-2014 (0% de match exacto de rango
+ * en el mismo año) → el mapeo es PROPIO del ciclo (montevideo-circuito-barrio.internas-2014.json,
+ * build-circuito-barrio-cycles.py). No se reusa el mapeo de otra elección (sería el bug "Carrasco").
  *
- * Ejecutar: `npm run etl:internas-2014-mvd`
+ * Fuentes:
+ *   - Votos:    data/raw/electoral/internas-2014/desglose-de-votos.csv (UTF-8; DEPARTAMENTO='MO',
+ *               TIPO_REGISTRO=HOJA_ODN; opcionId = slug(LEMA con prefijo "Partido ")).
+ *   - Mapeo:    data/mappings/montevideo-circuito-barrio.internas-2014.json (crvToBarrio).
+ *   - Geometría: public/data/geo/montevideo/zona.topo.json (62 barrios, ya existe; no se regenera).
+ *
+ * El nivel HOJA por barrio lo emite run-internas-2014-hoja.ts (que ahora hace MVD por barrio).
+ * Los overlays circuito/local los emiten build-votes-circuito/build-votes-local (con el plan).
+ *
+ * Ejecutar: `npm run etl:internas-2014-mvd` (después correr el sweep de partidos + nacional).
  */
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
-import type { AgregadoZona, VotoOpcion } from '../src/lib/contracts';
+import { feature } from 'topojson-client';
+import type { GeometryCollection } from 'topojson-specification';
+import type { FeatureCollection } from 'geojson';
 import { parseCsv } from './extract/parse-csv';
+import { aggregateInternasMvdBarrio } from './transform/aggregate-internas-mvd-barrio';
 import { buildShard, writeShard } from './load/emit-shard';
 import { reconcile } from './gates/reconcile';
-import { slug } from './lib/normalize';
+import { checkCoverage } from './gates/coverage';
 
 const CSV = 'data/raw/electoral/internas-2014/desglose-de-votos.csv';
-const ELECCION = 'internas-2014';
-const SHARD_OUT = `public/data/${ELECCION}/montevideo/votes.json`;
-const OPCIONES_OUT = `public/data/${ELECCION}/montevideo/opciones.json`;
+const MAPPING_IN = 'data/mappings/montevideo-circuito-barrio.internas-2014.json';
+const GEO_IN = 'public/data/geo/montevideo/zona.topo.json';
+const SHARD_OUT = 'public/data/internas-2014/montevideo/votes.json';
+const OPCIONES_OUT = 'public/data/internas-2014/montevideo/opciones.json';
 
 function main(): void {
-  console.log('=== ETL Montevideo internas-2014 — DEPTO-TOTAL (sin barrio; ver ADR-0001) ===');
+  console.log('=== ETL Montevideo internas-2014 — nivel BARRIO (CRV→barrio por ciclo) ===');
   const rows = parseCsv(CSV, 'utf8');
+  const { crvToBarrio } = JSON.parse(readFileSync(MAPPING_IN, 'utf8')) as { crvToBarrio: Record<string, string> };
 
-  const lemas = new Map<string, number>();   // lemaId → votos
-  const lemaNombre = new Map<string, string>();
-  let total = 0;
-  for (const r of rows) {
-    if (r['DEPARTAMENTO'] !== 'MO' || r['TIPO_REGISTRO'] !== 'HOJA_ODN') continue;
-    const votos = Number(r['CANTIDAD_VOTOS']) || 0;
-    if (votos <= 0) continue;
-    const lemaRaw = (r['LEMA'] ?? '').trim();
-    if (!lemaRaw) continue;
-    const lemaId = slug(lemaRaw);
-    lemaNombre.set(lemaId, lemaRaw);
-    lemas.set(lemaId, (lemas.get(lemaId) ?? 0) + votos);
-    total += votos;
-  }
+  const agg = aggregateInternasMvdBarrio(rows, crvToBarrio, 'MO');
+  console.log(
+    `barrios ${agg.zonas.length} · ${agg.opciones.length} lemas · total ${agg.totalCanonico.toLocaleString('es-UY')} · ` +
+      `unmapped ${agg.unmappedVotos.toLocaleString('es-UY')} (${agg.circuitosSinBarrio.length} circuitos)`,
+  );
 
-  const ranking = [...lemas.entries()].sort((a, b) => b[1] - a[1]);
-  const porOpcion: VotoOpcion[] = ranking.map(([opcionId, votos]) => ({ opcionId, votos }));
-  const zona: AgregadoZona = {
-    geoId: 'Montevideo',
-    ganadorOpcionId: ranking.length ? ranking[0][0] : '',
-    validos: total,
-    porOpcion,
-    noPartidarios: { enBlanco: 0, anulados: 0, observados: 0 },
-  };
-
-  const shard = buildShard([zona], { eleccionId: ELECCION, departamento: 'montevideo', tipo: 'internas', nivel: 'zona', outPath: SHARD_OUT });
+  const shard = buildShard(agg.zonas, {
+    eleccionId: 'internas-2014', departamento: 'montevideo', tipo: 'internas', nivel: 'zona', outPath: SHARD_OUT,
+  });
   writeShard(shard, SHARD_OUT);
-  const opciones = [...lemaNombre.entries()].map(([opcionId, nombre]) => ({ opcionId, nombre }));
   mkdirSync(dirname(OPCIONES_OUT), { recursive: true });
-  writeFileSync(OPCIONES_OUT, JSON.stringify({ opciones }), 'utf8');
+  writeFileSync(OPCIONES_OUT, JSON.stringify({ opciones: agg.opciones }), 'utf8');
+  console.log(`Shard + opciones: ${SHARD_OUT}`);
 
-  console.log(`Montevideo depto-total: ${total.toLocaleString('es-UY')} votos · ${opciones.length} lemas`);
-  const rec = reconcile(shard, total, 0);
-  console.log(`Reconciliación: sum-in=${rec.sumIn.toLocaleString('es-UY')} delta=${rec.delta} ✅`);
-  console.log('=== MVD internas-2014: OK (depto-total) ✅ ===');
+  console.log('\n--- Gate: reconciliación (losslessness) ---');
+  const rec = reconcile(shard, agg.totalCanonico, agg.unmappedVotos);
+  console.log(`sum-in=${rec.sumIn.toLocaleString('es-UY')} sum-out=${rec.sumOut.toLocaleString('es-UY')} delta=${rec.delta} ✅`);
+
+  console.log('\n--- Gate: cobertura barrios↔geometría ---');
+  const topo = JSON.parse(readFileSync(GEO_IN, 'utf8'));
+  const fc = feature(topo, topo.objects['zonas'] as GeometryCollection) as FeatureCollection;
+  const geoNames = fc.features.map((f) => String((f.properties as { name: string }).name));
+  const cov = checkCoverage({ shard, geoBarrioNames: geoNames, totalCanonico: agg.totalCanonico });
+  console.log(
+    `placement ${(cov.placement * 100).toFixed(1)}% · barrio-fill ${cov.barriosConVotos}/${cov.geoBarrios} = ${(cov.barrioFill * 100).toFixed(1)}%`,
+  );
+  if (cov.shardSinMatch.length > 0) console.log(`⚠️ geoIds sin match (${cov.shardSinMatch.length}): ${cov.shardSinMatch.join(', ')}`);
+
+  console.log('\n=== internas-2014 MVD: nivel BARRIO, gates PASARON ✅ ===');
 }
 
 main();

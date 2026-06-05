@@ -53,6 +53,7 @@ def georef_keys():
     return ks
 
 PLANS = [('data/raw/electoral/nacionales-2014/plan-circuital.csv', 'Direccion'),
+         ('data/raw/electoral/internas-2014/plan-circuital.csv', 'Direccion'),
          ('data/raw/electoral/internas-2019/plan-circuital.csv', 'Direccion'),
          ('data/raw/electoral/nacionales-2019-full/plan-circuital.csv', 'Direccion'),
          ('data/raw/electoral/departamentales-2020/plan-circuital.csv', 'Direccion'),

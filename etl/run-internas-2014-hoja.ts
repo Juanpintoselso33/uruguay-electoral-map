@@ -1,12 +1,13 @@
 /**
- * ETL — internas-2014, nivel HOJA, INTERIOR (18 deptos). Clon de run-internas-2019-hoja.ts.
+ * ETL — internas-2014, nivel HOJA, 19 deptos (MVD + 18 interior). Clon de run-internas-2019-hoja.ts.
  *
  *   - HOJA_ODN (Convención Nacional): D1=PRECANDIDATO, D2=nº de hoja → lema→precandidato→hoja.
  *   - HOJA_ODD (Convención Departamental): D1="No aplica", D2=nº de hoja → lema→hoja.
  *
- * Diferencias vs 2019: desglose UTF-8 (no latin-1); Montevideo EXCLUIDO (sin plan-circuital de
- * internas-2014 no hay join CRV→barrio fiable; ver run-internas-2014-mvd.ts / reporte). El interior
- * usa SERIE (combinadas "SFA SFB" → pro-rata). Reconcilia ODN Σ hojas == votes.json lema por depto.
+ * Diferencias vs 2019: desglose UTF-8 (no latin-1). TODOS los deptos (incl. Montevideo) usan SERIE
+ * como unidad geográfica: MVD ahora se muestra POR SERIE (no depto-total; sin plan-circuital no hay
+ * barrio, pero la serie ES la unidad — ver run-internas-2014-mvd.ts). Series combinadas "SFA SFB"
+ * → pro-rata. Reconcilia ODN Σ hojas == votes.json lema por depto.
  *
  * Ejecutar: `npm run etl:internas-2014-hoja`.
  */
@@ -21,8 +22,11 @@ import { buildShard, writeShard } from './load/emit-shard';
 const CSV = 'data/raw/electoral/internas-2014/desglose-de-votos.csv';
 const ELECCION = 'internas-2014';
 const VL = 'vl';
+// Montevideo se emite por BARRIO (CRV→barrio del mapeo por ciclo), igual que su votes.json.
+// El resto de los deptos (incl. Canelones/Maldonado) sigue por SERIE.
+const MVD_MAPPING = 'data/mappings/montevideo-circuito-barrio.internas-2014.json';
 
-interface Cfg { deptCode: string; deptName: string; exteriorSerie?: string }
+interface Cfg { deptCode: string; deptName: string; exteriorSerie?: string; geoMode?: 'serie' | 'barrio' }
 
 interface Acc {
   lemas: Map<string, string>;
@@ -104,11 +108,20 @@ function emitir(acc: Acc, contienda: 'odn' | 'odd', conPrecand: boolean): {
   return { cc, shards, lemaPorGeo };
 }
 
-function runDept(cfg: Cfg, allRows: Record<string, string>[], d1Key: string, d2Key: string): void {
+function runDept(cfg: Cfg, allRows: Record<string, string>[], d1Key: string, d2Key: string,
+                 crvToBarrio?: Record<string, string>): void {
   const { deptCode, deptName, exteriorSerie } = cfg;
+  const barrioMode = cfg.geoMode === 'barrio';
+  const nivel = barrioMode ? 'zona' : 'serie';
   const odn = nuevoAcc(); const odd = nuevoAcc();
-  // interior → serie(s) minúscula; combinadas "SFA SFB" → pro-rata (floor, resto a la 1ra).
+  // BARRIO (MVD): geoId = barrio display name (join CRV→barrio, mismo mapeo que votes.json).
+  // SERIE (interior): serie(s) minúscula; combinadas "SFA SFB" → pro-rata (floor, resto a la 1ra).
   const geoVotos = (r: Record<string, string>, votos: number): [string, number][] => {
+    if (barrioMode) {
+      const crv = (r['CRV'] ?? '').trim();
+      const barrio = crvToBarrio![crv] ?? crvToBarrio![String(Number(crv))];
+      return barrio ? [[barrio, votos]] : []; // sin barrio → no se emite (el bucket unmapped del votes.json)
+    }
     const sRaw = (r['SERIES'] ?? '').trim();
     if (!sRaw || sRaw.toUpperCase() === (exteriorSerie ?? '').toUpperCase()) return [];
     const series = sRaw.toLowerCase().split(/\s+/).filter(Boolean); const n = series.length; if (n === 0) return [];
@@ -145,7 +158,7 @@ function runDept(cfg: Cfg, allRows: Record<string, string>[], d1Key: string, d2K
     for (const s of e.shards) {
       if (s.zonas.length === 0) continue;
       const out = `public/data/${ELECCION}/${deptName}/hoja/${contienda}/${s.lemaId}.json`;
-      const shard = buildShard(s.zonas, { eleccionId: ELECCION, departamento: deptName, tipo: 'internas', nivel: 'serie', outPath: out });
+      const shard = buildShard(s.zonas, { eleccionId: ELECCION, departamento: deptName, tipo: 'internas', nivel, outPath: out });
       assertHojasEnCatalogo(shard, catalogo);
       writeShard(shard, out);
       nShards++;
@@ -170,13 +183,15 @@ function runDept(cfg: Cfg, allRows: Record<string, string>[], d1Key: string, d2K
 }
 
 function main(): void {
-  console.log('=== ETL internas-2014 HOJA — INTERIOR 18 deptos (ODN lema→precand→hoja + ODD lema→hoja) ===');
+  console.log('=== ETL internas-2014 HOJA — 19 deptos (MVD + interior; ODN lema→precand→hoja + ODD lema→hoja) ===');
   const allRows = parseCsv(CSV, 'utf8');
   const keys = Object.keys(allRows[0] ?? {});
   const d1Key = keys.find((k) => /DESCRIPCI.*N_1/i.test(k)) ?? 'DESCRIPCIÓN_1';
   const d2Key = keys.find((k) => /DESCRIPCI.*N_2/i.test(k)) ?? 'DESCRIPCIÓN_2';
   console.log(`columnas: precand="${d1Key}" hoja="${d2Key}"`);
+  const crvToBarrio = (JSON.parse(readFileSync(MVD_MAPPING, 'utf8')) as { crvToBarrio: Record<string, string> }).crvToBarrio;
   const DEPTS: Cfg[] = [
+    { deptCode: 'MO', deptName: 'montevideo', exteriorSerie: 'AZZ', geoMode: 'barrio' },
     { deptCode: 'CA', deptName: 'canelones', exteriorSerie: 'CZZ' },
     { deptCode: 'MA', deptName: 'maldonado', exteriorSerie: 'DZZ' },
     { deptCode: 'CO', deptName: 'colonia', exteriorSerie: 'NZZ' },
@@ -198,7 +213,7 @@ function main(): void {
   ];
   let ok = 0; const failed: string[] = [];
   for (const cfg of DEPTS) {
-    try { runDept(cfg, allRows, d1Key, d2Key); ok++; } catch (e) { console.error(`ERROR ${cfg.deptName}:`, (e as Error).message); failed.push(cfg.deptName); }
+    try { runDept(cfg, allRows, d1Key, d2Key, cfg.geoMode === 'barrio' ? crvToBarrio : undefined); ok++; } catch (e) { console.error(`ERROR ${cfg.deptName}:`, (e as Error).message); failed.push(cfg.deptName); }
   }
   console.log(`\n=== internas-2014 HOJA: ${ok}/${DEPTS.length} ===`);
   if (failed.length > 0) { console.error(`FALLARON: ${failed.join(', ')}`); process.exit(1); }
