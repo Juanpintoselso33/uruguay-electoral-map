@@ -2,31 +2,34 @@
 
 /* ── Design tokens (DESIGN.md) ─────────────────────────────────────────── */
 :root {
+  /* Paleta = Dirección A · Editorial del mockup de Claude Design (papel cálido + tinta + oxblood). */
   /* Surfaces */
-  --color-bg:        #E9E5DC;
-  --color-paper:     #F7F4EE;
+  --color-bg:        #ECE7DD;
+  --color-paper:     #F6F2EA;
   --color-card:      #FFFFFF;
-  --color-surface-1: #F9FAFB;
-  --color-surface-2: #F3F4F6;
+  --color-surface-1: #F1ECE2;
+  --color-surface-2: #EFE9DE;
   /* Borders */
-  --color-border:        #E5E7EB;
-  --color-border-strong: #D1D5DB;
+  --color-border:        #E2DBCC;
+  --color-border-strong: #D0C7B4;
   /* Text */
-  --color-ink:       #1A1916;
-  --color-ink-soft:  #374151;
-  --color-ink-muted: #6B7280;
-  --color-ink-faint: #9CA3AF;
+  --color-ink:       #1C1A16;
+  --color-ink-soft:  #4C473D;
+  --color-ink-muted: #857E6F;
+  --color-ink-faint: #ABA493;
   /* Accent / focus */
-  --color-accent:    #8A1C1C;
-  --color-focus:     #6366F1;
+  --color-accent:      #8A1C1C;
+  --color-accent-soft: #F0E2DC;
+  --color-focus:       #8A1C1C;
+  --color-good:        #2D7D3E;
   /* Interactive states */
-  --color-btn-active-bg: #111827;
-  --color-btn-active-fg: #FFFFFF;
-  --color-highlight:        #EFF6FF;
-  --color-highlight-border: #93C5FD;
+  --color-btn-active-bg: #1C1A16;
+  --color-btn-active-fg: #F6F2EA;
+  --color-highlight:        #F0E2DC;
+  --color-highlight-border: #D0C7B4;
   /* Map */
-  --color-map-bg:    #F8FAFC;
-  --color-sin-datos: #E5E7EB;
+  --color-map-bg:    #F8F4EC;
+  --color-sin-datos: #E2DBCC;
 
   /* ── Epic 23 (rediseño UX): tokens de forma/tipografía/densidad ───────────── */
   /* Tipografía */
@@ -51,25 +54,28 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg:        #0E1320;
-    --color-paper:     #151B2B;
-    --color-card:      #28324A;
-    --color-surface-1: #1E2638;
-    --color-surface-2: #252F45;
-    --color-border:        #5F6E92;
-    --color-border-strong: #6E7FA5;
-    --color-ink:       #E8ECF6;
-    --color-ink-soft:  #C1CAE0;
-    --color-ink-muted: #93A0BC;
-    --color-ink-faint: #68779A;
-    --color-accent:    #E0A6A6;
-    --color-focus:     #E0A6A6;
-    --color-btn-active-bg: #E8ECF6;
-    --color-btn-active-fg: #151B2B;
-    --color-highlight:        #252F45;
-    --color-highlight-border: #4A5C80;
-    --color-map-bg:    #1E2638;
-    --color-sin-datos: #313C56;
+    /* Dark = Dirección A · Editorial del mockup (oscuro CÁLIDO, no navy). */
+    --color-bg:        #131210;
+    --color-paper:     #1C1A16;
+    --color-card:      #25221B;
+    --color-surface-1: #201D17;
+    --color-surface-2: #232019;
+    --color-border:        #383328;
+    --color-border-strong: #4D4738;
+    --color-ink:       #F1ECE0;
+    --color-ink-soft:  #C9C2B1;
+    --color-ink-muted: #908979;
+    --color-ink-faint: #6E6857;
+    --color-accent:      #E6AEAE;
+    --color-accent-soft: #36241F;
+    --color-focus:       #E6AEAE;
+    --color-good:        #5FBE73;
+    --color-btn-active-bg: #F1ECE0;
+    --color-btn-active-fg: #1C1A16;
+    --color-highlight:        #36241F;
+    --color-highlight-border: #4D4738;
+    --color-map-bg:    #1A1813;
+    --color-sin-datos: #383328;
     /* Epic 23: sombras más densas en oscuro */
     --shadow-sm:    0 1px 2px rgba(0, 0, 0, 0.4);
     --shadow:       0 6px 22px rgba(0, 0, 0, 0.5);
