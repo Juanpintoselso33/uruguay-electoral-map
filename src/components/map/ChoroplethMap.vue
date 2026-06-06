@@ -17,6 +17,7 @@ import { feature as topoFeature } from 'topojson-client';
 import { resolveParty } from '../../lib/party-meta';
 import { winnerAtLevel, resolveOpcionAppearance, NIVEL_LABEL, type Nivel, type OpcMeta } from '../../lib/appearance';
 import { buildOpcionTree, type TreeNode } from '../../lib/opcion-tree';
+import { ensureManifest, tieneOpcional } from '../../lib/data-manifest';
 import type { VotosShard, AgregadoZona } from '../../lib/contracts';
 import { $selection, $level, $comparison, $circuito, bindToLocation, commit, hydrateStores } from '../../stores/map-state';
 import { parseUrl } from '../../lib/url-state';
@@ -361,11 +362,12 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
   const geoNivel = (nivel === 'municipio' && eleccion !== 'municipales-2025')
     ? `municipio.${(eleccion.match(/\d{4}/) ?? [''])[0]}`
     : nivel;
+  await ensureManifest(); // capacidades por vista → no pedir opcionales que no existen (evita 404)
   const [topoRes, votesRes, opcRes, metaRes, serieMapRes, serieBarrioRes, annexRes, intendentesRes, alcaldesRes, concejosRes, intendentesZonaRes] = await Promise.all([
     fetch(`${base}/data/geo/${departamento}/${geoNivel}.topo.json`),
     fetch(`${base}/data/${eleccion}/${departamento}/${votesFile}`),
     fetch(`${base}/data/${eleccion}/${departamento}/opciones.json`),
-    nivel === 'localidad'
+    nivel === 'localidad' && tieneOpcional(eleccion, departamento, 'localidad-meta')
       ? fetch(`${base}/data/${eleccion}/${departamento}/localidad-meta.json`).catch(() => null)
       : Promise.resolve(null),
     nivel === 'serie'
@@ -377,29 +379,29 @@ async function loadData(eleccion: string, departamento: string, nivel: string): 
     // Epic 16.4: override de anexión — series nuevas que no votaron esa elección, fusionadas con su
     // madre. Per-depto (nivel serie) usa serie-annexed.json; la vista zona nacional usa el
     // consolidado zona-annexed.json. Ausente = sin anexiones.
-    nivel === 'serie' && departamento !== '_nacional'
+    nivel === 'serie' && departamento !== '_nacional' && tieneOpcional(eleccion, departamento, 'serie-annexed')
       ? fetch(`${base}/data/${eleccion}/${departamento}/serie-annexed.json`).catch(() => null)
-      : (nivel === 'zona' && departamento === '_nacional')
+      : (nivel === 'zona' && departamento === '_nacional' && tieneOpcional(eleccion, '_nacional', 'zona-annexed'))
         ? fetch(`${base}/data/${eleccion}/_nacional/zona-annexed.json`).catch(() => null)
         : Promise.resolve(null),
     // Vista nacional departamentales: candidatos a intendente por depto (electo + votos por candidato).
     // Solo existe para 2025; ausente = ficha sin candidatos (degrada al desglose por partido).
-    departamento === '_nacional' && eleccion.startsWith('departamentales')
+    departamento === '_nacional' && eleccion.startsWith('departamentales') && tieneOpcional(eleccion, '_nacional', 'intendentes')
       ? fetch(`${base}/data/${eleccion}/_nacional/intendentes.json`).catch(() => null)
       : Promise.resolve(null),
     // Municipales: alcalde electo por municipio (Epic 22.4). El archivo es único (_nacional)
     // pero aplica tanto a la vista nacional como a las per-depto (se keyea según el geoId del view).
-    eleccion.startsWith('municipales')
+    eleccion.startsWith('municipales') && tieneOpcional(eleccion, '_nacional', 'alcaldes')
       ? fetch(`${base}/data/${eleccion}/_nacional/alcaldes.json`).catch(() => null)
       : Promise.resolve(null),
     // Municipales: Concejo Municipal completo (alcalde + 4 concejales) por municipio (Epic 22.7).
-    eleccion.startsWith('municipales')
+    eleccion.startsWith('municipales') && tieneOpcional(eleccion, '_nacional', 'concejos')
       ? fetch(`${base}/data/${eleccion}/_nacional/concejos.json`).catch(() => null)
       : Promise.resolve(null),
     // Vista por-depto departamentales (nivel serie): candidatos a intendente POR SERIE, para que
     // la ficha del polígono muestre "cómo le fue a cada candidato en esa zona" (gemelo por-serie
     // de _nacional/intendentes.json). Solo 2025; ausente → ficha sin candidatos (degrada a partido).
-    departamento !== '_nacional' && eleccion.startsWith('departamentales') && nivel === 'serie'
+    departamento !== '_nacional' && eleccion.startsWith('departamentales') && nivel === 'serie' && tieneOpcional(eleccion, departamento, 'intendentes-zona')
       ? fetch(`${base}/data/${eleccion}/${departamento}/intendentes-zona.json`).catch(() => null)
       : Promise.resolve(null),
   ]);
@@ -1165,8 +1167,11 @@ function ensureCatalogo(eleccion: string, departamento: string): Promise<void> {
     const nivPorCont = new Map<string, Nivel[]>();
     try {
       const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-      const res = await fetch(`${base}/data/${eleccion}/${departamento}/catalogo.json`);
-      if (res.ok) {
+      await ensureManifest();
+      const res = tieneOpcional(eleccion, departamento, 'catalogo')
+        ? await fetch(`${base}/data/${eleccion}/${departamento}/catalogo.json`)
+        : null;
+      if (res && res.ok) {
         const doc = (await res.json()) as {
           contiendas: {
             contienda: string;
@@ -1234,6 +1239,10 @@ async function ensureHojaShards(eleccion: string, departamento: string, sel: str
   await ensureCatalogo(eleccion, departamento);
   // Localidad/barrio: un solo consolidado re-agregado (los shards por serie no joinean aquí).
   if (await ensureHojaGeoConsolidado(eleccion, departamento)) return;
+  // Elección lema-only (sin dir hoja/, p.ej. municipales): no pidas hoja/{lema}.json al seleccionar
+  // (evita 404; el desglose ya vive en el votes.json base). Manifest desconocido → sigue como antes.
+  await ensureManifest();
+  if (!tieneOpcional(eleccion, departamento, 'hoja-base')) return;
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   const need = new Set<string>();
   for (const id of sel) {
@@ -1391,6 +1400,10 @@ async function ensureAllHojaShards(eleccion: string, departamento: string): Prom
   // equivocado haya marcado la elección como sin-hoja (evita bloquear el desglose por lista).
   if (await ensureHojaGeoConsolidado(eleccion, departamento)) return;
   if (eleccionSinHojaBase.has(eleccion)) return; // ya se supo que no publica shards de hoja base
+  // Si el manifest sabe que esta vista NO tiene dir hoja/ (lema-only, p.ej. municipales), no pruebes
+  // hoja/{lema}.json: marcala y salí (evita el 404 del probe; el árbol degrada a lema, igual que hoy).
+  await ensureManifest();
+  if (!tieneOpcional(eleccion, departamento, 'hoja-base')) { eleccionSinHojaBase.add(eleccion); return; }
 
   const cont = activeContiendaFicha();
   const meta = catalogoOpcMeta;
@@ -2264,8 +2277,10 @@ async function loadCircuitoOverlay(eleccion: string, departamento: string): Prom
     circuitosPorLocal = new Map();
     if (votes.nivel === 'local') {
       try {
-        const hlRes = await fetch(`${base}/data/${eleccion}/${departamento}/hoja-local.json`);
-        if (hlRes.ok) {
+        const hlRes = tieneOpcional(eleccion, departamento, 'hoja-local')
+          ? await fetch(`${base}/data/${eleccion}/${departamento}/hoja-local.json`)
+          : null;
+        if (hlRes && hlRes.ok) {
           const hl = (await hlRes.json()) as VotosShard;
           for (const z of hl.zonas) {
             circuitHojaVotos.set(norm(z.geoId), new Map(z.porOpcion.map((o) => [o.opcionId, o.votos])));
@@ -2277,8 +2292,10 @@ async function loadCircuitoOverlay(eleccion: string, departamento: string): Prom
       // Desglose por circuito (votes-circuito.json, nivel lema), agrupado por su `local`: da la lista
       // de circuitos del local + el ganador/válidos (y el desglose por partido como fallback).
       try {
-        const vcRes = await fetch(`${base}/data/${eleccion}/${departamento}/votes-circuito.json`);
-        if (vcRes.ok) {
+        const vcRes = tieneOpcional(eleccion, departamento, 'votes-circuito')
+          ? await fetch(`${base}/data/${eleccion}/${departamento}/votes-circuito.json`)
+          : null;
+        if (vcRes && vcRes.ok) {
           const vc = (await vcRes.json()) as { zonas: Array<{ geoId: string; local?: string; ganadorOpcionId: string; validos: number; porOpcion: { opcionId: string; votos: number }[] }> };
           for (const z of vc.zonas) {
             if (!z.local) continue;
@@ -2292,8 +2309,10 @@ async function loadCircuitoOverlay(eleccion: string, departamento: string): Prom
       // Desglose por HOJA por circuito (hoja-circuito.json): árbol completo de cada circuito. Single-file
       // se indexa entero; los deptos sharded guardan el índice y se fetchean por local al click.
       try {
-        const hcRes = await fetch(`${base}/data/${eleccion}/${departamento}/hoja-circuito.json`);
-        if (hcRes.ok) {
+        const hcRes = tieneOpcional(eleccion, departamento, 'hoja-circuito')
+          ? await fetch(`${base}/data/${eleccion}/${departamento}/hoja-circuito.json`)
+          : null;
+        if (hcRes && hcRes.ok) {
           const hc = (await hcRes.json()) as { sharded?: boolean; shardDir?: string; zonas?: HojaCircZona[] };
           if (hc.sharded && hc.shardDir) hojaCircuitoIndex = { base, eleccion, departamento, shardDir: hc.shardDir };
           else if (Array.isArray(hc.zonas)) indexHojaCircuitoZonas(hc.zonas);

@@ -25,6 +25,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
 
 const STEPS = [
+  ['build:manifest', 'node scripts/build-data-manifest.mjs'],
   ['generate:og', 'node scripts/generate-og.mjs'],
   ['generate:search', 'node scripts/generate-search-index.mjs'],
 ];

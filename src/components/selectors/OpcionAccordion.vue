@@ -12,6 +12,7 @@ import { onMounted, ref, computed, onUnmounted } from 'vue';
 import { resolveParty } from '../../lib/party-meta';
 import { $selection, commit } from '../../stores/map-state';
 import { useCollapsible } from '../../lib/use-collapsible';
+import { ensureManifest, tieneOpcional } from '../../lib/data-manifest';
 
 // Plegable (Epic UX): el control de listas arranca COLAPSADO (es avanzado); el usuario lo abre.
 const { open: panelOpen, toggle: togglePanel } = useCollapsible('opcion', false);
@@ -108,11 +109,14 @@ onMounted(async () => {
   });
   try {
     const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+    await ensureManifest(); // si la vista no tiene catálogo (binarias/plebiscitos), no lo pidas → sin 404
     const [resCat, resVotes] = await Promise.all([
-      fetch(`${base}/data/${props.eleccion}/${props.departamento}/catalogo.json`),
+      tieneOpcional(props.eleccion, props.departamento, 'catalogo')
+        ? fetch(`${base}/data/${props.eleccion}/${props.departamento}/catalogo.json`)
+        : Promise.resolve(null),
       fetch(`${base}/data/${props.eleccion}/${props.departamento}/votes.json`),
     ]);
-    const doc = resCat.ok
+    const doc = resCat && resCat.ok
       ? ((await resCat.json()) as Catalogo)
       : await catalogoPlanoFallback(base); // sin catálogo de HOJA → catálogo plano sintético (Epic 13)
     if (!doc) return;
@@ -303,6 +307,9 @@ function toggleExpand(id: string): void {
     (c) => c.nodos.some((n) => n.nivel === 'lema' && n.id === id),
   );
   if (!cont || !esLema) return;
+  // Elección lema-only (sin dir hoja/, p.ej. municipales): no pidas hoja/{cont}/{lema}.json al
+  // expandir (evita 404; el total por lema ya está). Manifest cargado en onMounted; desconocido → fetch.
+  if (!tieneOpcional(props.eleccion, props.departamento, 'hoja-base')) return;
   const key = `${cont}/${id}`;
   if (fetchedHojas.has(key)) return;
   fetchedHojas.add(key);
