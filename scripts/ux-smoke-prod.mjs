@@ -30,6 +30,9 @@ const PAGES = [
   '/nacionales-2009/montevideo',
   '/balotaje-2009/montevideo',
   '/departamentales-2010/montevideo',
+  '/municipales-2010/montevideo',
+  '/municipales-2010/canelones',
+  '/municipales-2010',
   '/nacionales-2024/canelones',
   '/internas-2014/canelones',
   '/departamentales-2025/salto',
@@ -111,10 +114,15 @@ async function exercise(page) {
     const box = canvas ? await canvas.boundingBox() : null;
     let fichaOk = false;
     if (box) {
-      const pts = [[0.5, 0.5], [0.42, 0.4], [0.58, 0.55], [0.5, 0.35], [0.45, 0.62]];
+      // Barrido denso: cubre también latitudes bajas (sur) para la vista nacional de municipales,
+      // donde los polígonos son islas chicas y dispersas (gran parte del país sin municipio en 2010)
+      // y los clicks centrales caen en hueco. No es bug de la app: es geometría rala.
+      const fxs = [0.5, 0.42, 0.58, 0.35, 0.65, 0.3, 0.7, 0.8];
+      const fys = [0.5, 0.4, 0.6, 0.72, 0.82, 0.88];
+      const pts = fys.flatMap((fy) => fxs.map((fx) => [fx, fy]));
       for (const [fx, fy] of pts) {
         await canvas.click({ position: { x: box.width * fx, y: box.height * fy }, timeout: 4000 }).catch(() => {});
-        await page.waitForTimeout(700);
+        await page.waitForTimeout(450);
         // ficha con contenido real: el árbol o el cuerpo con texto
         const body = await page.$('.zone-sheet__arbol, .zone-sheet__body, .zone-sheet__cands');
         const txt = body ? (await body.innerText().catch(() => '')) : '';

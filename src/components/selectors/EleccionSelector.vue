@@ -21,7 +21,7 @@ const META: Record<string, { short: string; type: TipoEleccion; año: number }> 
   'nacionales-2009':                  { short: 'Nacionales',       type: 'nacionales',  año: 2009 },
   'balotaje-2009':                    { short: 'Balotaje',         type: 'balotaje',    año: 2009 },
   'departamentales-2010':             { short: 'Departamentales',  type: 'dptales',     año: 2010 },
-  // municipales-2010: datos cacheados pero render diferido (sin geometría de municipios 2010).
+  'municipales-2010':                 { short: 'Municipales',      type: 'dptales',     año: 2010 },
   'internas-2014':                    { short: 'Internas',         type: 'internas',    año: 2014 },
   'nacionales-2014':                  { short: 'Nacionales',       type: 'nacionales',  año: 2014 },
   'balotaje-2014':                    { short: 'Balotaje',         type: 'balotaje',    año: 2014 },

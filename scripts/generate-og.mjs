@@ -127,9 +127,14 @@ for (const { eleccion, departamento } of ROUTES) {
     const opciones = JSON.parse(
       readFileSync(`public/data/${eleccion}/${departamento}/opciones.json`, 'utf8'),
     ).opciones;
-    const nivel = votes.nivel; // 'zona' | 'serie'
+    const nivel = votes.nivel; // 'zona' | 'serie' | 'municipio' | 'departamento'
+    // Geometría de municipios POR CICLO (igual que ChoroplethMap): 2025 = sin sufijo;
+    // otros ciclos (p.ej. municipales-2010) → municipio.{año}.topo.json.
+    const geoNivel = (nivel === 'municipio' && eleccion !== 'municipales-2025')
+      ? `municipio.${(eleccion.match(/\d{4}/) ?? [''])[0]}`
+      : nivel;
     const topo = JSON.parse(
-      readFileSync(`public/data/geo/${departamento}/${nivel}.topo.json`, 'utf8'),
+      readFileSync(`public/data/geo/${departamento}/${geoNivel}.topo.json`, 'utf8'),
     );
 
     // geoId → color del ganador
