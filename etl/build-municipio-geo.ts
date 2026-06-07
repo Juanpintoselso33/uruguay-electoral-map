@@ -78,9 +78,15 @@ function serializeWithBudget(fc: FeatureCollection, budget: number, label: strin
 }
 
 function deptoFeatures(deptName: string, grises: string[]): Feature[] {
-  const seriesGeoPath = `data/raw/geographic/${deptName}_series_map.json`;
+  // La geometría de series vive en public/data/geographic/ (committeada); data/raw/geographic/
+  // es la fuente histórica (quedó vacía tras sacar los geo grandes de LFS). Preferir la primera.
+  const seriesGeoCandidates = [
+    `public/data/geographic/${deptName}_series_map.json`,
+    `data/raw/geographic/${deptName}_series_map.json`,
+  ];
+  const seriesGeoPath = seriesGeoCandidates.find((p) => existsSync(p));
   const mappingPath = `public/data/mappings/${deptName}/serie-municipio.${ELECCION}.json`;
-  if (!existsSync(seriesGeoPath) || !existsSync(mappingPath)) return [];
+  if (!seriesGeoPath || !existsSync(mappingPath)) return [];
 
   const seriesGeo = JSON.parse(readFileSync(seriesGeoPath, 'utf8')) as FeatureCollection;
   const mapping = JSON.parse(readFileSync(mappingPath, 'utf8')) as SerieMunicipioEntry[];
