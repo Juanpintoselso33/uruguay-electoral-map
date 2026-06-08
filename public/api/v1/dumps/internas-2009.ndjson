@@ -1,109 +1,218 @@
-{"eleccion": "internas-2009", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "frente-amplio", "votos": 224066, "validos": 403487}
-{"eleccion": "internas-2009", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "nacional", "votos": 135172, "validos": 403487}
-{"eleccion": "internas-2009", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "colorado", "votos": 39848, "validos": 403487}
-{"eleccion": "internas-2009", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "independiente", "votos": 1188, "validos": 403487}
-{"eleccion": "internas-2009", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "de-los-trabajadores", "votos": 172, "validos": 403487}
-{"eleccion": "internas-2009", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "cuatro-puntos-cardinales", "votos": 190, "validos": 403487}
-{"eleccion": "internas-2009", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "asamblea-popular", "votos": 2706, "validos": 403487}
-{"eleccion": "internas-2009", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "comuna", "votos": 145, "validos": 403487}
-{"eleccion": "internas-2009", "departamento": "canelones", "geoId": "Canelones", "opcionId": "frente-amplio", "votos": 63159, "validos": 147211}
-{"eleccion": "internas-2009", "departamento": "canelones", "geoId": "Canelones", "opcionId": "nacional", "votos": 68811, "validos": 147211}
-{"eleccion": "internas-2009", "departamento": "canelones", "geoId": "Canelones", "opcionId": "colorado", "votos": 13838, "validos": 147211}
-{"eleccion": "internas-2009", "departamento": "canelones", "geoId": "Canelones", "opcionId": "independiente", "votos": 582, "validos": 147211}
-{"eleccion": "internas-2009", "departamento": "canelones", "geoId": "Canelones", "opcionId": "de-los-trabajadores", "votos": 74, "validos": 147211}
-{"eleccion": "internas-2009", "departamento": "canelones", "geoId": "Canelones", "opcionId": "cuatro-puntos-cardinales", "votos": 57, "validos": 147211}
-{"eleccion": "internas-2009", "departamento": "canelones", "geoId": "Canelones", "opcionId": "asamblea-popular", "votos": 651, "validos": 147211}
-{"eleccion": "internas-2009", "departamento": "canelones", "geoId": "Canelones", "opcionId": "comuna", "votos": 39, "validos": 147211}
-{"eleccion": "internas-2009", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "frente-amplio", "votos": 18824, "validos": 53428}
-{"eleccion": "internas-2009", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "nacional", "votos": 26536, "validos": 53428}
-{"eleccion": "internas-2009", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "colorado", "votos": 7612, "validos": 53428}
-{"eleccion": "internas-2009", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "independiente", "votos": 313, "validos": 53428}
-{"eleccion": "internas-2009", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "de-los-trabajadores", "votos": 2, "validos": 53428}
-{"eleccion": "internas-2009", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "asamblea-popular", "votos": 59, "validos": 53428}
-{"eleccion": "internas-2009", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "comuna", "votos": 82, "validos": 53428}
-{"eleccion": "internas-2009", "departamento": "colonia", "geoId": "Colonia", "opcionId": "frente-amplio", "votos": 13664, "validos": 49239}
-{"eleccion": "internas-2009", "departamento": "colonia", "geoId": "Colonia", "opcionId": "nacional", "votos": 27931, "validos": 49239}
-{"eleccion": "internas-2009", "departamento": "colonia", "geoId": "Colonia", "opcionId": "colorado", "votos": 7361, "validos": 49239}
-{"eleccion": "internas-2009", "departamento": "colonia", "geoId": "Colonia", "opcionId": "independiente", "votos": 238, "validos": 49239}
-{"eleccion": "internas-2009", "departamento": "colonia", "geoId": "Colonia", "opcionId": "asamblea-popular", "votos": 45, "validos": 49239}
-{"eleccion": "internas-2009", "departamento": "salto", "geoId": "Salto", "opcionId": "frente-amplio", "votos": 14966, "validos": 41479}
-{"eleccion": "internas-2009", "departamento": "salto", "geoId": "Salto", "opcionId": "nacional", "votos": 15952, "validos": 41479}
-{"eleccion": "internas-2009", "departamento": "salto", "geoId": "Salto", "opcionId": "colorado", "votos": 10448, "validos": 41479}
-{"eleccion": "internas-2009", "departamento": "salto", "geoId": "Salto", "opcionId": "independiente", "votos": 87, "validos": 41479}
-{"eleccion": "internas-2009", "departamento": "salto", "geoId": "Salto", "opcionId": "cuatro-puntos-cardinales", "votos": 16, "validos": 41479}
-{"eleccion": "internas-2009", "departamento": "salto", "geoId": "Salto", "opcionId": "asamblea-popular", "votos": 10, "validos": 41479}
-{"eleccion": "internas-2009", "departamento": "paysandu", "geoId": "Paysandú", "opcionId": "frente-amplio", "votos": 13366, "validos": 38978}
-{"eleccion": "internas-2009", "departamento": "paysandu", "geoId": "Paysandú", "opcionId": "nacional", "votos": 22214, "validos": 38978}
-{"eleccion": "internas-2009", "departamento": "paysandu", "geoId": "Paysandú", "opcionId": "colorado", "votos": 3104, "validos": 38978}
-{"eleccion": "internas-2009", "departamento": "paysandu", "geoId": "Paysandú", "opcionId": "independiente", "votos": 247, "validos": 38978}
-{"eleccion": "internas-2009", "departamento": "paysandu", "geoId": "Paysandú", "opcionId": "asamblea-popular", "votos": 47, "validos": 38978}
-{"eleccion": "internas-2009", "departamento": "rivera", "geoId": "Rivera", "opcionId": "frente-amplio", "votos": 7193, "validos": 30897}
-{"eleccion": "internas-2009", "departamento": "rivera", "geoId": "Rivera", "opcionId": "nacional", "votos": 16873, "validos": 30897}
-{"eleccion": "internas-2009", "departamento": "rivera", "geoId": "Rivera", "opcionId": "colorado", "votos": 6658, "validos": 30897}
-{"eleccion": "internas-2009", "departamento": "rivera", "geoId": "Rivera", "opcionId": "independiente", "votos": 61, "validos": 30897}
-{"eleccion": "internas-2009", "departamento": "rivera", "geoId": "Rivera", "opcionId": "de-los-trabajadores", "votos": 109, "validos": 30897}
-{"eleccion": "internas-2009", "departamento": "rivera", "geoId": "Rivera", "opcionId": "asamblea-popular", "votos": 3, "validos": 30897}
-{"eleccion": "internas-2009", "departamento": "cerro_largo", "geoId": "Cerro Largo", "opcionId": "frente-amplio", "votos": 8077, "validos": 32788}
-{"eleccion": "internas-2009", "departamento": "cerro_largo", "geoId": "Cerro Largo", "opcionId": "nacional", "votos": 22331, "validos": 32788}
-{"eleccion": "internas-2009", "departamento": "cerro_largo", "geoId": "Cerro Largo", "opcionId": "colorado", "votos": 2275, "validos": 32788}
-{"eleccion": "internas-2009", "departamento": "cerro_largo", "geoId": "Cerro Largo", "opcionId": "independiente", "votos": 57, "validos": 32788}
-{"eleccion": "internas-2009", "departamento": "cerro_largo", "geoId": "Cerro Largo", "opcionId": "asamblea-popular", "votos": 48, "validos": 32788}
-{"eleccion": "internas-2009", "departamento": "tacuarembo", "geoId": "Tacuarembó", "opcionId": "frente-amplio", "votos": 9777, "validos": 36468}
-{"eleccion": "internas-2009", "departamento": "tacuarembo", "geoId": "Tacuarembó", "opcionId": "nacional", "votos": 22269, "validos": 36468}
-{"eleccion": "internas-2009", "departamento": "tacuarembo", "geoId": "Tacuarembó", "opcionId": "colorado", "votos": 4311, "validos": 36468}
-{"eleccion": "internas-2009", "departamento": "tacuarembo", "geoId": "Tacuarembó", "opcionId": "independiente", "votos": 43, "validos": 36468}
-{"eleccion": "internas-2009", "departamento": "tacuarembo", "geoId": "Tacuarembó", "opcionId": "de-los-trabajadores", "votos": 1, "validos": 36468}
-{"eleccion": "internas-2009", "departamento": "tacuarembo", "geoId": "Tacuarembó", "opcionId": "asamblea-popular", "votos": 67, "validos": 36468}
-{"eleccion": "internas-2009", "departamento": "san_jose", "geoId": "San José", "opcionId": "frente-amplio", "votos": 12128, "validos": 35080}
-{"eleccion": "internas-2009", "departamento": "san_jose", "geoId": "San José", "opcionId": "nacional", "votos": 19525, "validos": 35080}
-{"eleccion": "internas-2009", "departamento": "san_jose", "geoId": "San José", "opcionId": "colorado", "votos": 3144, "validos": 35080}
-{"eleccion": "internas-2009", "departamento": "san_jose", "geoId": "San José", "opcionId": "independiente", "votos": 82, "validos": 35080}
-{"eleccion": "internas-2009", "departamento": "san_jose", "geoId": "San José", "opcionId": "cuatro-puntos-cardinales", "votos": 19, "validos": 35080}
-{"eleccion": "internas-2009", "departamento": "san_jose", "geoId": "San José", "opcionId": "asamblea-popular", "votos": 182, "validos": 35080}
-{"eleccion": "internas-2009", "departamento": "soriano", "geoId": "Soriano", "opcionId": "frente-amplio", "votos": 8841, "validos": 29797}
-{"eleccion": "internas-2009", "departamento": "soriano", "geoId": "Soriano", "opcionId": "nacional", "votos": 16447, "validos": 29797}
-{"eleccion": "internas-2009", "departamento": "soriano", "geoId": "Soriano", "opcionId": "colorado", "votos": 4381, "validos": 29797}
-{"eleccion": "internas-2009", "departamento": "soriano", "geoId": "Soriano", "opcionId": "independiente", "votos": 59, "validos": 29797}
-{"eleccion": "internas-2009", "departamento": "soriano", "geoId": "Soriano", "opcionId": "asamblea-popular", "votos": 69, "validos": 29797}
-{"eleccion": "internas-2009", "departamento": "rocha", "geoId": "Rocha", "opcionId": "frente-amplio", "votos": 8216, "validos": 23863}
-{"eleccion": "internas-2009", "departamento": "rocha", "geoId": "Rocha", "opcionId": "nacional", "votos": 11903, "validos": 23863}
-{"eleccion": "internas-2009", "departamento": "rocha", "geoId": "Rocha", "opcionId": "colorado", "votos": 3621, "validos": 23863}
-{"eleccion": "internas-2009", "departamento": "rocha", "geoId": "Rocha", "opcionId": "independiente", "votos": 30, "validos": 23863}
-{"eleccion": "internas-2009", "departamento": "rocha", "geoId": "Rocha", "opcionId": "de-los-trabajadores", "votos": 2, "validos": 23863}
-{"eleccion": "internas-2009", "departamento": "rocha", "geoId": "Rocha", "opcionId": "asamblea-popular", "votos": 91, "validos": 23863}
-{"eleccion": "internas-2009", "departamento": "florida", "geoId": "Florida", "opcionId": "frente-amplio", "votos": 7546, "validos": 25356}
-{"eleccion": "internas-2009", "departamento": "florida", "geoId": "Florida", "opcionId": "nacional", "votos": 13992, "validos": 25356}
-{"eleccion": "internas-2009", "departamento": "florida", "geoId": "Florida", "opcionId": "colorado", "votos": 3661, "validos": 25356}
-{"eleccion": "internas-2009", "departamento": "florida", "geoId": "Florida", "opcionId": "independiente", "votos": 75, "validos": 25356}
-{"eleccion": "internas-2009", "departamento": "florida", "geoId": "Florida", "opcionId": "de-los-trabajadores", "votos": 6, "validos": 25356}
-{"eleccion": "internas-2009", "departamento": "florida", "geoId": "Florida", "opcionId": "asamblea-popular", "votos": 76, "validos": 25356}
-{"eleccion": "internas-2009", "departamento": "artigas", "geoId": "Artigas", "opcionId": "frente-amplio", "votos": 7031, "validos": 26038}
-{"eleccion": "internas-2009", "departamento": "artigas", "geoId": "Artigas", "opcionId": "nacional", "votos": 13605, "validos": 26038}
-{"eleccion": "internas-2009", "departamento": "artigas", "geoId": "Artigas", "opcionId": "colorado", "votos": 5351, "validos": 26038}
-{"eleccion": "internas-2009", "departamento": "artigas", "geoId": "Artigas", "opcionId": "independiente", "votos": 39, "validos": 26038}
-{"eleccion": "internas-2009", "departamento": "artigas", "geoId": "Artigas", "opcionId": "asamblea-popular", "votos": 12, "validos": 26038}
-{"eleccion": "internas-2009", "departamento": "durazno", "geoId": "Durazno", "opcionId": "frente-amplio", "votos": 5250, "validos": 22825}
-{"eleccion": "internas-2009", "departamento": "durazno", "geoId": "Durazno", "opcionId": "nacional", "votos": 14299, "validos": 22825}
-{"eleccion": "internas-2009", "departamento": "durazno", "geoId": "Durazno", "opcionId": "colorado", "votos": 3130, "validos": 22825}
-{"eleccion": "internas-2009", "departamento": "durazno", "geoId": "Durazno", "opcionId": "independiente", "votos": 107, "validos": 22825}
-{"eleccion": "internas-2009", "departamento": "durazno", "geoId": "Durazno", "opcionId": "asamblea-popular", "votos": 39, "validos": 22825}
-{"eleccion": "internas-2009", "departamento": "treinta_y_tres", "geoId": "Treinta y Tres", "opcionId": "frente-amplio", "votos": 5602, "validos": 18810}
-{"eleccion": "internas-2009", "departamento": "treinta_y_tres", "geoId": "Treinta y Tres", "opcionId": "nacional", "votos": 11460, "validos": 18810}
-{"eleccion": "internas-2009", "departamento": "treinta_y_tres", "geoId": "Treinta y Tres", "opcionId": "colorado", "votos": 1717, "validos": 18810}
-{"eleccion": "internas-2009", "departamento": "treinta_y_tres", "geoId": "Treinta y Tres", "opcionId": "independiente", "votos": 14, "validos": 18810}
-{"eleccion": "internas-2009", "departamento": "treinta_y_tres", "geoId": "Treinta y Tres", "opcionId": "asamblea-popular", "votos": 17, "validos": 18810}
-{"eleccion": "internas-2009", "departamento": "lavalleja", "geoId": "Lavalleja", "opcionId": "frente-amplio", "votos": 4735, "validos": 23276}
-{"eleccion": "internas-2009", "departamento": "lavalleja", "geoId": "Lavalleja", "opcionId": "nacional", "votos": 14736, "validos": 23276}
-{"eleccion": "internas-2009", "departamento": "lavalleja", "geoId": "Lavalleja", "opcionId": "colorado", "votos": 3679, "validos": 23276}
-{"eleccion": "internas-2009", "departamento": "lavalleja", "geoId": "Lavalleja", "opcionId": "independiente", "votos": 100, "validos": 23276}
-{"eleccion": "internas-2009", "departamento": "lavalleja", "geoId": "Lavalleja", "opcionId": "asamblea-popular", "votos": 26, "validos": 23276}
-{"eleccion": "internas-2009", "departamento": "rio_negro", "geoId": "Río Negro", "opcionId": "frente-amplio", "votos": 5889, "validos": 18570}
-{"eleccion": "internas-2009", "departamento": "rio_negro", "geoId": "Río Negro", "opcionId": "nacional", "votos": 9647, "validos": 18570}
-{"eleccion": "internas-2009", "departamento": "rio_negro", "geoId": "Río Negro", "opcionId": "colorado", "votos": 2934, "validos": 18570}
-{"eleccion": "internas-2009", "departamento": "rio_negro", "geoId": "Río Negro", "opcionId": "independiente", "votos": 79, "validos": 18570}
-{"eleccion": "internas-2009", "departamento": "rio_negro", "geoId": "Río Negro", "opcionId": "asamblea-popular", "votos": 21, "validos": 18570}
-{"eleccion": "internas-2009", "departamento": "flores", "geoId": "Flores", "opcionId": "frente-amplio", "votos": 2230, "validos": 11381}
-{"eleccion": "internas-2009", "departamento": "flores", "geoId": "Flores", "opcionId": "nacional", "votos": 7782, "validos": 11381}
-{"eleccion": "internas-2009", "departamento": "flores", "geoId": "Flores", "opcionId": "colorado", "votos": 1349, "validos": 11381}
-{"eleccion": "internas-2009", "departamento": "flores", "geoId": "Flores", "opcionId": "independiente", "votos": 16, "validos": 11381}
-{"eleccion": "internas-2009", "departamento": "flores", "geoId": "Flores", "opcionId": "asamblea-popular", "votos": 4, "validos": 11381}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Artigas", "opcionId": "frente-amplio", "votos": 7031, "validos": 26038}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Artigas", "opcionId": "nacional", "votos": 13605, "validos": 26038}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Artigas", "opcionId": "colorado", "votos": 5351, "validos": 26038}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Artigas", "opcionId": "independiente", "votos": 39, "validos": 26038}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Artigas", "opcionId": "asamblea-popular", "votos": 12, "validos": 26038}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Canelones", "opcionId": "frente-amplio", "votos": 63159, "validos": 147211}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Canelones", "opcionId": "nacional", "votos": 68811, "validos": 147211}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Canelones", "opcionId": "colorado", "votos": 13838, "validos": 147211}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Canelones", "opcionId": "independiente", "votos": 582, "validos": 147211}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Canelones", "opcionId": "de-los-trabajadores", "votos": 74, "validos": 147211}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Canelones", "opcionId": "cuatro-puntos-cardinales", "votos": 57, "validos": 147211}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Canelones", "opcionId": "asamblea-popular", "votos": 651, "validos": 147211}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Canelones", "opcionId": "comuna", "votos": 39, "validos": 147211}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Cerro Largo", "opcionId": "frente-amplio", "votos": 8077, "validos": 32788}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Cerro Largo", "opcionId": "nacional", "votos": 22331, "validos": 32788}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Cerro Largo", "opcionId": "colorado", "votos": 2275, "validos": 32788}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Cerro Largo", "opcionId": "independiente", "votos": 57, "validos": 32788}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Cerro Largo", "opcionId": "asamblea-popular", "votos": 48, "validos": 32788}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Colonia", "opcionId": "frente-amplio", "votos": 13664, "validos": 49239}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Colonia", "opcionId": "nacional", "votos": 27931, "validos": 49239}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Colonia", "opcionId": "colorado", "votos": 7361, "validos": 49239}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Colonia", "opcionId": "independiente", "votos": 238, "validos": 49239}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Colonia", "opcionId": "asamblea-popular", "votos": 45, "validos": 49239}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Durazno", "opcionId": "frente-amplio", "votos": 5250, "validos": 22825}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Durazno", "opcionId": "nacional", "votos": 14299, "validos": 22825}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Durazno", "opcionId": "colorado", "votos": 3130, "validos": 22825}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Durazno", "opcionId": "independiente", "votos": 107, "validos": 22825}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Durazno", "opcionId": "asamblea-popular", "votos": 39, "validos": 22825}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Flores", "opcionId": "frente-amplio", "votos": 2230, "validos": 11381}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Flores", "opcionId": "nacional", "votos": 7782, "validos": 11381}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Flores", "opcionId": "colorado", "votos": 1349, "validos": 11381}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Flores", "opcionId": "independiente", "votos": 16, "validos": 11381}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Flores", "opcionId": "asamblea-popular", "votos": 4, "validos": 11381}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Florida", "opcionId": "frente-amplio", "votos": 7546, "validos": 25356}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Florida", "opcionId": "nacional", "votos": 13992, "validos": 25356}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Florida", "opcionId": "colorado", "votos": 3661, "validos": 25356}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Florida", "opcionId": "independiente", "votos": 75, "validos": 25356}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Florida", "opcionId": "de-los-trabajadores", "votos": 6, "validos": 25356}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Florida", "opcionId": "asamblea-popular", "votos": 76, "validos": 25356}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Lavalleja", "opcionId": "frente-amplio", "votos": 4735, "validos": 23276}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Lavalleja", "opcionId": "nacional", "votos": 14736, "validos": 23276}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Lavalleja", "opcionId": "colorado", "votos": 3679, "validos": 23276}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Lavalleja", "opcionId": "independiente", "votos": 100, "validos": 23276}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Lavalleja", "opcionId": "asamblea-popular", "votos": 26, "validos": 23276}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Maldonado", "opcionId": "frente-amplio", "votos": 18824, "validos": 53428}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Maldonado", "opcionId": "nacional", "votos": 26536, "validos": 53428}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Maldonado", "opcionId": "colorado", "votos": 7612, "validos": 53428}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Maldonado", "opcionId": "independiente", "votos": 313, "validos": 53428}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Maldonado", "opcionId": "de-los-trabajadores", "votos": 2, "validos": 53428}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Maldonado", "opcionId": "asamblea-popular", "votos": 59, "validos": 53428}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Maldonado", "opcionId": "comuna", "votos": 82, "validos": 53428}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Montevideo", "opcionId": "frente-amplio", "votos": 224066, "validos": 403487}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Montevideo", "opcionId": "nacional", "votos": 135172, "validos": 403487}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Montevideo", "opcionId": "colorado", "votos": 39848, "validos": 403487}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Montevideo", "opcionId": "independiente", "votos": 1188, "validos": 403487}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Montevideo", "opcionId": "de-los-trabajadores", "votos": 172, "validos": 403487}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Montevideo", "opcionId": "cuatro-puntos-cardinales", "votos": 190, "validos": 403487}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Montevideo", "opcionId": "asamblea-popular", "votos": 2706, "validos": 403487}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Montevideo", "opcionId": "comuna", "votos": 145, "validos": 403487}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Paysandú", "opcionId": "frente-amplio", "votos": 13366, "validos": 38978}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Paysandú", "opcionId": "nacional", "votos": 22214, "validos": 38978}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Paysandú", "opcionId": "colorado", "votos": 3104, "validos": 38978}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Paysandú", "opcionId": "independiente", "votos": 247, "validos": 38978}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Paysandú", "opcionId": "asamblea-popular", "votos": 47, "validos": 38978}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Río Negro", "opcionId": "frente-amplio", "votos": 5889, "validos": 18570}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Río Negro", "opcionId": "nacional", "votos": 9647, "validos": 18570}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Río Negro", "opcionId": "colorado", "votos": 2934, "validos": 18570}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Río Negro", "opcionId": "independiente", "votos": 79, "validos": 18570}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Río Negro", "opcionId": "asamblea-popular", "votos": 21, "validos": 18570}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Rivera", "opcionId": "frente-amplio", "votos": 7193, "validos": 30897}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Rivera", "opcionId": "nacional", "votos": 16873, "validos": 30897}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Rivera", "opcionId": "colorado", "votos": 6658, "validos": 30897}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Rivera", "opcionId": "independiente", "votos": 61, "validos": 30897}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Rivera", "opcionId": "de-los-trabajadores", "votos": 109, "validos": 30897}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Rivera", "opcionId": "asamblea-popular", "votos": 3, "validos": 30897}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Rocha", "opcionId": "frente-amplio", "votos": 8216, "validos": 23863}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Rocha", "opcionId": "nacional", "votos": 11903, "validos": 23863}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Rocha", "opcionId": "colorado", "votos": 3621, "validos": 23863}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Rocha", "opcionId": "independiente", "votos": 30, "validos": 23863}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Rocha", "opcionId": "de-los-trabajadores", "votos": 2, "validos": 23863}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Rocha", "opcionId": "asamblea-popular", "votos": 91, "validos": 23863}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Salto", "opcionId": "frente-amplio", "votos": 14966, "validos": 41479}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Salto", "opcionId": "nacional", "votos": 15952, "validos": 41479}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Salto", "opcionId": "colorado", "votos": 10448, "validos": 41479}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Salto", "opcionId": "independiente", "votos": 87, "validos": 41479}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Salto", "opcionId": "cuatro-puntos-cardinales", "votos": 16, "validos": 41479}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Salto", "opcionId": "asamblea-popular", "votos": 10, "validos": 41479}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "San José", "opcionId": "frente-amplio", "votos": 12128, "validos": 35080}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "San José", "opcionId": "nacional", "votos": 19525, "validos": 35080}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "San José", "opcionId": "colorado", "votos": 3144, "validos": 35080}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "San José", "opcionId": "independiente", "votos": 82, "validos": 35080}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "San José", "opcionId": "cuatro-puntos-cardinales", "votos": 19, "validos": 35080}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "San José", "opcionId": "asamblea-popular", "votos": 182, "validos": 35080}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Soriano", "opcionId": "frente-amplio", "votos": 8841, "validos": 29797}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Soriano", "opcionId": "nacional", "votos": 16447, "validos": 29797}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Soriano", "opcionId": "colorado", "votos": 4381, "validos": 29797}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Soriano", "opcionId": "independiente", "votos": 59, "validos": 29797}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Soriano", "opcionId": "asamblea-popular", "votos": 69, "validos": 29797}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Tacuarembó", "opcionId": "frente-amplio", "votos": 9777, "validos": 36468}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Tacuarembó", "opcionId": "nacional", "votos": 22269, "validos": 36468}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Tacuarembó", "opcionId": "colorado", "votos": 4311, "validos": 36468}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Tacuarembó", "opcionId": "independiente", "votos": 43, "validos": 36468}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Tacuarembó", "opcionId": "de-los-trabajadores", "votos": 1, "validos": 36468}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Tacuarembó", "opcionId": "asamblea-popular", "votos": 67, "validos": 36468}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Treinta y Tres", "opcionId": "frente-amplio", "votos": 5602, "validos": 18810}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Treinta y Tres", "opcionId": "nacional", "votos": 11460, "validos": 18810}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Treinta y Tres", "opcionId": "colorado", "votos": 1717, "validos": 18810}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Treinta y Tres", "opcionId": "independiente", "votos": 14, "validos": 18810}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "_nacional", "geoId": "Treinta y Tres", "opcionId": "asamblea-popular", "votos": 17, "validos": 18810}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "frente-amplio", "votos": 224066, "validos": 403487}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "nacional", "votos": 135172, "validos": 403487}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "colorado", "votos": 39848, "validos": 403487}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "independiente", "votos": 1188, "validos": 403487}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "de-los-trabajadores", "votos": 172, "validos": 403487}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "cuatro-puntos-cardinales", "votos": 190, "validos": 403487}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "asamblea-popular", "votos": 2706, "validos": 403487}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "comuna", "votos": 145, "validos": 403487}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "canelones", "geoId": "Canelones", "opcionId": "frente-amplio", "votos": 63159, "validos": 147211}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "canelones", "geoId": "Canelones", "opcionId": "nacional", "votos": 68811, "validos": 147211}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "canelones", "geoId": "Canelones", "opcionId": "colorado", "votos": 13838, "validos": 147211}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "canelones", "geoId": "Canelones", "opcionId": "independiente", "votos": 582, "validos": 147211}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "canelones", "geoId": "Canelones", "opcionId": "de-los-trabajadores", "votos": 74, "validos": 147211}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "canelones", "geoId": "Canelones", "opcionId": "cuatro-puntos-cardinales", "votos": 57, "validos": 147211}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "canelones", "geoId": "Canelones", "opcionId": "asamblea-popular", "votos": 651, "validos": 147211}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "canelones", "geoId": "Canelones", "opcionId": "comuna", "votos": 39, "validos": 147211}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "frente-amplio", "votos": 18824, "validos": 53428}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "nacional", "votos": 26536, "validos": 53428}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "colorado", "votos": 7612, "validos": 53428}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "independiente", "votos": 313, "validos": 53428}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "de-los-trabajadores", "votos": 2, "validos": 53428}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "asamblea-popular", "votos": 59, "validos": 53428}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "comuna", "votos": 82, "validos": 53428}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "colonia", "geoId": "Colonia", "opcionId": "frente-amplio", "votos": 13664, "validos": 49239}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "colonia", "geoId": "Colonia", "opcionId": "nacional", "votos": 27931, "validos": 49239}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "colonia", "geoId": "Colonia", "opcionId": "colorado", "votos": 7361, "validos": 49239}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "colonia", "geoId": "Colonia", "opcionId": "independiente", "votos": 238, "validos": 49239}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "colonia", "geoId": "Colonia", "opcionId": "asamblea-popular", "votos": 45, "validos": 49239}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "salto", "geoId": "Salto", "opcionId": "frente-amplio", "votos": 14966, "validos": 41479}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "salto", "geoId": "Salto", "opcionId": "nacional", "votos": 15952, "validos": 41479}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "salto", "geoId": "Salto", "opcionId": "colorado", "votos": 10448, "validos": 41479}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "salto", "geoId": "Salto", "opcionId": "independiente", "votos": 87, "validos": 41479}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "salto", "geoId": "Salto", "opcionId": "cuatro-puntos-cardinales", "votos": 16, "validos": 41479}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "salto", "geoId": "Salto", "opcionId": "asamblea-popular", "votos": 10, "validos": 41479}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "paysandu", "geoId": "Paysandú", "opcionId": "frente-amplio", "votos": 13366, "validos": 38978}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "paysandu", "geoId": "Paysandú", "opcionId": "nacional", "votos": 22214, "validos": 38978}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "paysandu", "geoId": "Paysandú", "opcionId": "colorado", "votos": 3104, "validos": 38978}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "paysandu", "geoId": "Paysandú", "opcionId": "independiente", "votos": 247, "validos": 38978}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "paysandu", "geoId": "Paysandú", "opcionId": "asamblea-popular", "votos": 47, "validos": 38978}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "rivera", "geoId": "Rivera", "opcionId": "frente-amplio", "votos": 7193, "validos": 30897}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "rivera", "geoId": "Rivera", "opcionId": "nacional", "votos": 16873, "validos": 30897}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "rivera", "geoId": "Rivera", "opcionId": "colorado", "votos": 6658, "validos": 30897}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "rivera", "geoId": "Rivera", "opcionId": "independiente", "votos": 61, "validos": 30897}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "rivera", "geoId": "Rivera", "opcionId": "de-los-trabajadores", "votos": 109, "validos": 30897}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "rivera", "geoId": "Rivera", "opcionId": "asamblea-popular", "votos": 3, "validos": 30897}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "cerro_largo", "geoId": "Cerro Largo", "opcionId": "frente-amplio", "votos": 8077, "validos": 32788}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "cerro_largo", "geoId": "Cerro Largo", "opcionId": "nacional", "votos": 22331, "validos": 32788}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "cerro_largo", "geoId": "Cerro Largo", "opcionId": "colorado", "votos": 2275, "validos": 32788}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "cerro_largo", "geoId": "Cerro Largo", "opcionId": "independiente", "votos": 57, "validos": 32788}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "cerro_largo", "geoId": "Cerro Largo", "opcionId": "asamblea-popular", "votos": 48, "validos": 32788}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "tacuarembo", "geoId": "Tacuarembó", "opcionId": "frente-amplio", "votos": 9777, "validos": 36468}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "tacuarembo", "geoId": "Tacuarembó", "opcionId": "nacional", "votos": 22269, "validos": 36468}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "tacuarembo", "geoId": "Tacuarembó", "opcionId": "colorado", "votos": 4311, "validos": 36468}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "tacuarembo", "geoId": "Tacuarembó", "opcionId": "independiente", "votos": 43, "validos": 36468}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "tacuarembo", "geoId": "Tacuarembó", "opcionId": "de-los-trabajadores", "votos": 1, "validos": 36468}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "tacuarembo", "geoId": "Tacuarembó", "opcionId": "asamblea-popular", "votos": 67, "validos": 36468}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "san_jose", "geoId": "San José", "opcionId": "frente-amplio", "votos": 12128, "validos": 35080}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "san_jose", "geoId": "San José", "opcionId": "nacional", "votos": 19525, "validos": 35080}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "san_jose", "geoId": "San José", "opcionId": "colorado", "votos": 3144, "validos": 35080}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "san_jose", "geoId": "San José", "opcionId": "independiente", "votos": 82, "validos": 35080}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "san_jose", "geoId": "San José", "opcionId": "cuatro-puntos-cardinales", "votos": 19, "validos": 35080}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "san_jose", "geoId": "San José", "opcionId": "asamblea-popular", "votos": 182, "validos": 35080}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "soriano", "geoId": "Soriano", "opcionId": "frente-amplio", "votos": 8841, "validos": 29797}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "soriano", "geoId": "Soriano", "opcionId": "nacional", "votos": 16447, "validos": 29797}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "soriano", "geoId": "Soriano", "opcionId": "colorado", "votos": 4381, "validos": 29797}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "soriano", "geoId": "Soriano", "opcionId": "independiente", "votos": 59, "validos": 29797}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "soriano", "geoId": "Soriano", "opcionId": "asamblea-popular", "votos": 69, "validos": 29797}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "rocha", "geoId": "Rocha", "opcionId": "frente-amplio", "votos": 8216, "validos": 23863}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "rocha", "geoId": "Rocha", "opcionId": "nacional", "votos": 11903, "validos": 23863}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "rocha", "geoId": "Rocha", "opcionId": "colorado", "votos": 3621, "validos": 23863}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "rocha", "geoId": "Rocha", "opcionId": "independiente", "votos": 30, "validos": 23863}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "rocha", "geoId": "Rocha", "opcionId": "de-los-trabajadores", "votos": 2, "validos": 23863}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "rocha", "geoId": "Rocha", "opcionId": "asamblea-popular", "votos": 91, "validos": 23863}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "florida", "geoId": "Florida", "opcionId": "frente-amplio", "votos": 7546, "validos": 25356}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "florida", "geoId": "Florida", "opcionId": "nacional", "votos": 13992, "validos": 25356}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "florida", "geoId": "Florida", "opcionId": "colorado", "votos": 3661, "validos": 25356}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "florida", "geoId": "Florida", "opcionId": "independiente", "votos": 75, "validos": 25356}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "florida", "geoId": "Florida", "opcionId": "de-los-trabajadores", "votos": 6, "validos": 25356}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "florida", "geoId": "Florida", "opcionId": "asamblea-popular", "votos": 76, "validos": 25356}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "artigas", "geoId": "Artigas", "opcionId": "frente-amplio", "votos": 7031, "validos": 26038}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "artigas", "geoId": "Artigas", "opcionId": "nacional", "votos": 13605, "validos": 26038}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "artigas", "geoId": "Artigas", "opcionId": "colorado", "votos": 5351, "validos": 26038}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "artigas", "geoId": "Artigas", "opcionId": "independiente", "votos": 39, "validos": 26038}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "artigas", "geoId": "Artigas", "opcionId": "asamblea-popular", "votos": 12, "validos": 26038}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "durazno", "geoId": "Durazno", "opcionId": "frente-amplio", "votos": 5250, "validos": 22825}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "durazno", "geoId": "Durazno", "opcionId": "nacional", "votos": 14299, "validos": 22825}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "durazno", "geoId": "Durazno", "opcionId": "colorado", "votos": 3130, "validos": 22825}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "durazno", "geoId": "Durazno", "opcionId": "independiente", "votos": 107, "validos": 22825}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "durazno", "geoId": "Durazno", "opcionId": "asamblea-popular", "votos": 39, "validos": 22825}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "treinta_y_tres", "geoId": "Treinta y Tres", "opcionId": "frente-amplio", "votos": 5602, "validos": 18810}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "treinta_y_tres", "geoId": "Treinta y Tres", "opcionId": "nacional", "votos": 11460, "validos": 18810}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "treinta_y_tres", "geoId": "Treinta y Tres", "opcionId": "colorado", "votos": 1717, "validos": 18810}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "treinta_y_tres", "geoId": "Treinta y Tres", "opcionId": "independiente", "votos": 14, "validos": 18810}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "treinta_y_tres", "geoId": "Treinta y Tres", "opcionId": "asamblea-popular", "votos": 17, "validos": 18810}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "lavalleja", "geoId": "Lavalleja", "opcionId": "frente-amplio", "votos": 4735, "validos": 23276}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "lavalleja", "geoId": "Lavalleja", "opcionId": "nacional", "votos": 14736, "validos": 23276}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "lavalleja", "geoId": "Lavalleja", "opcionId": "colorado", "votos": 3679, "validos": 23276}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "lavalleja", "geoId": "Lavalleja", "opcionId": "independiente", "votos": 100, "validos": 23276}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "lavalleja", "geoId": "Lavalleja", "opcionId": "asamblea-popular", "votos": 26, "validos": 23276}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "rio_negro", "geoId": "Río Negro", "opcionId": "frente-amplio", "votos": 5889, "validos": 18570}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "rio_negro", "geoId": "Río Negro", "opcionId": "nacional", "votos": 9647, "validos": 18570}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "rio_negro", "geoId": "Río Negro", "opcionId": "colorado", "votos": 2934, "validos": 18570}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "rio_negro", "geoId": "Río Negro", "opcionId": "independiente", "votos": 79, "validos": 18570}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "rio_negro", "geoId": "Río Negro", "opcionId": "asamblea-popular", "votos": 21, "validos": 18570}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "flores", "geoId": "Flores", "opcionId": "frente-amplio", "votos": 2230, "validos": 11381}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "flores", "geoId": "Flores", "opcionId": "nacional", "votos": 7782, "validos": 11381}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "flores", "geoId": "Flores", "opcionId": "colorado", "votos": 1349, "validos": 11381}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "flores", "geoId": "Flores", "opcionId": "independiente", "votos": 16, "validos": 11381}
+{"eleccion": "internas-2009", "nivel": "departamento", "departamento": "flores", "geoId": "Flores", "opcionId": "asamblea-popular", "votos": 4, "validos": 11381}

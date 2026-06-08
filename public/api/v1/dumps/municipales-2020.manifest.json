@@ -1,15 +1,20 @@
 {
  "eleccion": "municipales-2020",
- "registros": 433,
+ "registros": 866,
  "formato": "ndjson",
+ "niveles": [
+  "municipio"
+ ],
  "campos": [
   "eleccion",
+  "nivel",
   "departamento",
   "geoId",
   "opcionId",
   "votos",
   "validos"
  ],
+ "nota": "Resultado por (nivel, zona). Desglose por hoja en /api/v1/results/hoja-*.",
  "fuente": "Corte Electoral del Uruguay",
  "version": "v1"
 }

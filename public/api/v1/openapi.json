@@ -441,7 +441,7 @@
      "Resultados"
     ],
     "summary": "Dump NDJSON por elección",
-    "description": "Una línea JSON por (departamento × zona × opción) para procesamiento masivo.",
+    "description": "Una línea JSON por (nivel × departamento × geoId × opción) para procesamiento masivo. Incluye todos los niveles geográficos + el agregado _nacional; cada fila trae `nivel`.",
     "parameters": [
      {
       "name": "eleccion",
@@ -458,7 +458,7 @@
       "description": "OK",
       "content": {
        "application/x-ndjson": {
-        "example": "{\"eleccion\":\"nacionales-2024\",\"departamento\":\"montevideo\",\"zona\":\"Ciudad Vieja\",\"opcionId\":\"frente-amplio\",\"votos\":12345}\n{\"eleccion\":\"nacionales-2024\",\"departamento\":\"montevideo\",\"zona\":\"Ciudad Vieja\",\"opcionId\":\"nacional\",\"votos\":6789}"
+        "example": "{\"eleccion\":\"nacionales-2024\",\"nivel\":\"barrio\",\"departamento\":\"montevideo\",\"geoId\":\"Ciudad Vieja\",\"opcionId\":\"frente-amplio\",\"votos\":12345,\"validos\":20100}\n{\"eleccion\":\"nacionales-2024\",\"nivel\":\"departamento\",\"departamento\":\"_nacional\",\"geoId\":\"Montevideo\",\"opcionId\":\"frente-amplio\",\"votos\":522205,\"validos\":904327}"
        }
       }
      }

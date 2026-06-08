@@ -1,359 +1,718 @@
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio B", "opcionId": "frente-amplio", "votos": 20692, "validos": 39954}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio B", "opcionId": "coalicion-republicana", "votos": 18907, "validos": 39954}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio B", "opcionId": "asamblea-popular", "votos": 355, "validos": 39954}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio CH", "opcionId": "coalicion-republicana", "votos": 42416, "validos": 63123}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio CH", "opcionId": "frente-amplio", "votos": 20455, "validos": 63123}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio CH", "opcionId": "asamblea-popular", "votos": 252, "validos": 63123}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio D", "opcionId": "frente-amplio", "votos": 19393, "validos": 36477}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio D", "opcionId": "coalicion-republicana", "votos": 16833, "validos": 36477}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio D", "opcionId": "asamblea-popular", "votos": 251, "validos": 36477}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio E", "opcionId": "coalicion-republicana", "votos": 28178, "validos": 49685}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio E", "opcionId": "frente-amplio", "votos": 21280, "validos": 49685}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio E", "opcionId": "asamblea-popular", "votos": 227, "validos": 49685}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio F", "opcionId": "frente-amplio", "votos": 19492, "validos": 38612}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio F", "opcionId": "coalicion-republicana", "votos": 18942, "validos": 38612}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio F", "opcionId": "asamblea-popular", "votos": 178, "validos": 38612}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio C", "opcionId": "frente-amplio", "votos": 22176, "validos": 39351}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio C", "opcionId": "coalicion-republicana", "votos": 16874, "validos": 39351}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio C", "opcionId": "asamblea-popular", "votos": 301, "validos": 39351}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio G", "opcionId": "frente-amplio", "votos": 20775, "validos": 34642}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio G", "opcionId": "coalicion-republicana", "votos": 13642, "validos": 34642}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio G", "opcionId": "asamblea-popular", "votos": 225, "validos": 34642}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio A", "opcionId": "frente-amplio", "votos": 30482, "validos": 42307}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio A", "opcionId": "coalicion-republicana", "votos": 11496, "validos": 42307}
-{"eleccion": "municipales-2025", "departamento": "montevideo", "geoId": "Municipio A", "opcionId": "asamblea-popular", "votos": 329, "validos": 42307}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "LAS PIEDRAS", "opcionId": "frente-amplio", "votos": 15554, "validos": 25890}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "LAS PIEDRAS", "opcionId": "coalicion-republicana", "votos": 10184, "validos": 25890}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "LAS PIEDRAS", "opcionId": "asamblea-popular", "votos": 138, "validos": 25890}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "LAS PIEDRAS", "opcionId": "nacional", "votos": 14, "validos": 25890}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "CIUDAD DE LA COSTA", "opcionId": "frente-amplio", "votos": 22146, "validos": 33171}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "CIUDAD DE LA COSTA", "opcionId": "coalicion-republicana", "votos": 10929, "validos": 33171}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "CIUDAD DE LA COSTA", "opcionId": "asamblea-popular", "votos": 96, "validos": 33171}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SALINAS", "opcionId": "frente-amplio", "votos": 5492, "validos": 8627}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SALINAS", "opcionId": "coalicion-republicana", "votos": 3063, "validos": 8627}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SALINAS", "opcionId": "asamblea-popular", "votos": 72, "validos": 8627}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "PARQUE DEL PLATA", "opcionId": "frente-amplio", "votos": 2725, "validos": 4732}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "PARQUE DEL PLATA", "opcionId": "coalicion-republicana", "votos": 1979, "validos": 4732}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "PARQUE DEL PLATA", "opcionId": "asamblea-popular", "votos": 28, "validos": 4732}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "COLONIA NICOLICH", "opcionId": "frente-amplio", "votos": 3271, "validos": 4732}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "COLONIA NICOLICH", "opcionId": "coalicion-republicana", "votos": 1438, "validos": 4732}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "COLONIA NICOLICH", "opcionId": "asamblea-popular", "votos": 23, "validos": 4732}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SUÁREZ", "opcionId": "frente-amplio", "votos": 3039, "validos": 5220}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SUÁREZ", "opcionId": "coalicion-republicana", "votos": 2161, "validos": 5220}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SUÁREZ", "opcionId": "asamblea-popular", "votos": 20, "validos": 5220}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "CANELONES", "opcionId": "frente-amplio", "votos": 6749, "validos": 10358}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "CANELONES", "opcionId": "coalicion-republicana", "votos": 3609, "validos": 10358}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SANTA LUCÍA", "opcionId": "frente-amplio", "votos": 5600, "validos": 8647}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SANTA LUCÍA", "opcionId": "coalicion-republicana", "votos": 3047, "validos": 8647}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "LOS CERRILLOS", "opcionId": "coalicion-republicana", "votos": 2636, "validos": 4058}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "LOS CERRILLOS", "opcionId": "frente-amplio", "votos": 1422, "validos": 4058}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "AGUAS CORRIENTES", "opcionId": "frente-amplio", "votos": 614, "validos": 933}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "AGUAS CORRIENTES", "opcionId": "coalicion-republicana", "votos": 319, "validos": 933}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "PROGRESO", "opcionId": "frente-amplio", "votos": 5033, "validos": 7002}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "PROGRESO", "opcionId": "coalicion-republicana", "votos": 1969, "validos": 7002}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "18 DE MAYO", "opcionId": "coalicion-republicana", "votos": 3487, "validos": 6833}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "18 DE MAYO", "opcionId": "frente-amplio", "votos": 3346, "validos": 6833}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "LA PAZ", "opcionId": "frente-amplio", "votos": 7194, "validos": 9641}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "LA PAZ", "opcionId": "coalicion-republicana", "votos": 2447, "validos": 9641}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SAUCE", "opcionId": "coalicion-republicana", "votos": 4418, "validos": 6549}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SAUCE", "opcionId": "frente-amplio", "votos": 2131, "validos": 6549}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SANTA ROSA", "opcionId": "frente-amplio", "votos": 1792, "validos": 2850}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SANTA ROSA", "opcionId": "coalicion-republicana", "votos": 1058, "validos": 2850}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SAN JACINTO", "opcionId": "coalicion-republicana", "votos": 3490, "validos": 4764}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SAN JACINTO", "opcionId": "frente-amplio", "votos": 1274, "validos": 4764}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SAN RAMÓN", "opcionId": "coalicion-republicana", "votos": 3955, "validos": 4668}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SAN RAMÓN", "opcionId": "frente-amplio", "votos": 713, "validos": 4668}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "TALA", "opcionId": "coalicion-republicana", "votos": 3877, "validos": 5668}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "TALA", "opcionId": "frente-amplio", "votos": 1791, "validos": 5668}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "MIGUES", "opcionId": "coalicion-republicana", "votos": 2303, "validos": 2746}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "MIGUES", "opcionId": "frente-amplio", "votos": 443, "validos": 2746}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "MONTES", "opcionId": "frente-amplio", "votos": 753, "validos": 1143}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "MONTES", "opcionId": "coalicion-republicana", "votos": 390, "validos": 1143}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SOCA", "opcionId": "coalicion-republicana", "votos": 1113, "validos": 1762}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SOCA", "opcionId": "frente-amplio", "votos": 649, "validos": 1762}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "LA FLORESTA", "opcionId": "frente-amplio", "votos": 2981, "validos": 5253}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "LA FLORESTA", "opcionId": "coalicion-republicana", "votos": 2272, "validos": 5253}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "PANDO", "opcionId": "frente-amplio", "votos": 8446, "validos": 15091}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "PANDO", "opcionId": "coalicion-republicana", "votos": 6645, "validos": 15091}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "EMPALME OLMOS", "opcionId": "coalicion-republicana", "votos": 2193, "validos": 3700}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "EMPALME OLMOS", "opcionId": "frente-amplio", "votos": 1507, "validos": 3700}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "ATLÁNTIDA", "opcionId": "coalicion-republicana", "votos": 3390, "validos": 6282}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "ATLÁNTIDA", "opcionId": "frente-amplio", "votos": 2892, "validos": 6282}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "PASO CARRASCO", "opcionId": "frente-amplio", "votos": 3884, "validos": 5121}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "PASO CARRASCO", "opcionId": "coalicion-republicana", "votos": 1237, "validos": 5121}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "BARROS BLANCOS", "opcionId": "frente-amplio", "votos": 6604, "validos": 12357}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "BARROS BLANCOS", "opcionId": "coalicion-republicana", "votos": 5753, "validos": 12357}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "JUANICÓ", "opcionId": "coalicion-republicana", "votos": 1397, "validos": 2067}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "JUANICÓ", "opcionId": "frente-amplio", "votos": 670, "validos": 2067}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SAN ANTONIO", "opcionId": "coalicion-republicana", "votos": 1322, "validos": 1986}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SAN ANTONIO", "opcionId": "frente-amplio", "votos": 664, "validos": 1986}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SAN BAUTISTA", "opcionId": "coalicion-republicana", "votos": 2079, "validos": 2626}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "SAN BAUTISTA", "opcionId": "frente-amplio", "votos": 547, "validos": 2626}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "TOLEDO", "opcionId": "coalicion-republicana", "votos": 3654, "validos": 7218}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "TOLEDO", "opcionId": "frente-amplio", "votos": 3564, "validos": 7218}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "DEL ANDALUZ", "opcionId": "frente-amplio", "votos": 1177, "validos": 1903}
-{"eleccion": "municipales-2025", "departamento": "canelones", "geoId": "DEL ANDALUZ", "opcionId": "coalicion-republicana", "votos": 726, "validos": 1903}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "MALDONADO", "opcionId": "nacional", "votos": 26378, "validos": 35779}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "MALDONADO", "opcionId": "frente-amplio", "votos": 7861, "validos": 35779}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "MALDONADO", "opcionId": "colorado", "votos": 1432, "validos": 35779}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "MALDONADO", "opcionId": "asamblea-popular", "votos": 108, "validos": 35779}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "SAN CARLOS", "opcionId": "nacional", "votos": 10531, "validos": 16601}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "SAN CARLOS", "opcionId": "frente-amplio", "votos": 5412, "validos": 16601}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "SAN CARLOS", "opcionId": "colorado", "votos": 569, "validos": 16601}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "SAN CARLOS", "opcionId": "asamblea-popular", "votos": 89, "validos": 16601}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "PIRIÁPOLIS", "opcionId": "nacional", "votos": 4651, "validos": 9498}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "PIRIÁPOLIS", "opcionId": "frente-amplio", "votos": 4189, "validos": 9498}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "PIRIÁPOLIS", "opcionId": "colorado", "votos": 644, "validos": 9498}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "PIRIÁPOLIS", "opcionId": "asamblea-popular", "votos": 14, "validos": 9498}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "PUNTA DEL ESTE", "opcionId": "nacional", "votos": 4540, "validos": 5352}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "PUNTA DEL ESTE", "opcionId": "frente-amplio", "votos": 611, "validos": 5352}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "PUNTA DEL ESTE", "opcionId": "colorado", "votos": 201, "validos": 5352}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "PAN DE AZÚCAR", "opcionId": "nacional", "votos": 3423, "validos": 5355}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "PAN DE AZÚCAR", "opcionId": "frente-amplio", "votos": 1660, "validos": 5355}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "PAN DE AZÚCAR", "opcionId": "colorado", "votos": 272, "validos": 5355}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "SOLÍS GRANDE", "opcionId": "nacional", "votos": 1446, "validos": 2085}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "SOLÍS GRANDE", "opcionId": "frente-amplio", "votos": 604, "validos": 2085}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "SOLÍS GRANDE", "opcionId": "colorado", "votos": 35, "validos": 2085}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "GARZÓN", "opcionId": "nacional", "votos": 778, "validos": 869}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "GARZÓN", "opcionId": "frente-amplio", "votos": 86, "validos": 869}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "GARZÓN", "opcionId": "colorado", "votos": 5, "validos": 869}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "AIGUÁ", "opcionId": "nacional", "votos": 1750, "validos": 2139}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "AIGUÁ", "opcionId": "frente-amplio", "votos": 227, "validos": 2139}
-{"eleccion": "municipales-2025", "departamento": "maldonado", "geoId": "AIGUÁ", "opcionId": "colorado", "votos": 162, "validos": 2139}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "COLONIA MIGUELETE", "opcionId": "nacional", "votos": 779, "validos": 935}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "COLONIA MIGUELETE", "opcionId": "colorado", "votos": 91, "validos": 935}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "COLONIA MIGUELETE", "opcionId": "frente-amplio", "votos": 65, "validos": 935}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "TARARIRAS", "opcionId": "nacional", "votos": 3736, "validos": 4676}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "TARARIRAS", "opcionId": "frente-amplio", "votos": 857, "validos": 4676}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "TARARIRAS", "opcionId": "colorado", "votos": 83, "validos": 4676}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "ROSARIO", "opcionId": "nacional", "votos": 3545, "validos": 6186}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "ROSARIO", "opcionId": "frente-amplio", "votos": 2536, "validos": 6186}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "ROSARIO", "opcionId": "colorado", "votos": 105, "validos": 6186}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "LA PAZ", "opcionId": "nacional", "votos": 536, "validos": 738}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "LA PAZ", "opcionId": "colorado", "votos": 202, "validos": 738}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "CUFRÉ", "opcionId": "nacional", "votos": 527, "validos": 587}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "CUFRÉ", "opcionId": "frente-amplio", "votos": 31, "validos": 587}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "CUFRÉ", "opcionId": "colorado", "votos": 29, "validos": 587}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "NUEVA HELVECIA", "opcionId": "nacional", "votos": 4249, "validos": 6640}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "NUEVA HELVECIA", "opcionId": "frente-amplio", "votos": 2114, "validos": 6640}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "NUEVA HELVECIA", "opcionId": "colorado", "votos": 277, "validos": 6640}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "FLORENCIO SÁNCHEZ", "opcionId": "nacional", "votos": 1057, "validos": 1527}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "FLORENCIO SÁNCHEZ", "opcionId": "frente-amplio", "votos": 417, "validos": 1527}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "FLORENCIO SÁNCHEZ", "opcionId": "colorado", "votos": 53, "validos": 1527}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "OMBÚES DE LAVALLE", "opcionId": "nacional", "votos": 2288, "validos": 2865}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "OMBÚES DE LAVALLE", "opcionId": "frente-amplio", "votos": 540, "validos": 2865}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "OMBÚES DE LAVALLE", "opcionId": "colorado", "votos": 37, "validos": 2865}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "CARMELO", "opcionId": "nacional", "votos": 7068, "validos": 9775}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "CARMELO", "opcionId": "frente-amplio", "votos": 2569, "validos": 9775}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "CARMELO", "opcionId": "colorado", "votos": 138, "validos": 9775}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "NUEVA PALMIRA", "opcionId": "nacional", "votos": 3085, "validos": 6193}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "NUEVA PALMIRA", "opcionId": "frente-amplio", "votos": 3026, "validos": 6193}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "NUEVA PALMIRA", "opcionId": "colorado", "votos": 82, "validos": 6193}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "JUAN L. LACAZE", "opcionId": "frente-amplio", "votos": 4669, "validos": 7445}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "JUAN L. LACAZE", "opcionId": "nacional", "votos": 2628, "validos": 7445}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "JUAN L. LACAZE", "opcionId": "colorado", "votos": 148, "validos": 7445}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "COLONIA VALDENSE", "opcionId": "nacional", "votos": 1976, "validos": 2559}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "COLONIA VALDENSE", "opcionId": "frente-amplio", "votos": 583, "validos": 2559}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "CONCHILLAS", "opcionId": "nacional", "votos": 895, "validos": 1127}
-{"eleccion": "municipales-2025", "departamento": "colonia", "geoId": "CONCHILLAS", "opcionId": "frente-amplio", "votos": 232, "validos": 1127}
-{"eleccion": "municipales-2025", "departamento": "salto", "geoId": "PUEBLO SAN ANTONIO", "opcionId": "coalicion-republicana", "votos": 1082, "validos": 1794}
-{"eleccion": "municipales-2025", "departamento": "salto", "geoId": "PUEBLO SAN ANTONIO", "opcionId": "frente-amplio", "votos": 712, "validos": 1794}
-{"eleccion": "municipales-2025", "departamento": "salto", "geoId": "VILLA CONSTITUCIÓN", "opcionId": "frente-amplio", "votos": 1385, "validos": 2491}
-{"eleccion": "municipales-2025", "departamento": "salto", "geoId": "VILLA CONSTITUCIÓN", "opcionId": "coalicion-republicana", "votos": 1106, "validos": 2491}
-{"eleccion": "municipales-2025", "departamento": "salto", "geoId": "PUEBLO BELÉN", "opcionId": "frente-amplio", "votos": 847, "validos": 1542}
-{"eleccion": "municipales-2025", "departamento": "salto", "geoId": "PUEBLO BELÉN", "opcionId": "coalicion-republicana", "votos": 695, "validos": 1542}
-{"eleccion": "municipales-2025", "departamento": "salto", "geoId": "COLONIA LAVALLEJA", "opcionId": "coalicion-republicana", "votos": 1021, "validos": 1676}
-{"eleccion": "municipales-2025", "departamento": "salto", "geoId": "COLONIA LAVALLEJA", "opcionId": "frente-amplio", "votos": 655, "validos": 1676}
-{"eleccion": "municipales-2025", "departamento": "salto", "geoId": "PUEBLO RINCÓN DE VALENTÍN", "opcionId": "frente-amplio", "votos": 554, "validos": 989}
-{"eleccion": "municipales-2025", "departamento": "salto", "geoId": "PUEBLO RINCÓN DE VALENTÍN", "opcionId": "coalicion-republicana", "votos": 435, "validos": 989}
-{"eleccion": "municipales-2025", "departamento": "salto", "geoId": "MATAOJO", "opcionId": "frente-amplio", "votos": 397, "validos": 783}
-{"eleccion": "municipales-2025", "departamento": "salto", "geoId": "MATAOJO", "opcionId": "coalicion-republicana", "votos": 386, "validos": 783}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "PORVENIR", "opcionId": "nacional", "votos": 1549, "validos": 2025}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "PORVENIR", "opcionId": "frente-amplio", "votos": 450, "validos": 2025}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "PORVENIR", "opcionId": "colorado", "votos": 26, "validos": 2025}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "GUICHÓN", "opcionId": "nacional", "votos": 2331, "validos": 4363}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "GUICHÓN", "opcionId": "colorado", "votos": 1305, "validos": 4363}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "GUICHÓN", "opcionId": "frente-amplio", "votos": 727, "validos": 4363}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "TAMBORES", "opcionId": "nacional", "votos": 504, "validos": 628}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "TAMBORES", "opcionId": "frente-amplio", "votos": 93, "validos": 628}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "TAMBORES", "opcionId": "colorado", "votos": 31, "validos": 628}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "QUEBRACHO", "opcionId": "nacional", "votos": 1372, "validos": 2129}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "QUEBRACHO", "opcionId": "frente-amplio", "votos": 502, "validos": 2129}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "QUEBRACHO", "opcionId": "colorado", "votos": 255, "validos": 2129}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "EL EUCALIPTO", "opcionId": "nacional", "votos": 339, "validos": 440}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "EL EUCALIPTO", "opcionId": "colorado", "votos": 56, "validos": 440}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "EL EUCALIPTO", "opcionId": "frente-amplio", "votos": 45, "validos": 440}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "LORENZO GEYRES", "opcionId": "nacional", "votos": 590, "validos": 903}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "LORENZO GEYRES", "opcionId": "frente-amplio", "votos": 309, "validos": 903}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "LORENZO GEYRES", "opcionId": "colorado", "votos": 4, "validos": 903}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "CERRO CHATO", "opcionId": "nacional", "votos": 735, "validos": 802}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "CERRO CHATO", "opcionId": "frente-amplio", "votos": 66, "validos": 802}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "CERRO CHATO", "opcionId": "colorado", "votos": 1, "validos": 802}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "CHAPICUY", "opcionId": "nacional", "votos": 340, "validos": 681}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "CHAPICUY", "opcionId": "colorado", "votos": 277, "validos": 681}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "CHAPICUY", "opcionId": "frente-amplio", "votos": 64, "validos": 681}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "PIEDRAS COLORADAS", "opcionId": "nacional", "votos": 904, "validos": 1055}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "PIEDRAS COLORADAS", "opcionId": "frente-amplio", "votos": 150, "validos": 1055}
-{"eleccion": "municipales-2025", "departamento": "paysandu", "geoId": "PIEDRAS COLORADAS", "opcionId": "colorado", "votos": 1, "validos": 1055}
-{"eleccion": "municipales-2025", "departamento": "rivera", "geoId": "TRANQUERAS", "opcionId": "colorado", "votos": 4144, "validos": 5089}
-{"eleccion": "municipales-2025", "departamento": "rivera", "geoId": "TRANQUERAS", "opcionId": "nacional", "votos": 737, "validos": 5089}
-{"eleccion": "municipales-2025", "departamento": "rivera", "geoId": "TRANQUERAS", "opcionId": "frente-amplio", "votos": 208, "validos": 5089}
-{"eleccion": "municipales-2025", "departamento": "rivera", "geoId": "MINAS DE CORRALES", "opcionId": "colorado", "votos": 2159, "validos": 2602}
-{"eleccion": "municipales-2025", "departamento": "rivera", "geoId": "MINAS DE CORRALES", "opcionId": "nacional", "votos": 285, "validos": 2602}
-{"eleccion": "municipales-2025", "departamento": "rivera", "geoId": "MINAS DE CORRALES", "opcionId": "frente-amplio", "votos": 158, "validos": 2602}
-{"eleccion": "municipales-2025", "departamento": "rivera", "geoId": "VICHADERO", "opcionId": "nacional", "votos": 1462, "validos": 2811}
-{"eleccion": "municipales-2025", "departamento": "rivera", "geoId": "VICHADERO", "opcionId": "colorado", "votos": 1173, "validos": 2811}
-{"eleccion": "municipales-2025", "departamento": "rivera", "geoId": "VICHADERO", "opcionId": "frente-amplio", "votos": 176, "validos": 2811}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "RÍO BRANCO", "opcionId": "nacional", "votos": 9648, "validos": 10297}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "RÍO BRANCO", "opcionId": "frente-amplio", "votos": 559, "validos": 10297}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "RÍO BRANCO", "opcionId": "colorado", "votos": 90, "validos": 10297}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "FRAILE MUERTO", "opcionId": "nacional", "votos": 2062, "validos": 2273}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "FRAILE MUERTO", "opcionId": "frente-amplio", "votos": 202, "validos": 2273}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "FRAILE MUERTO", "opcionId": "colorado", "votos": 9, "validos": 2273}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "TUPAMBAÉ", "opcionId": "nacional", "votos": 663, "validos": 789}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "TUPAMBAÉ", "opcionId": "frente-amplio", "votos": 121, "validos": 789}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "TUPAMBAÉ", "opcionId": "colorado", "votos": 5, "validos": 789}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "BAÑADO DE MEDINA", "opcionId": "nacional", "votos": 786, "validos": 822}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "BAÑADO DE MEDINA", "opcionId": "frente-amplio", "votos": 36, "validos": 822}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "PLÁCIDO ROSAS", "opcionId": "nacional", "votos": 420, "validos": 456}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "PLÁCIDO ROSAS", "opcionId": "frente-amplio", "votos": 36, "validos": 456}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "CERRO DE LAS CUENTAS", "opcionId": "nacional", "votos": 386, "validos": 412}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "CERRO DE LAS CUENTAS", "opcionId": "frente-amplio", "votos": 26, "validos": 412}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "LAS CAÑAS", "opcionId": "nacional", "votos": 296, "validos": 355}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "LAS CAÑAS", "opcionId": "frente-amplio", "votos": 59, "validos": 355}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "LAGUNA MERÍN", "opcionId": "nacional", "votos": 569, "validos": 706}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "LAGUNA MERÍN", "opcionId": "frente-amplio", "votos": 137, "validos": 706}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "CENTURIÓN", "opcionId": "nacional", "votos": 241, "validos": 244}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "CENTURIÓN", "opcionId": "frente-amplio", "votos": 3, "validos": 244}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "ISIDORO NOBLÍA", "opcionId": "nacional", "votos": 1923, "validos": 2070}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "ISIDORO NOBLÍA", "opcionId": "frente-amplio", "votos": 147, "validos": 2070}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "ACEGUÁ", "opcionId": "nacional", "votos": 1240, "validos": 1278}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "ACEGUÁ", "opcionId": "frente-amplio", "votos": 38, "validos": 1278}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "TRES ISLAS", "opcionId": "nacional", "votos": 223, "validos": 228}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "TRES ISLAS", "opcionId": "frente-amplio", "votos": 5, "validos": 228}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "RAMÓN TRIGO", "opcionId": "nacional", "votos": 188, "validos": 214}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "RAMÓN TRIGO", "opcionId": "frente-amplio", "votos": 26, "validos": 214}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "ARBOLITO", "opcionId": "nacional", "votos": 275, "validos": 275}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "QUEBRACHO", "opcionId": "nacional", "votos": 164, "validos": 164}
-{"eleccion": "municipales-2025", "departamento": "cerro_largo", "geoId": "ARÉVALO", "opcionId": "nacional", "votos": 557, "validos": 557}
-{"eleccion": "municipales-2025", "departamento": "tacuarembo", "geoId": "ANSINA", "opcionId": "nacional", "votos": 1900, "validos": 2223}
-{"eleccion": "municipales-2025", "departamento": "tacuarembo", "geoId": "ANSINA", "opcionId": "frente-amplio", "votos": 187, "validos": 2223}
-{"eleccion": "municipales-2025", "departamento": "tacuarembo", "geoId": "ANSINA", "opcionId": "colorado", "votos": 136, "validos": 2223}
-{"eleccion": "municipales-2025", "departamento": "tacuarembo", "geoId": "SAN GREGORIO DE POLANCO", "opcionId": "nacional", "votos": 1876, "validos": 2707}
-{"eleccion": "municipales-2025", "departamento": "tacuarembo", "geoId": "SAN GREGORIO DE POLANCO", "opcionId": "frente-amplio", "votos": 657, "validos": 2707}
-{"eleccion": "municipales-2025", "departamento": "tacuarembo", "geoId": "SAN GREGORIO DE POLANCO", "opcionId": "colorado", "votos": 174, "validos": 2707}
-{"eleccion": "municipales-2025", "departamento": "tacuarembo", "geoId": "PASO DE LOS TOROS", "opcionId": "nacional", "votos": 6604, "validos": 8738}
-{"eleccion": "municipales-2025", "departamento": "tacuarembo", "geoId": "PASO DE LOS TOROS", "opcionId": "frente-amplio", "votos": 1853, "validos": 8738}
-{"eleccion": "municipales-2025", "departamento": "tacuarembo", "geoId": "PASO DE LOS TOROS", "opcionId": "colorado", "votos": 281, "validos": 8738}
-{"eleccion": "municipales-2025", "departamento": "tacuarembo", "geoId": "VILLA CARAGUATÁ", "opcionId": "nacional", "votos": 2396, "validos": 2567}
-{"eleccion": "municipales-2025", "departamento": "tacuarembo", "geoId": "VILLA CARAGUATÁ", "opcionId": "frente-amplio", "votos": 88, "validos": 2567}
-{"eleccion": "municipales-2025", "departamento": "tacuarembo", "geoId": "VILLA CARAGUATÁ", "opcionId": "colorado", "votos": 83, "validos": 2567}
-{"eleccion": "municipales-2025", "departamento": "san_jose", "geoId": "CIUDAD DEL PLATA", "opcionId": "frente-amplio", "votos": 6742, "validos": 12431}
-{"eleccion": "municipales-2025", "departamento": "san_jose", "geoId": "CIUDAD DEL PLATA", "opcionId": "nacional", "votos": 5574, "validos": 12431}
-{"eleccion": "municipales-2025", "departamento": "san_jose", "geoId": "CIUDAD DEL PLATA", "opcionId": "colorado", "votos": 84, "validos": 12431}
-{"eleccion": "municipales-2025", "departamento": "san_jose", "geoId": "CIUDAD DEL PLATA", "opcionId": "asamblea-popular", "votos": 31, "validos": 12431}
-{"eleccion": "municipales-2025", "departamento": "san_jose", "geoId": "RODRÍGUEZ", "opcionId": "nacional", "votos": 2036, "validos": 2759}
-{"eleccion": "municipales-2025", "departamento": "san_jose", "geoId": "RODRÍGUEZ", "opcionId": "frente-amplio", "votos": 667, "validos": 2759}
-{"eleccion": "municipales-2025", "departamento": "san_jose", "geoId": "RODRÍGUEZ", "opcionId": "colorado", "votos": 56, "validos": 2759}
-{"eleccion": "municipales-2025", "departamento": "san_jose", "geoId": "LIBERTAD", "opcionId": "nacional", "votos": 4416, "validos": 6792}
-{"eleccion": "municipales-2025", "departamento": "san_jose", "geoId": "LIBERTAD", "opcionId": "frente-amplio", "votos": 2157, "validos": 6792}
-{"eleccion": "municipales-2025", "departamento": "san_jose", "geoId": "LIBERTAD", "opcionId": "colorado", "votos": 219, "validos": 6792}
-{"eleccion": "municipales-2025", "departamento": "san_jose", "geoId": "ECILDA PAULLIER", "opcionId": "nacional", "votos": 2492, "validos": 3084}
-{"eleccion": "municipales-2025", "departamento": "san_jose", "geoId": "ECILDA PAULLIER", "opcionId": "frente-amplio", "votos": 491, "validos": 3084}
-{"eleccion": "municipales-2025", "departamento": "san_jose", "geoId": "ECILDA PAULLIER", "opcionId": "colorado", "votos": 101, "validos": 3084}
-{"eleccion": "municipales-2025", "departamento": "soriano", "geoId": "VILLA DE SANTO DOMINGO DE SORIANO", "opcionId": "nacional", "votos": 563, "validos": 885}
-{"eleccion": "municipales-2025", "departamento": "soriano", "geoId": "VILLA DE SANTO DOMINGO DE SORIANO", "opcionId": "colorado", "votos": 161, "validos": 885}
-{"eleccion": "municipales-2025", "departamento": "soriano", "geoId": "VILLA DE SANTO DOMINGO DE SORIANO", "opcionId": "frente-amplio", "votos": 161, "validos": 885}
-{"eleccion": "municipales-2025", "departamento": "soriano", "geoId": "DOLORES", "opcionId": "nacional", "votos": 7759, "validos": 10841}
-{"eleccion": "municipales-2025", "departamento": "soriano", "geoId": "DOLORES", "opcionId": "frente-amplio", "votos": 2052, "validos": 10841}
-{"eleccion": "municipales-2025", "departamento": "soriano", "geoId": "DOLORES", "opcionId": "colorado", "votos": 1030, "validos": 10841}
-{"eleccion": "municipales-2025", "departamento": "soriano", "geoId": "JOSÉ ENRIQUE RODÓ", "opcionId": "nacional", "votos": 1216, "validos": 1596}
-{"eleccion": "municipales-2025", "departamento": "soriano", "geoId": "JOSÉ ENRIQUE RODÓ", "opcionId": "frente-amplio", "votos": 323, "validos": 1596}
-{"eleccion": "municipales-2025", "departamento": "soriano", "geoId": "JOSÉ ENRIQUE RODÓ", "opcionId": "colorado", "votos": 57, "validos": 1596}
-{"eleccion": "municipales-2025", "departamento": "soriano", "geoId": "CARDONA", "opcionId": "nacional", "votos": 2438, "validos": 3821}
-{"eleccion": "municipales-2025", "departamento": "soriano", "geoId": "CARDONA", "opcionId": "frente-amplio", "votos": 1035, "validos": 3821}
-{"eleccion": "municipales-2025", "departamento": "soriano", "geoId": "CARDONA", "opcionId": "colorado", "votos": 348, "validos": 3821}
-{"eleccion": "municipales-2025", "departamento": "soriano", "geoId": "PALMITAS", "opcionId": "nacional", "votos": 865, "validos": 1420}
-{"eleccion": "municipales-2025", "departamento": "soriano", "geoId": "PALMITAS", "opcionId": "colorado", "votos": 436, "validos": 1420}
-{"eleccion": "municipales-2025", "departamento": "soriano", "geoId": "PALMITAS", "opcionId": "frente-amplio", "votos": 119, "validos": 1420}
-{"eleccion": "municipales-2025", "departamento": "rocha", "geoId": "CASTILLOS", "opcionId": "nacional", "votos": 3551, "validos": 5503}
-{"eleccion": "municipales-2025", "departamento": "rocha", "geoId": "CASTILLOS", "opcionId": "frente-amplio", "votos": 1874, "validos": 5503}
-{"eleccion": "municipales-2025", "departamento": "rocha", "geoId": "CASTILLOS", "opcionId": "colorado", "votos": 78, "validos": 5503}
-{"eleccion": "municipales-2025", "departamento": "rocha", "geoId": "LA PALOMA", "opcionId": "frente-amplio", "votos": 2269, "validos": 4321}
-{"eleccion": "municipales-2025", "departamento": "rocha", "geoId": "LA PALOMA", "opcionId": "nacional", "votos": 2024, "validos": 4321}
-{"eleccion": "municipales-2025", "departamento": "rocha", "geoId": "LA PALOMA", "opcionId": "colorado", "votos": 28, "validos": 4321}
-{"eleccion": "municipales-2025", "departamento": "rocha", "geoId": "LASCANO", "opcionId": "nacional", "votos": 3146, "validos": 4924}
-{"eleccion": "municipales-2025", "departamento": "rocha", "geoId": "LASCANO", "opcionId": "frente-amplio", "votos": 1750, "validos": 4924}
-{"eleccion": "municipales-2025", "departamento": "rocha", "geoId": "LASCANO", "opcionId": "colorado", "votos": 28, "validos": 4924}
-{"eleccion": "municipales-2025", "departamento": "rocha", "geoId": "CHUY", "opcionId": "nacional", "votos": 4924, "validos": 8184}
-{"eleccion": "municipales-2025", "departamento": "rocha", "geoId": "CHUY", "opcionId": "frente-amplio", "votos": 3220, "validos": 8184}
-{"eleccion": "municipales-2025", "departamento": "rocha", "geoId": "CHUY", "opcionId": "colorado", "votos": 40, "validos": 8184}
-{"eleccion": "municipales-2025", "departamento": "florida", "geoId": "SARANDÍ GRANDE", "opcionId": "nacional", "votos": 3301, "validos": 4532}
-{"eleccion": "municipales-2025", "departamento": "florida", "geoId": "SARANDÍ GRANDE", "opcionId": "frente-amplio", "votos": 939, "validos": 4532}
-{"eleccion": "municipales-2025", "departamento": "florida", "geoId": "SARANDÍ GRANDE", "opcionId": "colorado", "votos": 292, "validos": 4532}
-{"eleccion": "municipales-2025", "departamento": "florida", "geoId": "CASUPÁ", "opcionId": "nacional", "votos": 1477, "validos": 1911}
-{"eleccion": "municipales-2025", "departamento": "florida", "geoId": "CASUPÁ", "opcionId": "frente-amplio", "votos": 326, "validos": 1911}
-{"eleccion": "municipales-2025", "departamento": "florida", "geoId": "CASUPÁ", "opcionId": "colorado", "votos": 108, "validos": 1911}
-{"eleccion": "municipales-2025", "departamento": "florida", "geoId": "FRAY MARCOS", "opcionId": "nacional", "votos": 1480, "validos": 2087}
-{"eleccion": "municipales-2025", "departamento": "florida", "geoId": "FRAY MARCOS", "opcionId": "frente-amplio", "votos": 347, "validos": 2087}
-{"eleccion": "municipales-2025", "departamento": "florida", "geoId": "FRAY MARCOS", "opcionId": "colorado", "votos": 260, "validos": 2087}
-{"eleccion": "municipales-2025", "departamento": "artigas", "geoId": "TOMÁS GOMENSORO", "opcionId": "nacional", "votos": 1179, "validos": 1978}
-{"eleccion": "municipales-2025", "departamento": "artigas", "geoId": "TOMÁS GOMENSORO", "opcionId": "frente-amplio", "votos": 738, "validos": 1978}
-{"eleccion": "municipales-2025", "departamento": "artigas", "geoId": "TOMÁS GOMENSORO", "opcionId": "colorado", "votos": 33, "validos": 1978}
-{"eleccion": "municipales-2025", "departamento": "artigas", "geoId": "TOMÁS GOMENSORO", "opcionId": "cabildo-abierto", "votos": 28, "validos": 1978}
-{"eleccion": "municipales-2025", "departamento": "artigas", "geoId": "BELLA UNIÓN", "opcionId": "nacional", "votos": 5468, "validos": 10721}
-{"eleccion": "municipales-2025", "departamento": "artigas", "geoId": "BELLA UNIÓN", "opcionId": "frente-amplio", "votos": 4695, "validos": 10721}
-{"eleccion": "municipales-2025", "departamento": "artigas", "geoId": "BELLA UNIÓN", "opcionId": "colorado", "votos": 463, "validos": 10721}
-{"eleccion": "municipales-2025", "departamento": "artigas", "geoId": "BELLA UNIÓN", "opcionId": "cabildo-abierto", "votos": 95, "validos": 10721}
-{"eleccion": "municipales-2025", "departamento": "artigas", "geoId": "BALTASAR BRUM", "opcionId": "nacional", "votos": 971, "validos": 1790}
-{"eleccion": "municipales-2025", "departamento": "artigas", "geoId": "BALTASAR BRUM", "opcionId": "colorado", "votos": 467, "validos": 1790}
-{"eleccion": "municipales-2025", "departamento": "artigas", "geoId": "BALTASAR BRUM", "opcionId": "frente-amplio", "votos": 352, "validos": 1790}
-{"eleccion": "municipales-2025", "departamento": "durazno", "geoId": "SARANDÍ DEL YÍ", "opcionId": "nacional", "votos": 3714, "validos": 4936}
-{"eleccion": "municipales-2025", "departamento": "durazno", "geoId": "SARANDÍ DEL YÍ", "opcionId": "frente-amplio", "votos": 1005, "validos": 4936}
-{"eleccion": "municipales-2025", "departamento": "durazno", "geoId": "SARANDÍ DEL YÍ", "opcionId": "colorado", "votos": 167, "validos": 4936}
-{"eleccion": "municipales-2025", "departamento": "durazno", "geoId": "SARANDÍ DEL YÍ", "opcionId": "asamblea-popular", "votos": 50, "validos": 4936}
-{"eleccion": "municipales-2025", "departamento": "durazno", "geoId": "VILLA DEL CARMEN", "opcionId": "nacional", "votos": 1691, "validos": 1943}
-{"eleccion": "municipales-2025", "departamento": "durazno", "geoId": "VILLA DEL CARMEN", "opcionId": "frente-amplio", "votos": 186, "validos": 1943}
-{"eleccion": "municipales-2025", "departamento": "durazno", "geoId": "VILLA DEL CARMEN", "opcionId": "colorado", "votos": 66, "validos": 1943}
-{"eleccion": "municipales-2025", "departamento": "treinta_y_tres", "geoId": "VERGARA", "opcionId": "nacional", "votos": 2660, "validos": 2874}
-{"eleccion": "municipales-2025", "departamento": "treinta_y_tres", "geoId": "VERGARA", "opcionId": "frente-amplio", "votos": 214, "validos": 2874}
-{"eleccion": "municipales-2025", "departamento": "treinta_y_tres", "geoId": "GENERAL ENRIQUE MARTÍNEZ", "opcionId": "nacional", "votos": 923, "validos": 1106}
-{"eleccion": "municipales-2025", "departamento": "treinta_y_tres", "geoId": "GENERAL ENRIQUE MARTÍNEZ", "opcionId": "frente-amplio", "votos": 183, "validos": 1106}
-{"eleccion": "municipales-2025", "departamento": "treinta_y_tres", "geoId": "RINCÓN", "opcionId": "nacional", "votos": 524, "validos": 604}
-{"eleccion": "municipales-2025", "departamento": "treinta_y_tres", "geoId": "RINCÓN", "opcionId": "frente-amplio", "votos": 80, "validos": 604}
-{"eleccion": "municipales-2025", "departamento": "treinta_y_tres", "geoId": "SANTA CLARA DE OLIMAR", "opcionId": "nacional", "votos": 1537, "validos": 1671}
-{"eleccion": "municipales-2025", "departamento": "treinta_y_tres", "geoId": "SANTA CLARA DE OLIMAR", "opcionId": "frente-amplio", "votos": 134, "validos": 1671}
-{"eleccion": "municipales-2025", "departamento": "treinta_y_tres", "geoId": "CERRO CHATO", "opcionId": "nacional", "votos": 1240, "validos": 1859}
-{"eleccion": "municipales-2025", "departamento": "treinta_y_tres", "geoId": "CERRO CHATO", "opcionId": "frente-amplio", "votos": 619, "validos": 1859}
-{"eleccion": "municipales-2025", "departamento": "treinta_y_tres", "geoId": "VILLA SARA", "opcionId": "nacional", "votos": 513, "validos": 624}
-{"eleccion": "municipales-2025", "departamento": "treinta_y_tres", "geoId": "VILLA SARA", "opcionId": "frente-amplio", "votos": 111, "validos": 624}
-{"eleccion": "municipales-2025", "departamento": "lavalleja", "geoId": "SOLÍS DE MATAOJO", "opcionId": "nacional", "votos": 1041, "validos": 2097}
-{"eleccion": "municipales-2025", "departamento": "lavalleja", "geoId": "SOLÍS DE MATAOJO", "opcionId": "frente-amplio", "votos": 833, "validos": 2097}
-{"eleccion": "municipales-2025", "departamento": "lavalleja", "geoId": "SOLÍS DE MATAOJO", "opcionId": "colorado", "votos": 223, "validos": 2097}
-{"eleccion": "municipales-2025", "departamento": "lavalleja", "geoId": "MARISCALA", "opcionId": "nacional", "votos": 744, "validos": 1223}
-{"eleccion": "municipales-2025", "departamento": "lavalleja", "geoId": "MARISCALA", "opcionId": "colorado", "votos": 364, "validos": 1223}
-{"eleccion": "municipales-2025", "departamento": "lavalleja", "geoId": "MARISCALA", "opcionId": "frente-amplio", "votos": 115, "validos": 1223}
-{"eleccion": "municipales-2025", "departamento": "lavalleja", "geoId": "PIRARAJÁ", "opcionId": "nacional", "votos": 430, "validos": 526}
-{"eleccion": "municipales-2025", "departamento": "lavalleja", "geoId": "PIRARAJÁ", "opcionId": "frente-amplio", "votos": 91, "validos": 526}
-{"eleccion": "municipales-2025", "departamento": "lavalleja", "geoId": "PIRARAJÁ", "opcionId": "colorado", "votos": 5, "validos": 526}
-{"eleccion": "municipales-2025", "departamento": "lavalleja", "geoId": "JOSÉ PEDRO VARELA", "opcionId": "nacional", "votos": 1870, "validos": 3288}
-{"eleccion": "municipales-2025", "departamento": "lavalleja", "geoId": "JOSÉ PEDRO VARELA", "opcionId": "frente-amplio", "votos": 1097, "validos": 3288}
-{"eleccion": "municipales-2025", "departamento": "lavalleja", "geoId": "JOSÉ PEDRO VARELA", "opcionId": "colorado", "votos": 321, "validos": 3288}
-{"eleccion": "municipales-2025", "departamento": "lavalleja", "geoId": "ZAPICÁN", "opcionId": "nacional", "votos": 361, "validos": 468}
-{"eleccion": "municipales-2025", "departamento": "lavalleja", "geoId": "ZAPICÁN", "opcionId": "colorado", "votos": 61, "validos": 468}
-{"eleccion": "municipales-2025", "departamento": "lavalleja", "geoId": "ZAPICÁN", "opcionId": "frente-amplio", "votos": 46, "validos": 468}
-{"eleccion": "municipales-2025", "departamento": "lavalleja", "geoId": "JOSÉ BATLLE Y ORDÓÑEZ", "opcionId": "colorado", "votos": 759, "validos": 1663}
-{"eleccion": "municipales-2025", "departamento": "lavalleja", "geoId": "JOSÉ BATLLE Y ORDÓÑEZ", "opcionId": "nacional", "votos": 726, "validos": 1663}
-{"eleccion": "municipales-2025", "departamento": "lavalleja", "geoId": "JOSÉ BATLLE Y ORDÓÑEZ", "opcionId": "frente-amplio", "votos": 178, "validos": 1663}
-{"eleccion": "municipales-2025", "departamento": "rio_negro", "geoId": "NUEVO BERLÍN", "opcionId": "nacional", "votos": 826, "validos": 1508}
-{"eleccion": "municipales-2025", "departamento": "rio_negro", "geoId": "NUEVO BERLÍN", "opcionId": "frente-amplio", "votos": 437, "validos": 1508}
-{"eleccion": "municipales-2025", "departamento": "rio_negro", "geoId": "NUEVO BERLÍN", "opcionId": "colorado", "votos": 245, "validos": 1508}
-{"eleccion": "municipales-2025", "departamento": "rio_negro", "geoId": "SAN JAVIER", "opcionId": "nacional", "votos": 544, "validos": 1494}
-{"eleccion": "municipales-2025", "departamento": "rio_negro", "geoId": "SAN JAVIER", "opcionId": "frente-amplio", "votos": 531, "validos": 1494}
-{"eleccion": "municipales-2025", "departamento": "rio_negro", "geoId": "SAN JAVIER", "opcionId": "colorado", "votos": 419, "validos": 1494}
-{"eleccion": "municipales-2025", "departamento": "rio_negro", "geoId": "YOUNG", "opcionId": "frente-amplio", "votos": 3809, "validos": 9028}
-{"eleccion": "municipales-2025", "departamento": "rio_negro", "geoId": "YOUNG", "opcionId": "nacional", "votos": 3522, "validos": 9028}
-{"eleccion": "municipales-2025", "departamento": "rio_negro", "geoId": "YOUNG", "opcionId": "colorado", "votos": 1697, "validos": 9028}
-{"eleccion": "municipales-2025", "departamento": "flores", "geoId": "ISMAEL CORTINAS", "opcionId": "nacional", "votos": 787, "validos": 824}
-{"eleccion": "municipales-2025", "departamento": "flores", "geoId": "ISMAEL CORTINAS", "opcionId": "frente-amplio", "votos": 24, "validos": 824}
-{"eleccion": "municipales-2025", "departamento": "flores", "geoId": "ISMAEL CORTINAS", "opcionId": "colorado", "votos": 13, "validos": 824}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TOMÁS GOMENSORO · Artigas", "opcionId": "nacional", "votos": 1179, "validos": 1978}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TOMÁS GOMENSORO · Artigas", "opcionId": "frente-amplio", "votos": 738, "validos": 1978}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TOMÁS GOMENSORO · Artigas", "opcionId": "colorado", "votos": 33, "validos": 1978}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TOMÁS GOMENSORO · Artigas", "opcionId": "cabildo-abierto", "votos": 28, "validos": 1978}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "BELLA UNIÓN · Artigas", "opcionId": "nacional", "votos": 5468, "validos": 10721}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "BELLA UNIÓN · Artigas", "opcionId": "frente-amplio", "votos": 4695, "validos": 10721}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "BELLA UNIÓN · Artigas", "opcionId": "colorado", "votos": 463, "validos": 10721}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "BELLA UNIÓN · Artigas", "opcionId": "cabildo-abierto", "votos": 95, "validos": 10721}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "BALTASAR BRUM · Artigas", "opcionId": "nacional", "votos": 971, "validos": 1790}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "BALTASAR BRUM · Artigas", "opcionId": "colorado", "votos": 467, "validos": 1790}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "BALTASAR BRUM · Artigas", "opcionId": "frente-amplio", "votos": 352, "validos": 1790}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LAS PIEDRAS · Canelones", "opcionId": "frente-amplio", "votos": 15554, "validos": 25890}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LAS PIEDRAS · Canelones", "opcionId": "coalicion-republicana", "votos": 10184, "validos": 25890}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LAS PIEDRAS · Canelones", "opcionId": "asamblea-popular", "votos": 138, "validos": 25890}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LAS PIEDRAS · Canelones", "opcionId": "nacional", "votos": 14, "validos": 25890}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CIUDAD DE LA COSTA · Canelones", "opcionId": "frente-amplio", "votos": 22146, "validos": 33171}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CIUDAD DE LA COSTA · Canelones", "opcionId": "coalicion-republicana", "votos": 10929, "validos": 33171}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CIUDAD DE LA COSTA · Canelones", "opcionId": "asamblea-popular", "votos": 96, "validos": 33171}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SALINAS · Canelones", "opcionId": "frente-amplio", "votos": 5492, "validos": 8627}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SALINAS · Canelones", "opcionId": "coalicion-republicana", "votos": 3063, "validos": 8627}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SALINAS · Canelones", "opcionId": "asamblea-popular", "votos": 72, "validos": 8627}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PARQUE DEL PLATA · Canelones", "opcionId": "frente-amplio", "votos": 2725, "validos": 4732}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PARQUE DEL PLATA · Canelones", "opcionId": "coalicion-republicana", "votos": 1979, "validos": 4732}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PARQUE DEL PLATA · Canelones", "opcionId": "asamblea-popular", "votos": 28, "validos": 4732}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "COLONIA NICOLICH · Canelones", "opcionId": "frente-amplio", "votos": 3271, "validos": 4732}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "COLONIA NICOLICH · Canelones", "opcionId": "coalicion-republicana", "votos": 1438, "validos": 4732}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "COLONIA NICOLICH · Canelones", "opcionId": "asamblea-popular", "votos": 23, "validos": 4732}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SUÁREZ · Canelones", "opcionId": "frente-amplio", "votos": 3039, "validos": 5220}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SUÁREZ · Canelones", "opcionId": "coalicion-republicana", "votos": 2161, "validos": 5220}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SUÁREZ · Canelones", "opcionId": "asamblea-popular", "votos": 20, "validos": 5220}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CANELONES · Canelones", "opcionId": "frente-amplio", "votos": 6749, "validos": 10358}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CANELONES · Canelones", "opcionId": "coalicion-republicana", "votos": 3609, "validos": 10358}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SANTA LUCÍA · Canelones", "opcionId": "frente-amplio", "votos": 5600, "validos": 8647}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SANTA LUCÍA · Canelones", "opcionId": "coalicion-republicana", "votos": 3047, "validos": 8647}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LOS CERRILLOS · Canelones", "opcionId": "coalicion-republicana", "votos": 2636, "validos": 4058}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LOS CERRILLOS · Canelones", "opcionId": "frente-amplio", "votos": 1422, "validos": 4058}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "AGUAS CORRIENTES · Canelones", "opcionId": "frente-amplio", "votos": 614, "validos": 933}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "AGUAS CORRIENTES · Canelones", "opcionId": "coalicion-republicana", "votos": 319, "validos": 933}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PROGRESO · Canelones", "opcionId": "frente-amplio", "votos": 5033, "validos": 7002}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PROGRESO · Canelones", "opcionId": "coalicion-republicana", "votos": 1969, "validos": 7002}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "18 DE MAYO · Canelones", "opcionId": "coalicion-republicana", "votos": 3487, "validos": 6833}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "18 DE MAYO · Canelones", "opcionId": "frente-amplio", "votos": 3346, "validos": 6833}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LA PAZ · Canelones", "opcionId": "frente-amplio", "votos": 7194, "validos": 9641}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LA PAZ · Canelones", "opcionId": "coalicion-republicana", "votos": 2447, "validos": 9641}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SAUCE · Canelones", "opcionId": "coalicion-republicana", "votos": 4418, "validos": 6549}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SAUCE · Canelones", "opcionId": "frente-amplio", "votos": 2131, "validos": 6549}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SANTA ROSA · Canelones", "opcionId": "frente-amplio", "votos": 1792, "validos": 2850}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SANTA ROSA · Canelones", "opcionId": "coalicion-republicana", "votos": 1058, "validos": 2850}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SAN JACINTO · Canelones", "opcionId": "coalicion-republicana", "votos": 3490, "validos": 4764}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SAN JACINTO · Canelones", "opcionId": "frente-amplio", "votos": 1274, "validos": 4764}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SAN RAMÓN · Canelones", "opcionId": "coalicion-republicana", "votos": 3955, "validos": 4668}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SAN RAMÓN · Canelones", "opcionId": "frente-amplio", "votos": 713, "validos": 4668}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TALA · Canelones", "opcionId": "coalicion-republicana", "votos": 3877, "validos": 5668}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TALA · Canelones", "opcionId": "frente-amplio", "votos": 1791, "validos": 5668}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "MIGUES · Canelones", "opcionId": "coalicion-republicana", "votos": 2303, "validos": 2746}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "MIGUES · Canelones", "opcionId": "frente-amplio", "votos": 443, "validos": 2746}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "MONTES · Canelones", "opcionId": "frente-amplio", "votos": 753, "validos": 1143}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "MONTES · Canelones", "opcionId": "coalicion-republicana", "votos": 390, "validos": 1143}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SOCA · Canelones", "opcionId": "coalicion-republicana", "votos": 1113, "validos": 1762}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SOCA · Canelones", "opcionId": "frente-amplio", "votos": 649, "validos": 1762}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LA FLORESTA · Canelones", "opcionId": "frente-amplio", "votos": 2981, "validos": 5253}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LA FLORESTA · Canelones", "opcionId": "coalicion-republicana", "votos": 2272, "validos": 5253}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PANDO · Canelones", "opcionId": "frente-amplio", "votos": 8446, "validos": 15091}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PANDO · Canelones", "opcionId": "coalicion-republicana", "votos": 6645, "validos": 15091}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "EMPALME OLMOS · Canelones", "opcionId": "coalicion-republicana", "votos": 2193, "validos": 3700}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "EMPALME OLMOS · Canelones", "opcionId": "frente-amplio", "votos": 1507, "validos": 3700}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ATLÁNTIDA · Canelones", "opcionId": "coalicion-republicana", "votos": 3390, "validos": 6282}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ATLÁNTIDA · Canelones", "opcionId": "frente-amplio", "votos": 2892, "validos": 6282}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PASO CARRASCO · Canelones", "opcionId": "frente-amplio", "votos": 3884, "validos": 5121}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PASO CARRASCO · Canelones", "opcionId": "coalicion-republicana", "votos": 1237, "validos": 5121}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "BARROS BLANCOS · Canelones", "opcionId": "frente-amplio", "votos": 6604, "validos": 12357}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "BARROS BLANCOS · Canelones", "opcionId": "coalicion-republicana", "votos": 5753, "validos": 12357}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "JUANICÓ · Canelones", "opcionId": "coalicion-republicana", "votos": 1397, "validos": 2067}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "JUANICÓ · Canelones", "opcionId": "frente-amplio", "votos": 670, "validos": 2067}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SAN ANTONIO · Canelones", "opcionId": "coalicion-republicana", "votos": 1322, "validos": 1986}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SAN ANTONIO · Canelones", "opcionId": "frente-amplio", "votos": 664, "validos": 1986}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SAN BAUTISTA · Canelones", "opcionId": "coalicion-republicana", "votos": 2079, "validos": 2626}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SAN BAUTISTA · Canelones", "opcionId": "frente-amplio", "votos": 547, "validos": 2626}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TOLEDO · Canelones", "opcionId": "coalicion-republicana", "votos": 3654, "validos": 7218}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TOLEDO · Canelones", "opcionId": "frente-amplio", "votos": 3564, "validos": 7218}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "DEL ANDALUZ · Canelones", "opcionId": "frente-amplio", "votos": 1177, "validos": 1903}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "DEL ANDALUZ · Canelones", "opcionId": "coalicion-republicana", "votos": 726, "validos": 1903}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "RÍO BRANCO · Cerro Largo", "opcionId": "nacional", "votos": 9648, "validos": 10297}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "RÍO BRANCO · Cerro Largo", "opcionId": "frente-amplio", "votos": 559, "validos": 10297}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "RÍO BRANCO · Cerro Largo", "opcionId": "colorado", "votos": 90, "validos": 10297}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "FRAILE MUERTO · Cerro Largo", "opcionId": "nacional", "votos": 2062, "validos": 2273}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "FRAILE MUERTO · Cerro Largo", "opcionId": "frente-amplio", "votos": 202, "validos": 2273}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "FRAILE MUERTO · Cerro Largo", "opcionId": "colorado", "votos": 9, "validos": 2273}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TUPAMBAÉ · Cerro Largo", "opcionId": "nacional", "votos": 663, "validos": 789}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TUPAMBAÉ · Cerro Largo", "opcionId": "frente-amplio", "votos": 121, "validos": 789}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TUPAMBAÉ · Cerro Largo", "opcionId": "colorado", "votos": 5, "validos": 789}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "BAÑADO DE MEDINA · Cerro Largo", "opcionId": "nacional", "votos": 786, "validos": 822}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "BAÑADO DE MEDINA · Cerro Largo", "opcionId": "frente-amplio", "votos": 36, "validos": 822}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PLÁCIDO ROSAS · Cerro Largo", "opcionId": "nacional", "votos": 420, "validos": 456}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PLÁCIDO ROSAS · Cerro Largo", "opcionId": "frente-amplio", "votos": 36, "validos": 456}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CERRO DE LAS CUENTAS · Cerro Largo", "opcionId": "nacional", "votos": 386, "validos": 412}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CERRO DE LAS CUENTAS · Cerro Largo", "opcionId": "frente-amplio", "votos": 26, "validos": 412}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LAS CAÑAS · Cerro Largo", "opcionId": "nacional", "votos": 296, "validos": 355}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LAS CAÑAS · Cerro Largo", "opcionId": "frente-amplio", "votos": 59, "validos": 355}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LAGUNA MERÍN · Cerro Largo", "opcionId": "nacional", "votos": 569, "validos": 706}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LAGUNA MERÍN · Cerro Largo", "opcionId": "frente-amplio", "votos": 137, "validos": 706}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CENTURIÓN · Cerro Largo", "opcionId": "nacional", "votos": 241, "validos": 244}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CENTURIÓN · Cerro Largo", "opcionId": "frente-amplio", "votos": 3, "validos": 244}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ISIDORO NOBLÍA · Cerro Largo", "opcionId": "nacional", "votos": 1923, "validos": 2070}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ISIDORO NOBLÍA · Cerro Largo", "opcionId": "frente-amplio", "votos": 147, "validos": 2070}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ACEGUÁ · Cerro Largo", "opcionId": "nacional", "votos": 1240, "validos": 1278}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ACEGUÁ · Cerro Largo", "opcionId": "frente-amplio", "votos": 38, "validos": 1278}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TRES ISLAS · Cerro Largo", "opcionId": "nacional", "votos": 223, "validos": 228}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TRES ISLAS · Cerro Largo", "opcionId": "frente-amplio", "votos": 5, "validos": 228}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "RAMÓN TRIGO · Cerro Largo", "opcionId": "nacional", "votos": 188, "validos": 214}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "RAMÓN TRIGO · Cerro Largo", "opcionId": "frente-amplio", "votos": 26, "validos": 214}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ARBOLITO · Cerro Largo", "opcionId": "nacional", "votos": 275, "validos": 275}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "QUEBRACHO · Cerro Largo", "opcionId": "nacional", "votos": 164, "validos": 164}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ARÉVALO · Cerro Largo", "opcionId": "nacional", "votos": 557, "validos": 557}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "COLONIA MIGUELETE · Colonia", "opcionId": "nacional", "votos": 779, "validos": 935}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "COLONIA MIGUELETE · Colonia", "opcionId": "colorado", "votos": 91, "validos": 935}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "COLONIA MIGUELETE · Colonia", "opcionId": "frente-amplio", "votos": 65, "validos": 935}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TARARIRAS · Colonia", "opcionId": "nacional", "votos": 3736, "validos": 4676}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TARARIRAS · Colonia", "opcionId": "frente-amplio", "votos": 857, "validos": 4676}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TARARIRAS · Colonia", "opcionId": "colorado", "votos": 83, "validos": 4676}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ROSARIO · Colonia", "opcionId": "nacional", "votos": 3545, "validos": 6186}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ROSARIO · Colonia", "opcionId": "frente-amplio", "votos": 2536, "validos": 6186}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ROSARIO · Colonia", "opcionId": "colorado", "votos": 105, "validos": 6186}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LA PAZ · Colonia", "opcionId": "nacional", "votos": 536, "validos": 738}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LA PAZ · Colonia", "opcionId": "colorado", "votos": 202, "validos": 738}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CUFRÉ · Colonia", "opcionId": "nacional", "votos": 527, "validos": 587}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CUFRÉ · Colonia", "opcionId": "frente-amplio", "votos": 31, "validos": 587}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CUFRÉ · Colonia", "opcionId": "colorado", "votos": 29, "validos": 587}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "NUEVA HELVECIA · Colonia", "opcionId": "nacional", "votos": 4249, "validos": 6640}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "NUEVA HELVECIA · Colonia", "opcionId": "frente-amplio", "votos": 2114, "validos": 6640}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "NUEVA HELVECIA · Colonia", "opcionId": "colorado", "votos": 277, "validos": 6640}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "FLORENCIO SÁNCHEZ · Colonia", "opcionId": "nacional", "votos": 1057, "validos": 1527}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "FLORENCIO SÁNCHEZ · Colonia", "opcionId": "frente-amplio", "votos": 417, "validos": 1527}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "FLORENCIO SÁNCHEZ · Colonia", "opcionId": "colorado", "votos": 53, "validos": 1527}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "OMBÚES DE LAVALLE · Colonia", "opcionId": "nacional", "votos": 2288, "validos": 2865}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "OMBÚES DE LAVALLE · Colonia", "opcionId": "frente-amplio", "votos": 540, "validos": 2865}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "OMBÚES DE LAVALLE · Colonia", "opcionId": "colorado", "votos": 37, "validos": 2865}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CARMELO · Colonia", "opcionId": "nacional", "votos": 7068, "validos": 9775}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CARMELO · Colonia", "opcionId": "frente-amplio", "votos": 2569, "validos": 9775}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CARMELO · Colonia", "opcionId": "colorado", "votos": 138, "validos": 9775}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "NUEVA PALMIRA · Colonia", "opcionId": "nacional", "votos": 3085, "validos": 6193}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "NUEVA PALMIRA · Colonia", "opcionId": "frente-amplio", "votos": 3026, "validos": 6193}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "NUEVA PALMIRA · Colonia", "opcionId": "colorado", "votos": 82, "validos": 6193}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "JUAN L. LACAZE · Colonia", "opcionId": "frente-amplio", "votos": 4669, "validos": 7445}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "JUAN L. LACAZE · Colonia", "opcionId": "nacional", "votos": 2628, "validos": 7445}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "JUAN L. LACAZE · Colonia", "opcionId": "colorado", "votos": 148, "validos": 7445}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "COLONIA VALDENSE · Colonia", "opcionId": "nacional", "votos": 1976, "validos": 2559}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "COLONIA VALDENSE · Colonia", "opcionId": "frente-amplio", "votos": 583, "validos": 2559}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CONCHILLAS · Colonia", "opcionId": "nacional", "votos": 895, "validos": 1127}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CONCHILLAS · Colonia", "opcionId": "frente-amplio", "votos": 232, "validos": 1127}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SARANDÍ DEL YÍ · Durazno", "opcionId": "nacional", "votos": 3714, "validos": 4936}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SARANDÍ DEL YÍ · Durazno", "opcionId": "frente-amplio", "votos": 1005, "validos": 4936}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SARANDÍ DEL YÍ · Durazno", "opcionId": "colorado", "votos": 167, "validos": 4936}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SARANDÍ DEL YÍ · Durazno", "opcionId": "asamblea-popular", "votos": 50, "validos": 4936}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "VILLA DEL CARMEN · Durazno", "opcionId": "nacional", "votos": 1691, "validos": 1943}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "VILLA DEL CARMEN · Durazno", "opcionId": "frente-amplio", "votos": 186, "validos": 1943}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "VILLA DEL CARMEN · Durazno", "opcionId": "colorado", "votos": 66, "validos": 1943}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ISMAEL CORTINAS · Flores", "opcionId": "nacional", "votos": 787, "validos": 824}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ISMAEL CORTINAS · Flores", "opcionId": "frente-amplio", "votos": 24, "validos": 824}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ISMAEL CORTINAS · Flores", "opcionId": "colorado", "votos": 13, "validos": 824}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SARANDÍ GRANDE · Florida", "opcionId": "nacional", "votos": 3301, "validos": 4532}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SARANDÍ GRANDE · Florida", "opcionId": "frente-amplio", "votos": 939, "validos": 4532}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SARANDÍ GRANDE · Florida", "opcionId": "colorado", "votos": 292, "validos": 4532}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CASUPÁ · Florida", "opcionId": "nacional", "votos": 1477, "validos": 1911}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CASUPÁ · Florida", "opcionId": "frente-amplio", "votos": 326, "validos": 1911}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CASUPÁ · Florida", "opcionId": "colorado", "votos": 108, "validos": 1911}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "FRAY MARCOS · Florida", "opcionId": "nacional", "votos": 1480, "validos": 2087}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "FRAY MARCOS · Florida", "opcionId": "frente-amplio", "votos": 347, "validos": 2087}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "FRAY MARCOS · Florida", "opcionId": "colorado", "votos": 260, "validos": 2087}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SOLÍS DE MATAOJO · Lavalleja", "opcionId": "nacional", "votos": 1041, "validos": 2097}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SOLÍS DE MATAOJO · Lavalleja", "opcionId": "frente-amplio", "votos": 833, "validos": 2097}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SOLÍS DE MATAOJO · Lavalleja", "opcionId": "colorado", "votos": 223, "validos": 2097}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "MARISCALA · Lavalleja", "opcionId": "nacional", "votos": 744, "validos": 1223}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "MARISCALA · Lavalleja", "opcionId": "colorado", "votos": 364, "validos": 1223}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "MARISCALA · Lavalleja", "opcionId": "frente-amplio", "votos": 115, "validos": 1223}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PIRARAJÁ · Lavalleja", "opcionId": "nacional", "votos": 430, "validos": 526}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PIRARAJÁ · Lavalleja", "opcionId": "frente-amplio", "votos": 91, "validos": 526}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PIRARAJÁ · Lavalleja", "opcionId": "colorado", "votos": 5, "validos": 526}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "JOSÉ PEDRO VARELA · Lavalleja", "opcionId": "nacional", "votos": 1870, "validos": 3288}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "JOSÉ PEDRO VARELA · Lavalleja", "opcionId": "frente-amplio", "votos": 1097, "validos": 3288}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "JOSÉ PEDRO VARELA · Lavalleja", "opcionId": "colorado", "votos": 321, "validos": 3288}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ZAPICÁN · Lavalleja", "opcionId": "nacional", "votos": 361, "validos": 468}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ZAPICÁN · Lavalleja", "opcionId": "colorado", "votos": 61, "validos": 468}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ZAPICÁN · Lavalleja", "opcionId": "frente-amplio", "votos": 46, "validos": 468}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "JOSÉ BATLLE Y ORDÓÑEZ · Lavalleja", "opcionId": "colorado", "votos": 759, "validos": 1663}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "JOSÉ BATLLE Y ORDÓÑEZ · Lavalleja", "opcionId": "nacional", "votos": 726, "validos": 1663}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "JOSÉ BATLLE Y ORDÓÑEZ · Lavalleja", "opcionId": "frente-amplio", "votos": 178, "validos": 1663}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "MALDONADO · Maldonado", "opcionId": "nacional", "votos": 26378, "validos": 35779}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "MALDONADO · Maldonado", "opcionId": "frente-amplio", "votos": 7861, "validos": 35779}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "MALDONADO · Maldonado", "opcionId": "colorado", "votos": 1432, "validos": 35779}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "MALDONADO · Maldonado", "opcionId": "asamblea-popular", "votos": 108, "validos": 35779}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SAN CARLOS · Maldonado", "opcionId": "nacional", "votos": 10531, "validos": 16601}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SAN CARLOS · Maldonado", "opcionId": "frente-amplio", "votos": 5412, "validos": 16601}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SAN CARLOS · Maldonado", "opcionId": "colorado", "votos": 569, "validos": 16601}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SAN CARLOS · Maldonado", "opcionId": "asamblea-popular", "votos": 89, "validos": 16601}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PIRIÁPOLIS · Maldonado", "opcionId": "nacional", "votos": 4651, "validos": 9498}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PIRIÁPOLIS · Maldonado", "opcionId": "frente-amplio", "votos": 4189, "validos": 9498}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PIRIÁPOLIS · Maldonado", "opcionId": "colorado", "votos": 644, "validos": 9498}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PIRIÁPOLIS · Maldonado", "opcionId": "asamblea-popular", "votos": 14, "validos": 9498}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PUNTA DEL ESTE · Maldonado", "opcionId": "nacional", "votos": 4540, "validos": 5352}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PUNTA DEL ESTE · Maldonado", "opcionId": "frente-amplio", "votos": 611, "validos": 5352}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PUNTA DEL ESTE · Maldonado", "opcionId": "colorado", "votos": 201, "validos": 5352}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PAN DE AZÚCAR · Maldonado", "opcionId": "nacional", "votos": 3423, "validos": 5355}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PAN DE AZÚCAR · Maldonado", "opcionId": "frente-amplio", "votos": 1660, "validos": 5355}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PAN DE AZÚCAR · Maldonado", "opcionId": "colorado", "votos": 272, "validos": 5355}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SOLÍS GRANDE · Maldonado", "opcionId": "nacional", "votos": 1446, "validos": 2085}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SOLÍS GRANDE · Maldonado", "opcionId": "frente-amplio", "votos": 604, "validos": 2085}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SOLÍS GRANDE · Maldonado", "opcionId": "colorado", "votos": 35, "validos": 2085}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "GARZÓN · Maldonado", "opcionId": "nacional", "votos": 778, "validos": 869}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "GARZÓN · Maldonado", "opcionId": "frente-amplio", "votos": 86, "validos": 869}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "GARZÓN · Maldonado", "opcionId": "colorado", "votos": 5, "validos": 869}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "AIGUÁ · Maldonado", "opcionId": "nacional", "votos": 1750, "validos": 2139}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "AIGUÁ · Maldonado", "opcionId": "frente-amplio", "votos": 227, "validos": 2139}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "AIGUÁ · Maldonado", "opcionId": "colorado", "votos": 162, "validos": 2139}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio B · Montevideo", "opcionId": "frente-amplio", "votos": 20692, "validos": 39954}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio B · Montevideo", "opcionId": "coalicion-republicana", "votos": 18907, "validos": 39954}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio B · Montevideo", "opcionId": "asamblea-popular", "votos": 355, "validos": 39954}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio CH · Montevideo", "opcionId": "coalicion-republicana", "votos": 42416, "validos": 63123}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio CH · Montevideo", "opcionId": "frente-amplio", "votos": 20455, "validos": 63123}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio CH · Montevideo", "opcionId": "asamblea-popular", "votos": 252, "validos": 63123}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio D · Montevideo", "opcionId": "frente-amplio", "votos": 19393, "validos": 36477}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio D · Montevideo", "opcionId": "coalicion-republicana", "votos": 16833, "validos": 36477}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio D · Montevideo", "opcionId": "asamblea-popular", "votos": 251, "validos": 36477}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio E · Montevideo", "opcionId": "coalicion-republicana", "votos": 28178, "validos": 49685}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio E · Montevideo", "opcionId": "frente-amplio", "votos": 21280, "validos": 49685}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio E · Montevideo", "opcionId": "asamblea-popular", "votos": 227, "validos": 49685}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio F · Montevideo", "opcionId": "frente-amplio", "votos": 19492, "validos": 38612}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio F · Montevideo", "opcionId": "coalicion-republicana", "votos": 18942, "validos": 38612}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio F · Montevideo", "opcionId": "asamblea-popular", "votos": 178, "validos": 38612}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio C · Montevideo", "opcionId": "frente-amplio", "votos": 22176, "validos": 39351}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio C · Montevideo", "opcionId": "coalicion-republicana", "votos": 16874, "validos": 39351}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio C · Montevideo", "opcionId": "asamblea-popular", "votos": 301, "validos": 39351}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio G · Montevideo", "opcionId": "frente-amplio", "votos": 20775, "validos": 34642}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio G · Montevideo", "opcionId": "coalicion-republicana", "votos": 13642, "validos": 34642}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio G · Montevideo", "opcionId": "asamblea-popular", "votos": 225, "validos": 34642}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio A · Montevideo", "opcionId": "frente-amplio", "votos": 30482, "validos": 42307}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio A · Montevideo", "opcionId": "coalicion-republicana", "votos": 11496, "validos": 42307}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "Municipio A · Montevideo", "opcionId": "asamblea-popular", "votos": 329, "validos": 42307}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PORVENIR · Paysandú", "opcionId": "nacional", "votos": 1549, "validos": 2025}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PORVENIR · Paysandú", "opcionId": "frente-amplio", "votos": 450, "validos": 2025}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PORVENIR · Paysandú", "opcionId": "colorado", "votos": 26, "validos": 2025}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "GUICHÓN · Paysandú", "opcionId": "nacional", "votos": 2331, "validos": 4363}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "GUICHÓN · Paysandú", "opcionId": "colorado", "votos": 1305, "validos": 4363}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "GUICHÓN · Paysandú", "opcionId": "frente-amplio", "votos": 727, "validos": 4363}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TAMBORES · Paysandú", "opcionId": "nacional", "votos": 504, "validos": 628}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TAMBORES · Paysandú", "opcionId": "frente-amplio", "votos": 93, "validos": 628}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TAMBORES · Paysandú", "opcionId": "colorado", "votos": 31, "validos": 628}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "QUEBRACHO · Paysandú", "opcionId": "nacional", "votos": 1372, "validos": 2129}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "QUEBRACHO · Paysandú", "opcionId": "frente-amplio", "votos": 502, "validos": 2129}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "QUEBRACHO · Paysandú", "opcionId": "colorado", "votos": 255, "validos": 2129}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "EL EUCALIPTO · Paysandú", "opcionId": "nacional", "votos": 339, "validos": 440}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "EL EUCALIPTO · Paysandú", "opcionId": "colorado", "votos": 56, "validos": 440}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "EL EUCALIPTO · Paysandú", "opcionId": "frente-amplio", "votos": 45, "validos": 440}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LORENZO GEYRES · Paysandú", "opcionId": "nacional", "votos": 590, "validos": 903}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LORENZO GEYRES · Paysandú", "opcionId": "frente-amplio", "votos": 309, "validos": 903}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LORENZO GEYRES · Paysandú", "opcionId": "colorado", "votos": 4, "validos": 903}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CERRO CHATO · Paysandú", "opcionId": "nacional", "votos": 735, "validos": 802}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CERRO CHATO · Paysandú", "opcionId": "frente-amplio", "votos": 66, "validos": 802}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CERRO CHATO · Paysandú", "opcionId": "colorado", "votos": 1, "validos": 802}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CHAPICUY · Paysandú", "opcionId": "nacional", "votos": 340, "validos": 681}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CHAPICUY · Paysandú", "opcionId": "colorado", "votos": 277, "validos": 681}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CHAPICUY · Paysandú", "opcionId": "frente-amplio", "votos": 64, "validos": 681}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PIEDRAS COLORADAS · Paysandú", "opcionId": "nacional", "votos": 904, "validos": 1055}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PIEDRAS COLORADAS · Paysandú", "opcionId": "frente-amplio", "votos": 150, "validos": 1055}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PIEDRAS COLORADAS · Paysandú", "opcionId": "colorado", "votos": 1, "validos": 1055}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "NUEVO BERLÍN · Río Negro", "opcionId": "nacional", "votos": 826, "validos": 1508}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "NUEVO BERLÍN · Río Negro", "opcionId": "frente-amplio", "votos": 437, "validos": 1508}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "NUEVO BERLÍN · Río Negro", "opcionId": "colorado", "votos": 245, "validos": 1508}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SAN JAVIER · Río Negro", "opcionId": "nacional", "votos": 544, "validos": 1494}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SAN JAVIER · Río Negro", "opcionId": "frente-amplio", "votos": 531, "validos": 1494}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SAN JAVIER · Río Negro", "opcionId": "colorado", "votos": 419, "validos": 1494}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "YOUNG · Río Negro", "opcionId": "frente-amplio", "votos": 3809, "validos": 9028}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "YOUNG · Río Negro", "opcionId": "nacional", "votos": 3522, "validos": 9028}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "YOUNG · Río Negro", "opcionId": "colorado", "votos": 1697, "validos": 9028}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TRANQUERAS · Rivera", "opcionId": "colorado", "votos": 4144, "validos": 5089}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TRANQUERAS · Rivera", "opcionId": "nacional", "votos": 737, "validos": 5089}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "TRANQUERAS · Rivera", "opcionId": "frente-amplio", "votos": 208, "validos": 5089}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "MINAS DE CORRALES · Rivera", "opcionId": "colorado", "votos": 2159, "validos": 2602}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "MINAS DE CORRALES · Rivera", "opcionId": "nacional", "votos": 285, "validos": 2602}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "MINAS DE CORRALES · Rivera", "opcionId": "frente-amplio", "votos": 158, "validos": 2602}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "VICHADERO · Rivera", "opcionId": "nacional", "votos": 1462, "validos": 2811}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "VICHADERO · Rivera", "opcionId": "colorado", "votos": 1173, "validos": 2811}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "VICHADERO · Rivera", "opcionId": "frente-amplio", "votos": 176, "validos": 2811}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CASTILLOS · Rocha", "opcionId": "nacional", "votos": 3551, "validos": 5503}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CASTILLOS · Rocha", "opcionId": "frente-amplio", "votos": 1874, "validos": 5503}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CASTILLOS · Rocha", "opcionId": "colorado", "votos": 78, "validos": 5503}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LA PALOMA · Rocha", "opcionId": "frente-amplio", "votos": 2269, "validos": 4321}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LA PALOMA · Rocha", "opcionId": "nacional", "votos": 2024, "validos": 4321}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LA PALOMA · Rocha", "opcionId": "colorado", "votos": 28, "validos": 4321}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LASCANO · Rocha", "opcionId": "nacional", "votos": 3146, "validos": 4924}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LASCANO · Rocha", "opcionId": "frente-amplio", "votos": 1750, "validos": 4924}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LASCANO · Rocha", "opcionId": "colorado", "votos": 28, "validos": 4924}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CHUY · Rocha", "opcionId": "nacional", "votos": 4924, "validos": 8184}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CHUY · Rocha", "opcionId": "frente-amplio", "votos": 3220, "validos": 8184}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CHUY · Rocha", "opcionId": "colorado", "votos": 40, "validos": 8184}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PUEBLO SAN ANTONIO · Salto", "opcionId": "coalicion-republicana", "votos": 1082, "validos": 1794}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PUEBLO SAN ANTONIO · Salto", "opcionId": "frente-amplio", "votos": 712, "validos": 1794}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "VILLA CONSTITUCIÓN · Salto", "opcionId": "frente-amplio", "votos": 1385, "validos": 2491}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "VILLA CONSTITUCIÓN · Salto", "opcionId": "coalicion-republicana", "votos": 1106, "validos": 2491}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PUEBLO BELÉN · Salto", "opcionId": "frente-amplio", "votos": 847, "validos": 1542}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PUEBLO BELÉN · Salto", "opcionId": "coalicion-republicana", "votos": 695, "validos": 1542}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "COLONIA LAVALLEJA · Salto", "opcionId": "coalicion-republicana", "votos": 1021, "validos": 1676}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "COLONIA LAVALLEJA · Salto", "opcionId": "frente-amplio", "votos": 655, "validos": 1676}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PUEBLO RINCÓN DE VALENTÍN · Salto", "opcionId": "frente-amplio", "votos": 554, "validos": 989}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PUEBLO RINCÓN DE VALENTÍN · Salto", "opcionId": "coalicion-republicana", "votos": 435, "validos": 989}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "MATAOJO · Salto", "opcionId": "frente-amplio", "votos": 397, "validos": 783}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "MATAOJO · Salto", "opcionId": "coalicion-republicana", "votos": 386, "validos": 783}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CIUDAD DEL PLATA · San José", "opcionId": "frente-amplio", "votos": 6742, "validos": 12431}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CIUDAD DEL PLATA · San José", "opcionId": "nacional", "votos": 5574, "validos": 12431}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CIUDAD DEL PLATA · San José", "opcionId": "colorado", "votos": 84, "validos": 12431}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CIUDAD DEL PLATA · San José", "opcionId": "asamblea-popular", "votos": 31, "validos": 12431}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "RODRÍGUEZ · San José", "opcionId": "nacional", "votos": 2036, "validos": 2759}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "RODRÍGUEZ · San José", "opcionId": "frente-amplio", "votos": 667, "validos": 2759}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "RODRÍGUEZ · San José", "opcionId": "colorado", "votos": 56, "validos": 2759}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LIBERTAD · San José", "opcionId": "nacional", "votos": 4416, "validos": 6792}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LIBERTAD · San José", "opcionId": "frente-amplio", "votos": 2157, "validos": 6792}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "LIBERTAD · San José", "opcionId": "colorado", "votos": 219, "validos": 6792}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ECILDA PAULLIER · San José", "opcionId": "nacional", "votos": 2492, "validos": 3084}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ECILDA PAULLIER · San José", "opcionId": "frente-amplio", "votos": 491, "validos": 3084}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ECILDA PAULLIER · San José", "opcionId": "colorado", "votos": 101, "validos": 3084}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "VILLA DE SANTO DOMINGO DE SORIANO · Soriano", "opcionId": "nacional", "votos": 563, "validos": 885}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "VILLA DE SANTO DOMINGO DE SORIANO · Soriano", "opcionId": "colorado", "votos": 161, "validos": 885}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "VILLA DE SANTO DOMINGO DE SORIANO · Soriano", "opcionId": "frente-amplio", "votos": 161, "validos": 885}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "DOLORES · Soriano", "opcionId": "nacional", "votos": 7759, "validos": 10841}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "DOLORES · Soriano", "opcionId": "frente-amplio", "votos": 2052, "validos": 10841}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "DOLORES · Soriano", "opcionId": "colorado", "votos": 1030, "validos": 10841}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "JOSÉ ENRIQUE RODÓ · Soriano", "opcionId": "nacional", "votos": 1216, "validos": 1596}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "JOSÉ ENRIQUE RODÓ · Soriano", "opcionId": "frente-amplio", "votos": 323, "validos": 1596}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "JOSÉ ENRIQUE RODÓ · Soriano", "opcionId": "colorado", "votos": 57, "validos": 1596}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CARDONA · Soriano", "opcionId": "nacional", "votos": 2438, "validos": 3821}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CARDONA · Soriano", "opcionId": "frente-amplio", "votos": 1035, "validos": 3821}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CARDONA · Soriano", "opcionId": "colorado", "votos": 348, "validos": 3821}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PALMITAS · Soriano", "opcionId": "nacional", "votos": 865, "validos": 1420}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PALMITAS · Soriano", "opcionId": "colorado", "votos": 436, "validos": 1420}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PALMITAS · Soriano", "opcionId": "frente-amplio", "votos": 119, "validos": 1420}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ANSINA · Tacuarembó", "opcionId": "nacional", "votos": 1900, "validos": 2223}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ANSINA · Tacuarembó", "opcionId": "frente-amplio", "votos": 187, "validos": 2223}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "ANSINA · Tacuarembó", "opcionId": "colorado", "votos": 136, "validos": 2223}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SAN GREGORIO DE POLANCO · Tacuarembó", "opcionId": "nacional", "votos": 1876, "validos": 2707}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SAN GREGORIO DE POLANCO · Tacuarembó", "opcionId": "frente-amplio", "votos": 657, "validos": 2707}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SAN GREGORIO DE POLANCO · Tacuarembó", "opcionId": "colorado", "votos": 174, "validos": 2707}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PASO DE LOS TOROS · Tacuarembó", "opcionId": "nacional", "votos": 6604, "validos": 8738}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PASO DE LOS TOROS · Tacuarembó", "opcionId": "frente-amplio", "votos": 1853, "validos": 8738}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "PASO DE LOS TOROS · Tacuarembó", "opcionId": "colorado", "votos": 281, "validos": 8738}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "VILLA CARAGUATÁ · Tacuarembó", "opcionId": "nacional", "votos": 2396, "validos": 2567}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "VILLA CARAGUATÁ · Tacuarembó", "opcionId": "frente-amplio", "votos": 88, "validos": 2567}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "VILLA CARAGUATÁ · Tacuarembó", "opcionId": "colorado", "votos": 83, "validos": 2567}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "VERGARA · Treinta y Tres", "opcionId": "nacional", "votos": 2660, "validos": 2874}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "VERGARA · Treinta y Tres", "opcionId": "frente-amplio", "votos": 214, "validos": 2874}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "GENERAL ENRIQUE MARTÍNEZ · Treinta y Tres", "opcionId": "nacional", "votos": 923, "validos": 1106}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "GENERAL ENRIQUE MARTÍNEZ · Treinta y Tres", "opcionId": "frente-amplio", "votos": 183, "validos": 1106}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "RINCÓN · Treinta y Tres", "opcionId": "nacional", "votos": 524, "validos": 604}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "RINCÓN · Treinta y Tres", "opcionId": "frente-amplio", "votos": 80, "validos": 604}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SANTA CLARA DE OLIMAR · Treinta y Tres", "opcionId": "nacional", "votos": 1537, "validos": 1671}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "SANTA CLARA DE OLIMAR · Treinta y Tres", "opcionId": "frente-amplio", "votos": 134, "validos": 1671}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CERRO CHATO · Treinta y Tres", "opcionId": "nacional", "votos": 1240, "validos": 1859}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "CERRO CHATO · Treinta y Tres", "opcionId": "frente-amplio", "votos": 619, "validos": 1859}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "VILLA SARA · Treinta y Tres", "opcionId": "nacional", "votos": 513, "validos": 624}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "_nacional", "geoId": "VILLA SARA · Treinta y Tres", "opcionId": "frente-amplio", "votos": 111, "validos": 624}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio B", "opcionId": "frente-amplio", "votos": 20692, "validos": 39954}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio B", "opcionId": "coalicion-republicana", "votos": 18907, "validos": 39954}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio B", "opcionId": "asamblea-popular", "votos": 355, "validos": 39954}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio CH", "opcionId": "coalicion-republicana", "votos": 42416, "validos": 63123}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio CH", "opcionId": "frente-amplio", "votos": 20455, "validos": 63123}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio CH", "opcionId": "asamblea-popular", "votos": 252, "validos": 63123}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio D", "opcionId": "frente-amplio", "votos": 19393, "validos": 36477}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio D", "opcionId": "coalicion-republicana", "votos": 16833, "validos": 36477}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio D", "opcionId": "asamblea-popular", "votos": 251, "validos": 36477}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio E", "opcionId": "coalicion-republicana", "votos": 28178, "validos": 49685}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio E", "opcionId": "frente-amplio", "votos": 21280, "validos": 49685}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio E", "opcionId": "asamblea-popular", "votos": 227, "validos": 49685}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio F", "opcionId": "frente-amplio", "votos": 19492, "validos": 38612}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio F", "opcionId": "coalicion-republicana", "votos": 18942, "validos": 38612}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio F", "opcionId": "asamblea-popular", "votos": 178, "validos": 38612}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio C", "opcionId": "frente-amplio", "votos": 22176, "validos": 39351}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio C", "opcionId": "coalicion-republicana", "votos": 16874, "validos": 39351}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio C", "opcionId": "asamblea-popular", "votos": 301, "validos": 39351}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio G", "opcionId": "frente-amplio", "votos": 20775, "validos": 34642}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio G", "opcionId": "coalicion-republicana", "votos": 13642, "validos": 34642}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio G", "opcionId": "asamblea-popular", "votos": 225, "validos": 34642}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio A", "opcionId": "frente-amplio", "votos": 30482, "validos": 42307}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio A", "opcionId": "coalicion-republicana", "votos": 11496, "validos": 42307}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "montevideo", "geoId": "Municipio A", "opcionId": "asamblea-popular", "votos": 329, "validos": 42307}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "LAS PIEDRAS", "opcionId": "frente-amplio", "votos": 15554, "validos": 25890}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "LAS PIEDRAS", "opcionId": "coalicion-republicana", "votos": 10184, "validos": 25890}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "LAS PIEDRAS", "opcionId": "asamblea-popular", "votos": 138, "validos": 25890}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "LAS PIEDRAS", "opcionId": "nacional", "votos": 14, "validos": 25890}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "CIUDAD DE LA COSTA", "opcionId": "frente-amplio", "votos": 22146, "validos": 33171}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "CIUDAD DE LA COSTA", "opcionId": "coalicion-republicana", "votos": 10929, "validos": 33171}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "CIUDAD DE LA COSTA", "opcionId": "asamblea-popular", "votos": 96, "validos": 33171}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SALINAS", "opcionId": "frente-amplio", "votos": 5492, "validos": 8627}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SALINAS", "opcionId": "coalicion-republicana", "votos": 3063, "validos": 8627}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SALINAS", "opcionId": "asamblea-popular", "votos": 72, "validos": 8627}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "PARQUE DEL PLATA", "opcionId": "frente-amplio", "votos": 2725, "validos": 4732}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "PARQUE DEL PLATA", "opcionId": "coalicion-republicana", "votos": 1979, "validos": 4732}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "PARQUE DEL PLATA", "opcionId": "asamblea-popular", "votos": 28, "validos": 4732}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "COLONIA NICOLICH", "opcionId": "frente-amplio", "votos": 3271, "validos": 4732}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "COLONIA NICOLICH", "opcionId": "coalicion-republicana", "votos": 1438, "validos": 4732}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "COLONIA NICOLICH", "opcionId": "asamblea-popular", "votos": 23, "validos": 4732}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SUÁREZ", "opcionId": "frente-amplio", "votos": 3039, "validos": 5220}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SUÁREZ", "opcionId": "coalicion-republicana", "votos": 2161, "validos": 5220}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SUÁREZ", "opcionId": "asamblea-popular", "votos": 20, "validos": 5220}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "CANELONES", "opcionId": "frente-amplio", "votos": 6749, "validos": 10358}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "CANELONES", "opcionId": "coalicion-republicana", "votos": 3609, "validos": 10358}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SANTA LUCÍA", "opcionId": "frente-amplio", "votos": 5600, "validos": 8647}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SANTA LUCÍA", "opcionId": "coalicion-republicana", "votos": 3047, "validos": 8647}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "LOS CERRILLOS", "opcionId": "coalicion-republicana", "votos": 2636, "validos": 4058}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "LOS CERRILLOS", "opcionId": "frente-amplio", "votos": 1422, "validos": 4058}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "AGUAS CORRIENTES", "opcionId": "frente-amplio", "votos": 614, "validos": 933}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "AGUAS CORRIENTES", "opcionId": "coalicion-republicana", "votos": 319, "validos": 933}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "PROGRESO", "opcionId": "frente-amplio", "votos": 5033, "validos": 7002}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "PROGRESO", "opcionId": "coalicion-republicana", "votos": 1969, "validos": 7002}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "18 DE MAYO", "opcionId": "coalicion-republicana", "votos": 3487, "validos": 6833}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "18 DE MAYO", "opcionId": "frente-amplio", "votos": 3346, "validos": 6833}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "LA PAZ", "opcionId": "frente-amplio", "votos": 7194, "validos": 9641}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "LA PAZ", "opcionId": "coalicion-republicana", "votos": 2447, "validos": 9641}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SAUCE", "opcionId": "coalicion-republicana", "votos": 4418, "validos": 6549}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SAUCE", "opcionId": "frente-amplio", "votos": 2131, "validos": 6549}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SANTA ROSA", "opcionId": "frente-amplio", "votos": 1792, "validos": 2850}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SANTA ROSA", "opcionId": "coalicion-republicana", "votos": 1058, "validos": 2850}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SAN JACINTO", "opcionId": "coalicion-republicana", "votos": 3490, "validos": 4764}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SAN JACINTO", "opcionId": "frente-amplio", "votos": 1274, "validos": 4764}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SAN RAMÓN", "opcionId": "coalicion-republicana", "votos": 3955, "validos": 4668}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SAN RAMÓN", "opcionId": "frente-amplio", "votos": 713, "validos": 4668}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "TALA", "opcionId": "coalicion-republicana", "votos": 3877, "validos": 5668}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "TALA", "opcionId": "frente-amplio", "votos": 1791, "validos": 5668}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "MIGUES", "opcionId": "coalicion-republicana", "votos": 2303, "validos": 2746}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "MIGUES", "opcionId": "frente-amplio", "votos": 443, "validos": 2746}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "MONTES", "opcionId": "frente-amplio", "votos": 753, "validos": 1143}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "MONTES", "opcionId": "coalicion-republicana", "votos": 390, "validos": 1143}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SOCA", "opcionId": "coalicion-republicana", "votos": 1113, "validos": 1762}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SOCA", "opcionId": "frente-amplio", "votos": 649, "validos": 1762}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "LA FLORESTA", "opcionId": "frente-amplio", "votos": 2981, "validos": 5253}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "LA FLORESTA", "opcionId": "coalicion-republicana", "votos": 2272, "validos": 5253}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "PANDO", "opcionId": "frente-amplio", "votos": 8446, "validos": 15091}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "PANDO", "opcionId": "coalicion-republicana", "votos": 6645, "validos": 15091}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "EMPALME OLMOS", "opcionId": "coalicion-republicana", "votos": 2193, "validos": 3700}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "EMPALME OLMOS", "opcionId": "frente-amplio", "votos": 1507, "validos": 3700}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "ATLÁNTIDA", "opcionId": "coalicion-republicana", "votos": 3390, "validos": 6282}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "ATLÁNTIDA", "opcionId": "frente-amplio", "votos": 2892, "validos": 6282}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "PASO CARRASCO", "opcionId": "frente-amplio", "votos": 3884, "validos": 5121}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "PASO CARRASCO", "opcionId": "coalicion-republicana", "votos": 1237, "validos": 5121}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "BARROS BLANCOS", "opcionId": "frente-amplio", "votos": 6604, "validos": 12357}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "BARROS BLANCOS", "opcionId": "coalicion-republicana", "votos": 5753, "validos": 12357}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "JUANICÓ", "opcionId": "coalicion-republicana", "votos": 1397, "validos": 2067}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "JUANICÓ", "opcionId": "frente-amplio", "votos": 670, "validos": 2067}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SAN ANTONIO", "opcionId": "coalicion-republicana", "votos": 1322, "validos": 1986}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SAN ANTONIO", "opcionId": "frente-amplio", "votos": 664, "validos": 1986}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SAN BAUTISTA", "opcionId": "coalicion-republicana", "votos": 2079, "validos": 2626}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "SAN BAUTISTA", "opcionId": "frente-amplio", "votos": 547, "validos": 2626}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "TOLEDO", "opcionId": "coalicion-republicana", "votos": 3654, "validos": 7218}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "TOLEDO", "opcionId": "frente-amplio", "votos": 3564, "validos": 7218}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "DEL ANDALUZ", "opcionId": "frente-amplio", "votos": 1177, "validos": 1903}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "canelones", "geoId": "DEL ANDALUZ", "opcionId": "coalicion-republicana", "votos": 726, "validos": 1903}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "MALDONADO", "opcionId": "nacional", "votos": 26378, "validos": 35779}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "MALDONADO", "opcionId": "frente-amplio", "votos": 7861, "validos": 35779}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "MALDONADO", "opcionId": "colorado", "votos": 1432, "validos": 35779}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "MALDONADO", "opcionId": "asamblea-popular", "votos": 108, "validos": 35779}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "SAN CARLOS", "opcionId": "nacional", "votos": 10531, "validos": 16601}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "SAN CARLOS", "opcionId": "frente-amplio", "votos": 5412, "validos": 16601}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "SAN CARLOS", "opcionId": "colorado", "votos": 569, "validos": 16601}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "SAN CARLOS", "opcionId": "asamblea-popular", "votos": 89, "validos": 16601}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "PIRIÁPOLIS", "opcionId": "nacional", "votos": 4651, "validos": 9498}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "PIRIÁPOLIS", "opcionId": "frente-amplio", "votos": 4189, "validos": 9498}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "PIRIÁPOLIS", "opcionId": "colorado", "votos": 644, "validos": 9498}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "PIRIÁPOLIS", "opcionId": "asamblea-popular", "votos": 14, "validos": 9498}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "PUNTA DEL ESTE", "opcionId": "nacional", "votos": 4540, "validos": 5352}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "PUNTA DEL ESTE", "opcionId": "frente-amplio", "votos": 611, "validos": 5352}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "PUNTA DEL ESTE", "opcionId": "colorado", "votos": 201, "validos": 5352}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "PAN DE AZÚCAR", "opcionId": "nacional", "votos": 3423, "validos": 5355}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "PAN DE AZÚCAR", "opcionId": "frente-amplio", "votos": 1660, "validos": 5355}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "PAN DE AZÚCAR", "opcionId": "colorado", "votos": 272, "validos": 5355}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "SOLÍS GRANDE", "opcionId": "nacional", "votos": 1446, "validos": 2085}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "SOLÍS GRANDE", "opcionId": "frente-amplio", "votos": 604, "validos": 2085}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "SOLÍS GRANDE", "opcionId": "colorado", "votos": 35, "validos": 2085}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "GARZÓN", "opcionId": "nacional", "votos": 778, "validos": 869}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "GARZÓN", "opcionId": "frente-amplio", "votos": 86, "validos": 869}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "GARZÓN", "opcionId": "colorado", "votos": 5, "validos": 869}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "AIGUÁ", "opcionId": "nacional", "votos": 1750, "validos": 2139}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "AIGUÁ", "opcionId": "frente-amplio", "votos": 227, "validos": 2139}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "maldonado", "geoId": "AIGUÁ", "opcionId": "colorado", "votos": 162, "validos": 2139}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "COLONIA MIGUELETE", "opcionId": "nacional", "votos": 779, "validos": 935}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "COLONIA MIGUELETE", "opcionId": "colorado", "votos": 91, "validos": 935}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "COLONIA MIGUELETE", "opcionId": "frente-amplio", "votos": 65, "validos": 935}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "TARARIRAS", "opcionId": "nacional", "votos": 3736, "validos": 4676}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "TARARIRAS", "opcionId": "frente-amplio", "votos": 857, "validos": 4676}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "TARARIRAS", "opcionId": "colorado", "votos": 83, "validos": 4676}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "ROSARIO", "opcionId": "nacional", "votos": 3545, "validos": 6186}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "ROSARIO", "opcionId": "frente-amplio", "votos": 2536, "validos": 6186}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "ROSARIO", "opcionId": "colorado", "votos": 105, "validos": 6186}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "LA PAZ", "opcionId": "nacional", "votos": 536, "validos": 738}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "LA PAZ", "opcionId": "colorado", "votos": 202, "validos": 738}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "CUFRÉ", "opcionId": "nacional", "votos": 527, "validos": 587}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "CUFRÉ", "opcionId": "frente-amplio", "votos": 31, "validos": 587}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "CUFRÉ", "opcionId": "colorado", "votos": 29, "validos": 587}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "NUEVA HELVECIA", "opcionId": "nacional", "votos": 4249, "validos": 6640}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "NUEVA HELVECIA", "opcionId": "frente-amplio", "votos": 2114, "validos": 6640}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "NUEVA HELVECIA", "opcionId": "colorado", "votos": 277, "validos": 6640}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "FLORENCIO SÁNCHEZ", "opcionId": "nacional", "votos": 1057, "validos": 1527}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "FLORENCIO SÁNCHEZ", "opcionId": "frente-amplio", "votos": 417, "validos": 1527}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "FLORENCIO SÁNCHEZ", "opcionId": "colorado", "votos": 53, "validos": 1527}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "OMBÚES DE LAVALLE", "opcionId": "nacional", "votos": 2288, "validos": 2865}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "OMBÚES DE LAVALLE", "opcionId": "frente-amplio", "votos": 540, "validos": 2865}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "OMBÚES DE LAVALLE", "opcionId": "colorado", "votos": 37, "validos": 2865}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "CARMELO", "opcionId": "nacional", "votos": 7068, "validos": 9775}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "CARMELO", "opcionId": "frente-amplio", "votos": 2569, "validos": 9775}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "CARMELO", "opcionId": "colorado", "votos": 138, "validos": 9775}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "NUEVA PALMIRA", "opcionId": "nacional", "votos": 3085, "validos": 6193}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "NUEVA PALMIRA", "opcionId": "frente-amplio", "votos": 3026, "validos": 6193}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "NUEVA PALMIRA", "opcionId": "colorado", "votos": 82, "validos": 6193}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "JUAN L. LACAZE", "opcionId": "frente-amplio", "votos": 4669, "validos": 7445}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "JUAN L. LACAZE", "opcionId": "nacional", "votos": 2628, "validos": 7445}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "JUAN L. LACAZE", "opcionId": "colorado", "votos": 148, "validos": 7445}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "COLONIA VALDENSE", "opcionId": "nacional", "votos": 1976, "validos": 2559}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "COLONIA VALDENSE", "opcionId": "frente-amplio", "votos": 583, "validos": 2559}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "CONCHILLAS", "opcionId": "nacional", "votos": 895, "validos": 1127}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "colonia", "geoId": "CONCHILLAS", "opcionId": "frente-amplio", "votos": 232, "validos": 1127}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "salto", "geoId": "PUEBLO SAN ANTONIO", "opcionId": "coalicion-republicana", "votos": 1082, "validos": 1794}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "salto", "geoId": "PUEBLO SAN ANTONIO", "opcionId": "frente-amplio", "votos": 712, "validos": 1794}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "salto", "geoId": "VILLA CONSTITUCIÓN", "opcionId": "frente-amplio", "votos": 1385, "validos": 2491}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "salto", "geoId": "VILLA CONSTITUCIÓN", "opcionId": "coalicion-republicana", "votos": 1106, "validos": 2491}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "salto", "geoId": "PUEBLO BELÉN", "opcionId": "frente-amplio", "votos": 847, "validos": 1542}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "salto", "geoId": "PUEBLO BELÉN", "opcionId": "coalicion-republicana", "votos": 695, "validos": 1542}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "salto", "geoId": "COLONIA LAVALLEJA", "opcionId": "coalicion-republicana", "votos": 1021, "validos": 1676}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "salto", "geoId": "COLONIA LAVALLEJA", "opcionId": "frente-amplio", "votos": 655, "validos": 1676}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "salto", "geoId": "PUEBLO RINCÓN DE VALENTÍN", "opcionId": "frente-amplio", "votos": 554, "validos": 989}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "salto", "geoId": "PUEBLO RINCÓN DE VALENTÍN", "opcionId": "coalicion-republicana", "votos": 435, "validos": 989}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "salto", "geoId": "MATAOJO", "opcionId": "frente-amplio", "votos": 397, "validos": 783}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "salto", "geoId": "MATAOJO", "opcionId": "coalicion-republicana", "votos": 386, "validos": 783}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "PORVENIR", "opcionId": "nacional", "votos": 1549, "validos": 2025}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "PORVENIR", "opcionId": "frente-amplio", "votos": 450, "validos": 2025}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "PORVENIR", "opcionId": "colorado", "votos": 26, "validos": 2025}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "GUICHÓN", "opcionId": "nacional", "votos": 2331, "validos": 4363}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "GUICHÓN", "opcionId": "colorado", "votos": 1305, "validos": 4363}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "GUICHÓN", "opcionId": "frente-amplio", "votos": 727, "validos": 4363}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "TAMBORES", "opcionId": "nacional", "votos": 504, "validos": 628}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "TAMBORES", "opcionId": "frente-amplio", "votos": 93, "validos": 628}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "TAMBORES", "opcionId": "colorado", "votos": 31, "validos": 628}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "QUEBRACHO", "opcionId": "nacional", "votos": 1372, "validos": 2129}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "QUEBRACHO", "opcionId": "frente-amplio", "votos": 502, "validos": 2129}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "QUEBRACHO", "opcionId": "colorado", "votos": 255, "validos": 2129}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "EL EUCALIPTO", "opcionId": "nacional", "votos": 339, "validos": 440}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "EL EUCALIPTO", "opcionId": "colorado", "votos": 56, "validos": 440}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "EL EUCALIPTO", "opcionId": "frente-amplio", "votos": 45, "validos": 440}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "LORENZO GEYRES", "opcionId": "nacional", "votos": 590, "validos": 903}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "LORENZO GEYRES", "opcionId": "frente-amplio", "votos": 309, "validos": 903}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "LORENZO GEYRES", "opcionId": "colorado", "votos": 4, "validos": 903}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "CERRO CHATO", "opcionId": "nacional", "votos": 735, "validos": 802}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "CERRO CHATO", "opcionId": "frente-amplio", "votos": 66, "validos": 802}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "CERRO CHATO", "opcionId": "colorado", "votos": 1, "validos": 802}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "CHAPICUY", "opcionId": "nacional", "votos": 340, "validos": 681}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "CHAPICUY", "opcionId": "colorado", "votos": 277, "validos": 681}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "CHAPICUY", "opcionId": "frente-amplio", "votos": 64, "validos": 681}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "PIEDRAS COLORADAS", "opcionId": "nacional", "votos": 904, "validos": 1055}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "PIEDRAS COLORADAS", "opcionId": "frente-amplio", "votos": 150, "validos": 1055}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "paysandu", "geoId": "PIEDRAS COLORADAS", "opcionId": "colorado", "votos": 1, "validos": 1055}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rivera", "geoId": "TRANQUERAS", "opcionId": "colorado", "votos": 4144, "validos": 5089}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rivera", "geoId": "TRANQUERAS", "opcionId": "nacional", "votos": 737, "validos": 5089}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rivera", "geoId": "TRANQUERAS", "opcionId": "frente-amplio", "votos": 208, "validos": 5089}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rivera", "geoId": "MINAS DE CORRALES", "opcionId": "colorado", "votos": 2159, "validos": 2602}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rivera", "geoId": "MINAS DE CORRALES", "opcionId": "nacional", "votos": 285, "validos": 2602}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rivera", "geoId": "MINAS DE CORRALES", "opcionId": "frente-amplio", "votos": 158, "validos": 2602}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rivera", "geoId": "VICHADERO", "opcionId": "nacional", "votos": 1462, "validos": 2811}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rivera", "geoId": "VICHADERO", "opcionId": "colorado", "votos": 1173, "validos": 2811}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rivera", "geoId": "VICHADERO", "opcionId": "frente-amplio", "votos": 176, "validos": 2811}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "RÍO BRANCO", "opcionId": "nacional", "votos": 9648, "validos": 10297}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "RÍO BRANCO", "opcionId": "frente-amplio", "votos": 559, "validos": 10297}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "RÍO BRANCO", "opcionId": "colorado", "votos": 90, "validos": 10297}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "FRAILE MUERTO", "opcionId": "nacional", "votos": 2062, "validos": 2273}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "FRAILE MUERTO", "opcionId": "frente-amplio", "votos": 202, "validos": 2273}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "FRAILE MUERTO", "opcionId": "colorado", "votos": 9, "validos": 2273}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "TUPAMBAÉ", "opcionId": "nacional", "votos": 663, "validos": 789}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "TUPAMBAÉ", "opcionId": "frente-amplio", "votos": 121, "validos": 789}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "TUPAMBAÉ", "opcionId": "colorado", "votos": 5, "validos": 789}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "BAÑADO DE MEDINA", "opcionId": "nacional", "votos": 786, "validos": 822}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "BAÑADO DE MEDINA", "opcionId": "frente-amplio", "votos": 36, "validos": 822}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "PLÁCIDO ROSAS", "opcionId": "nacional", "votos": 420, "validos": 456}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "PLÁCIDO ROSAS", "opcionId": "frente-amplio", "votos": 36, "validos": 456}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "CERRO DE LAS CUENTAS", "opcionId": "nacional", "votos": 386, "validos": 412}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "CERRO DE LAS CUENTAS", "opcionId": "frente-amplio", "votos": 26, "validos": 412}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "LAS CAÑAS", "opcionId": "nacional", "votos": 296, "validos": 355}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "LAS CAÑAS", "opcionId": "frente-amplio", "votos": 59, "validos": 355}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "LAGUNA MERÍN", "opcionId": "nacional", "votos": 569, "validos": 706}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "LAGUNA MERÍN", "opcionId": "frente-amplio", "votos": 137, "validos": 706}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "CENTURIÓN", "opcionId": "nacional", "votos": 241, "validos": 244}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "CENTURIÓN", "opcionId": "frente-amplio", "votos": 3, "validos": 244}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "ISIDORO NOBLÍA", "opcionId": "nacional", "votos": 1923, "validos": 2070}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "ISIDORO NOBLÍA", "opcionId": "frente-amplio", "votos": 147, "validos": 2070}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "ACEGUÁ", "opcionId": "nacional", "votos": 1240, "validos": 1278}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "ACEGUÁ", "opcionId": "frente-amplio", "votos": 38, "validos": 1278}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "TRES ISLAS", "opcionId": "nacional", "votos": 223, "validos": 228}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "TRES ISLAS", "opcionId": "frente-amplio", "votos": 5, "validos": 228}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "RAMÓN TRIGO", "opcionId": "nacional", "votos": 188, "validos": 214}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "RAMÓN TRIGO", "opcionId": "frente-amplio", "votos": 26, "validos": 214}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "ARBOLITO", "opcionId": "nacional", "votos": 275, "validos": 275}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "QUEBRACHO", "opcionId": "nacional", "votos": 164, "validos": 164}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "cerro_largo", "geoId": "ARÉVALO", "opcionId": "nacional", "votos": 557, "validos": 557}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "tacuarembo", "geoId": "ANSINA", "opcionId": "nacional", "votos": 1900, "validos": 2223}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "tacuarembo", "geoId": "ANSINA", "opcionId": "frente-amplio", "votos": 187, "validos": 2223}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "tacuarembo", "geoId": "ANSINA", "opcionId": "colorado", "votos": 136, "validos": 2223}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "tacuarembo", "geoId": "SAN GREGORIO DE POLANCO", "opcionId": "nacional", "votos": 1876, "validos": 2707}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "tacuarembo", "geoId": "SAN GREGORIO DE POLANCO", "opcionId": "frente-amplio", "votos": 657, "validos": 2707}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "tacuarembo", "geoId": "SAN GREGORIO DE POLANCO", "opcionId": "colorado", "votos": 174, "validos": 2707}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "tacuarembo", "geoId": "PASO DE LOS TOROS", "opcionId": "nacional", "votos": 6604, "validos": 8738}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "tacuarembo", "geoId": "PASO DE LOS TOROS", "opcionId": "frente-amplio", "votos": 1853, "validos": 8738}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "tacuarembo", "geoId": "PASO DE LOS TOROS", "opcionId": "colorado", "votos": 281, "validos": 8738}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "tacuarembo", "geoId": "VILLA CARAGUATÁ", "opcionId": "nacional", "votos": 2396, "validos": 2567}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "tacuarembo", "geoId": "VILLA CARAGUATÁ", "opcionId": "frente-amplio", "votos": 88, "validos": 2567}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "tacuarembo", "geoId": "VILLA CARAGUATÁ", "opcionId": "colorado", "votos": 83, "validos": 2567}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "san_jose", "geoId": "CIUDAD DEL PLATA", "opcionId": "frente-amplio", "votos": 6742, "validos": 12431}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "san_jose", "geoId": "CIUDAD DEL PLATA", "opcionId": "nacional", "votos": 5574, "validos": 12431}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "san_jose", "geoId": "CIUDAD DEL PLATA", "opcionId": "colorado", "votos": 84, "validos": 12431}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "san_jose", "geoId": "CIUDAD DEL PLATA", "opcionId": "asamblea-popular", "votos": 31, "validos": 12431}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "san_jose", "geoId": "RODRÍGUEZ", "opcionId": "nacional", "votos": 2036, "validos": 2759}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "san_jose", "geoId": "RODRÍGUEZ", "opcionId": "frente-amplio", "votos": 667, "validos": 2759}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "san_jose", "geoId": "RODRÍGUEZ", "opcionId": "colorado", "votos": 56, "validos": 2759}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "san_jose", "geoId": "LIBERTAD", "opcionId": "nacional", "votos": 4416, "validos": 6792}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "san_jose", "geoId": "LIBERTAD", "opcionId": "frente-amplio", "votos": 2157, "validos": 6792}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "san_jose", "geoId": "LIBERTAD", "opcionId": "colorado", "votos": 219, "validos": 6792}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "san_jose", "geoId": "ECILDA PAULLIER", "opcionId": "nacional", "votos": 2492, "validos": 3084}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "san_jose", "geoId": "ECILDA PAULLIER", "opcionId": "frente-amplio", "votos": 491, "validos": 3084}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "san_jose", "geoId": "ECILDA PAULLIER", "opcionId": "colorado", "votos": 101, "validos": 3084}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "soriano", "geoId": "VILLA DE SANTO DOMINGO DE SORIANO", "opcionId": "nacional", "votos": 563, "validos": 885}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "soriano", "geoId": "VILLA DE SANTO DOMINGO DE SORIANO", "opcionId": "colorado", "votos": 161, "validos": 885}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "soriano", "geoId": "VILLA DE SANTO DOMINGO DE SORIANO", "opcionId": "frente-amplio", "votos": 161, "validos": 885}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "soriano", "geoId": "DOLORES", "opcionId": "nacional", "votos": 7759, "validos": 10841}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "soriano", "geoId": "DOLORES", "opcionId": "frente-amplio", "votos": 2052, "validos": 10841}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "soriano", "geoId": "DOLORES", "opcionId": "colorado", "votos": 1030, "validos": 10841}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "soriano", "geoId": "JOSÉ ENRIQUE RODÓ", "opcionId": "nacional", "votos": 1216, "validos": 1596}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "soriano", "geoId": "JOSÉ ENRIQUE RODÓ", "opcionId": "frente-amplio", "votos": 323, "validos": 1596}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "soriano", "geoId": "JOSÉ ENRIQUE RODÓ", "opcionId": "colorado", "votos": 57, "validos": 1596}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "soriano", "geoId": "CARDONA", "opcionId": "nacional", "votos": 2438, "validos": 3821}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "soriano", "geoId": "CARDONA", "opcionId": "frente-amplio", "votos": 1035, "validos": 3821}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "soriano", "geoId": "CARDONA", "opcionId": "colorado", "votos": 348, "validos": 3821}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "soriano", "geoId": "PALMITAS", "opcionId": "nacional", "votos": 865, "validos": 1420}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "soriano", "geoId": "PALMITAS", "opcionId": "colorado", "votos": 436, "validos": 1420}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "soriano", "geoId": "PALMITAS", "opcionId": "frente-amplio", "votos": 119, "validos": 1420}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rocha", "geoId": "CASTILLOS", "opcionId": "nacional", "votos": 3551, "validos": 5503}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rocha", "geoId": "CASTILLOS", "opcionId": "frente-amplio", "votos": 1874, "validos": 5503}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rocha", "geoId": "CASTILLOS", "opcionId": "colorado", "votos": 78, "validos": 5503}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rocha", "geoId": "LA PALOMA", "opcionId": "frente-amplio", "votos": 2269, "validos": 4321}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rocha", "geoId": "LA PALOMA", "opcionId": "nacional", "votos": 2024, "validos": 4321}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rocha", "geoId": "LA PALOMA", "opcionId": "colorado", "votos": 28, "validos": 4321}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rocha", "geoId": "LASCANO", "opcionId": "nacional", "votos": 3146, "validos": 4924}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rocha", "geoId": "LASCANO", "opcionId": "frente-amplio", "votos": 1750, "validos": 4924}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rocha", "geoId": "LASCANO", "opcionId": "colorado", "votos": 28, "validos": 4924}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rocha", "geoId": "CHUY", "opcionId": "nacional", "votos": 4924, "validos": 8184}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rocha", "geoId": "CHUY", "opcionId": "frente-amplio", "votos": 3220, "validos": 8184}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rocha", "geoId": "CHUY", "opcionId": "colorado", "votos": 40, "validos": 8184}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "florida", "geoId": "SARANDÍ GRANDE", "opcionId": "nacional", "votos": 3301, "validos": 4532}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "florida", "geoId": "SARANDÍ GRANDE", "opcionId": "frente-amplio", "votos": 939, "validos": 4532}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "florida", "geoId": "SARANDÍ GRANDE", "opcionId": "colorado", "votos": 292, "validos": 4532}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "florida", "geoId": "CASUPÁ", "opcionId": "nacional", "votos": 1477, "validos": 1911}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "florida", "geoId": "CASUPÁ", "opcionId": "frente-amplio", "votos": 326, "validos": 1911}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "florida", "geoId": "CASUPÁ", "opcionId": "colorado", "votos": 108, "validos": 1911}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "florida", "geoId": "FRAY MARCOS", "opcionId": "nacional", "votos": 1480, "validos": 2087}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "florida", "geoId": "FRAY MARCOS", "opcionId": "frente-amplio", "votos": 347, "validos": 2087}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "florida", "geoId": "FRAY MARCOS", "opcionId": "colorado", "votos": 260, "validos": 2087}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "artigas", "geoId": "TOMÁS GOMENSORO", "opcionId": "nacional", "votos": 1179, "validos": 1978}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "artigas", "geoId": "TOMÁS GOMENSORO", "opcionId": "frente-amplio", "votos": 738, "validos": 1978}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "artigas", "geoId": "TOMÁS GOMENSORO", "opcionId": "colorado", "votos": 33, "validos": 1978}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "artigas", "geoId": "TOMÁS GOMENSORO", "opcionId": "cabildo-abierto", "votos": 28, "validos": 1978}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "artigas", "geoId": "BELLA UNIÓN", "opcionId": "nacional", "votos": 5468, "validos": 10721}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "artigas", "geoId": "BELLA UNIÓN", "opcionId": "frente-amplio", "votos": 4695, "validos": 10721}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "artigas", "geoId": "BELLA UNIÓN", "opcionId": "colorado", "votos": 463, "validos": 10721}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "artigas", "geoId": "BELLA UNIÓN", "opcionId": "cabildo-abierto", "votos": 95, "validos": 10721}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "artigas", "geoId": "BALTASAR BRUM", "opcionId": "nacional", "votos": 971, "validos": 1790}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "artigas", "geoId": "BALTASAR BRUM", "opcionId": "colorado", "votos": 467, "validos": 1790}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "artigas", "geoId": "BALTASAR BRUM", "opcionId": "frente-amplio", "votos": 352, "validos": 1790}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "durazno", "geoId": "SARANDÍ DEL YÍ", "opcionId": "nacional", "votos": 3714, "validos": 4936}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "durazno", "geoId": "SARANDÍ DEL YÍ", "opcionId": "frente-amplio", "votos": 1005, "validos": 4936}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "durazno", "geoId": "SARANDÍ DEL YÍ", "opcionId": "colorado", "votos": 167, "validos": 4936}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "durazno", "geoId": "SARANDÍ DEL YÍ", "opcionId": "asamblea-popular", "votos": 50, "validos": 4936}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "durazno", "geoId": "VILLA DEL CARMEN", "opcionId": "nacional", "votos": 1691, "validos": 1943}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "durazno", "geoId": "VILLA DEL CARMEN", "opcionId": "frente-amplio", "votos": 186, "validos": 1943}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "durazno", "geoId": "VILLA DEL CARMEN", "opcionId": "colorado", "votos": 66, "validos": 1943}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "treinta_y_tres", "geoId": "VERGARA", "opcionId": "nacional", "votos": 2660, "validos": 2874}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "treinta_y_tres", "geoId": "VERGARA", "opcionId": "frente-amplio", "votos": 214, "validos": 2874}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "treinta_y_tres", "geoId": "GENERAL ENRIQUE MARTÍNEZ", "opcionId": "nacional", "votos": 923, "validos": 1106}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "treinta_y_tres", "geoId": "GENERAL ENRIQUE MARTÍNEZ", "opcionId": "frente-amplio", "votos": 183, "validos": 1106}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "treinta_y_tres", "geoId": "RINCÓN", "opcionId": "nacional", "votos": 524, "validos": 604}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "treinta_y_tres", "geoId": "RINCÓN", "opcionId": "frente-amplio", "votos": 80, "validos": 604}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "treinta_y_tres", "geoId": "SANTA CLARA DE OLIMAR", "opcionId": "nacional", "votos": 1537, "validos": 1671}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "treinta_y_tres", "geoId": "SANTA CLARA DE OLIMAR", "opcionId": "frente-amplio", "votos": 134, "validos": 1671}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "treinta_y_tres", "geoId": "CERRO CHATO", "opcionId": "nacional", "votos": 1240, "validos": 1859}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "treinta_y_tres", "geoId": "CERRO CHATO", "opcionId": "frente-amplio", "votos": 619, "validos": 1859}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "treinta_y_tres", "geoId": "VILLA SARA", "opcionId": "nacional", "votos": 513, "validos": 624}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "treinta_y_tres", "geoId": "VILLA SARA", "opcionId": "frente-amplio", "votos": 111, "validos": 624}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "lavalleja", "geoId": "SOLÍS DE MATAOJO", "opcionId": "nacional", "votos": 1041, "validos": 2097}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "lavalleja", "geoId": "SOLÍS DE MATAOJO", "opcionId": "frente-amplio", "votos": 833, "validos": 2097}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "lavalleja", "geoId": "SOLÍS DE MATAOJO", "opcionId": "colorado", "votos": 223, "validos": 2097}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "lavalleja", "geoId": "MARISCALA", "opcionId": "nacional", "votos": 744, "validos": 1223}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "lavalleja", "geoId": "MARISCALA", "opcionId": "colorado", "votos": 364, "validos": 1223}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "lavalleja", "geoId": "MARISCALA", "opcionId": "frente-amplio", "votos": 115, "validos": 1223}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "lavalleja", "geoId": "PIRARAJÁ", "opcionId": "nacional", "votos": 430, "validos": 526}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "lavalleja", "geoId": "PIRARAJÁ", "opcionId": "frente-amplio", "votos": 91, "validos": 526}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "lavalleja", "geoId": "PIRARAJÁ", "opcionId": "colorado", "votos": 5, "validos": 526}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "lavalleja", "geoId": "JOSÉ PEDRO VARELA", "opcionId": "nacional", "votos": 1870, "validos": 3288}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "lavalleja", "geoId": "JOSÉ PEDRO VARELA", "opcionId": "frente-amplio", "votos": 1097, "validos": 3288}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "lavalleja", "geoId": "JOSÉ PEDRO VARELA", "opcionId": "colorado", "votos": 321, "validos": 3288}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "lavalleja", "geoId": "ZAPICÁN", "opcionId": "nacional", "votos": 361, "validos": 468}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "lavalleja", "geoId": "ZAPICÁN", "opcionId": "colorado", "votos": 61, "validos": 468}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "lavalleja", "geoId": "ZAPICÁN", "opcionId": "frente-amplio", "votos": 46, "validos": 468}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "lavalleja", "geoId": "JOSÉ BATLLE Y ORDÓÑEZ", "opcionId": "colorado", "votos": 759, "validos": 1663}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "lavalleja", "geoId": "JOSÉ BATLLE Y ORDÓÑEZ", "opcionId": "nacional", "votos": 726, "validos": 1663}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "lavalleja", "geoId": "JOSÉ BATLLE Y ORDÓÑEZ", "opcionId": "frente-amplio", "votos": 178, "validos": 1663}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rio_negro", "geoId": "NUEVO BERLÍN", "opcionId": "nacional", "votos": 826, "validos": 1508}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rio_negro", "geoId": "NUEVO BERLÍN", "opcionId": "frente-amplio", "votos": 437, "validos": 1508}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rio_negro", "geoId": "NUEVO BERLÍN", "opcionId": "colorado", "votos": 245, "validos": 1508}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rio_negro", "geoId": "SAN JAVIER", "opcionId": "nacional", "votos": 544, "validos": 1494}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rio_negro", "geoId": "SAN JAVIER", "opcionId": "frente-amplio", "votos": 531, "validos": 1494}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rio_negro", "geoId": "SAN JAVIER", "opcionId": "colorado", "votos": 419, "validos": 1494}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rio_negro", "geoId": "YOUNG", "opcionId": "frente-amplio", "votos": 3809, "validos": 9028}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rio_negro", "geoId": "YOUNG", "opcionId": "nacional", "votos": 3522, "validos": 9028}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "rio_negro", "geoId": "YOUNG", "opcionId": "colorado", "votos": 1697, "validos": 9028}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "flores", "geoId": "ISMAEL CORTINAS", "opcionId": "nacional", "votos": 787, "validos": 824}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "flores", "geoId": "ISMAEL CORTINAS", "opcionId": "frente-amplio", "votos": 24, "validos": 824}
+{"eleccion": "municipales-2025", "nivel": "municipio", "departamento": "flores", "geoId": "ISMAEL CORTINAS", "opcionId": "colorado", "votos": 13, "validos": 824}
