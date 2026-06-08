@@ -1,72 +1,144 @@
-{"eleccion": "departamentales-2010", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "frente-amplio", "votos": 405601, "validos": 750551}
-{"eleccion": "departamentales-2010", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "nacional", "votos": 174917, "validos": 750551}
-{"eleccion": "departamentales-2010", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "colorado", "votos": 159976, "validos": 750551}
-{"eleccion": "departamentales-2010", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "asamblea-popular", "votos": 10057, "validos": 750551}
-{"eleccion": "departamentales-2010", "departamento": "canelones", "geoId": "Canelones", "opcionId": "frente-amplio", "votos": 164849, "validos": 268518}
-{"eleccion": "departamentales-2010", "departamento": "canelones", "geoId": "Canelones", "opcionId": "nacional", "votos": 71666, "validos": 268518}
-{"eleccion": "departamentales-2010", "departamento": "canelones", "geoId": "Canelones", "opcionId": "colorado", "votos": 29920, "validos": 268518}
-{"eleccion": "departamentales-2010", "departamento": "canelones", "geoId": "Canelones", "opcionId": "asamblea-popular", "votos": 2083, "validos": 268518}
-{"eleccion": "departamentales-2010", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "frente-amplio", "votos": 50955, "validos": 96983}
-{"eleccion": "departamentales-2010", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "nacional", "votos": 32415, "validos": 96983}
-{"eleccion": "departamentales-2010", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "colorado", "votos": 13443, "validos": 96983}
-{"eleccion": "departamentales-2010", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "asamblea-popular", "votos": 170, "validos": 96983}
-{"eleccion": "departamentales-2010", "departamento": "colonia", "geoId": "Colonia", "opcionId": "frente-amplio", "votos": 27316, "validos": 82181}
-{"eleccion": "departamentales-2010", "departamento": "colonia", "geoId": "Colonia", "opcionId": "nacional", "votos": 45751, "validos": 82181}
-{"eleccion": "departamentales-2010", "departamento": "colonia", "geoId": "Colonia", "opcionId": "colorado", "votos": 8983, "validos": 82181}
-{"eleccion": "departamentales-2010", "departamento": "colonia", "geoId": "Colonia", "opcionId": "asamblea-popular", "votos": 131, "validos": 82181}
-{"eleccion": "departamentales-2010", "departamento": "salto", "geoId": "Salto", "opcionId": "frente-amplio", "votos": 33693, "validos": 79228}
-{"eleccion": "departamentales-2010", "departamento": "salto", "geoId": "Salto", "opcionId": "nacional", "votos": 10401, "validos": 79228}
-{"eleccion": "departamentales-2010", "departamento": "salto", "geoId": "Salto", "opcionId": "colorado", "votos": 35027, "validos": 79228}
-{"eleccion": "departamentales-2010", "departamento": "salto", "geoId": "Salto", "opcionId": "asamblea-popular", "votos": 107, "validos": 79228}
-{"eleccion": "departamentales-2010", "departamento": "paysandu", "geoId": "Paysandú", "opcionId": "frente-amplio", "votos": 32831, "validos": 73351}
-{"eleccion": "departamentales-2010", "departamento": "paysandu", "geoId": "Paysandú", "opcionId": "nacional", "votos": 34152, "validos": 73351}
-{"eleccion": "departamentales-2010", "departamento": "paysandu", "geoId": "Paysandú", "opcionId": "colorado", "votos": 5957, "validos": 73351}
-{"eleccion": "departamentales-2010", "departamento": "paysandu", "geoId": "Paysandú", "opcionId": "asamblea-popular", "votos": 411, "validos": 73351}
-{"eleccion": "departamentales-2010", "departamento": "rivera", "geoId": "Rivera", "opcionId": "frente-amplio", "votos": 15232, "validos": 67596}
-{"eleccion": "departamentales-2010", "departamento": "rivera", "geoId": "Rivera", "opcionId": "nacional", "votos": 17698, "validos": 67596}
-{"eleccion": "departamentales-2010", "departamento": "rivera", "geoId": "Rivera", "opcionId": "colorado", "votos": 34666, "validos": 67596}
-{"eleccion": "departamentales-2010", "departamento": "cerro_largo", "geoId": "Cerro Largo", "opcionId": "frente-amplio", "votos": 21484, "validos": 56024}
-{"eleccion": "departamentales-2010", "departamento": "cerro_largo", "geoId": "Cerro Largo", "opcionId": "nacional", "votos": 29876, "validos": 56024}
-{"eleccion": "departamentales-2010", "departamento": "cerro_largo", "geoId": "Cerro Largo", "opcionId": "colorado", "votos": 4599, "validos": 56024}
-{"eleccion": "departamentales-2010", "departamento": "cerro_largo", "geoId": "Cerro Largo", "opcionId": "asamblea-popular", "votos": 65, "validos": 56024}
-{"eleccion": "departamentales-2010", "departamento": "tacuarembo", "geoId": "Tacuarembó", "opcionId": "frente-amplio", "votos": 15266, "validos": 62833}
-{"eleccion": "departamentales-2010", "departamento": "tacuarembo", "geoId": "Tacuarembó", "opcionId": "nacional", "votos": 44197, "validos": 62833}
-{"eleccion": "departamentales-2010", "departamento": "tacuarembo", "geoId": "Tacuarembó", "opcionId": "colorado", "votos": 3370, "validos": 62833}
-{"eleccion": "departamentales-2010", "departamento": "san_jose", "geoId": "San José", "opcionId": "frente-amplio", "votos": 22690, "validos": 64860}
-{"eleccion": "departamentales-2010", "departamento": "san_jose", "geoId": "San José", "opcionId": "nacional", "votos": 39109, "validos": 64860}
-{"eleccion": "departamentales-2010", "departamento": "san_jose", "geoId": "San José", "opcionId": "colorado", "votos": 2729, "validos": 64860}
-{"eleccion": "departamentales-2010", "departamento": "san_jose", "geoId": "San José", "opcionId": "asamblea-popular", "votos": 332, "validos": 64860}
-{"eleccion": "departamentales-2010", "departamento": "soriano", "geoId": "Soriano", "opcionId": "frente-amplio", "votos": 19558, "validos": 56498}
-{"eleccion": "departamentales-2010", "departamento": "soriano", "geoId": "Soriano", "opcionId": "nacional", "votos": 33033, "validos": 56498}
-{"eleccion": "departamentales-2010", "departamento": "soriano", "geoId": "Soriano", "opcionId": "colorado", "votos": 3726, "validos": 56498}
-{"eleccion": "departamentales-2010", "departamento": "soriano", "geoId": "Soriano", "opcionId": "asamblea-popular", "votos": 181, "validos": 56498}
-{"eleccion": "departamentales-2010", "departamento": "rocha", "geoId": "Rocha", "opcionId": "frente-amplio", "votos": 27123, "validos": 46966}
-{"eleccion": "departamentales-2010", "departamento": "rocha", "geoId": "Rocha", "opcionId": "nacional", "votos": 15559, "validos": 46966}
-{"eleccion": "departamentales-2010", "departamento": "rocha", "geoId": "Rocha", "opcionId": "colorado", "votos": 4009, "validos": 46966}
-{"eleccion": "departamentales-2010", "departamento": "rocha", "geoId": "Rocha", "opcionId": "asamblea-popular", "votos": 275, "validos": 46966}
-{"eleccion": "departamentales-2010", "departamento": "florida", "geoId": "Florida", "opcionId": "frente-amplio", "votos": 20916, "validos": 47380}
-{"eleccion": "departamentales-2010", "departamento": "florida", "geoId": "Florida", "opcionId": "nacional", "votos": 21168, "validos": 47380}
-{"eleccion": "departamentales-2010", "departamento": "florida", "geoId": "Florida", "opcionId": "colorado", "votos": 5152, "validos": 47380}
-{"eleccion": "departamentales-2010", "departamento": "florida", "geoId": "Florida", "opcionId": "asamblea-popular", "votos": 144, "validos": 47380}
-{"eleccion": "departamentales-2010", "departamento": "artigas", "geoId": "Artigas", "opcionId": "frente-amplio", "votos": 22578, "validos": 47572}
-{"eleccion": "departamentales-2010", "departamento": "artigas", "geoId": "Artigas", "opcionId": "nacional", "votos": 20091, "validos": 47572}
-{"eleccion": "departamentales-2010", "departamento": "artigas", "geoId": "Artigas", "opcionId": "colorado", "votos": 4784, "validos": 47572}
-{"eleccion": "departamentales-2010", "departamento": "artigas", "geoId": "Artigas", "opcionId": "asamblea-popular", "votos": 119, "validos": 47572}
-{"eleccion": "departamentales-2010", "departamento": "durazno", "geoId": "Durazno", "opcionId": "frente-amplio", "votos": 10939, "validos": 39053}
-{"eleccion": "departamentales-2010", "departamento": "durazno", "geoId": "Durazno", "opcionId": "nacional", "votos": 25294, "validos": 39053}
-{"eleccion": "departamentales-2010", "departamento": "durazno", "geoId": "Durazno", "opcionId": "colorado", "votos": 2663, "validos": 39053}
-{"eleccion": "departamentales-2010", "departamento": "durazno", "geoId": "Durazno", "opcionId": "asamblea-popular", "votos": 157, "validos": 39053}
-{"eleccion": "departamentales-2010", "departamento": "treinta_y_tres", "geoId": "Treinta y Tres", "opcionId": "frente-amplio", "votos": 14677, "validos": 34587}
-{"eleccion": "departamentales-2010", "departamento": "treinta_y_tres", "geoId": "Treinta y Tres", "opcionId": "nacional", "votos": 17902, "validos": 34587}
-{"eleccion": "departamentales-2010", "departamento": "treinta_y_tres", "geoId": "Treinta y Tres", "opcionId": "colorado", "votos": 1919, "validos": 34587}
-{"eleccion": "departamentales-2010", "departamento": "treinta_y_tres", "geoId": "Treinta y Tres", "opcionId": "asamblea-popular", "votos": 89, "validos": 34587}
-{"eleccion": "departamentales-2010", "departamento": "lavalleja", "geoId": "Lavalleja", "opcionId": "frente-amplio", "votos": 14568, "validos": 42591}
-{"eleccion": "departamentales-2010", "departamento": "lavalleja", "geoId": "Lavalleja", "opcionId": "nacional", "votos": 24068, "validos": 42591}
-{"eleccion": "departamentales-2010", "departamento": "lavalleja", "geoId": "Lavalleja", "opcionId": "colorado", "votos": 3903, "validos": 42591}
-{"eleccion": "departamentales-2010", "departamento": "lavalleja", "geoId": "Lavalleja", "opcionId": "asamblea-popular", "votos": 52, "validos": 42591}
-{"eleccion": "departamentales-2010", "departamento": "rio_negro", "geoId": "Río Negro", "opcionId": "frente-amplio", "votos": 13489, "validos": 34721}
-{"eleccion": "departamentales-2010", "departamento": "rio_negro", "geoId": "Río Negro", "opcionId": "nacional", "votos": 15546, "validos": 34721}
-{"eleccion": "departamentales-2010", "departamento": "rio_negro", "geoId": "Río Negro", "opcionId": "colorado", "votos": 5686, "validos": 34721}
-{"eleccion": "departamentales-2010", "departamento": "flores", "geoId": "Flores", "opcionId": "frente-amplio", "votos": 4530, "validos": 17982}
-{"eleccion": "departamentales-2010", "departamento": "flores", "geoId": "Flores", "opcionId": "nacional", "votos": 11479, "validos": 17982}
-{"eleccion": "departamentales-2010", "departamento": "flores", "geoId": "Flores", "opcionId": "colorado", "votos": 1973, "validos": 17982}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Artigas", "opcionId": "frente-amplio", "votos": 22578, "validos": 47572}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Artigas", "opcionId": "nacional", "votos": 20091, "validos": 47572}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Artigas", "opcionId": "colorado", "votos": 4784, "validos": 47572}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Artigas", "opcionId": "asamblea-popular", "votos": 119, "validos": 47572}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Canelones", "opcionId": "frente-amplio", "votos": 164849, "validos": 268518}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Canelones", "opcionId": "nacional", "votos": 71666, "validos": 268518}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Canelones", "opcionId": "colorado", "votos": 29920, "validos": 268518}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Canelones", "opcionId": "asamblea-popular", "votos": 2083, "validos": 268518}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Cerro Largo", "opcionId": "frente-amplio", "votos": 21484, "validos": 56024}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Cerro Largo", "opcionId": "nacional", "votos": 29876, "validos": 56024}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Cerro Largo", "opcionId": "colorado", "votos": 4599, "validos": 56024}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Cerro Largo", "opcionId": "asamblea-popular", "votos": 65, "validos": 56024}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Colonia", "opcionId": "frente-amplio", "votos": 27316, "validos": 82181}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Colonia", "opcionId": "nacional", "votos": 45751, "validos": 82181}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Colonia", "opcionId": "colorado", "votos": 8983, "validos": 82181}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Colonia", "opcionId": "asamblea-popular", "votos": 131, "validos": 82181}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Durazno", "opcionId": "frente-amplio", "votos": 10939, "validos": 39053}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Durazno", "opcionId": "nacional", "votos": 25294, "validos": 39053}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Durazno", "opcionId": "colorado", "votos": 2663, "validos": 39053}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Durazno", "opcionId": "asamblea-popular", "votos": 157, "validos": 39053}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Flores", "opcionId": "frente-amplio", "votos": 4530, "validos": 17982}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Flores", "opcionId": "nacional", "votos": 11479, "validos": 17982}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Flores", "opcionId": "colorado", "votos": 1973, "validos": 17982}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Florida", "opcionId": "frente-amplio", "votos": 20916, "validos": 47380}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Florida", "opcionId": "nacional", "votos": 21168, "validos": 47380}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Florida", "opcionId": "colorado", "votos": 5152, "validos": 47380}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Florida", "opcionId": "asamblea-popular", "votos": 144, "validos": 47380}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Lavalleja", "opcionId": "frente-amplio", "votos": 14568, "validos": 42591}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Lavalleja", "opcionId": "nacional", "votos": 24068, "validos": 42591}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Lavalleja", "opcionId": "colorado", "votos": 3903, "validos": 42591}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Lavalleja", "opcionId": "asamblea-popular", "votos": 52, "validos": 42591}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Maldonado", "opcionId": "frente-amplio", "votos": 50955, "validos": 96983}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Maldonado", "opcionId": "nacional", "votos": 32415, "validos": 96983}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Maldonado", "opcionId": "colorado", "votos": 13443, "validos": 96983}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Maldonado", "opcionId": "asamblea-popular", "votos": 170, "validos": 96983}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Montevideo", "opcionId": "frente-amplio", "votos": 405601, "validos": 750551}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Montevideo", "opcionId": "nacional", "votos": 174917, "validos": 750551}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Montevideo", "opcionId": "colorado", "votos": 159976, "validos": 750551}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Montevideo", "opcionId": "asamblea-popular", "votos": 10057, "validos": 750551}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Paysandú", "opcionId": "frente-amplio", "votos": 32831, "validos": 73351}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Paysandú", "opcionId": "nacional", "votos": 34152, "validos": 73351}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Paysandú", "opcionId": "colorado", "votos": 5957, "validos": 73351}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Paysandú", "opcionId": "asamblea-popular", "votos": 411, "validos": 73351}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Río Negro", "opcionId": "frente-amplio", "votos": 13489, "validos": 34721}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Río Negro", "opcionId": "nacional", "votos": 15546, "validos": 34721}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Río Negro", "opcionId": "colorado", "votos": 5686, "validos": 34721}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Rivera", "opcionId": "frente-amplio", "votos": 15232, "validos": 67596}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Rivera", "opcionId": "nacional", "votos": 17698, "validos": 67596}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Rivera", "opcionId": "colorado", "votos": 34666, "validos": 67596}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Rocha", "opcionId": "frente-amplio", "votos": 27123, "validos": 46966}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Rocha", "opcionId": "nacional", "votos": 15559, "validos": 46966}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Rocha", "opcionId": "colorado", "votos": 4009, "validos": 46966}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Rocha", "opcionId": "asamblea-popular", "votos": 275, "validos": 46966}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Salto", "opcionId": "frente-amplio", "votos": 33693, "validos": 79228}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Salto", "opcionId": "nacional", "votos": 10401, "validos": 79228}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Salto", "opcionId": "colorado", "votos": 35027, "validos": 79228}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Salto", "opcionId": "asamblea-popular", "votos": 107, "validos": 79228}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "San José", "opcionId": "frente-amplio", "votos": 22690, "validos": 64860}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "San José", "opcionId": "nacional", "votos": 39109, "validos": 64860}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "San José", "opcionId": "colorado", "votos": 2729, "validos": 64860}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "San José", "opcionId": "asamblea-popular", "votos": 332, "validos": 64860}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Soriano", "opcionId": "frente-amplio", "votos": 19558, "validos": 56498}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Soriano", "opcionId": "nacional", "votos": 33033, "validos": 56498}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Soriano", "opcionId": "colorado", "votos": 3726, "validos": 56498}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Soriano", "opcionId": "asamblea-popular", "votos": 181, "validos": 56498}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Tacuarembó", "opcionId": "frente-amplio", "votos": 15266, "validos": 62833}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Tacuarembó", "opcionId": "nacional", "votos": 44197, "validos": 62833}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Tacuarembó", "opcionId": "colorado", "votos": 3370, "validos": 62833}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Treinta y Tres", "opcionId": "frente-amplio", "votos": 14677, "validos": 34587}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Treinta y Tres", "opcionId": "nacional", "votos": 17902, "validos": 34587}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Treinta y Tres", "opcionId": "colorado", "votos": 1919, "validos": 34587}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "_nacional", "geoId": "Treinta y Tres", "opcionId": "asamblea-popular", "votos": 89, "validos": 34587}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "frente-amplio", "votos": 405601, "validos": 750551}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "nacional", "votos": 174917, "validos": 750551}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "colorado", "votos": 159976, "validos": 750551}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "montevideo", "geoId": "Montevideo", "opcionId": "asamblea-popular", "votos": 10057, "validos": 750551}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "canelones", "geoId": "Canelones", "opcionId": "frente-amplio", "votos": 164849, "validos": 268518}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "canelones", "geoId": "Canelones", "opcionId": "nacional", "votos": 71666, "validos": 268518}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "canelones", "geoId": "Canelones", "opcionId": "colorado", "votos": 29920, "validos": 268518}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "canelones", "geoId": "Canelones", "opcionId": "asamblea-popular", "votos": 2083, "validos": 268518}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "frente-amplio", "votos": 50955, "validos": 96983}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "nacional", "votos": 32415, "validos": 96983}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "colorado", "votos": 13443, "validos": 96983}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "maldonado", "geoId": "Maldonado", "opcionId": "asamblea-popular", "votos": 170, "validos": 96983}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "colonia", "geoId": "Colonia", "opcionId": "frente-amplio", "votos": 27316, "validos": 82181}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "colonia", "geoId": "Colonia", "opcionId": "nacional", "votos": 45751, "validos": 82181}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "colonia", "geoId": "Colonia", "opcionId": "colorado", "votos": 8983, "validos": 82181}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "colonia", "geoId": "Colonia", "opcionId": "asamblea-popular", "votos": 131, "validos": 82181}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "salto", "geoId": "Salto", "opcionId": "frente-amplio", "votos": 33693, "validos": 79228}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "salto", "geoId": "Salto", "opcionId": "nacional", "votos": 10401, "validos": 79228}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "salto", "geoId": "Salto", "opcionId": "colorado", "votos": 35027, "validos": 79228}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "salto", "geoId": "Salto", "opcionId": "asamblea-popular", "votos": 107, "validos": 79228}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "paysandu", "geoId": "Paysandú", "opcionId": "frente-amplio", "votos": 32831, "validos": 73351}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "paysandu", "geoId": "Paysandú", "opcionId": "nacional", "votos": 34152, "validos": 73351}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "paysandu", "geoId": "Paysandú", "opcionId": "colorado", "votos": 5957, "validos": 73351}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "paysandu", "geoId": "Paysandú", "opcionId": "asamblea-popular", "votos": 411, "validos": 73351}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "rivera", "geoId": "Rivera", "opcionId": "frente-amplio", "votos": 15232, "validos": 67596}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "rivera", "geoId": "Rivera", "opcionId": "nacional", "votos": 17698, "validos": 67596}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "rivera", "geoId": "Rivera", "opcionId": "colorado", "votos": 34666, "validos": 67596}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "cerro_largo", "geoId": "Cerro Largo", "opcionId": "frente-amplio", "votos": 21484, "validos": 56024}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "cerro_largo", "geoId": "Cerro Largo", "opcionId": "nacional", "votos": 29876, "validos": 56024}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "cerro_largo", "geoId": "Cerro Largo", "opcionId": "colorado", "votos": 4599, "validos": 56024}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "cerro_largo", "geoId": "Cerro Largo", "opcionId": "asamblea-popular", "votos": 65, "validos": 56024}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "tacuarembo", "geoId": "Tacuarembó", "opcionId": "frente-amplio", "votos": 15266, "validos": 62833}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "tacuarembo", "geoId": "Tacuarembó", "opcionId": "nacional", "votos": 44197, "validos": 62833}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "tacuarembo", "geoId": "Tacuarembó", "opcionId": "colorado", "votos": 3370, "validos": 62833}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "san_jose", "geoId": "San José", "opcionId": "frente-amplio", "votos": 22690, "validos": 64860}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "san_jose", "geoId": "San José", "opcionId": "nacional", "votos": 39109, "validos": 64860}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "san_jose", "geoId": "San José", "opcionId": "colorado", "votos": 2729, "validos": 64860}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "san_jose", "geoId": "San José", "opcionId": "asamblea-popular", "votos": 332, "validos": 64860}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "soriano", "geoId": "Soriano", "opcionId": "frente-amplio", "votos": 19558, "validos": 56498}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "soriano", "geoId": "Soriano", "opcionId": "nacional", "votos": 33033, "validos": 56498}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "soriano", "geoId": "Soriano", "opcionId": "colorado", "votos": 3726, "validos": 56498}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "soriano", "geoId": "Soriano", "opcionId": "asamblea-popular", "votos": 181, "validos": 56498}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "rocha", "geoId": "Rocha", "opcionId": "frente-amplio", "votos": 27123, "validos": 46966}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "rocha", "geoId": "Rocha", "opcionId": "nacional", "votos": 15559, "validos": 46966}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "rocha", "geoId": "Rocha", "opcionId": "colorado", "votos": 4009, "validos": 46966}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "rocha", "geoId": "Rocha", "opcionId": "asamblea-popular", "votos": 275, "validos": 46966}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "florida", "geoId": "Florida", "opcionId": "frente-amplio", "votos": 20916, "validos": 47380}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "florida", "geoId": "Florida", "opcionId": "nacional", "votos": 21168, "validos": 47380}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "florida", "geoId": "Florida", "opcionId": "colorado", "votos": 5152, "validos": 47380}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "florida", "geoId": "Florida", "opcionId": "asamblea-popular", "votos": 144, "validos": 47380}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "artigas", "geoId": "Artigas", "opcionId": "frente-amplio", "votos": 22578, "validos": 47572}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "artigas", "geoId": "Artigas", "opcionId": "nacional", "votos": 20091, "validos": 47572}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "artigas", "geoId": "Artigas", "opcionId": "colorado", "votos": 4784, "validos": 47572}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "artigas", "geoId": "Artigas", "opcionId": "asamblea-popular", "votos": 119, "validos": 47572}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "durazno", "geoId": "Durazno", "opcionId": "frente-amplio", "votos": 10939, "validos": 39053}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "durazno", "geoId": "Durazno", "opcionId": "nacional", "votos": 25294, "validos": 39053}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "durazno", "geoId": "Durazno", "opcionId": "colorado", "votos": 2663, "validos": 39053}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "durazno", "geoId": "Durazno", "opcionId": "asamblea-popular", "votos": 157, "validos": 39053}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "treinta_y_tres", "geoId": "Treinta y Tres", "opcionId": "frente-amplio", "votos": 14677, "validos": 34587}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "treinta_y_tres", "geoId": "Treinta y Tres", "opcionId": "nacional", "votos": 17902, "validos": 34587}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "treinta_y_tres", "geoId": "Treinta y Tres", "opcionId": "colorado", "votos": 1919, "validos": 34587}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "treinta_y_tres", "geoId": "Treinta y Tres", "opcionId": "asamblea-popular", "votos": 89, "validos": 34587}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "lavalleja", "geoId": "Lavalleja", "opcionId": "frente-amplio", "votos": 14568, "validos": 42591}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "lavalleja", "geoId": "Lavalleja", "opcionId": "nacional", "votos": 24068, "validos": 42591}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "lavalleja", "geoId": "Lavalleja", "opcionId": "colorado", "votos": 3903, "validos": 42591}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "lavalleja", "geoId": "Lavalleja", "opcionId": "asamblea-popular", "votos": 52, "validos": 42591}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "rio_negro", "geoId": "Río Negro", "opcionId": "frente-amplio", "votos": 13489, "validos": 34721}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "rio_negro", "geoId": "Río Negro", "opcionId": "nacional", "votos": 15546, "validos": 34721}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "rio_negro", "geoId": "Río Negro", "opcionId": "colorado", "votos": 5686, "validos": 34721}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "flores", "geoId": "Flores", "opcionId": "frente-amplio", "votos": 4530, "validos": 17982}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "flores", "geoId": "Flores", "opcionId": "nacional", "votos": 11479, "validos": 17982}
+{"eleccion": "departamentales-2010", "nivel": "departamento", "departamento": "flores", "geoId": "Flores", "opcionId": "colorado", "votos": 1973, "validos": 17982}

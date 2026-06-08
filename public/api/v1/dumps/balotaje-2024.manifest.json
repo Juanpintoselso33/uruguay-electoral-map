@@ -1,15 +1,25 @@
 {
  "eleccion": "balotaje-2024",
- "registros": 1348,
+ "registros": 22742,
  "formato": "ndjson",
+ "niveles": [
+  "circuito",
+  "departamento",
+  "local",
+  "localidad",
+  "serie",
+  "zona"
+ ],
  "campos": [
   "eleccion",
+  "nivel",
   "departamento",
   "geoId",
   "opcionId",
   "votos",
   "validos"
  ],
+ "nota": "Resultado por (nivel, zona). Desglose por hoja en /api/v1/results/hoja-*.",
  "fuente": "Corte Electoral del Uruguay",
  "version": "v1"
 }

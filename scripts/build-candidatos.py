@@ -45,13 +45,56 @@ def mejor_variante(variantes):
     return sorted(no_upper or list(variantes))[0]
 
 
-def dedup_partidos(parts):
-    """Colapsa partidos duplicados por casing ('PARTIDO NACIONAL' + 'Partido Nacional' -> uno)."""
+_MINOR_ES = {"de", "del", "la", "las", "los", "y", "e", "o", "a", "en", "el"}
+
+
+def _titlecase_es(s):
+    """Title-case con conectores en minúscula; respeta acrónimos entre paréntesis ('(PCN)')."""
+    out = []
+    for i, w in enumerate(s.split()):
+        if w.startswith("(") and w.endswith(")"):
+            out.append(w)
+        else:
+            wl = w.lower()
+            out.append(wl if (wl in _MINOR_ES and i > 0) else wl.capitalize())
+    return " ".join(out)
+
+
+def _build_canon_partidos():
+    """Mapa norm(nombre) -> nombre canónico, tomado de TODOS los opciones.json (misma fuente
+    que usa el mapa/front). Garantiza que los partidos de candidatos coincidan con el resto."""
+    import glob
     by_key = {}
-    for p in parts:
-        if p:
-            by_key.setdefault(norm(p), set()).add(p)
-    return sorted(mejor_variante(v) for v in by_key.values())
+    for p in glob.glob(os.path.join(ROOT, "public/data/*/*/opciones.json")):
+        try:
+            for o in json.load(open(p, encoding="utf-8")).get("opciones", []):
+                n = o.get("nombre")
+                if n:
+                    by_key.setdefault(norm(n), set()).add(n)
+        except Exception:
+            pass
+    return {k: mejor_variante(v) for k, v in by_key.items()}
+
+
+CANON_PARTIDOS = _build_canon_partidos()
+
+
+def canon_partido(p):
+    """Nombre canónico de un partido: opciones.json es autoritativo; si no está, prueba sin el
+    prefijo 'PARTIDO '; si sigue sin match y viene en mayúsculas, title-case. Idempotente."""
+    if not p:
+        return p
+    k = norm(p)
+    if k in CANON_PARTIDOS:
+        return CANON_PARTIDOS[k]
+    if k.startswith("PARTIDO ") and k[len("PARTIDO "):] in CANON_PARTIDOS:
+        return CANON_PARTIDOS[k[len("PARTIDO "):]]
+    return _titlecase_es(p) if p == p.upper() else p
+
+
+def dedup_partidos(parts):
+    """Canonicaliza (vía opciones.json) y colapsa duplicados: 'PARTIDO NACIONAL' -> 'Partido Nacional'."""
+    return sorted({canon_partido(p) for p in parts if p})
 
 
 def limpiar_nombre(n):
@@ -148,8 +191,9 @@ def main():
 
         for a in p["apariciones"]:
             e, d, hoja = a["eleccion"], a["departamento"], str(a["hoja"])
-            cargo, partido, sublema = a.get("cargo"), a.get("partido"), a.get("sublema")
+            cargo, partido_raw, sublema = a.get("cargo"), a.get("partido"), a.get("sublema")
             match = a.get("match", "credencial")
+            partido = canon_partido(partido_raw)  # display canónico; el crudo se usa para el join al catálogo
 
             ck = (e, cargo, partido, sublema, match)
             if ck not in cand_seen:
@@ -165,7 +209,7 @@ def main():
             cat = get_cat(e, d)
             if not cat:
                 continue
-            oid = hoja_opcion(cat, hoja, partido)
+            oid = hoja_opcion(cat, hoja, partido_raw)
             if not oid:
                 continue
             lk = (e, d, oid)

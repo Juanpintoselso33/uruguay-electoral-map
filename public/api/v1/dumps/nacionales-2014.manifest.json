@@ -1,15 +1,26 @@
 {
  "eleccion": "nacionales-2014",
- "registros": 3505,
+ "registros": 61913,
  "formato": "ndjson",
+ "niveles": [
+  "barrio",
+  "circuito",
+  "departamento",
+  "local",
+  "localidad",
+  "serie",
+  "zona"
+ ],
  "campos": [
   "eleccion",
+  "nivel",
   "departamento",
   "geoId",
   "opcionId",
   "votos",
   "validos"
  ],
+ "nota": "Resultado por (nivel, zona). Desglose por hoja en /api/v1/results/hoja-*.",
  "fuente": "Corte Electoral del Uruguay",
  "version": "v1"
 }

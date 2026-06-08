@@ -13,7 +13,7 @@ CORS abierto. Datos abiertos de la **Corte Electoral**. Entry point: [`index.jso
 | `elections.json` · `elections/{eleccion}.json` | Catálogo de elecciones y su metadata. |
 | `results/{eleccion}/{departamento}/votes.json` | Resultados por zona (vía `/data`). |
 | `geo/{departamento}/{nivel}.topo.json` | Geometría (TopoJSON). |
-| `dumps/{eleccion}.ndjson` | Dump bulk en NDJSON: una fila por `(departamento, zona, opción)` con votos — **resultado base por zona, por departamento** (sin agregado nacional ni granularidad circuito/local/hoja; para eso usar los recursos `results/`). Cubre las 24 elecciones. |
+| `dumps/{eleccion}.ndjson` | Dump bulk en NDJSON: una fila por `(nivel, departamento, geoId, opción)` con votos. Incluye **todos los niveles geográficos** (serie/barrio/localidad/circuito/local/municipio) **+ el agregado `_nacional`** (departamento y zona); cada fila trae el campo `nivel`. El desglose por **hoja** (lista) no va acá (otra forma, con `hojaId`) — está en `results/hoja-*`. Cubre las 24 elecciones. |
 | `candidatos/` | Dimensión persona ↔ candidatura ↔ votos de lista. **Ver [`candidatos/README.md`](candidatos/README.md).** |
 
 ## Candidatos: identidad y deuda pendiente

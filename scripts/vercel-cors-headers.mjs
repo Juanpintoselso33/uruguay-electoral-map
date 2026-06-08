@@ -25,6 +25,7 @@
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
 
 const CACHE = 'public, max-age=3600, s-maxage=31536000, immutable';
 
@@ -62,6 +63,18 @@ export default function vercelCorsHeaders() {
   return {
     name: 'vercel-api-routes',
     hooks: {
+      // Gate de contrato + completitud de la API ANTES del build. Corre en Vercel (que ejecuta
+      // `astro build`, no `npm run build`), así que un index/dumps/openapi obsoleto frente a /data
+      // ABORTA el deploy en vez de derivar en silencio. Ver scripts/gate-api-contract.mjs.
+      'astro:build:start': ({ logger }) => {
+        const gate = fileURLToPath(new URL('./gate-api-contract.mjs', import.meta.url));
+        try {
+          execFileSync('node', [gate], { stdio: 'inherit' });
+        } catch {
+          throw new Error('[vercel-api] gate de API falló — la API está obsoleta frente a /data. '
+            + "Corré 'npm run etl:api-index' y 'npm run etl:api-dumps <eleccion>' y commiteá.");
+        }
+      },
       'astro:build:done': ({ logger }) => {
         const configPath = fileURLToPath(new URL('../.vercel/output/config.json', import.meta.url));
         if (!existsSync(configPath)) {
