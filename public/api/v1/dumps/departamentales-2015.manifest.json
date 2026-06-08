@@ -1,6 +1,6 @@
 {
  "eleccion": "departamentales-2015",
- "registros": 2715,
+ "registros": 3087,
  "formato": "ndjson",
  "campos": [
   "eleccion",

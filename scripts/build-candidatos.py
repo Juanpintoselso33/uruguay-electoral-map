@@ -38,6 +38,29 @@ def norm(s: str) -> str:
     return "".join(c for c in s if unicodedata.category(c) != "Mn").upper()
 
 
+def mejor_variante(variantes):
+    """Entre variantes de casing del mismo valor, preferir la que NO es todo-mayúsculas
+    (política de nombres canónicos del proyecto: 'Partido Nacional', no 'PARTIDO NACIONAL')."""
+    no_upper = [v for v in variantes if v != v.upper()]
+    return sorted(no_upper or list(variantes))[0]
+
+
+def dedup_partidos(parts):
+    """Colapsa partidos duplicados por casing ('PARTIDO NACIONAL' + 'Partido Nacional' -> uno)."""
+    by_key = {}
+    for p in parts:
+        if p:
+            by_key.setdefault(norm(p), set()).add(p)
+    return sorted(mejor_variante(v) for v in by_key.values())
+
+
+def limpiar_nombre(n):
+    """Display: quita la coma colgante cuando el apellido viene vacío en la fuente
+    (', Jonathan Arlen' -> 'Jonathan Arlen')."""
+    n = (n or "").strip()
+    return n.lstrip(",").strip() if n.startswith(",") else n
+
+
 def hoja_opcion(cat_doc, hoja, partido=None):
     """hoja -> opcionId vía catalogo.json ya cargado; desambigua por partido si hay varios."""
     hoja_str = str(hoja)
@@ -99,7 +122,7 @@ def main():
     for p in personas:
         pid = p["personaId"]
         nombres = p["nombres"]
-        nombre = nombres[0] if nombres else pid
+        nombre = limpiar_nombre(nombres[0]) if nombres else pid
         cargos = sorted({a["cargo"].upper() for a in p["apariciones"] if a.get("cargo")})
         elecciones = sorted({a["eleccion"] for a in p["apariciones"]})
 
@@ -114,7 +137,7 @@ def main():
         if not (cargos_hard & CARGOS_LEGISLATIVOS):
             continue
 
-        partidos = sorted({a["partido"] for a in p["apariciones"] if a.get("partido")})
+        partidos = dedup_partidos(a["partido"] for a in p["apariciones"] if a.get("partido"))
 
         # Candidaturas compactas (deduped por eleccion+cargo+partido+sublema+match).
         cand_seen = set()

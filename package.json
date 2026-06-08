@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "node scripts/build-data-manifest.mjs && node scripts/generate-og.mjs && node scripts/generate-search-index.mjs && node scripts/gate-data.mjs && npx tsx scripts/gate-escaleras.ts && vitest run && astro build",
+    "build": "node scripts/build-data-manifest.mjs && node scripts/generate-og.mjs && node scripts/generate-search-index.mjs && node scripts/gate-data.mjs && node scripts/gate-api-contract.mjs && npx tsx scripts/gate-escaleras.ts && vitest run && astro build",
     "build:manifest": "node scripts/build-data-manifest.mjs",
     "generate:og": "node scripts/generate-og.mjs",
     "generate:search": "node scripts/generate-search-index.mjs",

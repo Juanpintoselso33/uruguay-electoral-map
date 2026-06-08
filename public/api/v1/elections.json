@@ -1,6 +1,31 @@
 {
  "elecciones": [
   {
+   "id": "balotaje-2009",
+   "departamentos": [
+    "artigas",
+    "canelones",
+    "cerro_largo",
+    "colonia",
+    "durazno",
+    "flores",
+    "florida",
+    "lavalleja",
+    "maldonado",
+    "montevideo",
+    "paysandu",
+    "rio_negro",
+    "rivera",
+    "rocha",
+    "salto",
+    "san_jose",
+    "soriano",
+    "tacuarembo",
+    "treinta_y_tres"
+   ],
+   "detalle": "/api/v1/elections/balotaje-2009.json"
+  },
+  {
    "id": "balotaje-2014",
    "departamentos": [
     "artigas",
@@ -76,6 +101,31 @@
    "detalle": "/api/v1/elections/balotaje-2024.json"
   },
   {
+   "id": "departamentales-2010",
+   "departamentos": [
+    "artigas",
+    "canelones",
+    "cerro_largo",
+    "colonia",
+    "durazno",
+    "flores",
+    "florida",
+    "lavalleja",
+    "maldonado",
+    "montevideo",
+    "paysandu",
+    "rio_negro",
+    "rivera",
+    "rocha",
+    "salto",
+    "san_jose",
+    "soriano",
+    "tacuarembo",
+    "treinta_y_tres"
+   ],
+   "detalle": "/api/v1/elections/departamentales-2010.json"
+  },
+  {
    "id": "departamentales-2015",
    "departamentos": [
     "artigas",
@@ -87,6 +137,7 @@
     "florida",
     "lavalleja",
     "maldonado",
+    "montevideo",
     "paysandu",
     "rio_negro",
     "rivera",
@@ -150,6 +201,56 @@
    "detalle": "/api/v1/elections/departamentales-2025.json"
   },
   {
+   "id": "internas-2009",
+   "departamentos": [
+    "artigas",
+    "canelones",
+    "cerro_largo",
+    "colonia",
+    "durazno",
+    "flores",
+    "florida",
+    "lavalleja",
+    "maldonado",
+    "montevideo",
+    "paysandu",
+    "rio_negro",
+    "rivera",
+    "rocha",
+    "salto",
+    "san_jose",
+    "soriano",
+    "tacuarembo",
+    "treinta_y_tres"
+   ],
+   "detalle": "/api/v1/elections/internas-2009.json"
+  },
+  {
+   "id": "internas-2014",
+   "departamentos": [
+    "artigas",
+    "canelones",
+    "cerro_largo",
+    "colonia",
+    "durazno",
+    "flores",
+    "florida",
+    "lavalleja",
+    "maldonado",
+    "montevideo",
+    "paysandu",
+    "rio_negro",
+    "rivera",
+    "rocha",
+    "salto",
+    "san_jose",
+    "soriano",
+    "tacuarembo",
+    "treinta_y_tres"
+   ],
+   "detalle": "/api/v1/elections/internas-2014.json"
+  },
+  {
    "id": "internas-2019",
    "departamentos": [
     "artigas",
@@ -198,6 +299,31 @@
     "treinta_y_tres"
    ],
    "detalle": "/api/v1/elections/internas-2024.json"
+  },
+  {
+   "id": "municipales-2010",
+   "departamentos": [
+    "artigas",
+    "canelones",
+    "cerro_largo",
+    "colonia",
+    "durazno",
+    "flores",
+    "florida",
+    "lavalleja",
+    "maldonado",
+    "montevideo",
+    "paysandu",
+    "rio_negro",
+    "rivera",
+    "rocha",
+    "salto",
+    "san_jose",
+    "soriano",
+    "tacuarembo",
+    "treinta_y_tres"
+   ],
+   "detalle": "/api/v1/elections/municipales-2010.json"
   },
   {
    "id": "municipales-2015",
@@ -273,6 +399,31 @@
     "treinta_y_tres"
    ],
    "detalle": "/api/v1/elections/municipales-2025.json"
+  },
+  {
+   "id": "nacionales-2009",
+   "departamentos": [
+    "artigas",
+    "canelones",
+    "cerro_largo",
+    "colonia",
+    "durazno",
+    "flores",
+    "florida",
+    "lavalleja",
+    "maldonado",
+    "montevideo",
+    "paysandu",
+    "rio_negro",
+    "rivera",
+    "rocha",
+    "salto",
+    "san_jose",
+    "soriano",
+    "tacuarembo",
+    "treinta_y_tres"
+   ],
+   "detalle": "/api/v1/elections/nacionales-2009.json"
   },
   {
    "id": "nacionales-2014",

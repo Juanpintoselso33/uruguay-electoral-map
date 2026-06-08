@@ -1,0 +1,15 @@
+{
+ "eleccion": "departamentales-2010",
+ "registros": 72,
+ "formato": "ndjson",
+ "campos": [
+  "eleccion",
+  "departamento",
+  "geoId",
+  "opcionId",
+  "votos",
+  "validos"
+ ],
+ "fuente": "Corte Electoral del Uruguay",
+ "version": "v1"
+}

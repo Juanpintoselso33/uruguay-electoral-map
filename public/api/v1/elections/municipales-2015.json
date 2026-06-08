@@ -5,10 +5,12 @@
    "id": "_nacional",
    "results": {
     "opciones": "/api/v1/results/municipales-2015/_nacional/opciones.json",
-    "votes": "/api/v1/results/municipales-2015/_nacional/votes.json"
+    "votes": "/api/v1/results/municipales-2015/_nacional/votes.json",
+    "hoja-municipio": "/api/v1/results/municipales-2015/_nacional/hoja-municipio.json"
    },
    "geo": {
     "departamento.topo": "/api/v1/geo/_nacional/departamento.topo.json",
+    "municipio.2010.topo": "/api/v1/geo/_nacional/municipio.2010.topo.json",
     "municipio.2015.topo": "/api/v1/geo/_nacional/municipio.2015.topo.json",
     "municipio.2020.topo": "/api/v1/geo/_nacional/municipio.2020.topo.json",
     "municipio.topo": "/api/v1/geo/_nacional/municipio.topo.json",
@@ -18,14 +20,18 @@
   {
    "id": "artigas",
    "results": {
+    "catalogo": "/api/v1/results/municipales-2015/artigas/catalogo.json",
     "opciones": "/api/v1/results/municipales-2015/artigas/opciones.json",
-    "votes": "/api/v1/results/municipales-2015/artigas/votes.json"
+    "votes": "/api/v1/results/municipales-2015/artigas/votes.json",
+    "hoja-municipio": "/api/v1/results/municipales-2015/artigas/hoja-municipio.json"
    },
    "geo": {
     "barrio.topo": "/api/v1/geo/artigas/barrio.topo.json",
     "circuito.topo": "/api/v1/geo/artigas/circuito.topo.json",
+    "departamento.topo": "/api/v1/geo/artigas/departamento.topo.json",
     "local.topo": "/api/v1/geo/artigas/local.topo.json",
     "localidad.topo": "/api/v1/geo/artigas/localidad.topo.json",
+    "municipio.2010.topo": "/api/v1/geo/artigas/municipio.2010.topo.json",
     "municipio.2015.topo": "/api/v1/geo/artigas/municipio.2015.topo.json",
     "municipio.2020.topo": "/api/v1/geo/artigas/municipio.2020.topo.json",
     "municipio.topo": "/api/v1/geo/artigas/municipio.topo.json",
@@ -35,13 +41,17 @@
   {
    "id": "canelones",
    "results": {
+    "catalogo": "/api/v1/results/municipales-2015/canelones/catalogo.json",
     "opciones": "/api/v1/results/municipales-2015/canelones/opciones.json",
-    "votes": "/api/v1/results/municipales-2015/canelones/votes.json"
+    "votes": "/api/v1/results/municipales-2015/canelones/votes.json",
+    "hoja-municipio": "/api/v1/results/municipales-2015/canelones/hoja-municipio.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/canelones/circuito.topo.json",
+    "departamento.topo": "/api/v1/geo/canelones/departamento.topo.json",
     "local.topo": "/api/v1/geo/canelones/local.topo.json",
     "localidad.topo": "/api/v1/geo/canelones/localidad.topo.json",
+    "municipio.2010.topo": "/api/v1/geo/canelones/municipio.2010.topo.json",
     "municipio.2015.topo": "/api/v1/geo/canelones/municipio.2015.topo.json",
     "municipio.2020.topo": "/api/v1/geo/canelones/municipio.2020.topo.json",
     "municipio.topo": "/api/v1/geo/canelones/municipio.topo.json",
@@ -51,14 +61,18 @@
   {
    "id": "cerro_largo",
    "results": {
+    "catalogo": "/api/v1/results/municipales-2015/cerro_largo/catalogo.json",
     "opciones": "/api/v1/results/municipales-2015/cerro_largo/opciones.json",
-    "votes": "/api/v1/results/municipales-2015/cerro_largo/votes.json"
+    "votes": "/api/v1/results/municipales-2015/cerro_largo/votes.json",
+    "hoja-municipio": "/api/v1/results/municipales-2015/cerro_largo/hoja-municipio.json"
    },
    "geo": {
     "barrio.topo": "/api/v1/geo/cerro_largo/barrio.topo.json",
     "circuito.topo": "/api/v1/geo/cerro_largo/circuito.topo.json",
+    "departamento.topo": "/api/v1/geo/cerro_largo/departamento.topo.json",
     "local.topo": "/api/v1/geo/cerro_largo/local.topo.json",
     "localidad.topo": "/api/v1/geo/cerro_largo/localidad.topo.json",
+    "municipio.2010.topo": "/api/v1/geo/cerro_largo/municipio.2010.topo.json",
     "municipio.2015.topo": "/api/v1/geo/cerro_largo/municipio.2015.topo.json",
     "municipio.2020.topo": "/api/v1/geo/cerro_largo/municipio.2020.topo.json",
     "municipio.topo": "/api/v1/geo/cerro_largo/municipio.topo.json",
@@ -68,13 +82,17 @@
   {
    "id": "colonia",
    "results": {
+    "catalogo": "/api/v1/results/municipales-2015/colonia/catalogo.json",
     "opciones": "/api/v1/results/municipales-2015/colonia/opciones.json",
-    "votes": "/api/v1/results/municipales-2015/colonia/votes.json"
+    "votes": "/api/v1/results/municipales-2015/colonia/votes.json",
+    "hoja-municipio": "/api/v1/results/municipales-2015/colonia/hoja-municipio.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/colonia/circuito.topo.json",
+    "departamento.topo": "/api/v1/geo/colonia/departamento.topo.json",
     "local.topo": "/api/v1/geo/colonia/local.topo.json",
     "localidad.topo": "/api/v1/geo/colonia/localidad.topo.json",
+    "municipio.2010.topo": "/api/v1/geo/colonia/municipio.2010.topo.json",
     "municipio.2015.topo": "/api/v1/geo/colonia/municipio.2015.topo.json",
     "municipio.2020.topo": "/api/v1/geo/colonia/municipio.2020.topo.json",
     "municipio.topo": "/api/v1/geo/colonia/municipio.topo.json",
@@ -84,14 +102,18 @@
   {
    "id": "durazno",
    "results": {
+    "catalogo": "/api/v1/results/municipales-2015/durazno/catalogo.json",
     "opciones": "/api/v1/results/municipales-2015/durazno/opciones.json",
-    "votes": "/api/v1/results/municipales-2015/durazno/votes.json"
+    "votes": "/api/v1/results/municipales-2015/durazno/votes.json",
+    "hoja-municipio": "/api/v1/results/municipales-2015/durazno/hoja-municipio.json"
    },
    "geo": {
     "barrio.topo": "/api/v1/geo/durazno/barrio.topo.json",
     "circuito.topo": "/api/v1/geo/durazno/circuito.topo.json",
+    "departamento.topo": "/api/v1/geo/durazno/departamento.topo.json",
     "local.topo": "/api/v1/geo/durazno/local.topo.json",
     "localidad.topo": "/api/v1/geo/durazno/localidad.topo.json",
+    "municipio.2010.topo": "/api/v1/geo/durazno/municipio.2010.topo.json",
     "municipio.2015.topo": "/api/v1/geo/durazno/municipio.2015.topo.json",
     "municipio.2020.topo": "/api/v1/geo/durazno/municipio.2020.topo.json",
     "municipio.topo": "/api/v1/geo/durazno/municipio.topo.json",
@@ -101,13 +123,17 @@
   {
    "id": "flores",
    "results": {
+    "catalogo": "/api/v1/results/municipales-2015/flores/catalogo.json",
     "opciones": "/api/v1/results/municipales-2015/flores/opciones.json",
-    "votes": "/api/v1/results/municipales-2015/flores/votes.json"
+    "votes": "/api/v1/results/municipales-2015/flores/votes.json",
+    "hoja-municipio": "/api/v1/results/municipales-2015/flores/hoja-municipio.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/flores/circuito.topo.json",
+    "departamento.topo": "/api/v1/geo/flores/departamento.topo.json",
     "local.topo": "/api/v1/geo/flores/local.topo.json",
     "localidad.topo": "/api/v1/geo/flores/localidad.topo.json",
+    "municipio.2010.topo": "/api/v1/geo/flores/municipio.2010.topo.json",
     "municipio.2015.topo": "/api/v1/geo/flores/municipio.2015.topo.json",
     "municipio.2020.topo": "/api/v1/geo/flores/municipio.2020.topo.json",
     "municipio.topo": "/api/v1/geo/flores/municipio.topo.json",
@@ -117,13 +143,17 @@
   {
    "id": "florida",
    "results": {
+    "catalogo": "/api/v1/results/municipales-2015/florida/catalogo.json",
     "opciones": "/api/v1/results/municipales-2015/florida/opciones.json",
-    "votes": "/api/v1/results/municipales-2015/florida/votes.json"
+    "votes": "/api/v1/results/municipales-2015/florida/votes.json",
+    "hoja-municipio": "/api/v1/results/municipales-2015/florida/hoja-municipio.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/florida/circuito.topo.json",
+    "departamento.topo": "/api/v1/geo/florida/departamento.topo.json",
     "local.topo": "/api/v1/geo/florida/local.topo.json",
     "localidad.topo": "/api/v1/geo/florida/localidad.topo.json",
+    "municipio.2010.topo": "/api/v1/geo/florida/municipio.2010.topo.json",
     "municipio.2015.topo": "/api/v1/geo/florida/municipio.2015.topo.json",
     "municipio.2020.topo": "/api/v1/geo/florida/municipio.2020.topo.json",
     "municipio.topo": "/api/v1/geo/florida/municipio.topo.json",
@@ -133,13 +163,17 @@
   {
    "id": "lavalleja",
    "results": {
+    "catalogo": "/api/v1/results/municipales-2015/lavalleja/catalogo.json",
     "opciones": "/api/v1/results/municipales-2015/lavalleja/opciones.json",
-    "votes": "/api/v1/results/municipales-2015/lavalleja/votes.json"
+    "votes": "/api/v1/results/municipales-2015/lavalleja/votes.json",
+    "hoja-municipio": "/api/v1/results/municipales-2015/lavalleja/hoja-municipio.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/lavalleja/circuito.topo.json",
+    "departamento.topo": "/api/v1/geo/lavalleja/departamento.topo.json",
     "local.topo": "/api/v1/geo/lavalleja/local.topo.json",
     "localidad.topo": "/api/v1/geo/lavalleja/localidad.topo.json",
+    "municipio.2010.topo": "/api/v1/geo/lavalleja/municipio.2010.topo.json",
     "municipio.2015.topo": "/api/v1/geo/lavalleja/municipio.2015.topo.json",
     "municipio.2020.topo": "/api/v1/geo/lavalleja/municipio.2020.topo.json",
     "municipio.topo": "/api/v1/geo/lavalleja/municipio.topo.json",
@@ -149,13 +183,17 @@
   {
    "id": "maldonado",
    "results": {
+    "catalogo": "/api/v1/results/municipales-2015/maldonado/catalogo.json",
     "opciones": "/api/v1/results/municipales-2015/maldonado/opciones.json",
-    "votes": "/api/v1/results/municipales-2015/maldonado/votes.json"
+    "votes": "/api/v1/results/municipales-2015/maldonado/votes.json",
+    "hoja-municipio": "/api/v1/results/municipales-2015/maldonado/hoja-municipio.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/maldonado/circuito.topo.json",
+    "departamento.topo": "/api/v1/geo/maldonado/departamento.topo.json",
     "local.topo": "/api/v1/geo/maldonado/local.topo.json",
     "localidad.topo": "/api/v1/geo/maldonado/localidad.topo.json",
+    "municipio.2010.topo": "/api/v1/geo/maldonado/municipio.2010.topo.json",
     "municipio.2015.topo": "/api/v1/geo/maldonado/municipio.2015.topo.json",
     "municipio.2020.topo": "/api/v1/geo/maldonado/municipio.2020.topo.json",
     "municipio.topo": "/api/v1/geo/maldonado/municipio.topo.json",
@@ -165,12 +203,16 @@
   {
    "id": "montevideo",
    "results": {
+    "catalogo": "/api/v1/results/municipales-2015/montevideo/catalogo.json",
     "opciones": "/api/v1/results/municipales-2015/montevideo/opciones.json",
-    "votes": "/api/v1/results/municipales-2015/montevideo/votes.json"
+    "votes": "/api/v1/results/municipales-2015/montevideo/votes.json",
+    "hoja-municipio": "/api/v1/results/municipales-2015/montevideo/hoja-municipio.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/montevideo/circuito.topo.json",
+    "departamento.topo": "/api/v1/geo/montevideo/departamento.topo.json",
     "local.topo": "/api/v1/geo/montevideo/local.topo.json",
+    "municipio.2010.topo": "/api/v1/geo/montevideo/municipio.2010.topo.json",
     "municipio.2015.topo": "/api/v1/geo/montevideo/municipio.2015.topo.json",
     "municipio.2020.topo": "/api/v1/geo/montevideo/municipio.2020.topo.json",
     "municipio.topo": "/api/v1/geo/montevideo/municipio.topo.json",
@@ -180,14 +222,18 @@
   {
    "id": "paysandu",
    "results": {
+    "catalogo": "/api/v1/results/municipales-2015/paysandu/catalogo.json",
     "opciones": "/api/v1/results/municipales-2015/paysandu/opciones.json",
-    "votes": "/api/v1/results/municipales-2015/paysandu/votes.json"
+    "votes": "/api/v1/results/municipales-2015/paysandu/votes.json",
+    "hoja-municipio": "/api/v1/results/municipales-2015/paysandu/hoja-municipio.json"
    },
    "geo": {
     "barrio.topo": "/api/v1/geo/paysandu/barrio.topo.json",
     "circuito.topo": "/api/v1/geo/paysandu/circuito.topo.json",
+    "departamento.topo": "/api/v1/geo/paysandu/departamento.topo.json",
     "local.topo": "/api/v1/geo/paysandu/local.topo.json",
     "localidad.topo": "/api/v1/geo/paysandu/localidad.topo.json",
+    "municipio.2010.topo": "/api/v1/geo/paysandu/municipio.2010.topo.json",
     "municipio.2015.topo": "/api/v1/geo/paysandu/municipio.2015.topo.json",
     "municipio.2020.topo": "/api/v1/geo/paysandu/municipio.2020.topo.json",
     "municipio.topo": "/api/v1/geo/paysandu/municipio.topo.json",
@@ -197,13 +243,17 @@
   {
    "id": "rio_negro",
    "results": {
+    "catalogo": "/api/v1/results/municipales-2015/rio_negro/catalogo.json",
     "opciones": "/api/v1/results/municipales-2015/rio_negro/opciones.json",
-    "votes": "/api/v1/results/municipales-2015/rio_negro/votes.json"
+    "votes": "/api/v1/results/municipales-2015/rio_negro/votes.json",
+    "hoja-municipio": "/api/v1/results/municipales-2015/rio_negro/hoja-municipio.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/rio_negro/circuito.topo.json",
+    "departamento.topo": "/api/v1/geo/rio_negro/departamento.topo.json",
     "local.topo": "/api/v1/geo/rio_negro/local.topo.json",
     "localidad.topo": "/api/v1/geo/rio_negro/localidad.topo.json",
+    "municipio.2010.topo": "/api/v1/geo/rio_negro/municipio.2010.topo.json",
     "municipio.2015.topo": "/api/v1/geo/rio_negro/municipio.2015.topo.json",
     "municipio.2020.topo": "/api/v1/geo/rio_negro/municipio.2020.topo.json",
     "municipio.topo": "/api/v1/geo/rio_negro/municipio.topo.json",
@@ -213,14 +263,18 @@
   {
    "id": "rivera",
    "results": {
+    "catalogo": "/api/v1/results/municipales-2015/rivera/catalogo.json",
     "opciones": "/api/v1/results/municipales-2015/rivera/opciones.json",
-    "votes": "/api/v1/results/municipales-2015/rivera/votes.json"
+    "votes": "/api/v1/results/municipales-2015/rivera/votes.json",
+    "hoja-municipio": "/api/v1/results/municipales-2015/rivera/hoja-municipio.json"
    },
    "geo": {
     "barrio.topo": "/api/v1/geo/rivera/barrio.topo.json",
     "circuito.topo": "/api/v1/geo/rivera/circuito.topo.json",
+    "departamento.topo": "/api/v1/geo/rivera/departamento.topo.json",
     "local.topo": "/api/v1/geo/rivera/local.topo.json",
     "localidad.topo": "/api/v1/geo/rivera/localidad.topo.json",
+    "municipio.2010.topo": "/api/v1/geo/rivera/municipio.2010.topo.json",
     "municipio.2015.topo": "/api/v1/geo/rivera/municipio.2015.topo.json",
     "municipio.2020.topo": "/api/v1/geo/rivera/municipio.2020.topo.json",
     "municipio.topo": "/api/v1/geo/rivera/municipio.topo.json",
@@ -230,13 +284,17 @@
   {
    "id": "rocha",
    "results": {
+    "catalogo": "/api/v1/results/municipales-2015/rocha/catalogo.json",
     "opciones": "/api/v1/results/municipales-2015/rocha/opciones.json",
-    "votes": "/api/v1/results/municipales-2015/rocha/votes.json"
+    "votes": "/api/v1/results/municipales-2015/rocha/votes.json",
+    "hoja-municipio": "/api/v1/results/municipales-2015/rocha/hoja-municipio.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/rocha/circuito.topo.json",
+    "departamento.topo": "/api/v1/geo/rocha/departamento.topo.json",
     "local.topo": "/api/v1/geo/rocha/local.topo.json",
     "localidad.topo": "/api/v1/geo/rocha/localidad.topo.json",
+    "municipio.2010.topo": "/api/v1/geo/rocha/municipio.2010.topo.json",
     "municipio.2015.topo": "/api/v1/geo/rocha/municipio.2015.topo.json",
     "municipio.2020.topo": "/api/v1/geo/rocha/municipio.2020.topo.json",
     "municipio.topo": "/api/v1/geo/rocha/municipio.topo.json",
@@ -246,14 +304,18 @@
   {
    "id": "salto",
    "results": {
+    "catalogo": "/api/v1/results/municipales-2015/salto/catalogo.json",
     "opciones": "/api/v1/results/municipales-2015/salto/opciones.json",
-    "votes": "/api/v1/results/municipales-2015/salto/votes.json"
+    "votes": "/api/v1/results/municipales-2015/salto/votes.json",
+    "hoja-municipio": "/api/v1/results/municipales-2015/salto/hoja-municipio.json"
    },
    "geo": {
     "barrio.topo": "/api/v1/geo/salto/barrio.topo.json",
     "circuito.topo": "/api/v1/geo/salto/circuito.topo.json",
+    "departamento.topo": "/api/v1/geo/salto/departamento.topo.json",
     "local.topo": "/api/v1/geo/salto/local.topo.json",
     "localidad.topo": "/api/v1/geo/salto/localidad.topo.json",
+    "municipio.2010.topo": "/api/v1/geo/salto/municipio.2010.topo.json",
     "municipio.2015.topo": "/api/v1/geo/salto/municipio.2015.topo.json",
     "municipio.2020.topo": "/api/v1/geo/salto/municipio.2020.topo.json",
     "municipio.topo": "/api/v1/geo/salto/municipio.topo.json",
@@ -263,14 +325,18 @@
   {
    "id": "san_jose",
    "results": {
+    "catalogo": "/api/v1/results/municipales-2015/san_jose/catalogo.json",
     "opciones": "/api/v1/results/municipales-2015/san_jose/opciones.json",
-    "votes": "/api/v1/results/municipales-2015/san_jose/votes.json"
+    "votes": "/api/v1/results/municipales-2015/san_jose/votes.json",
+    "hoja-municipio": "/api/v1/results/municipales-2015/san_jose/hoja-municipio.json"
    },
    "geo": {
     "barrio.topo": "/api/v1/geo/san_jose/barrio.topo.json",
     "circuito.topo": "/api/v1/geo/san_jose/circuito.topo.json",
+    "departamento.topo": "/api/v1/geo/san_jose/departamento.topo.json",
     "local.topo": "/api/v1/geo/san_jose/local.topo.json",
     "localidad.topo": "/api/v1/geo/san_jose/localidad.topo.json",
+    "municipio.2010.topo": "/api/v1/geo/san_jose/municipio.2010.topo.json",
     "municipio.2015.topo": "/api/v1/geo/san_jose/municipio.2015.topo.json",
     "municipio.2020.topo": "/api/v1/geo/san_jose/municipio.2020.topo.json",
     "municipio.topo": "/api/v1/geo/san_jose/municipio.topo.json",
@@ -280,13 +346,17 @@
   {
    "id": "soriano",
    "results": {
+    "catalogo": "/api/v1/results/municipales-2015/soriano/catalogo.json",
     "opciones": "/api/v1/results/municipales-2015/soriano/opciones.json",
-    "votes": "/api/v1/results/municipales-2015/soriano/votes.json"
+    "votes": "/api/v1/results/municipales-2015/soriano/votes.json",
+    "hoja-municipio": "/api/v1/results/municipales-2015/soriano/hoja-municipio.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/soriano/circuito.topo.json",
+    "departamento.topo": "/api/v1/geo/soriano/departamento.topo.json",
     "local.topo": "/api/v1/geo/soriano/local.topo.json",
     "localidad.topo": "/api/v1/geo/soriano/localidad.topo.json",
+    "municipio.2010.topo": "/api/v1/geo/soriano/municipio.2010.topo.json",
     "municipio.2015.topo": "/api/v1/geo/soriano/municipio.2015.topo.json",
     "municipio.2020.topo": "/api/v1/geo/soriano/municipio.2020.topo.json",
     "municipio.topo": "/api/v1/geo/soriano/municipio.topo.json",
@@ -296,13 +366,17 @@
   {
    "id": "tacuarembo",
    "results": {
+    "catalogo": "/api/v1/results/municipales-2015/tacuarembo/catalogo.json",
     "opciones": "/api/v1/results/municipales-2015/tacuarembo/opciones.json",
-    "votes": "/api/v1/results/municipales-2015/tacuarembo/votes.json"
+    "votes": "/api/v1/results/municipales-2015/tacuarembo/votes.json",
+    "hoja-municipio": "/api/v1/results/municipales-2015/tacuarembo/hoja-municipio.json"
    },
    "geo": {
     "circuito.topo": "/api/v1/geo/tacuarembo/circuito.topo.json",
+    "departamento.topo": "/api/v1/geo/tacuarembo/departamento.topo.json",
     "local.topo": "/api/v1/geo/tacuarembo/local.topo.json",
     "localidad.topo": "/api/v1/geo/tacuarembo/localidad.topo.json",
+    "municipio.2010.topo": "/api/v1/geo/tacuarembo/municipio.2010.topo.json",
     "municipio.2015.topo": "/api/v1/geo/tacuarembo/municipio.2015.topo.json",
     "municipio.2020.topo": "/api/v1/geo/tacuarembo/municipio.2020.topo.json",
     "municipio.topo": "/api/v1/geo/tacuarembo/municipio.topo.json",
@@ -312,14 +386,18 @@
   {
    "id": "treinta_y_tres",
    "results": {
+    "catalogo": "/api/v1/results/municipales-2015/treinta_y_tres/catalogo.json",
     "opciones": "/api/v1/results/municipales-2015/treinta_y_tres/opciones.json",
-    "votes": "/api/v1/results/municipales-2015/treinta_y_tres/votes.json"
+    "votes": "/api/v1/results/municipales-2015/treinta_y_tres/votes.json",
+    "hoja-municipio": "/api/v1/results/municipales-2015/treinta_y_tres/hoja-municipio.json"
    },
    "geo": {
     "barrio.topo": "/api/v1/geo/treinta_y_tres/barrio.topo.json",
     "circuito.topo": "/api/v1/geo/treinta_y_tres/circuito.topo.json",
+    "departamento.topo": "/api/v1/geo/treinta_y_tres/departamento.topo.json",
     "local.topo": "/api/v1/geo/treinta_y_tres/local.topo.json",
     "localidad.topo": "/api/v1/geo/treinta_y_tres/localidad.topo.json",
+    "municipio.2010.topo": "/api/v1/geo/treinta_y_tres/municipio.2010.topo.json",
     "municipio.2015.topo": "/api/v1/geo/treinta_y_tres/municipio.2015.topo.json",
     "municipio.2020.topo": "/api/v1/geo/treinta_y_tres/municipio.2020.topo.json",
     "municipio.topo": "/api/v1/geo/treinta_y_tres/municipio.topo.json",
