@@ -62,6 +62,14 @@ def agregar_eleccion(eleccion, id2label):
     # SOLO los 19 deptos reales (excluye _nacional y cualquier carpeta no-depto, evita auto-sumarse al re-correr).
     deptos = sorted(d for d in id2label
                     if os.path.exists(f'{base}/{d}/votes.json'))
+    # Elecciones a nivel 'municipio' (municipales) tienen su PROPIO builder nacional
+    # (build-municipales*.py / build-elecciones-2015.py), que emite _nacional/votes.json a nivel
+    # municipio con geoId compuesto "MUNICIPIO · Depto" para joinear con municipio.topo.json.
+    # Este builder agrega serie/barrio → DEPARTAMENTO; si las procesara, pisaría ese shard con un
+    # agregado departamental de 19 zonas que NO joinea la geometría de municipios → mapa nacional gris.
+    if deptos and json.load(open(f'{base}/{deptos[0]}/votes.json', encoding='utf-8')).get('nivel') == 'municipio':
+        print(f'  ⏭ {eleccion}: nivel municipio — lo construye su builder propio (build-municipales*); se omite')
+        return
     # Elecciones que no cubren los 19 deptos a nivel votes.json por-depto (p.ej. departamentales-2015,
     # sin Montevideo a este nivel) tienen su _nacional generado por su propio builder; se OMITEN aquí
     # para no pisar/crashear (no es un error: es cobertura parcial real de esa instancia).
