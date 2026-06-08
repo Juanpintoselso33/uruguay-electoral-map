@@ -8,10 +8,19 @@ import json, os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'public/data')
 OUT = os.path.join(ROOT, 'public/api/v1')
-RESULT_FILES = ['catalogo.json', 'opciones.json', 'votes.json', 'votes-local.json',
-                'votes-circuito.json', 'votes-barrio.json', 'hoja-local.json',
-                # Municipales (Epic 22): recursos nacionales — alcalde electo + Concejo Municipal por municipio.
-                'alcaldes.json', 'concejos.json']
+RESULT_FILES = ['catalogo.json', 'opciones.json', 'votes.json',
+                # Granularidad por nivel geográfico (la que ya sirve /data; antes sub-advertida).
+                'votes-local.json', 'votes-circuito.json', 'votes-barrio.json',
+                'votes-localidad.json', 'votes-zona.json',
+                # Desglose por hoja (lista) re-agregado por nivel.
+                'hoja-local.json', 'hoja-circuito.json', 'hoja-barrio.json',
+                'hoja-localidad.json', 'hoja-municipio.json',
+                # Municipales (Epic 22): alcalde electo + Concejo Municipal por municipio.
+                'alcaldes.json', 'concejos.json',
+                # Departamentales: candidatos a intendente (nacional por depto y por serie).
+                'intendentes.json', 'intendentes-zona.json']
+                # NB: se excluyen a propósito serie-annexed/zona-annexed/annex-series/localidad-meta
+                # (plumbing interno de joins/anexión, no resultados públicos).
 
 def depts():
     return json.load(open(os.path.join(ROOT, 'src/config/departments.json'), encoding='utf-8'))

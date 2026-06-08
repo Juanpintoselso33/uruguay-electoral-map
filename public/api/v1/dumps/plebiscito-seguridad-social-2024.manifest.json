@@ -1,0 +1,15 @@
+{
+ "eleccion": "plebiscito-seguridad-social-2024",
+ "registros": 1348,
+ "formato": "ndjson",
+ "campos": [
+  "eleccion",
+  "departamento",
+  "geoId",
+  "opcionId",
+  "votos",
+  "validos"
+ ],
+ "fuente": "Corte Electoral del Uruguay",
+ "version": "v1"
+}
