@@ -27,7 +27,11 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 
-const CACHE = 'public, max-age=3600, s-maxage=31536000, immutable';
+// Datos MUTABLES en URL estable (se actualizan en cada deploy): NO usar `immutable` ni s-maxage
+// largo — eso fija la respuesta vieja en el edge para siempre y un deploy nuevo no la purga
+// (bug: la API quedaba sirviendo datos viejos pese a redeploy). Edge fresco 60s + stale-while-
+// revalidate para refrescar en background → un deploy se ve en ~1 min sin perder performance CDN.
+const CACHE = 'public, max-age=0, s-maxage=60, stale-while-revalidate=86400';
 
 // Build Output API: `headers` es un objeto plano (no el array {key,value} de vercel.json).
 const HEADER_ROUTES = [
