@@ -151,8 +151,6 @@ const esPlano = computed(() => (contienda.value?.niveles.length ?? 2) <= 1);
 // Rotularlas "listas" confunde (lista y partido no es lo mismo); acá se nombran bien.
 const esBinariaPlano = computed(() => (contienda.value?.opciones ?? []).some((o) => o.clase === 'binaria'));
 const esBalotaje = props.eleccion.startsWith('balotaje');
-/** Elección partidaria CON desglose por lista en los departamentos (internas/nacionales/departamentales). */
-const esPartidariaConListas = /^(internas|nacionales|departamentales)/.test(props.eleccion);
 /** Sustantivo (+ género) del nivel terminal del selector, según modo/elección. */
 const sustantivo = computed<{ sing: string; plur: string; genero: 'f' | 'm' }>(() => {
   if (!esPlano.value) return { sing: 'lista', plur: 'listas', genero: 'f' };
@@ -168,8 +166,6 @@ const chipSeleccion = computed(() => {
   const s = sustantivo.value;
   return `${n} ${n === 1 ? s.sing : s.plur} seleccionad${s.genero === 'f' ? 'a' : 'o'}${n === 1 ? '' : 's'}`;
 });
-/** CTA: en la vista nacional plana de una elección partidaria, el desglose por lista vive en cada depto. */
-const ctaDeptoListas = computed(() => esPlano.value && props.departamento === '_nacional' && esPartidariaConListas);
 // Escalera genérica (Story 10.9 + sublema ODN): puede haber 0, 1 o 2 niveles intermedios
 // (precandidato y/o sublema) entre lema y hoja. El árbol se arma recursivamente por `parentId`,
 // sin hardcodear cuál es el nivel medio. El TERMINAL (hoja del árbol) es hoja|candidato.
@@ -604,13 +600,6 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
         </li>
       </ul>
 
-      <!-- CTA (vista nacional partidaria): acá hay partidos; el desglose por lista está por depto. -->
-      <p v-if="ctaDeptoListas" class="acc__cta">
-        Esto son <strong>partidos</strong>, no listas. El desglose por <strong>lista</strong>
-        (los sectores internos de cada partido) está dentro de cada departamento — elegí uno
-        en la barra de arriba.
-      </p>
-
       <p v-if="!catalogo" class="acc__cargando">Cargando opciones…</p>
 
       <!-- Acciones: footer bajo el árbol (mismo v-if, mismos handlers que antes) -->
@@ -825,17 +814,6 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
 }
 .acc__etiqueta--precand { font-weight: 600; color: var(--color-ink); }
 .acc__lista { color: var(--color-ink); font-size: 0.8125rem; flex: 1; min-width: 0; }
-
-/* ── CTA hacia el desglose por lista (vista nacional) ──────────────────────────── */
-.acc__cta {
-  margin: 0.5rem 0 0.25rem; padding: 0.5rem 0.625rem;
-  font-size: 0.75rem; line-height: 1.45; color: var(--color-ink-soft);
-  background: var(--color-surface-1);
-  border: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-accent);
-  border-radius: var(--radius-sm);
-}
-.acc__cta strong { color: var(--color-ink); font-weight: 700; }
 
 /* ── Cargando ──────────────────────────────────────────────────────────────── */
 .acc__cargando { color: var(--color-ink-faint); font-size: 0.8125rem; margin: 0.4rem 0; }

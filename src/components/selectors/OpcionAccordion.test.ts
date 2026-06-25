@@ -136,14 +136,12 @@ describe('OpcionAccordion — caso plano nacional rotula PARTIDOS, no listas', (
     expect(chip).not.toContain('lista');
   });
 
-  it('muestra un CTA hacia el desglose por lista de los departamentos', async () => {
+  it('NO muestra disclaimer/CTA (se quitó — en departamentales nacional las listas no agregan)', async () => {
     const wrapper = mount(OpcionAccordion, { props: { eleccion: 'nacionales-2024', departamento: '_nacional' } });
     await flushPromises();
     await flushPromises();
 
-    const cta = wrapper.find('.acc__cta');
-    expect(cta.exists()).toBe(true);
-    expect(cta.text().toLowerCase()).toContain('departamento');
+    expect(wrapper.find('.acc__cta').exists()).toBe(false);
   });
 });
 
