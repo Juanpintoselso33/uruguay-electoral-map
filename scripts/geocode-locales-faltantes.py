@@ -91,8 +91,8 @@ def main():
     missing = [lo for lo in locales if not (lo.get("lat") and lo.get("lon"))]
     print(f"{depto}: {len(missing)} locales sin coord (de {len(locales)})")
 
-    resolved = 0
-    for lo in missing:
+    resolved = 0; resolved_loc = 0
+    for idx, lo in enumerate(missing):
         locn = norm(lo.get("localidad"))
         localidad = lo.get("localidad", "")
         # ancla: venues existentes de la localidad, o geocode del nombre de la localidad.
@@ -115,14 +115,24 @@ def main():
                 cand = hit; break
         if cand:
             lo["lat"], lo["lon"] = round(cand[0], 6), round(cand[1], 6)
-            lo["geocoded"] = True  # marca de procedencia (no es coord oficial)
+            lo["geocoded"] = True; lo["precision"] = "calle"  # dirección resuelta
             resolved += 1
+        elif anchor and in_bbox(anchor[0], anchor[1], UY_BBOX):
+            # Tier-2: la dirección "S/N esq." no se pinpointea, pero la LOCALIDAD sí. Ubicamos el
+            # venue en el centro de su localidad (precisión de pueblo, no de calle) con un jitter
+            # determinístico para no apilar puntos exactos. Cierra el gap sin caer en pueblo ajeno.
+            jlat = anchor[0] + ((idx % 5) - 2) * 0.0012
+            jlon = anchor[1] + (((idx // 5) % 5) - 2) * 0.0012
+            lo["lat"], lo["lon"] = round(jlat, 6), round(jlon, 6)
+            lo["geocoded"] = True; lo["precision"] = "localidad"
+            resolved_loc += 1
         else:
-            print(f"   sin resolver: {lo['localId']}  '{lo.get('direccion','')[:50]}'  (localidad={localidad})")
+            print(f"   sin resolver (localidad no geocodifica): {lo['localId']}  (localidad={localidad})")
 
     json.dump(_cache, open(CACHE, "w", encoding="utf-8"), ensure_ascii=False, indent=0)
     json.dump(cat, open(cat_path, "w", encoding="utf-8"), ensure_ascii=False)
-    print(f"  resueltos {resolved}/{len(missing)}; catálogo actualizado → {cat_path}")
+    print(f"  resueltos {resolved} por calle + {resolved_loc} por centro-de-localidad = "
+          f"{resolved + resolved_loc}/{len(missing)}; catálogo → {cat_path}")
 
     # 2) Reconstruir local.topo.json (mismo formato que build-locales-catalog).
     topo_path = os.path.join(GEO_DIR, depto, "local.topo.json")
