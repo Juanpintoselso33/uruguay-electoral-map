@@ -151,15 +151,27 @@ const esPlano = computed(() => (contienda.value?.niveles.length ?? 2) <= 1);
 // Rotularlas "listas" confunde (lista y partido no es lo mismo); acá se nombran bien.
 const esBinariaPlano = computed(() => (contienda.value?.opciones ?? []).some((o) => o.clase === 'binaria'));
 const esBalotaje = props.eleccion.startsWith('balotaje');
-/** Sustantivo (+ género) del nivel terminal del selector, según modo/elección. */
+/** Sustantivo (+género) del nivel TERMINAL de la contienda activa = lo más fino que se filtra.
+ *  No toda contienda termina en "lista": intendente → candidato, municipio → alcalde, plebiscito → opción. */
+const NOUN_TERMINAL: Record<string, { sing: string; plur: string; genero: 'f' | 'm' }> = {
+  hoja:      { sing: 'lista',     plur: 'listas',     genero: 'f' },
+  candidato: { sing: 'candidato', plur: 'candidatos', genero: 'm' },
+  alcalde:   { sing: 'alcalde',   plur: 'alcaldes',   genero: 'm' },
+  binaria:   { sing: 'opción',    plur: 'opciones',   genero: 'f' },
+};
+const terminoTerminal = computed<{ sing: string; plur: string; genero: 'f' | 'm' }>(
+  () => NOUN_TERMINAL[nivelHoja.value] ?? { sing: 'opción', plur: 'opciones', genero: 'f' });
+/** Sustantivo de las opciones. ÁRBOL = el terminal de la contienda (lista/candidato/alcalde);
+ *  PLANO = partido (vista nacional) / candidato (balotaje) / opción (plebiscito). Nunca "lista" si no la hay. */
 const sustantivo = computed<{ sing: string; plur: string; genero: 'f' | 'm' }>(() => {
-  if (!esPlano.value) return { sing: 'lista', plur: 'listas', genero: 'f' };
+  if (!esPlano.value) return terminoTerminal.value;
   if (esBinariaPlano.value) return { sing: 'opción', plur: 'opciones', genero: 'f' };
   if (esBalotaje) return { sing: 'candidato', plur: 'candidatos', genero: 'm' };
   return { sing: 'partido', plur: 'partidos', genero: 'm' };
 });
-/** Título del header del control. En el árbol hay listas y partidos; en plano, solo el sustantivo. */
-const tituloFiltro = computed(() => (esPlano.value ? `Filtrar por ${sustantivo.value.sing}` : 'Filtrar por lista / partido'));
+/** Título del control. ÁRBOL: "{terminal} / partido" (lista/candidato/alcalde + partido); PLANO: el sustantivo. */
+const tituloFiltro = computed(() =>
+  esPlano.value ? `Filtrar por ${sustantivo.value.sing}` : `Filtrar por ${terminoTerminal.value.sing} / partido`);
 /** Texto del chip de selección, con concordancia de género. */
 const chipSeleccion = computed(() => {
   const n = seleccion.value.size;
@@ -435,9 +447,9 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
           v-model="busqueda"
           class="acc__busqueda"
           type="search"
-          :inputmode="nivelHoja === 'candidato' ? 'text' : 'numeric'"
-          :placeholder="nivelHoja === 'candidato' ? 'Buscar candidato…' : 'Buscar lista por número…'"
-          :aria-label="nivelHoja === 'candidato' ? 'Buscar candidato' : 'Buscar lista por número'"
+          :inputmode="nivelHoja === 'hoja' ? 'numeric' : 'text'"
+          :placeholder="nivelHoja === 'hoja' ? 'Buscar lista por número…' : `Buscar ${terminoTerminal.sing}…`"
+          :aria-label="nivelHoja === 'hoja' ? 'Buscar lista por número' : `Buscar ${terminoTerminal.sing}`"
         />
         <select v-model="filtroPartido" class="acc__filtro" aria-label="Filtrar por partido">
           <option value="">Todos los partidos</option>
