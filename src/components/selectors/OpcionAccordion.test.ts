@@ -189,3 +189,43 @@ describe('OpcionAccordion — vista nacional CON catálogo de hoja (feature naci
     expect(wrapper.text()).toContain('UNIDAD PARA LA ESPERANZA');
   });
 });
+
+/**
+ * Prolijidad: el rótulo refleja el TERMINAL de la contienda. Una contienda de intendente
+ * (lema → candidato) NO debe decir "lista" en ningún lado visible.
+ */
+describe('OpcionAccordion — rótulo terminal-aware (no dice "lista" si no hay listas)', () => {
+  const CAT_INTENDENTE = {
+    eleccionId: 'departamentales-2025',
+    departamento: 'salto',
+    contiendas: [{
+      contienda: 'intendente',
+      niveles: ['lema', 'candidato'],
+      nodos: [{ id: 'pn', nivel: 'lema', etiqueta: 'Partido Nacional', partidoId: 'pn' }],
+      opciones: [{ clase: 'candidato', id: 'int-pn-x', candidato: 'Fulano Mengano', lemaId: 'pn', contienda: 'intendente' }],
+    }],
+  };
+  beforeEach(() => {
+    $context.set({ eleccion: 'departamentales-2025', departamento: 'salto' });
+    $selection.set({ zona: null, opcion: null, contienda: null, seleccion: [], modo: null, gnivel: null });
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+      if (url.includes('/_manifest.json')) return new Response(JSON.stringify({ 'departamentales-2025': { salto: ['catalogo'] } }), { status: 200 });
+      if (url.includes('/catalogo.json')) return new Response(JSON.stringify(CAT_INTENDENTE), { status: 200 });
+      return new Response(JSON.stringify({ zonas: [] }), { status: 200 });
+    }));
+  });
+
+  it('intendente: header dice "candidato / partido" y el chip "N candidato(s)", nunca "lista"', async () => {
+    const wrapper = mount(OpcionAccordion, { props: { eleccion: 'departamentales-2025', departamento: 'salto' } });
+    await flushPromises();
+
+    expect(wrapper.find('.acc__toggle-lbl').text()).toBe('Filtrar por candidato / partido');
+
+    // Seleccionar el candidato del lema → chip habla de candidatos, no de listas.
+    const cb = wrapper.findAll('button').find((b) => b.attributes('aria-label')?.startsWith('Seleccionar todas'));
+    await cb!.trigger('click');
+    await flushPromises();
+    expect(wrapper.find('.acc__chip--sel').text()).toBe('1 candidato seleccionado');
+    expect(wrapper.text().toLowerCase()).not.toContain('lista');
+  });
+});
