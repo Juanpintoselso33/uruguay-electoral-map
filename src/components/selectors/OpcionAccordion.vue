@@ -144,6 +144,32 @@ const contienda = computed<ContiendaCat | null>(
 );
 const tieneVariasContiendas = computed(() => (catalogo.value?.contiendas.length ?? 0) > 1);
 const esPlano = computed(() => (contienda.value?.niveles.length ?? 2) <= 1);
+
+// ── Rótulos: "lista" ≠ "partido" (feedback de usuario) ─────────────────────────
+// En el ÁRBOL las hojas SÍ son listas. En el caso PLANO las opciones NO lo son: vista
+// nacional sin catálogo → PARTIDOS; balotaje → candidatos; plebiscito/referéndum → Sí/No.
+// Rotularlas "listas" confunde (lista y partido no es lo mismo); acá se nombran bien.
+const esBinariaPlano = computed(() => (contienda.value?.opciones ?? []).some((o) => o.clase === 'binaria'));
+const esBalotaje = props.eleccion.startsWith('balotaje');
+/** Elección partidaria CON desglose por lista en los departamentos (internas/nacionales/departamentales). */
+const esPartidariaConListas = /^(internas|nacionales|departamentales)/.test(props.eleccion);
+/** Sustantivo (+ género) del nivel terminal del selector, según modo/elección. */
+const sustantivo = computed<{ sing: string; plur: string; genero: 'f' | 'm' }>(() => {
+  if (!esPlano.value) return { sing: 'lista', plur: 'listas', genero: 'f' };
+  if (esBinariaPlano.value) return { sing: 'opción', plur: 'opciones', genero: 'f' };
+  if (esBalotaje) return { sing: 'candidato', plur: 'candidatos', genero: 'm' };
+  return { sing: 'partido', plur: 'partidos', genero: 'm' };
+});
+/** Título del header del control. En el árbol hay listas y partidos; en plano, solo el sustantivo. */
+const tituloFiltro = computed(() => (esPlano.value ? `Filtrar por ${sustantivo.value.sing}` : 'Filtrar por lista / partido'));
+/** Texto del chip de selección, con concordancia de género. */
+const chipSeleccion = computed(() => {
+  const n = seleccion.value.size;
+  const s = sustantivo.value;
+  return `${n} ${n === 1 ? s.sing : s.plur} seleccionad${s.genero === 'f' ? 'a' : 'o'}${n === 1 ? '' : 's'}`;
+});
+/** CTA: en la vista nacional plana de una elección partidaria, el desglose por lista vive en cada depto. */
+const ctaDeptoListas = computed(() => esPlano.value && props.departamento === '_nacional' && esPartidariaConListas);
 // Escalera genérica (Story 10.9 + sublema ODN): puede haber 0, 1 o 2 niveles intermedios
 // (precandidato y/o sublema) entre lema y hoja. El árbol se arma recursivamente por `parentId`,
 // sin hardcodear cuál es el nivel medio. El TERMINAL (hoja del árbol) es hoja|candidato.
@@ -385,7 +411,7 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
       @click="togglePanel"
     >
       <span class="acc__toggle-chevron" :class="{ 'acc__toggle-chevron--open': panelOpen }" aria-hidden="true">▸</span>
-      <span class="acc__toggle-lbl">Filtrar por lista / partido</span>
+      <span class="acc__toggle-lbl">{{ tituloFiltro }}</span>
       <span v-if="!panelOpen && seleccion.size > 0" class="acc__toggle-badge">{{ seleccion.size }} sel.</span>
     </button>
 
@@ -434,7 +460,7 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
           <button type="button" aria-label="Limpiar búsqueda" @click="busqueda = ''">✕</button>
         </span>
         <span v-if="seleccion.size > 0" class="acc__chip acc__chip--sel">
-          {{ seleccion.size }} {{ seleccion.size === 1 ? 'lista' : 'listas' }} seleccionada{{ seleccion.size === 1 ? '' : 's' }}
+          {{ chipSeleccion }}
         </span>
       </div>
 
@@ -577,6 +603,13 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
           </div>
         </li>
       </ul>
+
+      <!-- CTA (vista nacional partidaria): acá hay partidos; el desglose por lista está por depto. -->
+      <p v-if="ctaDeptoListas" class="acc__cta">
+        Esto son <strong>partidos</strong>, no listas. El desglose por <strong>lista</strong>
+        (los sectores internos de cada partido) está dentro de cada departamento — elegí uno
+        en la barra de arriba.
+      </p>
 
       <p v-if="!catalogo" class="acc__cargando">Cargando opciones…</p>
 
@@ -792,6 +825,17 @@ const flagLema  = (l: NodoOpcion): string | null => resolveParty(l.etiqueta).fla
 }
 .acc__etiqueta--precand { font-weight: 600; color: var(--color-ink); }
 .acc__lista { color: var(--color-ink); font-size: 0.8125rem; flex: 1; min-width: 0; }
+
+/* ── CTA hacia el desglose por lista (vista nacional) ──────────────────────────── */
+.acc__cta {
+  margin: 0.5rem 0 0.25rem; padding: 0.5rem 0.625rem;
+  font-size: 0.75rem; line-height: 1.45; color: var(--color-ink-soft);
+  background: var(--color-surface-1);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+}
+.acc__cta strong { color: var(--color-ink); font-weight: 700; }
 
 /* ── Cargando ──────────────────────────────────────────────────────────────── */
 .acc__cargando { color: var(--color-ink-faint); font-size: 0.8125rem; margin: 0.4rem 0; }
