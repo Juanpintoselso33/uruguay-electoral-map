@@ -13,7 +13,8 @@ import path from 'node:path';
 const BASE = process.env.SWEEP_BASE || 'http://localhost:4322';
 const DATA = 'public/data';
 const MAX_DEPTOS = Number(process.argv[2] ?? 6);   // por elección, además de montevideo
-const CONCURRENCY = 5;
+const CONCURRENCY = Number(process.env.SWEEP_CONCURRENCY ?? 5);
+const NAV_TIMEOUT = Number(process.env.SWEEP_TIMEOUT ?? 20000);
 
 const readJSON = (p) => { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return null; } };
 
@@ -110,7 +111,7 @@ async function worker(wid) {
     page.on('response', onResp);
     let navOk = true;
     try {
-      await page.goto(BASE + job.url, { waitUntil: 'load', timeout: 20000 });
+      await page.goto(BASE + job.url, { waitUntil: 'load', timeout: NAV_TIMEOUT });
       await page.waitForTimeout(1600); // hidratación de islas (client:idle/load) + fetches async
     } catch (e) {
       navOk = false;

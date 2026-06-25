@@ -30,6 +30,17 @@ for cat_path in glob.glob(os.path.join(DATA, '*', '*', 'catalogo.json')):
     for z in votes['zonas']:
         for o in z.get('porOpcion', []):
             baseTot[o['opcionId']] += o.get('votos', 0)
+    # Para niveles localidad/barrio/municipio el cliente colorea con el consolidado hoja-{nivel}.json
+    # (ensureHojaGeoConsolidado), NO con hoja/{lema}.json. Incluir sus opcionIds con votos evita
+    # falsos negativos (p.ej. municipales municipio: las hojas viven en hoja-municipio.json).
+    consolidadoIds = set()
+    for nivel in ('municipio', 'localidad', 'barrio'):
+        cons = load(os.path.join(d, f'hoja-{nivel}.json'))
+        if cons:
+            for z in cons.get('zonas', []):
+                for o in z.get('porOpcion', []):
+                    if o.get('votos', 0) > 0:
+                        consolidadoIds.add(o['opcionId'])
     for c in cat.get('contiendas', []):
         cont = c['contienda']
         niveles = c.get('niveles', [])
@@ -57,6 +68,8 @@ for cat_path in glob.glob(os.path.join(DATA, '*', '*', 'catalogo.json')):
                     if baseTot.get(s, 0) > 0:
                         paintable = True
                         break
+            if not paintable and (sel & consolidadoIds):
+                paintable = True  # colorea vía consolidado hoja-{nivel}.json (localidad/barrio/municipio)
             revisados += 1
             if not paintable:
                 inter = len(sel & shard_ids)
