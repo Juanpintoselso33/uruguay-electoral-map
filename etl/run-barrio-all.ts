@@ -36,8 +36,10 @@ function findMapping(deptId: string): string | null {
 
 function main(): void {
   console.log('=== Generador votes-barrio (capitales del interior × todas las elecciones) ===');
+  // Criterio: deptos del interior CON geometría de barrio (capital subdividida). No depende de
+  // departments.json.levels (que ya no lista 'barrio'); el insumo real es geo/{id}/barrio.topo.json.
   const DEPTS = (deptsConfig as DeptEntry[]).filter(
-    (d) => d.id !== 'montevideo' && d.levels.includes('barrio'),
+    (d) => d.id !== 'montevideo' && existsSync(`public/data/geo/${d.id}/barrio.topo.json`),
   );
   let okElec = 0;
   let skipped = 0;

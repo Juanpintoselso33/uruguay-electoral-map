@@ -9,7 +9,7 @@
  */
 import type { NivelGeografico } from './contracts';
 
-export const NIVELES: readonly NivelGeografico[] = ['zona', 'serie', 'circuito'];
+export const NIVELES: readonly NivelGeografico[] = ['zona', 'serie', 'circuito', 'localidad'];
 export const NIVEL_DEFAULT: NivelGeografico = 'zona';
 export const BASE_NIVELES: readonly NivelGeografico[] = ['zona', 'barrio', 'localidad', 'serie'];
 

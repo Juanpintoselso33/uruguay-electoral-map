@@ -1,10 +1,10 @@
 [
   {"serie":"KAA","barrio":"Centro"},
-  {"serie":"KBA","barrio":"Barrio Olímpico"},
-  {"serie":"KBB","barrio":"El Espejo"},
-  {"serie":"KBC","barrio":"El Espejo"},
-  {"serie":"KCA","barrio":"Amanecer"},
+  {"serie":"KBA","barrio":"Centro"},
+  {"serie":"KBB","barrio":"Amanecer"},
+  {"serie":"KBC","barrio":"Chacras"},
+  {"serie":"KCA","barrio":"Norte"},
   {"serie":"KCB","barrio":"Asimovil"},
-  {"serie":"KCC","barrio":"Barrio P3"},
+  {"serie":"KCC","barrio":"Nuevo Paysandú"},
   {"serie":"KDA","barrio":"Chacras"}
 ]
