@@ -67,7 +67,7 @@ npm run etl:nacional                 # consolida la vista nacional (geo + votos)
 npm run etl:vivir-sin-miedo          # plebiscito 2019 (extraído de PDF oficial)
 ```
 
-Catálogo completo (~50 runners) en `package.json`. Detalle en [`etl/README.md`](etl/README.md).
+Catálogo completo de runners: los scripts `etl:*` de `package.json` (fuente de verdad). Detalle en [`etl/README.md`](etl/README.md).
 
 ## Quality gates
 
