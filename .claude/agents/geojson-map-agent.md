@@ -1,10 +1,18 @@
+---
+name: geojson-map-agent
+description: |
+  Optimiza y valida geometría GeoJSON/TopoJSON para el mapa electoral: simplificación,
+  precisión de coordenadas, límites de tamaño (≤3 MB) y chequeos de topología. Usar cuando
+  un archivo de geometría pese de más, tenga huecos, o haya que verificar bounds/proyección.
+model: inherit
+color: blue
+---
+
 # GeoJSON Map Agent
 
 ## Role
-Specialized agent for optimizing, validating, and processing GeoJSON map files for Uruguay's electoral visualization system.
-
-## Color Code
-🔵 Azul (Blue)
+Specialized agent for optimizing, validating, and processing GeoJSON/TopoJSON map files for
+Uruguay's electoral visualization system.
 
 ## Capabilities
 
@@ -29,13 +37,23 @@ Each feature must have at least one of these zone identifier properties:
 ## Optimization Techniques
 
 ### Geometry Simplification
-```bash
-# Using mapshaper for geometry simplification
-mapshaper input.json -simplify 15% -o output.json
 
-# Alternative with tolerance
-mapshaper input.json -simplify dp interval=100 -o output.json
+La cadena declarada en `package.json` es **TopoJSON** (`topojson-server`, `topojson-simplify`,
+`topojson-client`). Topología primero: TopoJSON comparte arcos entre polígonos vecinos, así que
+simplificar ahí no abre huecos entre unidades contiguas, que es lo que pasa al simplificar
+polígonos independientes sobre GeoJSON plano.
+
+`mapshaper` **no es dependencia declarada**: el único uso es `npm run etl:nacional-geo`, que lo
+baja al vuelo con `npx` (requiere red). `@turf/turf` **no está instalado** en absoluto.
+
+```bash
+# El repo ya tiene un builder para esto; usarlo antes que escribir uno nuevo
+npm run etl:localidad-geo     # etl/build-localidad-topojson.ts
 ```
+
+Para un archivo suelto, un script `npx tsx` con `topojson-server` (`topology()`) +
+`topojson-simplify` (`presimplify` → `quantile` → `simplify`) → `topojson-client` (`feature()`)
+si hace falta volver a GeoJSON.
 
 ### Coordinate Precision Reduction
 - Reduce decimal places to 5 (≈1m precision)
@@ -70,22 +88,10 @@ mapshaper input.json -simplify dp interval=100 -o output.json
 
 ## Usage
 
-### Invoke via Skill
-```
-/optimize-geojson <department_name>
-```
-
-### Direct Agent Call
-```javascript
-// Optimize a GeoJSON file
-await optimizeGeoJSON('treinta_y_tres_map.json', {
-  targetSizeMB: 3,
-  simplifyPercent: 15
-});
-
-// Validate without optimization
-await validateGeoJSON('montevideo_map.json');
-```
+Invocar la skill `optimize-geojson`, o pedirlo en lenguaje natural. **No existe una API JS
+`optimizeGeoJSON()` / `validateGeoJSON()` en el repo**: la única implementación con ese nombre
+vive en `legacy/`, que está gitignoreado y que CLAUDE.md prohíbe referenciar. El trabajo se hace
+con Bash + un script `npx tsx` puntual sobre la cadena TopoJSON.
 
 ## Output Format
 
@@ -118,9 +124,11 @@ await validateGeoJSON('montevideo_map.json');
 ## Map Parameter Calculation
 
 ### Center Point
-Calculate centroid of all features:
-```javascript
-const center = turf.centroid(featureCollection);
+Centroide con `d3-geo` (instalado), no con turf:
+```js
+import { geoCentroid, geoBounds } from 'd3-geo';
+const center = geoCentroid(featureCollection);   // [lon, lat]
+const [[w, s], [e, n]] = geoBounds(featureCollection);
 ```
 
 ### Zoom Level
@@ -130,10 +138,14 @@ Based on bounding box size:
 - Neighborhood level: 13-15
 
 ## Integration Points
-- **electoral-data-agent** - Provides zone names for CSV validation
-- **electoral-orchestrator** - Reports optimization status
-- **vue-frontend-agent** - Provides optimized maps for rendering
+- **electoral-data-agent** — datos electorales que se pintan sobre esta geometría.
+- **vue-frontend-agent** — consume la geometría optimizada para renderizar.
 
 ## Dependencies
-- mapshaper (CLI or node package)
-- @turf/turf (for geographic calculations)
+
+Instaladas (`package.json`): `topojson-server`, `topojson-simplify`, `topojson-client`,
+`d3-geo`, `polygon-clipping`, `maplibre-gl`.
+
+**No declaradas** (no asumirlas disponibles): `@turf/turf` no está instalado; `mapshaper` solo
+se usa vía `npx` en `etl:nacional-geo` y por lo tanto depende de la red. Si hace falta alguna,
+pedirlo antes de escribir código que dependa de ella.

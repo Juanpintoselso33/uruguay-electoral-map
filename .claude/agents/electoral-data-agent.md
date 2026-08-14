@@ -1,10 +1,19 @@
+---
+name: electoral-data-agent
+description: |
+  Valida y perfila los CSV electorales crudos de la Corte (esquema PARTIDO/DEPTO/CIRCUITO/
+  SERIES/ESCRUTINIO/PRECANDIDATO/HOJA/CNT_VOTOS/ZONA) antes de que entren al ETL. Usar cuando
+  haya que revisar un CSV de origen, diagnosticar filas raras o preparar un departamento nuevo.
+model: inherit
+color: green
+---
+
 # Electoral Data Agent
 
 ## Role
-Specialized agent for processing and validating electoral CSV data files for Uruguay's electoral map system.
-
-## Color Code
-🟢 Verde (Green)
+Valida y perfila los CSV electorales **crudos** (los que bajan de la Corte Electoral, en
+`data/raw/electoral/`) antes de que el ETL los consuma. No toca los shards ya publicados en
+`public/data/`: esos los produce el pipeline y los controla `npm run gate:data`.
 
 ## Capabilities
 
@@ -38,28 +47,32 @@ ZONA         - Geographic zone/neighborhood (string)
 ### Data Quality Checks
 - `CNT_VOTOS` must be non-negative integers
 - `HOJA` must be numeric strings
-- `ZONA` values must match GeoJSON property names
 - No duplicate rows for the same HOJA + ZONA combination
+- Una sola etapa de `ESCRUTINIO` por contienda (la definitiva). Nunca sumar a través de etapas.
+- Blancos / anulados / observados van sin partido ni hoja: son categorías aparte, se reconcilian
+  contra votos válidos, no se mezclan con listas.
+
+> **`ZONA` NO es la clave geográfica.** No validar `ZONA` contra el GeoJSON ni usarla para unir.
+> El join real es CIRCUITO (CRV) → barrio por geolocalización en Montevideo (y **por ciclo
+> electoral**, ver `docs/adr/0001-circuito-barrio-por-ciclo.md`) y serie → localidad curada en el
+> interior. Ver los invariantes en `public/data/README.md`.
 
 ### Anomaly Detection
 - Unusually high vote counts (>3 standard deviations)
-- Missing zones compared to GeoJSON
 - Inconsistent party-candidate relationships
+- Same `HOJA` mapped to more than one `PARTIDO` or `PRECANDIDATO`
 
 ## Usage
 
-### Invoke via Skill
-```
-/validate-csv <department_name>
-```
+Invocar la skill `validate-csv`, o pedirlo en lenguaje natural ("validá el CSV crudo de
+Paysandú"). **No hay API JS de validación en este repo**: la validación se hace leyendo el
+archivo y contándolo con las herramientas del agente (Read / Bash / un `npx tsx` puntual).
+Los gates reales del repo son:
 
-### Direct Agent Call
-```javascript
-// Validate ODN file for Montevideo
-await validateElectoralData('montevideo', 'odn');
-
-// Validate both files for a department
-await validateElectoralData('canelones', 'both');
+```bash
+npm run gate:data        # integridad de los shards ya publicados
+npm run gate:escaleras   # escaleras de color
+npm run gate:grises      # zonas sin geometría (Python)
 ```
 
 ## Output Format
@@ -79,7 +92,7 @@ await validateElectoralData('canelones', 'both');
   "issues": [
     {
       "severity": "warning|error",
-      "type": "missing_zone|duplicate_row|invalid_vote_count",
+      "type": "duplicate_row|invalid_vote_count|hoja_partido_inconsistente",
       "message": "Description of issue",
       "location": { "row": 123, "column": "CNT_VOTOS" }
     }
@@ -88,9 +101,8 @@ await validateElectoralData('canelones', 'both');
 ```
 
 ## Integration Points
-- **geojson-map-agent** - Receives zone names for cross-validation
-- **electoral-orchestrator** - Reports status to workflow coordinator
-- **vue-frontend-agent** - Provides processed data for visualization
+- **geojson-map-agent** — geometría y topología del mapa.
+- **vue-frontend-agent** — consume los shards ya publicados, no el CSV crudo.
 
 ## Error Handling
 - Log all validation errors with line numbers

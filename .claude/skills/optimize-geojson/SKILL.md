@@ -1,258 +1,79 @@
-# Optimize GeoJSON Skill
+---
+name: optimize-geojson
+description: |
+  Reduce el tamaño de archivos GeoJSON/TopoJSON del mapa (simplificación, precisión de
+  coordenadas, limpieza de propiedades) respetando el techo de 3 MB y sin abrir huecos entre
+  polígonos vecinos. Usar cuando un archivo de geometría exceda el presupuesto o renderice lento.
+---
 
-## Description
-Optimizes GeoJSON map files by simplifying geometries and reducing file size while maintaining visual quality.
+# Optimize GeoJSON
 
-## Trigger
-```
-/optimize-geojson <department_name> [--target-size <MB>] [--simplify <percent>]
-```
+Baja el peso de la geometría del mapa manteniendo la calidad visual **y la topología**.
 
-## Input Parameters
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| department_name | string | Yes | - | Department to optimize |
-| --target-size | number | No | 3 | Target file size in MB |
-| --simplify | number | No | auto | Simplification percentage |
+## Presupuesto
 
-## Size Constraints
-- **Maximum allowed**: 3MB
-- **Target optimal**: <1MB
-- **Critical case**: treinta_y_tres_map.json (24MB → target <3MB)
+- **Máximo duro: 3 MB por archivo** (invariante del proyecto, ver `public/data/README.md`).
+- Objetivo deseable: < 1 MB.
+- Precisión de coordenadas: 5 decimales (≈1 m) es suficiente para este mapa.
 
-## Optimization Workflow
+## Herramientas: qué hay y qué no
 
-### Step 1: Analyze Current File
-```javascript
-async function analyzeGeoJSON(path) {
-  const stats = await fs.stat(path);
-  const sizeMB = stats.size / (1024 * 1024);
+Declarado en `package.json`: `topojson-server`, `topojson-simplify`, `topojson-client`,
+`d3-geo`, `polygon-clipping`.
 
-  const geojson = JSON.parse(await fs.readFile(path, 'utf-8'));
+**No declarado:** `@turf/turf` no está instalado. `mapshaper` no es dependencia: solo lo usa
+`npm run etl:nacional-geo` vía `npx` (baja al vuelo, necesita red). No escribir pasos que
+dependan de ellos sin avisar.
 
-  return {
-    sizeMB,
-    featureCount: geojson.features.length,
-    totalVertices: countVertices(geojson),
-    coordinatePrecision: detectPrecision(geojson),
-    bounds: calculateBounds(geojson)
-  };
-}
+## Por qué TopoJSON y no simplificar el GeoJSON directo
 
-function countVertices(geojson) {
-  let count = 0;
-  geojson.features.forEach(feature => {
-    const coords = feature.geometry.coordinates;
-    count += flattenCoordinates(coords).length;
-  });
-  return count;
-}
-```
+Simplificar polígonos independientes hace que dos barrios vecinos pierdan vértices distintos
+sobre el borde que comparten: aparecen huecos y solapes. TopoJSON extrae los arcos compartidos
+y los simplifica una sola vez, así que el borde común queda idéntico de los dos lados. Para un
+mapa coroplético de unidades contiguas, es la única opción sensata.
 
-### Step 2: Create Backup
-```javascript
-async function createBackup(path) {
-  const backupDir = 'public/backups';
-  await fs.mkdir(backupDir, { recursive: true });
+## Workflow
 
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const filename = path.split('/').pop();
-  const backupPath = `${backupDir}/${filename}.${timestamp}.backup`;
-
-  await fs.copyFile(path, backupPath);
-  return backupPath;
-}
-```
-
-### Step 3: Apply Optimizations
-
-#### Geometry Simplification (Primary Method)
+### 1. Medir antes de tocar
 ```bash
-# Using mapshaper CLI
-mapshaper input.json \
-  -simplify ${percent}% keep-shapes \
-  -o output.json format=geojson
-
-# Iterative approach for large files
-mapshaper input.json \
-  -simplify dp interval=100 \
-  -clean \
-  -o output.json
+ls -lh <archivo>
 ```
+Anotar tamaño, cantidad de features y precisión actual de coordenadas.
 
-```javascript
-async function simplifyWithMapshaper(inputPath, outputPath, percent) {
-  const { execSync } = require('child_process');
+### 2. Backup
+El repo ya tiene `public/backups/`. Copiar ahí el original antes de sobreescribir.
 
-  execSync(`mapshaper "${inputPath}" \
-    -simplify ${percent}% keep-shapes \
-    -o "${outputPath}" format=geojson`);
-}
+### 3. Preferir el builder existente
+```bash
+npm run etl:localidad-geo     # etl/build-localidad-topojson.ts
 ```
+Si el archivo entra por el pipeline, el arreglo va en el builder, no en el artefacto.
 
-#### Coordinate Precision Reduction
-```javascript
-function reducePrecision(geojson, decimals = 5) {
-  const round = (num) => Math.round(num * 10**decimals) / 10**decimals;
+### 4. Para un archivo suelto: script `npx tsx`
+Cadena: `topology()` (topojson-server) → `presimplify()` → `quantile()` → `simplify()`
+(topojson-simplify) → si hace falta GeoJSON de vuelta, `feature()` (topojson-client).
 
-  function processCoords(coords) {
-    if (typeof coords[0] === 'number') {
-      return coords.map(round);
-    }
-    return coords.map(processCoords);
-  }
+La cuantización es la que más pesa en el resultado: bajar la grilla suele dar más reducción
+que subir la agresividad de la simplificación, y sin deformar contornos.
 
-  return {
-    ...geojson,
-    features: geojson.features.map(feature => ({
-      ...feature,
-      geometry: {
-        ...feature.geometry,
-        coordinates: processCoords(feature.geometry.coordinates)
-      }
-    }))
-  };
-}
-```
+### 5. Limpiar propiedades
+Quedarse solo con las que consume el frontend. Cada propiedad de texto se repite por feature y
+suma rápido.
 
-#### Property Cleanup
-```javascript
-function cleanProperties(geojson, keepProps = ['BARRIO', 'texto', 'zona']) {
-  return {
-    ...geojson,
-    features: geojson.features.map(feature => ({
-      type: feature.type,
-      geometry: feature.geometry,
-      properties: Object.fromEntries(
-        Object.entries(feature.properties || {})
-          .filter(([key]) => keepProps.includes(key))
-      )
-    }))
-  };
-}
-```
+### 6. Verificar
+- Tamaño ≤ 3 MB.
+- **La cantidad de features no cambió** — si bajó, se comió polígonos chicos.
+- Sin geometrías nulas ni anillos degenerados.
+- Coordenadas dentro de Uruguay: lat −35,0 a −30,0 · lon −58,5 a −53,0.
+- Mirar el mapa a los zooms de uso real. Si hay dudas, `npm run dev` y comparar.
+- `npm run gate:grises` — detecta zonas que quedaron sin geometría.
 
-### Step 4: Validate Result
-```javascript
-async function validateOptimizedFile(path, originalAnalysis) {
-  const analysis = await analyzeGeoJSON(path);
+## Si no llega al objetivo
 
-  const checks = {
-    sizeReduced: analysis.sizeMB < originalAnalysis.sizeMB,
-    underLimit: analysis.sizeMB <= 3,
-    featuresPreserved: analysis.featureCount === originalAnalysis.featureCount,
-    hasValidGeometry: validateGeometry(path)
-  };
+Iterar bajando cuantización antes que subir simplificación, y volver a medir en cada paso. Si
+después de dos o tres pasadas sigue sin entrar, parar y reportar: puede ser que el archivo
+tenga más detalle del que este mapa necesita (p. ej. geometría catastral donde alcanza el
+límite de barrio) y la solución sea cambiar la fuente, no exprimirla.
 
-  return {
-    valid: Object.values(checks).every(Boolean),
-    checks,
-    reduction: ((1 - analysis.sizeMB / originalAnalysis.sizeMB) * 100).toFixed(1)
-  };
-}
-```
-
-### Step 5: Calculate Map Parameters
-```javascript
-function calculateMapParameters(geojson) {
-  const bbox = turf.bbox(geojson);
-  const center = turf.center(geojson);
-
-  // Calculate appropriate zoom level
-  const width = Math.abs(bbox[2] - bbox[0]);
-  const height = Math.abs(bbox[3] - bbox[1]);
-  const maxSpan = Math.max(width, height);
-
-  // Approximate zoom calculation
-  const zoom = Math.min(13, Math.max(9, Math.round(8 - Math.log2(maxSpan))));
-
-  return {
-    center: [center.geometry.coordinates[1], center.geometry.coordinates[0]],
-    zoom,
-    bounds: {
-      north: bbox[3],
-      south: bbox[1],
-      east: bbox[2],
-      west: bbox[0]
-    }
-  };
-}
-```
-
-## Output Format
-
-### Success Report
-```json
-{
-  "status": "success",
-  "department": "treinta_y_tres",
-  "file": "public/treinta_y_tres_map.json",
-  "backup": "public/backups/treinta_y_tres_map.json.2024-01-15T10-30-00.backup",
-  "optimization": {
-    "originalSizeMB": 24.5,
-    "optimizedSizeMB": 2.8,
-    "reductionPercent": 88.6,
-    "simplificationLevel": "15%",
-    "coordinatePrecision": 5
-  },
-  "analysis": {
-    "featureCount": 45,
-    "originalVertices": 1250000,
-    "optimizedVertices": 45000
-  },
-  "mapParameters": {
-    "center": [-33.2211, -54.325],
-    "zoom": 10.5,
-    "bounds": {
-      "north": -32.8,
-      "south": -33.6,
-      "east": -53.8,
-      "west": -54.8
-    }
-  }
-}
-```
-
-### Iterative Optimization
-If first pass doesn't achieve target:
-```javascript
-async function iterativeOptimize(path, targetMB) {
-  const percentages = [20, 15, 10, 5];
-  let currentPath = path;
-
-  for (const percent of percentages) {
-    const analysis = await analyzeGeoJSON(currentPath);
-    if (analysis.sizeMB <= targetMB) break;
-
-    console.log(`Trying ${percent}% simplification...`);
-    await simplifyWithMapshaper(currentPath, currentPath, percent);
-  }
-
-  return analyzeGeoJSON(currentPath);
-}
-```
-
-## Visual Quality Preservation
-
-### Simplification Guidelines
-| Original Size | Recommended % | Expected Reduction |
-|---------------|---------------|-------------------|
-| <5MB | 20% | 40-50% |
-| 5-10MB | 15% | 50-70% |
-| 10-25MB | 10% | 70-85% |
-| >25MB | 5% | 85-95% |
-
-### Quality Checks
-- Verify polygon boundaries still align
-- Check for topology errors (gaps, overlaps)
-- Test at expected zoom levels
-- Compare with original visually
-
-## Dependencies
-- mapshaper (CLI or npm package)
-- @turf/turf
-- geojson-map-agent
-
-## Related Skills
-- validate-csv
-- add-department
+## Relacionadas
+- `validate-csv` · `add-department`

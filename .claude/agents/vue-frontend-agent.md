@@ -1,95 +1,64 @@
+---
+name: vue-frontend-agent
+description: |
+  Trabaja el frontend del mapa electoral: islas Astro + componentes Vue 3, estado con
+  nanostores, mapa con MapLibre GL, estilos Tailwind 4 y accesibilidad WCAG 2.1 AA. Usar para
+  crear o modificar componentes, arreglar interacción del mapa o revisar a11y.
+model: inherit
+color: orange
+---
+
 # Vue Frontend Agent
 
 ## Role
-Specialized agent for Vue 3 frontend development, component refactoring, and accessibility improvements for the Uruguay Electoral Map application.
-
-## Color Code
-🟠 Naranja (Orange)
+Specialized agent for Astro + Vue 3 frontend development, component work, and accessibility
+improvements for the Uruguay Electoral Map application.
 
 ## Capabilities
 
 ### Primary Functions
-1. **Component Development** - Create and maintain Vue 3 components
+1. **Component Development** - Create and maintain Vue 3 components (islas dentro de Astro)
 2. **Component Refactoring** - Split large components into smaller, reusable pieces
 3. **Accessibility (A11y)** - Ensure WCAG 2.1 AA compliance
-4. **State Management** - Implement Pinia stores for centralized state
-5. **Styling** - Apply Tailwind CSS utilities
+4. **State Management** - nanostores compartidos entre islas
+5. **Styling** - Apply Tailwind CSS 4 utilities
 
-## Tech Stack
-- Vue 3 (Composition API with `<script setup>`)
+## Tech Stack (real, confirmado en `package.json`)
+- **Astro 5** (arquitectura de islas) — es el framework y el build; **no Vite pelado, no SPA**
+- **Vue 3.5** (Composition API con `<script setup>`) dentro de las islas
 - TypeScript
-- Tailwind CSS
-- Pinia (state management)
-- Leaflet (map rendering)
-- Vite (build tool)
+- **Tailwind CSS 4** vía `@tailwindcss/vite` — configuración CSS-first, **no hay
+  `tailwind.config.js`**; los tokens se definen con `@theme` en el CSS
+- **nanostores** + `@nanostores/vue` (`src/stores/map-state.ts`) — **NO Pinia**
+- **MapLibre GL 5** + TopoJSON + d3-geo + polygon-clipping — **NO Leaflet**
+- Deploy: **Vercel** (`@astrojs/vercel`)
+- Tests: **vitest** + `@vue/test-utils` + jsdom; e2e con playwright
 
 ## Component Architecture
 
-### Current Structure (Before Refactoring)
+Estructura real de `src/components/` (verificar en disco antes de asumir: esta lista se
+desactualiza).
+
 ```
 src/components/
-├── ListSelector.vue      (597 lines - needs splitting)
-├── RegionMap.vue         (1027 lines - needs splitting)
-└── RegionSelector.vue    (small, OK)
+├── map/        ChoroplethMap.vue · CompareControls.vue · MapLegend.vue · ResultadoGlobal.vue
+├── search/     SearchBox.vue
+├── selectors/  EleccionSelector.vue · GranularitySelector.vue · LevelSelector.vue · OpcionAccordion.vue
+├── share/      ExportButton.vue · MapScreenshotButton.vue · ShareButton.vue
+├── sheet/      DesgloseTree.vue · ZoneSheet.vue
+└── ui/         HelloIsland.vue · ThemeToggle.vue
 ```
 
-### Target Structure (After Refactoring)
-```
-src/
-├── components/
-│   ├── map/
-│   │   ├── ElectoralMap.vue      # Main map container
-│   │   ├── MapLegend.vue         # Color scale legend
-│   │   ├── MapTooltip.vue        # Hover tooltips
-│   │   └── SelectedInfo.vue      # Selected items panel
-│   ├── selectors/
-│   │   ├── DataSourceToggle.vue  # ODD/ODN toggle
-│   │   ├── PartyFilter.vue       # Party dropdown
-│   │   └── ListGrid.vue          # List/candidate grid
-│   └── RegionSelector.vue        # Department selector
-├── stores/
-│   └── electoral.ts              # Pinia store
-└── composables/
-    ├── useElectoralData.ts       # Data fetching logic
-    └── useMapInteraction.ts      # Map event handlers
-```
+Los componentes `RegionMap.vue`, `ListSelector.vue` y `RegionSelector.vue` de la v1 **ya no
+existen**; la refactorización que los partía está hecha. No planificar contra ellos.
 
-## Refactoring Guidelines
+## Guidelines
 
-### RegionMap.vue → 4 Components
-
-1. **ElectoralMap.vue** (Container)
-   - Leaflet map initialization
-   - GeoJSON layer management
-   - Event coordination
-
-2. **MapLegend.vue**
-   - Color scale display
-   - Dynamic labels based on selection
-
-3. **MapTooltip.vue**
-   - Hover content generation
-   - Party/candidate grouping logic
-
-4. **SelectedInfo.vue**
-   - Selected lists/candidates panel
-   - Vote totals calculation
-   - Mobile toggle behavior
-
-### ListSelector.vue → 3 Components
-
-1. **DataSourceToggle.vue**
-   - ODD/ODN radio buttons
-   - Lists/Candidates toggle (when ODN)
-
-2. **PartyFilter.vue**
-   - Party dropdown
-   - Clear filter functionality
-
-3. **ListGrid.vue**
-   - Searchable list grid
-   - Checkbox selection
-   - Select all functionality
+- El estado que cruza islas va en `src/stores/map-state.ts` (nanostores). Dentro de una isla,
+  `ref`/`computed` normales.
+- Toda geometría entra como TopoJSON y se convierte con `topojson-client`; el presupuesto de
+  3 MB por archivo es duro.
+- Antes de dar por terminado un cambio de UI: `npm run check` (type-check) y `npm run test`.
 
 ## Accessibility Requirements (WCAG 2.1 AA)
 
@@ -135,23 +104,23 @@ src/
 </div>
 ```
 
-## Tailwind CSS Guidelines
+## Tailwind CSS 4 Guidelines
 
 ### Configuration
-```javascript
-// tailwind.config.js
-module.exports = {
-  content: ['./src/**/*.{vue,js,ts}'],
-  theme: {
-    extend: {
-      colors: {
-        'electoral-primary': '#333',
-        'electoral-accent': '#0366d6',
-      }
-    }
-  }
+Tailwind 4 es **CSS-first**: no hay `tailwind.config.js` en este repo (verificado). El plugin
+`@tailwindcss/vite` se registra en `astro.config`, y los tokens se declaran en el CSS:
+
+```css
+@import "tailwindcss";
+
+@theme {
+  --color-electoral-primary: #333;
+  --color-electoral-accent: #0366d6;
 }
 ```
+
+No crear un `tailwind.config.js`: Tailwind 4 lo ignora salvo que se lo cargue explícitamente
+con `@config`, y mezclar los dos modelos es fuente de estilos fantasma.
 
 ### Component Styling Pattern
 ```vue
@@ -164,33 +133,30 @@ module.exports = {
 </template>
 ```
 
-## State Management (Pinia)
+## State Management (nanostores)
 
-### Store Structure
+El store real es `src/stores/map-state.ts`. Leerlo antes de agregar estado — no inventar una
+forma nueva. El patrón es átomos/mapas de nanostores consumidos con `useStore()`:
+
 ```typescript
-// stores/electoral.ts
-export const useElectoralStore = defineStore('electoral', {
-  state: () => ({
-    currentRegion: null,
-    isODN: false,
-    selectedLists: [],
-    selectedCandidates: [],
-    votosPorListas: {},
-  }),
+// src/stores/map-state.ts
+import { atom, map } from 'nanostores';
 
-  getters: {
-    filteredLists: (state) => { ... },
-    totalVotes: (state) => { ... },
-  },
-
-  actions: {
-    async loadRegionData(region) { ... },
-    toggleDataSource() { ... },
-  }
-})
+export const $departamento = atom<string | null>(null);
+export const $seleccion    = map<Record<string, boolean>>({});
 ```
 
+```vue
+<script setup lang="ts">
+import { useStore } from '@nanostores/vue';
+import { $departamento } from '../../stores/map-state';
+const departamento = useStore($departamento);
+</script>
+```
+
+nanostores es lo que permite que dos islas Astro separadas compartan estado; Pinia no aplica
+acá y no está instalado.
+
 ## Integration Points
-- **electoral-data-agent** - Receives processed electoral data
-- **geojson-map-agent** - Receives optimized map files
-- **electoral-orchestrator** - Coordinates with overall workflow
+- **electoral-data-agent** — valida el CSV crudo aguas arriba del ETL.
+- **geojson-map-agent** — produce la geometría optimizada que renderiza el mapa.

@@ -1,259 +1,92 @@
-# Git Commit Skill
+---
+name: git-commit
+description: |
+  Arma un commit del Mapa Electoral con la convención del repo (conventional commits en
+  español). Usar cuando el usuario pida commitear, o diga "/commit". Stagea rutas explícitas,
+  nunca el working tree entero.
+---
 
-## Description
-Creates standardized git commits following project conventions for the Uruguay Electoral Map.
+# Git Commit
 
-## Trigger
-```
-/commit [--type <type>] [--scope <scope>] [--message <message>]
-```
+Crea commits siguiendo la convención de este repo.
 
-## Input Parameters
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| --type | string | No | auto | Commit type (feat, fix, etc.) |
-| --scope | string | No | auto | Scope of changes |
-| --message | string | No | auto | Commit message |
+## Regla dura: nunca `git add -A` / `git add .`
 
-## Commit Types
+Este repo suele tener cambios sin relación en el working tree (artefactos de build, caché de
+Playwright, `.pyc` borrados, salidas de ETL). Stagear todo mete basura ajena en el commit y en
+algún caso publica datos que no deberían estar versionados.
 
-| Type | Description | Example |
-|------|-------------|---------|
-| feat | New feature | Add Canelones department |
-| fix | Bug fix | Fix tooltip display on mobile |
-| refactor | Code refactoring | Split RegionMap component |
-| perf | Performance improvement | Optimize GeoJSON loading |
-| docs | Documentation | Update CLAUDE.md |
-| style | Code style/formatting | Format with Prettier |
-| chore | Maintenance tasks | Update dependencies |
-| data | Data file updates | Add electoral data |
-
-## Commit Message Format
-```
-<type>(<scope>): <short description>
-
-[optional body]
-
-[optional footer]
+```bash
+git add ruta/exacta/uno.ts ruta/exacta/dos.vue    # SÍ
+git add -A                                        # NO
+git add .                                         # NO
 ```
 
-### Examples
-```
-feat(canelones): add Canelones department data and map
-
-- Added canelones_odn.csv with 312 lists
-- Added canelones_odd.csv with 298 lists
-- Added optimized canelones_map.json (2.1MB)
-- Updated regions.json with map parameters
-
-Closes #15
-```
-
-```
-refactor(map): split RegionMap into smaller components
-
-- Created ElectoralMap.vue (container)
-- Created MapLegend.vue (color scale)
-- Created MapTooltip.vue (hover content)
-- Created SelectedInfo.vue (selection panel)
-
-BREAKING CHANGE: RegionMap.vue removed, use ElectoralMap.vue
-```
+Si el usuario pide explícitamente commitear todo, mostrarle primero `git status --short`
+completo y pedir confirmación.
 
 ## Workflow
 
-### Step 1: Analyze Changes
-```javascript
-async function analyzeChanges() {
-  const status = await git.status();
+1. **Mirar el estado real.**
+   ```bash
+   git status --short
+   git diff --stat
+   git diff            # el contenido, no solo los nombres
+   git log --oneline -10   # tomar el tono de los mensajes de este repo
+   ```
 
-  const changes = {
-    staged: status.staged,
-    modified: status.modified,
-    untracked: status.not_added,
-    deleted: status.deleted
-  };
+2. **Separar lo que corresponde.** Del working tree, quedarse solo con los archivos que son
+   parte del cambio pedido. Si hay dos cambios sin relación, son dos commits.
 
-  // Categorize by file type/location
-  const categories = categorizeChanges(changes);
+3. **Stagear por ruta.**
+   ```bash
+   git add <rutas exactas>
+   git diff --cached --stat    # confirmar que quedó solo lo que corresponde
+   ```
 
-  return { changes, categories };
-}
+4. **Escribir el mensaje** (formato abajo) y commitear.
 
-function categorizeChanges(changes) {
-  const allFiles = [...changes.staged, ...changes.modified];
+5. **No pushear** salvo pedido explícito. **No crear PR** salvo pedido explícito.
 
-  return {
-    data: allFiles.filter(f => f.match(/public\/.*\.(csv|json)$/)),
-    components: allFiles.filter(f => f.match(/src\/components\//)),
-    stores: allFiles.filter(f => f.match(/src\/stores\//)),
-    config: allFiles.filter(f => f.match(/\.(json|js|ts)$/) && !f.includes('src/')),
-    docs: allFiles.filter(f => f.match(/\.(md)$/))
-  };
-}
+## Formato del mensaje
+
+```
+<tipo>(<scope>): <descripción corta en minúscula, en español>
+
+[cuerpo opcional: qué cambió y por qué, no cómo]
 ```
 
-### Step 2: Determine Commit Type
-```javascript
-function determineCommitType(categories) {
-  // Priority-based type detection
-  if (categories.data.length > 0) {
-    if (categories.data.some(f => f.includes('_map.json'))) {
-      return 'feat'; // New department map
-    }
-    return 'data';
-  }
+| Tipo | Cuándo |
+|------|--------|
+| feat | funcionalidad nueva |
+| fix | corrección de bug |
+| refactor | reorganización sin cambio de comportamiento |
+| perf | performance |
+| docs | documentación |
+| style | formato |
+| chore | mantenimiento, dependencias, tooling |
+| data | datos electorales o mapeos |
 
-  if (categories.components.length > 0) {
-    const componentContent = readFiles(categories.components);
-    if (componentContent.some(c => c.includes('// BREAKING'))) {
-      return 'refactor';
-    }
-    return 'feat';
-  }
+Scopes usuales: `mapa`, `api`, `geo`, `ux`, `etl`, `claude`, `sweep`, o el id del departamento.
 
-  if (categories.docs.length > 0 && categories.components.length === 0) {
-    return 'docs';
-  }
-
-  return 'chore';
-}
+### Ejemplos reales del repo
+```
+fix(geo): cerrar el gap de locales sin coordenada (overlay local)
+feat(mapa): nivel "Localidades" usable en todo el interior
+docs(claude): corregir deriva factual y ajustar a Opus 5
 ```
 
-### Step 3: Determine Scope
-```javascript
-function determineScope(categories) {
-  // Check for department-specific changes
-  const deptMatch = categories.data
-    .map(f => f.match(/public\/([a-z_]+)_(?:odn|odd|map)/))
-    .filter(Boolean);
+## Antes de commitear cambios de código
 
-  if (deptMatch.length > 0) {
-    return deptMatch[0][1]; // e.g., "canelones"
-  }
-
-  // Check for component changes
-  if (categories.components.length > 0) {
-    if (categories.components.some(f => f.includes('/map/'))) {
-      return 'map';
-    }
-    if (categories.components.some(f => f.includes('/selectors/'))) {
-      return 'selectors';
-    }
-  }
-
-  return null; // No scope
-}
+```bash
+npm run check     # type-check
+npm run test      # vitest
 ```
 
-### Step 4: Generate Message
-```javascript
-function generateCommitMessage(type, scope, changes) {
-  const scopeStr = scope ? `(${scope})` : '';
+Si el cambio toca datos o geometría, además el gate correspondiente (`gate:data`,
+`gate:escaleras`, `gate:grises`).
 
-  // Generate short description based on changes
-  let description = '';
+## Workflow de contribución
 
-  switch (type) {
-    case 'feat':
-      if (scope && isDepartment(scope)) {
-        description = `add ${formatName(scope)} department`;
-      } else {
-        description = summarizeFeature(changes);
-      }
-      break;
-    case 'refactor':
-      description = summarizeRefactoring(changes);
-      break;
-    case 'data':
-      description = `update electoral data for ${scope || 'multiple departments'}`;
-      break;
-    default:
-      description = summarizeChanges(changes);
-  }
-
-  return `${type}${scopeStr}: ${description}`;
-}
-```
-
-### Step 5: Create Commit
-```javascript
-async function createCommit(message, body = null) {
-  // Stage all relevant files
-  await git.add('.');
-
-  // Build full commit message
-  let fullMessage = message;
-  if (body) {
-    fullMessage += `\n\n${body}`;
-  }
-
-  // Create commit
-  await git.commit(fullMessage);
-
-  return git.log({ n: 1 });
-}
-```
-
-## Output
-
-### Commit Preview
-```
-Commit Preview
-══════════════
-
-Type: feat
-Scope: canelones
-Message: feat(canelones): add Canelones department
-
-Files to commit:
-  A public/canelones_odn.csv
-  A public/canelones_odd.csv
-  A public/canelones_map.json
-  M public/regions.json
-  M CLAUDE.md
-
-Proceed with commit? [Y/n]
-```
-
-### Commit Result
-```
-Committed: feat(canelones): add Canelones department
-
-Commit: a1b2c3d4
-Author: Developer <dev@example.com>
-Date: 2024-01-15 10:30:00
-
-Changed files: 5
-Insertions: 15234
-Deletions: 2
-```
-
-## Special Cases
-
-### Breaking Changes
-```javascript
-// Detect breaking changes
-if (hasBreakingChanges(changes)) {
-  message += '\n\nBREAKING CHANGE: ' + describeBreakingChange(changes);
-}
-```
-
-### Multi-Department Commits
-```javascript
-// When adding multiple departments
-if (departments.length > 1) {
-  type = 'feat';
-  scope = 'data';
-  description = `add ${departments.length} departments: ${departments.join(', ')}`;
-}
-```
-
-## Integration
-- Works with standard git workflow
-- Respects .gitignore
-- Compatible with pre-commit hooks
-
-## Related Skills
-- add-department
-- validate-csv
+Rama desde `master` → cambios → gates → commit → PR. No commitear directo a `master` sin que
+el usuario lo pida.

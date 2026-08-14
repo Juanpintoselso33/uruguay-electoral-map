@@ -1,102 +1,74 @@
-# /add-department Command
+---
+description: Da de alta un departamento (o una elección de un departamento) en el mapa electoral, de datos crudos hasta gates.
+argument-hint: <departamento> [eleccion]
+---
 
-Add a new department to the Uruguay Electoral Map system.
+# /add-department
 
-## Usage
+Da de alta un departamento —o una instancia electoral nueva de un departamento ya existente—
+en el Mapa Electoral de Uruguay.
+
+## Uso
 ```
-/add-department <department_name>
-```
-
-## Arguments
-- `department_name` - Name of the department to add (lowercase, underscores for spaces)
-
-## Examples
-```
-/add-department canelones
-/add-department san_jose
-/add-department treinta_y_tres
+/add-department <departamento> [eleccion]
 ```
 
-## Prerequisites
+- `departamento` — id en minúsculas con guiones bajos: `canelones`, `san_jose`, `treinta_y_tres`.
+- `eleccion` — id de la instancia: `nacionales-2024`, `balotaje-2019`, `departamentales-2025`…
 
-Before running this command, ensure these files exist in `public/`:
+## Antes de empezar
 
-1. **ODN CSV File**: `{department}_odn.csv`
-   - Electoral data for Orden Departamental Nacional
+Leer, en este orden:
 
-2. **ODD CSV File**: `{department}_odd.csv`
-   - Electoral data for Orden Departamental Departamental
+1. `public/data/README.md` — contrato de datos e invariantes de dominio.
+2. `etl/README.md` — cómo está armado el pipeline.
+3. `src/config/departments.json` — qué cobertura ya existe (es la fuente de verdad).
 
-3. **GeoJSON Map**: `{department}_map.json`
-   - Geographic boundaries for zones/neighborhoods
+Los CSV crudos de la Corte van en `data/raw/electoral/`. Los `*_odn.csv` / `*_odd.csv` sueltos
+en `public/` son restos de la v1 y **no** son la entrada del pipeline.
 
-## Process
+## Proceso
 
-The command triggers the following workflow:
+### 1. Validar el CSV crudo
+Esquema `PARTIDO, DEPTO, CIRCUITO, SERIES, ESCRUTINIO, PRECANDIDATO, HOJA, CNT_VOTOS, ZONA`.
+Encoding UTF-8 (normalizar si viene Latin-1). Una sola etapa de `ESCRUTINIO`, la definitiva.
+Blancos/anulados/observados son categorías aparte.
 
-### Step 1: File Validation
-- Check that all required files exist
-- Verify file formats and encoding
+### 2. Resolver el join geográfico
+- **Montevideo:** CIRCUITO (CRV) → barrio por geolocalización, **un mapeo por ciclo electoral**.
+  `scripts/build-circuito-barrio-cycles.py` genera
+  `data/mappings/montevideo-circuito-barrio.{ciclo}.json`. Ver
+  `docs/adr/0001-circuito-barrio-por-ciclo.md`.
+- **Interior:** serie → barrio/localidad, mapeo curado.
+- Nunca unir por la columna `ZONA` directa ni por join espacial de series.
 
-### Step 2: CSV Validation
-- Validate schema against required columns
-- Check data quality and consistency
-- Report any issues found
-
-### Step 3: GeoJSON Processing
-- Check file size (must be <3MB)
-- Optimize if necessary
-- Calculate map center and zoom level
-- Extract zone names for cross-validation
-
-### Step 4: Cross-Validation
-- Match zone names in CSV with GeoJSON properties
-- Report any mismatches
-
-### Step 5: Integration
-- Add department to `public/regions.json`
-- Update CLAUDE.md department list
-
-### Step 6: Verification
-- Test data loading
-- Verify map rendering
-
-## Output
-
-### Success
+### 3. Correr el ETL
+```bash
+npm run etl:<runner>      # ver los scripts etl:* de package.json
 ```
-✓ Department 'canelones' added successfully
+Si la instancia no tiene runner, crear `etl/run-<algo>.ts` siguiendo uno existente del mismo
+tipo y registrarlo en `package.json`.
 
-Summary:
-- ODN Lists: 312
-- ODD Lists: 298
-- Zones: 45
-- Map Center: [-34.45, -56.21]
-- Map Zoom: 10
+### 4. Geometría
+TopoJSON/GeoJSON ≤ 3 MB por archivo. Si excede, simplificar (ver la skill `optimize-geojson`).
 
-Files updated:
-- public/regions.json
-- CLAUDE.md
+### 5. Declarar la cobertura
+Agregar el departamento y/o la elección en `src/config/departments.json` (`id`, `label`,
+`levels`, `elecciones`).
+
+### 6. Gates
+```bash
+npm run gate:data
+npm run gate:escaleras
+npm run gate:grises
 ```
 
-### Failure
-```
-✗ Failed to add department 'canelones'
+## Salida
 
-Errors:
-1. Missing file: public/canelones_odn.csv
-2. GeoJSON too large: 15MB (max 3MB)
+Reportar: qué se ingirió (filas, contiendas, unidades geográficas), qué gates corrieron y su
+resultado, y qué quedó sin resolver. Si algo falló, decir en qué paso y por qué; no seguir
+aguas abajo de un gate en rojo.
 
-Suggested actions:
-1. Add the missing CSV file
-2. Run '/optimize-geojson canelones' to reduce file size
-```
-
-## Related Commands
-- `/validate-data` - Validate data files without adding
-- `/optimize-geojson` - Manually optimize a GeoJSON file
-
-## Notes
-- Department names must use lowercase letters and underscores
-- The command will not overwrite existing department configurations
-- Use `--force` flag to update an existing department
+## Notas
+- No commitear sin que el usuario lo pida. Si commiteás, `git add` con rutas explícitas.
+- La granularidad por hoja no se downscopea a nivel-lema, aunque el join sea laborioso.

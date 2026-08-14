@@ -1,171 +1,82 @@
+---
+name: electoral-orchestrator
+description: |
+  Coordina el alta de una elección o un departamento nuevo de punta a punta: datos crudos →
+  ETL → geometría → cobertura declarada → gates. Usar solo para altas multi-paso; para una
+  validación suelta o un cambio de UI, ir directo al agente o a la skill que corresponda.
+model: inherit
+color: purple
+---
+
 # Electoral Orchestrator
 
 ## Role
-Master coordination agent that manages workflows between specialized agents and ensures smooth execution of multi-step tasks for the Uruguay Electoral Map project.
+Coordina las altas multi-paso del mapa electoral (una elección nueva, un departamento nuevo)
+llevando el hilo entre datos, geometría y frontend.
 
-## Color Code
-🟣 Púrpura (Purple)
+## Cuándo NO usar este agente
 
-## Capabilities
+Para casi todo. Un cambio de un solo paso —validar un CSV, simplificar un GeoJSON, tocar un
+componente— se hace directo, sin coordinador. Este agente gana algo solo cuando hay ≥3 pasos
+con dependencias reales entre sí y artefactos que se pisan.
 
-### Primary Functions
-1. **Workflow Coordination** - Orchestrate multi-agent tasks
-2. **Progress Tracking** - Monitor and report task completion
-3. **Error Recovery** - Handle failures and retry logic
-4. **Department Onboarding** - Manage the process of adding new departments
+## Presupuesto de delegación
 
-## Managed Agents
+- **Techo: 3 subagentes por alta**, uno por dominio (datos / geometría / frontend), y solo si
+  las tres partes son sustanciales e independientes.
+- Un paso que es "correr un comando y leer la salida" **no** se delega: se corre.
+- No abrir un subagente para releer un archivo que ya está en contexto.
+- Si el trabajo cabe en una sola cabeza, hacerlo en una sola cabeza.
 
-| Agent | Role | Color |
-|-------|------|-------|
-| electoral-data-agent | CSV validation & processing | 🟢 Green |
-| geojson-map-agent | GeoJSON optimization | 🔵 Blue |
-| vue-frontend-agent | Frontend development | 🟠 Orange |
+## Agentes disponibles
 
-## Workflows
+| Agent | Dominio |
+|-------|---------|
+| electoral-data-agent | CSV crudo de la Corte: esquema y calidad |
+| geojson-map-agent | Geometría TopoJSON/GeoJSON: simplificación y topología |
+| vue-frontend-agent | Astro + Vue: componentes, estado, a11y |
 
-### 1. Add Department Workflow
+## Fuente de verdad de cobertura
 
-Sequential process to add a new department to the system:
+**`src/config/departments.json`** declara qué departamentos, niveles y elecciones existen. Toda
+alta empieza y termina ahí. (`public/regions.json` y `elections-meta.json` son de la v1 y **ya
+no existen en el repo** — no escribirlos ni leerlos.)
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    ADD DEPARTMENT WORKFLOW                       │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  1. VALIDATE INPUT FILES                                         │
-│     ├── Check {dept}_odn.csv exists                             │
-│     ├── Check {dept}_odd.csv exists                             │
-│     └── Check {dept}_map.json exists                            │
-│                                                                  │
-│  2. ELECTORAL DATA VALIDATION (electoral-data-agent)            │
-│     ├── Validate CSV schema                                     │
-│     ├── Check data quality                                      │
-│     └── Generate validation report                              │
-│                                                                  │
-│  3. GEOJSON OPTIMIZATION (geojson-map-agent)                    │
-│     ├── Check file size                                         │
-│     ├── Optimize if >3MB                                        │
-│     ├── Calculate center & zoom                                 │
-│     └── Validate zone names                                     │
-│                                                                  │
-│  4. CROSS-VALIDATION                                             │
-│     └── Match CSV zones with GeoJSON properties                 │
-│                                                                  │
-│  5. INTEGRATION (vue-frontend-agent)                            │
-│     ├── Add to regions.json                                     │
-│     └── Verify component rendering                              │
-│                                                                  │
-│  6. FINALIZATION                                                 │
-│     ├── Update CLAUDE.md department list                        │
-│     └── Generate completion report                              │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
-```
+## Workflow: alta de una elección / departamento
 
-### 2. Full Validation Workflow
+1. **Datos crudos.** Ubicar los CSV de origen en `data/raw/electoral/`. Validar esquema y
+   calidad (`electoral-data-agent`). Encoding UTF-8; el origen de la Corte suele venir en
+   Latin-1 y se normaliza en la ingesta.
+2. **Mapeo geográfico.** Montevideo: CRV → barrio, **por ciclo electoral**
+   (`scripts/build-circuito-barrio-cycles.py`; ver `docs/adr/0001-circuito-barrio-por-ciclo.md`).
+   Interior: serie → localidad, mapeo curado. Nunca por la columna `ZONA`.
+3. **ETL.** Correr el runner de la instancia (`npm run etl:<algo>`). El catálogo real de
+   runners son los scripts `etl:*` de `package.json`; detalle en `etl/README.md`.
+4. **Geometría.** Si falta o pesa >3 MB, `geojson-map-agent`.
+5. **Declarar cobertura.** Agregar la elección/departamento a `src/config/departments.json`.
+6. **Gates.** `npm run gate:data`, `npm run gate:escaleras`, `npm run gate:grises`, y
+   `npm run check` + `npm run test` si se tocó frontend.
 
-Validate all departments and generate health report:
+Si un paso falla, parar y reportar. No seguir con los pasos aguas abajo sobre datos que no
+pasaron el gate.
 
-```
-For each department in regions.json:
-  1. Validate ODN CSV
-  2. Validate ODD CSV
-  3. Validate GeoJSON
-  4. Cross-validate zones
-  5. Compile results
+## Workflow: validación general
 
-Output: Full system health report
-```
-
-### 3. Frontend Refactoring Workflow
-
-Coordinate component splitting:
-
-```
-1. Analyze current component
-2. Identify extraction points
-3. Create new component files
-4. Update imports
-5. Test functionality
-6. Verify accessibility
-```
-
-## Command Interface
-
-### /add-department
 ```bash
-/add-department <department_name>
-
-# Example:
-/add-department canelones
+npm run gate:data        # integridad de shards
+npm run gate:escaleras   # escaleras de color
+npm run gate:grises      # zonas sin geometría (Python)
+npm run gate:all         # perf + a11y + Core Web Vitals
 ```
 
-**Workflow Steps:**
-1. Verify required files exist in `public/`
-2. Invoke electoral-data-agent for CSV validation
-3. Invoke geojson-map-agent for map optimization
-4. Cross-validate zone names
-5. Update regions.json
-6. Update CLAUDE.md
+## Reporte
 
-### /validate-data
-```bash
-/validate-data <department_name>
-/validate-data --all
+Al terminar: qué se agregó, qué gates corrieron y con qué resultado, y qué quedó pendiente.
+Sin logs decorativos ni barras de progreso inventadas — el estado real es el output de los
+gates.
 
-# Examples:
-/validate-data montevideo
-/validate-data --all
-```
+## Notas
 
-## Progress Reporting
-
-### Status Messages
-```
-[ORCHESTRATOR] Starting workflow: add-department
-[ORCHESTRATOR] Step 1/6: Validating input files...
-[DATA-AGENT] Validating montevideo_odn.csv...
-[DATA-AGENT] ✓ CSV validation complete (245 lists, 62 zones)
-[MAP-AGENT] Optimizing montevideo_map.json...
-[MAP-AGENT] ✓ Optimization complete (15MB → 2.1MB)
-[ORCHESTRATOR] Step 4/6: Cross-validating zones...
-[ORCHESTRATOR] ✓ All zones matched
-[FRONTEND-AGENT] Updating regions.json...
-[ORCHESTRATOR] ✓ Workflow complete
-```
-
-### Error Handling
-```
-[ORCHESTRATOR] ✗ Workflow failed at step 2
-[DATA-AGENT] Error: Missing column 'PRECANDIDATO' in row 1
-[ORCHESTRATOR] Suggested fix: Add 'PRECANDIDATO' column to CSV header
-[ORCHESTRATOR] Run '/validate-data montevideo' after fixing
-```
-
-## Configuration
-
-### Default Settings
-```json
-{
-  "retryAttempts": 3,
-  "timeout": 30000,
-  "parallelAgents": false,
-  "verboseLogging": true,
-  "autoOptimize": true,
-  "backupOriginals": true
-}
-```
-
-### Customization
-Modify `.claude/settings.json` to adjust:
-- Agent timeouts
-- Retry behavior
-- Logging verbosity
-- Auto-optimization thresholds
-
-## Integration Points
-- Receives commands from user/CLI
-- Dispatches tasks to specialized agents
-- Aggregates results from all agents
-- Updates project documentation
+- No commitear sin que el usuario lo pida. Al commitear, `git add` con rutas explícitas;
+  este repo tiene cambios sin relación en el working tree.
+- `legacy/`, `spikes/`, `_bmad/` y `docs/bmad-output/` están gitignoreados: no referenciarlos.

@@ -1,10 +1,19 @@
 # Project Constants
 
-## Uruguay Electoral Map - Shared Constants
+Referencia rápida de constantes de dominio. **No es un módulo importable**: no existe un
+`constants.ts` en `src/` que exporte esto. Es documentación; los valores reales viven en el
+código y en `src/config/departments.json`.
+
+Ante discrepancia, gana el código. `public/data/README.md` es la fuente de verdad del contrato
+de datos.
 
 ### Electoral Data
 
 #### Data Source Types
+Categorías de la v1. El modelo actual es **agnóstico al tipo de elección** (unidad base =
+opción electoral × unidad geográfica); las instancias reales se declaran en
+`src/config/departments.json` bajo `elecciones`.
+
 ```javascript
 const DATA_SOURCES = {
   ODN: 'odn',  // Orden Departamental Nacional
@@ -69,15 +78,9 @@ const DEPARTMENTS = {
 ### Map Configuration
 
 #### Default Map Settings
-```javascript
-const MAP_DEFAULTS = {
-  minZoom: 7,
-  maxZoom: 18,
-  tileLayer: null,  // No tile layer, just GeoJSON
-  attribution: false,
-  zoomControl: false
-};
-```
+El mapa es **MapLibre GL 5**, no Leaflet. Los valores de vista los fija el componente
+`src/components/map/ChoroplethMap.vue`; leerlo ahí antes de asumir. Rango de zoom en uso:
+aproximadamente 7 (país) a 18 (local). Sin capa de tiles: solo geometría propia.
 
 #### Color Scale (Heat Map)
 ```javascript
@@ -108,13 +111,10 @@ const GEOJSON_CONSTRAINTS = {
 ```
 
 #### File Naming Patterns
-```javascript
-const FILE_PATTERNS = {
-  odnCsv: '{department}_odn.csv',
-  oddCsv: '{department}_odd.csv',
-  geoJson: '{department}_map.json'
-};
-```
+Los patrones `{department}_odn.csv` / `_odd.csv` / `_map.json` son de la v1. En la v2 los
+datos publicados son shards bajo `public/data/` y la geometría es TopoJSON bajo
+`public/data/geo/`. Ver `public/data/README.md` para la convención vigente, y
+`data/mappings/` para los mapeos geográficos.
 
 ### Political Parties
 
@@ -173,24 +173,8 @@ const DATA_SOURCES_URLS = {
 };
 ```
 
-### Export for Use
+### Cómo usar este archivo
 
-```javascript
-// In JavaScript/TypeScript files
-export {
-  DATA_SOURCES,
-  CSV_COLUMNS,
-  REQUIRED_COLUMNS,
-  URUGUAY_BOUNDS,
-  DEPARTMENTS,
-  MAP_DEFAULTS,
-  HEAT_MAP_COLORS,
-  LEGEND_GRADES,
-  GEOJSON_CONSTRAINTS,
-  FILE_PATTERNS,
-  PARTY_ABBREVIATIONS,
-  BREAKPOINTS,
-  ANIMATIONS,
-  VOTE_LIMITS
-};
-```
+Como referencia de lectura, no como import. Los 19 departamentos con sus niveles y elecciones
+están en `src/config/departments.json`; las escaleras de color las valida
+`npm run gate:escaleras`; el estado compartido del mapa está en `src/stores/map-state.ts`.

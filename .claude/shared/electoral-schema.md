@@ -2,16 +2,21 @@
 
 ## Overview
 
-This document defines the data schema for electoral CSV files used in the Uruguay Electoral Map application.
+Esquema de los CSV electorales **crudos** que publica la Corte Electoral y que entran al ETL.
+Describe el **origen**, no el formato publicado: los shards que consume el frontend viven en
+`public/data/` y su contrato está en [`public/data/README.md`](../../public/data/README.md),
+que es la fuente de verdad ante cualquier discrepancia con este archivo.
 
 ## CSV File Structure
 
-### File Types
+### Ubicación
 
-| Type | Filename Pattern | Description |
-|------|------------------|-------------|
-| ODN | `{department}_odn.csv` | Orden Departamental Nacional data |
-| ODD | `{department}_odd.csv` | Orden Departamental Departamental data |
+Los CSV crudos van en `data/raw/electoral/`. Los `*_odn.csv` / `*_odd.csv` sueltos en `public/`
+son restos de la v1 y no son entrada del pipeline.
+
+El modelo es **agnóstico al tipo de elección**: la unidad base es *opción electoral × unidad
+geográfica* (hoja en internas y legislativas; candidato/lema en balotaje y presidencial). La
+antigua dicotomía ODN/ODD es un caso particular, no la estructura general.
 
 ### Column Definitions
 
@@ -92,12 +97,18 @@ This document defines the data schema for electoral CSV files used in the Urugua
 #### ZONA (Zone)
 - **Type**: String
 - **Required**: Yes
-- **Constraints**: Must match a zone in the corresponding GeoJSON
-- **Description**: Geographic zone/neighborhood name
+- **Constraints**: no vacío. **NO se valida contra el GeoJSON.**
+- **Description**: zona declarada en el origen. **No es la clave geográfica del proyecto.**
 - **Example Values**:
   - `"Centro"`
   - `"Pocitos"`
   - `"Ciudad Vieja"`
+
+> El join geográfico real **no pasa por `ZONA`**: Montevideo une CIRCUITO (CRV) → barrio por
+> geolocalización y **por ciclo electoral**; el interior usa un mapeo curado serie → localidad.
+> Unir por `ZONA` directa (o por join espacial de series) es el error que produjo el bug
+> "Carrasco FA 66,5% en 2014". Ver `docs/adr/0001-circuito-barrio-por-ciclo.md` y los
+> invariantes en `public/data/README.md`.
 
 ## Sample CSV
 
@@ -166,7 +177,10 @@ const schema = {
 2. **Non-negative Votes**: `CNT_VOTOS >= 0`
 3. **Party Consistency**: Same `HOJA` always belongs to same `PARTIDO`
 4. **Candidate Consistency**: Same `HOJA` always belongs to same `PRECANDIDATO`
-5. **Zone Existence**: All `ZONA` values must exist in GeoJSON
+5. **Etapa única de escrutinio**: una sola `ESCRUTINIO` por contienda (la definitiva). Nunca
+   sumar a través de etapas.
+6. **Blancos / anulados / observados**: sin partido ni hoja, categorías aparte; se reconcilian
+   contra votos válidos.
 
 ## Data Processing
 
@@ -204,24 +218,20 @@ data.forEach(row => {
 });
 ```
 
-## GeoJSON Cross-Reference
+## Cruce con la geometría
 
-### Zone Property Names
-GeoJSON features may use different property names for zones:
+**No se cruza contra `ZONA`.** La unidad geográfica sale del mapeo correspondiente, no de una
+columna del CSV:
 
-| Priority | Property | Example |
-|----------|----------|---------|
-| 1 | `BARRIO` | `{ "BARRIO": "Centro" }` |
-| 2 | `texto` | `{ "texto": "Centro" }` |
-| 3 | `zona` | `{ "zona": "Centro" }` |
+| Ámbito | Mapeo | Generado por |
+|--------|-------|--------------|
+| Montevideo | CIRCUITO (CRV) → barrio, **uno por ciclo electoral** | `scripts/build-circuito-barrio-cycles.py` → `data/mappings/montevideo-circuito-barrio.{ciclo}.json` |
+| Interior | serie → barrio/localidad, curado | `npm run etl:serie-localidad` → `data/mappings/{depto}-series-locality.json` |
 
-### Zone Normalization
-```javascript
-function getZoneName(feature) {
-  const props = feature.properties;
-  return props.BARRIO || props.texto || props.zona || '';
-}
-```
+Los CRV se reasignan entre elecciones: un único mapeo aplicado a todos los ciclos produce joins
+falsos. Ver `docs/adr/0001-circuito-barrio-por-ciclo.md`.
+
+El gate `npm run gate:grises` detecta unidades que quedaron sin geometría asociada.
 
 ## Data Quality Metrics
 

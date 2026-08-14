@@ -1,243 +1,96 @@
-# Validate CSV Skill
+---
+name: validate-csv
+description: |
+  Valida un CSV electoral crudo de la Corte contra el esquema del proyecto y chequea calidad
+  de datos (votos, hojas, duplicados, etapas de escrutinio). Usar antes de meter un
+  departamento o una elección nueva al ETL, o para diagnosticar filas raras en el origen.
+---
 
-## Description
-Validates electoral CSV data files against the required schema and checks data quality.
+# Validate CSV
 
-## Trigger
+Valida los CSV electorales **crudos** (los de `data/raw/electoral/`, tal como salen de la
+Corte Electoral) contra el esquema del proyecto.
+
+No confundir con `npm run gate:data`, que valida los **shards ya publicados** en
+`public/data/`. Esta skill mira el origen, aguas arriba del ETL.
+
+## Esquema requerido
+
 ```
-/validate-csv <department_name> [--type odn|odd|both]
-```
-
-## Input Parameters
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| department_name | string | Yes | - | Department to validate |
-| --type | string | No | both | Type of CSV to validate |
-
-## Required CSV Schema
-
-### Columns
-```
-PARTIDO       - Political party name (string, non-empty)
-DEPTO         - Department name (string, non-empty)
-CIRCUITO      - Electoral circuit (string)
-SERIES        - Series number (string)
-ESCRUTINIO    - Scrutiny type (string)
-PRECANDIDATO  - Pre-candidate name (string)
-HOJA          - Ballot sheet/list number (string, numeric)
-CNT_VOTOS     - Vote count (string, parseable to non-negative integer)
-ZONA          - Zone/neighborhood name (string, non-empty)
-```
-
-### Encoding Requirements
-- UTF-8 encoding
-- Comma (,) as delimiter
-- Optional: Double quotes for fields containing commas
-
-## Validation Logic
-
-### Step 1: File Access
-```javascript
-function validateFileAccess(path) {
-  if (!fileExists(path)) {
-    return { valid: false, error: 'E004: File not found' };
-  }
-
-  const encoding = detectEncoding(path);
-  if (encoding !== 'UTF-8') {
-    return { valid: false, error: `E002: Invalid encoding (${encoding})` };
-  }
-
-  return { valid: true };
-}
+PARTIDO       Partido político (string, no vacío)
+DEPTO         Departamento (string, no vacío)
+CIRCUITO      Circuito electoral / CRV (string)
+SERIES        Serie (string)
+ESCRUTINIO    Etapa de escrutinio (string)
+PRECANDIDATO  Precandidato (string; vacío en contiendas sin precandidato)
+HOJA          Número de hoja/lista (string numérico)
+CNT_VOTOS     Cantidad de votos (string parseable a entero ≥ 0)
+ZONA          Zona declarada en el origen (string)
 ```
 
-### Step 2: Schema Validation
-```javascript
-const REQUIRED_COLUMNS = [
-  'PARTIDO', 'DEPTO', 'CIRCUITO', 'SERIES',
-  'ESCRUTINIO', 'PRECANDIDATO', 'HOJA', 'CNT_VOTOS', 'ZONA'
-];
+Encoding **UTF-8**, delimitador coma. El origen suele venir en **Latin-1**: si aparecen
+`Ã±`/`Ã³`, el archivo no está en UTF-8 y hay que normalizarlo en la ingesta, no parchear
+después.
 
-function validateSchema(headers) {
-  const missing = REQUIRED_COLUMNS.filter(col => !headers.includes(col));
+## Chequeos
 
-  if (missing.length > 0) {
-    return {
-      valid: false,
-      error: `E001: Missing columns: ${missing.join(', ')}`
-    };
-  }
+### Estructura
+- Están las 9 columnas, sin encabezados vacíos.
+- El archivo parsea entero (no se corta a mitad por comillas mal cerradas).
 
-  return { valid: true };
-}
+### Calidad de filas
+- `CNT_VOTOS` entero ≥ 0.
+- `HOJA` numérica.
+- `PARTIDO` y `DEPTO` no vacíos.
+- Sin filas duplicadas para la misma combinación de claves.
+
+### Invariantes de dominio (los que importan)
+- **Una sola etapa de `ESCRUTINIO` por contienda**, la definitiva. Si el archivo trae varias,
+  es un problema de extracción: reportarlo, nunca sumarlas.
+- **Misma `HOJA` ⇒ mismo `PARTIDO` y mismo `PRECANDIDATO`.** Si una hoja aparece con dos
+  partidos, o el origen está mezclando contiendas o hay hojas homónimas entre elecciones.
+- **Blancos / anulados / observados** vienen sin partido ni hoja. Son categorías aparte: se
+  reconcilian contra votos válidos, no se cuentan como listas.
+
+> **`ZONA` no se valida contra el GeoJSON.** No es la clave geográfica. El join real es
+> CIRCUITO (CRV) → barrio por geolocalización en Montevideo —**y por ciclo electoral**, ver
+> `docs/adr/0001-circuito-barrio-por-ciclo.md`— y serie → localidad curada en el interior.
+> Validar `ZONA` contra la geometría es justamente el error que produjo el bug
+> "Carrasco FA 66,5% en 2014".
+
+## Cómo correrlo
+
+No hay una API de validación en el repo. Leer el archivo y contarlo con las herramientas
+disponibles: `Read` para inspeccionar, Bash para lo agregado, o un `npx tsx` puntual si hace
+falta cruzar mucho. Para archivos grandes, evitar cargarlos enteros en contexto.
+
+```bash
+head -1 data/raw/electoral/<archivo>.csv          # encabezados
+wc -l data/raw/electoral/<archivo>.csv            # filas
+file -I data/raw/electoral/<archivo>.csv          # encoding declarado
 ```
 
-### Step 3: Row Validation
-```javascript
-function validateRow(row, rowIndex) {
-  const issues = [];
+## Salida
 
-  // Validate CNT_VOTOS
-  const votes = parseInt(row.CNT_VOTOS, 10);
-  if (isNaN(votes)) {
-    issues.push({
-      severity: 'error',
-      code: 'E005',
-      message: `Invalid vote count: "${row.CNT_VOTOS}"`,
-      row: rowIndex
-    });
-  } else if (votes < 0) {
-    issues.push({
-      severity: 'warning',
-      code: 'W001',
-      message: `Negative vote count: ${votes}`,
-      row: rowIndex
-    });
-  }
+Un reporte con: archivo, filas, hojas únicas, unidades geográficas únicas, total de votos, y
+la lista de problemas con código, severidad y número de fila. Veredicto único:
+`OK` / `WARNING` / `ERROR`.
 
-  // Validate HOJA
-  if (!/^\d+$/.test(row.HOJA)) {
-    issues.push({
-      severity: 'warning',
-      code: 'W005',
-      message: `Non-numeric list number: "${row.HOJA}"`,
-      row: rowIndex
-    });
-  }
+## Códigos
 
-  // Validate required non-empty fields
-  ['PARTIDO', 'ZONA'].forEach(field => {
-    if (!row[field] || row[field].trim() === '') {
-      issues.push({
-        severity: 'error',
-        code: 'E006',
-        message: `Empty required field: ${field}`,
-        row: rowIndex
-      });
-    }
-  });
+| Código | Severidad | Descripción |
+|--------|-----------|-------------|
+| E001 | Error | Falta una columna requerida |
+| E002 | Error | Encoding inválido |
+| E004 | Error | Archivo no encontrado |
+| E005 | Error | `CNT_VOTOS` no parseable |
+| E006 | Error | Campo requerido vacío |
+| E007 | Error | Más de una etapa de `ESCRUTINIO` en la misma contienda |
+| W001 | Warning | Voto negativo |
+| W002 | Warning | Fila duplicada |
+| W005 | Warning | `HOJA` no numérica |
+| W006 | Warning | Misma `HOJA` con distinto `PARTIDO`/`PRECANDIDATO` |
 
-  return issues;
-}
-```
-
-### Step 4: Duplicate Detection
-```javascript
-function detectDuplicates(data) {
-  const seen = new Map();
-  const duplicates = [];
-
-  data.forEach((row, index) => {
-    const key = `${row.HOJA}|${row.ZONA}`;
-    if (seen.has(key)) {
-      duplicates.push({
-        severity: 'warning',
-        code: 'W002',
-        message: `Duplicate HOJA+ZONA: Lista ${row.HOJA}, ${row.ZONA}`,
-        rows: [seen.get(key), index + 2] // +2 for header and 1-indexed
-      });
-    } else {
-      seen.set(key, index + 2);
-    }
-  });
-
-  return duplicates;
-}
-```
-
-### Step 5: Statistical Analysis
-```javascript
-function analyzeStatistics(data) {
-  const votesByList = {};
-  const votesByZone = {};
-
-  data.forEach(row => {
-    const votes = parseInt(row.CNT_VOTOS, 10) || 0;
-    votesByList[row.HOJA] = (votesByList[row.HOJA] || 0) + votes;
-    votesByZone[row.ZONA] = (votesByZone[row.ZONA] || 0) + votes;
-  });
-
-  return {
-    totalRows: data.length,
-    uniqueLists: Object.keys(votesByList).length,
-    uniqueZones: Object.keys(votesByZone).length,
-    totalVotes: Object.values(votesByList).reduce((a, b) => a + b, 0),
-    avgVotesPerList: Object.values(votesByList).reduce((a, b) => a + b, 0) /
-                     Object.keys(votesByList).length
-  };
-}
-```
-
-## Output Format
-
-### Validation Report
-```json
-{
-  "file": "public/montevideo_odn.csv",
-  "department": "montevideo",
-  "type": "odn",
-  "status": "valid",
-  "statistics": {
-    "totalRows": 15234,
-    "uniqueLists": 245,
-    "uniqueZones": 62,
-    "totalVotes": 1250000,
-    "avgVotesPerList": 5102
-  },
-  "issues": [],
-  "warnings": []
-}
-```
-
-### Report with Issues
-```json
-{
-  "file": "public/canelones_odn.csv",
-  "department": "canelones",
-  "type": "odn",
-  "status": "warning",
-  "statistics": {
-    "totalRows": 8456,
-    "uniqueLists": 198,
-    "uniqueZones": 45,
-    "totalVotes": 890000
-  },
-  "issues": [
-    {
-      "severity": "warning",
-      "code": "W001",
-      "message": "Negative vote count: -15",
-      "row": 234
-    },
-    {
-      "severity": "warning",
-      "code": "W002",
-      "message": "Duplicate HOJA+ZONA: Lista 501, Ciudad de la Costa",
-      "rows": [1892, 2345]
-    }
-  ]
-}
-```
-
-## Error Codes Reference
-
-| Code | Severity | Description |
-|------|----------|-------------|
-| E001 | Error | Missing required column |
-| E002 | Error | Invalid file encoding |
-| E004 | Error | File not found |
-| E005 | Error | Invalid vote count format |
-| E006 | Error | Empty required field |
-| W001 | Warning | Negative vote count |
-| W002 | Warning | Duplicate row |
-| W003 | Warning | Zone name mismatch |
-| W005 | Warning | Non-numeric list number |
-
-## Dependencies
-- Papa Parse (CSV parsing)
-- electoral-data-agent
-
-## Related Skills
-- add-department
-- optimize-geojson
+## Relacionadas
+- `add-department` · `optimize-geojson`
+- Contrato de datos completo: `public/data/README.md`
