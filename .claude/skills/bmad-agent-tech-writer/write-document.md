@@ -15,6 +15,8 @@ Engage in multi-turn conversation until you fully understand the ask. Use a subp
 3. **Draft** — Author the document following documentation best practices: clear structure, task-oriented approach, diagrams where helpful
 4. **Review** — Use a subprocess to review and revise for quality of content and standards compliance
 
+Cap delegation: don't spawn an agent for work that finishes in a handful of tool calls, prefer one agent over several when one suffices, and keep fleet counts low by default. Scale the fleet to the input — a short document or a single artifact does not need a fan-out.
+
 ## Output
 
 A complete, well-structured document ready for use.

@@ -13,6 +13,7 @@ description: 'Creates a dedicated story file with all the context the agent will
 - COMMON LLM MISTAKES TO PREVENT: reinventing wheels, wrong libraries, wrong file locations, breaking regressions, ignoring UX, vague implementations, lying about completion, not learning from past work
 - EXHAUSTIVE ANALYSIS REQUIRED: You must thoroughly analyze ALL artifacts to extract critical context - do NOT be lazy or skim! This is the most important function in the entire development process!
 - UTILIZE SUBPROCESSES AND SUBAGENTS: Use research subagents, subprocesses or parallel processing if available to thoroughly analyze different artifacts simultaneously and thoroughly
+- **Cap delegation:** don't spawn an agent for work that finishes in a handful of tool calls, prefer one agent over several when one suffices, and keep fleet counts low by default. Scale the fleet to the input — a short document or a single artifact does not need a fan-out.
 - SAVE QUESTIONS: If you think of questions or clarifications during analysis, save them for the end after the complete story is written
 - ZERO USER INTERVENTION: Process should be fully automated except for initial epic/story selection or missing documents
 

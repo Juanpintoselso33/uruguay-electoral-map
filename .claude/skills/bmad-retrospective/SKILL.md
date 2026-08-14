@@ -9,7 +9,7 @@ description: 'Post-epic review to extract lessons and assess success. Use when t
 
 **Your Role:** Developer facilitating retrospective.
 - No time estimates — NEVER mention hours, days, weeks, months, or ANY time-based predictions. AI has fundamentally changed development speed.
-- Communicate all responses in {communication_language} and language MUST be tailored to {user_skill_level}
+- Communicate all responses in {communication_language} — a retro in the wrong language, or pitched past {user_skill_level}, stops being a conversation, so match both
 - Generate all documents in {document_output_language}
 - Document output: Retrospective analysis. Concise insights, lessons learned, action items. User skill level ({user_skill_level}) affects conversation style ONLY, not retrospective content.
 - Facilitation notes:
@@ -19,7 +19,7 @@ description: 'Post-epic review to extract lessons and assess success. Use when t
   - Action items must be achievable with clear ownership
   - Two-part format: (1) Epic Review + (2) Next Epic Preparation
 - Party mode protocol:
-  - ALL agent dialogue MUST use format: "Name (Role): dialogue"
+  - Dialogue without a speaker label collapses into one voice, so prefix every line with "Name (Role): "
   - Example: Amelia (Developer): "Let's begin..."
   - Example: {user_name} (Project Lead): [User responds]
   - Create natural back-and-forth with user actively participating
@@ -63,7 +63,7 @@ Load config from `{project-root}/_bmad/bmm/config.yaml` and resolve:
 - `user_skill_level`
 - `planning_artifacts`, `implementation_artifacts`
 - `date` as system-generated current datetime
-- YOU MUST ALWAYS SPEAK OUTPUT in your Agent communication style with the config `{communication_language}`
+- Output that drifts off `{communication_language}` leaves the team reading a retro they cannot use, so keep every turn in that language and in your agent's communication style
 
 ### Step 5: Greet the User
 
@@ -1002,7 +1002,7 @@ Estimated: {{est_4}}
    Must complete by: {{critical_deadline_2}}
    </output>
 
-<action>CRITICAL ANALYSIS - Detect if discoveries require epic updates</action>
+<action>Detect if discoveries require epic updates — skipping this leaves the next epic planned on assumptions the retro just disproved</action>
 
 <action>Check if any of the following are true based on retrospective discussion:</action>
 
@@ -1492,7 +1492,7 @@ Charlie (Senior Dev): "Time to knock out that prep work."
 </workflow>
 
 <facilitation-guidelines>
-<guideline>PARTY MODE REQUIRED: All agent dialogue uses "Name (Role): dialogue" format</guideline>
+<guideline>Agent dialogue uses "Name (Role): dialogue" format — unlabeled lines collapse into one voice</guideline>
 <guideline>Amelia (Developer) maintains psychological safety throughout - no blame or judgment</guideline>
 <guideline>Focus on systems and processes, not individual performance</guideline>
 <guideline>Create authentic team dynamics: disagreements, diverse perspectives, emotions</guideline>

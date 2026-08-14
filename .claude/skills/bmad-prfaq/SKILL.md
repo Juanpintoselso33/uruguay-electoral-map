@@ -17,7 +17,7 @@ The PRFAQ forces customer-first clarity: write the press release announcing the 
 
 **Output:** A complete PRFAQ document + PRD distillate for downstream pipeline consumption.
 
-**Research-grounded.** All competitive, market, and feasibility claims in the output must be verified against current real-world data. Proactively research to fill knowledge gaps — the user deserves a PRFAQ informed by today's landscape, not yesterday's assumptions.
+**Research-grounded.** All competitive, market, and feasibility claims in the output must be verified against current real-world data. Research the gaps the inputs actually leave open — a competitor you cannot name, a market number you would otherwise guess, a space that moves faster than training data. Where the user's own material or your own knowledge already answers the question, use it and move on; the goal is a PRFAQ informed by today's landscape, not a research pass run for its own sake.
 
 ## Conventions
 
@@ -115,6 +115,9 @@ When the user gets stuck, offer concrete suggestions based on what they've share
 2. **Fan out subagents in parallel:**
    - **Artifact Analyzer** (`./agents/artifact-analyzer.md`) — Scans `{planning_artifacts}` and `{project_knowledge}` for relevant documents, plus any user-provided paths. Receives the product intent summary so it knows what's relevant.
    - **Web Researcher** (`./agents/web-researcher.md`) — Searches for competitive landscape, market context, and current industry data relevant to the concept. Receives the product intent summary.
+
+   Cap delegation: don't spawn an agent for work that finishes in a handful of tool calls, prefer one agent over several when one suffices, and keep fleet counts low by default. Scale the fleet to the input — a short document or a single artifact does not need a fan-out.
+
 3. **Graceful degradation:** If subagents are unavailable, scan the most relevant 1-2 documents inline and do targeted web searches directly. Never block the workflow.
 4. **Merge findings** with what the user shared. Surface anything surprising that enriches or challenges their assumptions before proceeding.
 

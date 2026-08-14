@@ -64,6 +64,8 @@ The workspace persists; stop and resume freely.
 
 **Extract, don't ingest.** Source documents go to subagents for extraction; the parent assembles from extracts. Only load source documents into the parent context wholesale when no subagents are available.
 
+**Cap delegation:** don't spawn an agent for work that finishes in a handful of tool calls, prefer one agent over several when one suffices, and keep fleet counts low by default. Scale the fleet to the input — a short document or a single artifact does not need a fan-out.
+
 **Length scales with stakes.** Hobby / solo PRDs aim for about two pages. Internal tools land around five to eight. Launch and chain-top PRDs run as long as their FRs and concerns require. Whatever the length, detail that doesn't earn its place in the PRD's main narrative belongs in `addendum.md` — moving overflow there is correct; padding the PRD to look thorough is not.
 
 ## Reviewer Gate

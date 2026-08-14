@@ -76,6 +76,8 @@ Surface closure: stated needs become screens through journeys. IA closes when ev
 
 Used by Validate and Finalize. **Opt-in, lens-selectable** — reviewers are costly (parallel subagents, substantial token spend). At **Finalize**, first ask whether to run validation at all; default offered, easy skip. At **Validate** intent the user already opted in — skip that question. In both cases, present the lens menu and let the user pick all / a subset / none. Menu: rubric walker (`references/validate.md`) + `{workflow.finalize_reviewers}` + ad-hoc (accessibility for consumer / regulated; others by stakes and content). Picked lenses dispatch as parallel subagents → each writes `review-{slug}.md`, returns a compact summary. If any lens ran, run the synthesis pipeline in `references/validate.md`.
 
+**Cap delegation:** don't spawn an agent for work that finishes in a handful of tool calls, prefer one agent over several when one suffices, and keep fleet counts low by default. Scale the fleet to the input — a short document or a single artifact does not need a fan-out.
+
 ## Finalize
 
 Outcomes, in order:

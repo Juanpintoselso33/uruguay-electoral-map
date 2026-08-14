@@ -43,6 +43,9 @@ After every outcome, present what was learned and pause for the user before cont
 - **Path:line citations** use CWD-relative format, no leading `/`, so they're clickable in IDE-embedded terminals.
 - **Delegation discipline.** When a step requires reading 5+ files or any file >10K tokens, delegate to a subagent
   that returns structured JSON only. Cite `path:line` from the result; don't re-read in the parent.
+  Cap delegation: don't spawn an agent for work that finishes in a handful of tool calls, prefer one agent over
+  several when one suffices, and keep fleet counts low by default. Scale the fleet to the input — a short
+  document or a single artifact does not need a fan-out.
 - **Issue independent operations in parallel** (multi-grep, multi-read, parallel inventories) — one message, multiple
   tool calls.
 - **Communication.** Evidence-first language ("the evidence shows", "unconfirmed, requires X to verify"). No hedging,
